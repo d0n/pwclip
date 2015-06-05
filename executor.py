@@ -4,11 +4,10 @@ import os
 import sys
 from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE, DEVNULL
+
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == os.path.expanduser('~/bin'))]
-from modules.system.common import which
-from modules.system.users import user
+from ..systools import which
+from ..systools import user
 
 class Command(object):
 	"""(remote) command execution module"""
@@ -18,6 +17,7 @@ class Command(object):
 	_user = user.name
 	_host = ''
 	__sshbin = which('ssh')
+	# default ssh options (usually we dont want a script to be interactive)
 	__sshopts = {
         'o': [
             'StrictHostKeyChecking=no',
@@ -40,19 +40,15 @@ class Command(object):
 	# rw properties
 	@property               # sh_ <bool>
 	def sh_(self):
-		"""execute using shell environment"""
 		return self._sh_
 	@sh_.setter
 	def sh_(self, val):
-		"""execute using shell environment"""
 		self._sh_ = val if type(val) is bool else self._sh_
 	@property               # su_ <bool>
 	def su_(self):
-		"""execute using sudo as necessary"""
 		return self._su_
 	@su_.setter
 	def su_(self, val):
-		"""execute using sudo as necessary"""
 		self._su_ = val if type(val) is bool else self._su_
 	@property               # dbg <bool>
 	def dbg(self):
