@@ -6,8 +6,7 @@ from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE, DEVNULL
 
 # local relative imports
-from ..systools import which
-from ..systools import user
+from systools import which, user
 
 class Command(object):
 	"""(remote) command execution module"""
