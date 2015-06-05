@@ -11,4 +11,3 @@ from .users import Users
 user = Users()
 
 from .daemon import Daemon
-
