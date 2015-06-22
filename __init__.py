@@ -10,3 +10,7 @@ from .users import Users
 
 from .daemon import Daemon
 
+from .power import SystemPower
+
+from .uefi import UEFITool
+

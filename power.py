@@ -7,11 +7,9 @@ import sys
 from time import sleep
 
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [
-    p for p in sys.path if p != os.path.expanduser('~/bin')]
-from modules.wrapper.uefi import UEFITool
-from modules.system.executor import Command
-from modules.system.common import which
+from .misc import which
+from .uefi import UEFITool
+from executor import Command
 
 # default vars
 __me__ = os.path.basename(__file__)
