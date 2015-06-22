@@ -6,21 +6,12 @@ import os
 import sys
 
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [
-    p for p in sys.path if p != os.path.expanduser('~/bin')]
-from modules.colortext import error
-from modules.system.common import which
-from modules.system.executor import Command
+from colortext import error
+from systools import which
+from executor import Command
 
 # default vars
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.readlink(os.path.dirname(os.path.abspath(__file__)))
 __version__ = '0.1'
-
 
 class UEFITool(Command):
 	_sh_ = True
