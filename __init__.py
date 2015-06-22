@@ -1,10 +1,10 @@
 __version__ = '0.1'
 
-from .crontools import stamp, fileage
+from .cron import stamp, fileage
 
-from .misctools import which, random, string2bool
+from .path import bestlim, lineno, realpaths, confpaths, confdats
 
-from .pathtools import bestlim, lineno, realpaths, confpaths, confdats
+from .misc import which, random, string2bool
 
 from .users import Users
 
