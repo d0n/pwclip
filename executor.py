@@ -5,16 +5,25 @@ import sys
 from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE, DEVNULL
 
-# local relative imports
-from systools import which, Users
-user = Users()
+
+def which(prog):
+	for path in os.environ['PATH'].split(':'):
+		if os.access('%s/%s'%(path, prog), os.X_OK):
+			return '%s/%s'%(path, prog)
+
+def logeduser():
+	with open('/etc/passwd', 'r') as pwf:
+		pwds = pwf.readlines()
+	uid = os.getuid()
+	return [l.split(':')[0] for l in pwds if l and l.split(':')[2] == uid]
+
 
 class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
 	_su_ = False
 	_dbg = False
-	_user = user.name
+	_user = logeduser()
 	_host = ''
 	__sshbin = which('ssh')
 	# default ssh options (usually we dont want a script to be interactive)
