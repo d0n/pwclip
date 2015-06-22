@@ -7,10 +7,13 @@ import sys
 
 #local relative imports
 from systools import which
+print(sys.path)
 from executor import Command
 
 # default constant definitions
 __version__ = '0.1'
+
+print(dir(Command))
 
 class DePyKG(Command):
 	_pkgbin = which('dpkg')
