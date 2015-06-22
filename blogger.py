@@ -23,8 +23,8 @@ from cmd2 import Cmd
 # local relative imports
 sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
     not p == os.path.expanduser('~/bin'))]
-from modules.system.common import stamp, which
-from modules.system.executor import command as c
+from .misc import stamp, which
+from executor import command as c
 # global default variables
 __me__ = os.path.basename(__file__)
 __at__ = os.path.dirname(

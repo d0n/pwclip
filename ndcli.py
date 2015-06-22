@@ -17,22 +17,14 @@
 import re
 import os
 import sys
-# local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == os.path.expanduser('~/bin'))]
-from modules.colortext import fatal
-from modules.system.common import which
-from modules.system.executor import command as c
-from modules.system.pkg import DePyKG
-from modules.network.common import askdns
+
+from colortext import fatal
+from systools import which
+from executor import command as c
+from dpkg import DePyKG
+from network import askdns
 
 # global default variables
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.path.abspath(os.readlink(os.path.dirname(__file__)))
 __version__ = '0.0'
 
 def ndcli(pattern):

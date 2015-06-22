@@ -20,20 +20,11 @@ import os
 import sys
 
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == '%s/bin'%(os.path.expanduser('~')))]
-from modules.network.common import fqdn, netcat as nc
-from modules.network.ssh import SecureSHell
-from modules.system.executor import Command
-from modules.system.common import which
+from network import SecureSHell, fqdn, netcat as nc
+from executor import Command
+from systools import which
 
 # global default variables
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.readlink(os.path.dirname(os.path.abspath(__file__)))
 __version__ = '0.2'
 
 class Puppet(Command):

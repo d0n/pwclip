@@ -19,20 +19,11 @@ import re
 import os
 import sys
 
-# local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == os.path.expanduser('~/bin'))]
-from modules.colortext import blu, yel, error
-from modules.network.common import askdns, fqdn, netcat as nc
-from modules.system.executor import command as c
+from colortext import blu, yel, error
+from network import askdns, fqdn, netcat as nc
+from executor import command as c
 
 # global default variables
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.path.abspath(os.readlink(os.path.dirname(__file__)))
 __version__ = '0.0'
 
 def listhosts(stageha):
