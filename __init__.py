@@ -19,12 +19,10 @@ from .unitix import UnitixUsers
 
 from colortext import blu, cya, grn, yel, tabd, abort, error, fatal
 
-from network import currentnets, iternet, raflookup, fqdn, isip
+from network import LDAPSearch, currentnets, iternet, raflookup, fqdn, isip
 
-from ldap import LDAPSearch
+from repos import SubVersion
 
-from svn import SubVersion
-
-from systool import random, which, confdats
+from systools import random, which, confdats
 
 from executor import command as c

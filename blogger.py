@@ -16,22 +16,18 @@
 blogger module - provides breitlogger class which writes
 (timestamped) text to a log file
 """
+
 # global & stdlib imports
 import os
 import sys
 from cmd2 import Cmd
+
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == os.path.expanduser('~/bin'))]
-from .misc import stamp, which
+from systools import stamp, which
 from executor import command as c
+
 # global default variables
 __me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.path.abspath(os.readlink(os.path.dirname(__file__)))
 __version__ = '0.0'
 
 class BreitLogger(Cmd):
