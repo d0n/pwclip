@@ -6,14 +6,12 @@ import os
 import sys
 
 #local relative imports
-from systools import which
-print(sys.path)
+from .misctools import which
+
 from executor import Command
 
 # default constant definitions
 __version__ = '0.1'
-
-print(dir(Command))
 
 class DePyKG(Command):
 	_pkgbin = which('dpkg')
@@ -25,6 +23,7 @@ class DePyKG(Command):
 		if self.erno(self.pkgbin, '-s', package) == 0:
 			return True
 
+'''
 class Apytude(Command):
 	_dbg = False
 	_dry = False
@@ -143,3 +142,5 @@ if __name__ == '__main__':
 	print('\n'.join(m for m in dir()))
 	apt = AptSource('dbg')
 	print(apt.srces)
+
+'''

@@ -66,5 +66,5 @@ class Users(object):
 if __name__ == '__main__':
 	# module debugging area
 	print('\n'.join(d for d in dir()))
-	user = Users('dbg')
-	print(user.name)
+	#user = Users('dbg')
+	#print(user.name)
