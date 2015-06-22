@@ -6,8 +6,6 @@ import os
 import sys
 
 # local relative imports
-print('\n'.join('%s = %s'%(k, v) for (k, v) in sys.modules.items()))
-
 from colortext import error
 from systools import which
 from executor import Command
