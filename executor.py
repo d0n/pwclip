@@ -4,11 +4,9 @@ import os
 import sys
 from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE, DEVNULL
-# local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == os.path.expanduser('~/bin'))]
-from modules.system.common import which
-from modules.system.users import user
+
+from systools import which
+from users import user
 
 class Command(object):
 	"""(remote) command execution module"""
