@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 """executing (remote) commands module"""
 import os
-import sys
 from socket import getfqdn as fqdn
-from subprocess import call, Popen, PIPE, DEVNULL
+from subprocess import call, Popen, PIPE #, DEVNULL
 
+DEVNULL = open('/dev/null')
 
 def which(prog):
 	for path in os.environ['PATH'].split(':'):
@@ -14,8 +14,9 @@ def which(prog):
 def logeduser():
 	with open('/etc/passwd', 'r') as pwf:
 		pwds = pwf.readlines()
-	uid = os.getuid()
-	return [l.split(':')[0] for l in pwds if l and l.split(':')[2] == uid]
+	users = [l.split(':')[0] for l in pwds if (l and
+        l.split(':')[2] == os.getuid())]
+	return users[0] if users else False
 
 
 class Command(object):
@@ -23,25 +24,25 @@ class Command(object):
 	_sh_ = False
 	_su_ = False
 	_dbg = False
-	_user = logeduser()
-	_host = ''
 	__sshbin = which('ssh')
-	# default ssh options (usually we dont want a script to be interactive)
+	# default ssh options (usually we dont want a lib to be interactive)
 	__sshopts = {
         'o': [
             'StrictHostKeyChecking=no',
             'UserKnownHostsFile=/dev/null', 'LogLevel=ERROR'],
         '4': None
         }
+	user = logeduser()
+	host = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
 			if hasattr(self, arg):
-				setattr(self, arg, True)
+				setattr(self, arg[1:], True)
 		for (key, val) in kwargs.items():
 			key = '_%s'%(key)
 			if hasattr(self, key):
-				setattr(self, key, val)
+				setattr(self, key[1:], val)
 		if self.dbg:
 			print(Command.__mro__)
 			for (key, val) in self.__dict__.items():
@@ -52,31 +53,19 @@ class Command(object):
 		return self._sh_
 	@sh_.setter
 	def sh_(self, val):
-		self._sh_ = val if type(val) is bool else self._sh_
+		self._sh_ = val if isinstance(val, bool) else self._sh_
 	@property               # su_ <bool>
 	def su_(self):
 		return self._su_
 	@su_.setter
 	def su_(self, val):
-		self._su_ = val if type(val) is bool else self._su_
+		self._su_ = val if isinstance(val, bool) else self._su_
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val
-	@property               # host <str>
-	def host(self):
-		return self._host
-	@host.setter
-	def host(self, val):
-		self._host = val
-	@property               # user <str>
-	def user(self):
-		return self._user
-	@user.setter
-	def user(self, val):
-		self._user = val
 
 	@staticmethod
 	def __list(*commands):
@@ -86,7 +75,7 @@ class Command(object):
 			cmds = eval(commands)
 		except (SystemError, TypeError):
 			for cmmd in commands:
-				if type(cmmd) is str:
+				if isinstance(cmmd, str):
 					if ' ' in cmmd:
 						for cmd in cmmd.split(' '):
 							cmds.append(cmd)
@@ -117,7 +106,7 @@ class Command(object):
 		ssh = [self.__sshbin]
 		for (key, vals) in self.__sshopts.items():
 			key = '-%s'%(key)
-			if type(vals) is list:
+			if isinstance(vals, list):
 				for val in vals:
 					ssh.append(key)
 					ssh.append(val)
@@ -140,17 +129,16 @@ class Command(object):
 				commands.insert(0, which('sudo'))
 		return commands
 
-	def run(self, *commands, host=None, user=None):
+	def run(self, commands, host=None, user=None):
 		"""just run the command and return the processes PID"""
-		if host:
-			self.host = host
-		if user:
-			self.user = user
 		commands = self.__list(*commands)
 		if self.su_:
-			self.commands = self._sudocmd(commands)
-		if host:
-			commands = self._hostcmd(commands, self.host, self.user)
+			commands = self._sudocmd(commands)
+		if host or self.host:
+			commands = self._hostcmd(
+                commands,
+                host if host else self.host,
+                user if user else self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
@@ -160,7 +148,7 @@ class Command(object):
 		return Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
-	def call(self, *commands, host=None, user=None):
+	def call(self, commands, host=None, user=None):
 		"""
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
@@ -182,7 +170,7 @@ class Command(object):
                 'su =', self.su_, 'host =', self.host, 'user =', self.user)
 		return int(call(commands, shell=self.sh_))
 
-	def stdx(self, *commands, host=None, user=None):
+	def stdx(self, commands, host=None, user=None):
 		"""command execution which returns STDERR and/or STDOUT"""
 		if host:
 			self.host = host
@@ -206,7 +194,7 @@ class Command(object):
 		if err:
 			return err.decode()
 
-	def stdo(self, *commands, host=None, user=None):
+	def stdo(self, commands, host=None, user=None):
 		"""command execution which returns STDOUT only"""
 		if host:
 			self.host = host
@@ -228,7 +216,7 @@ class Command(object):
 		if out:
 			return out.decode()
 
-	def stde(self, *commands, host=None, user=None):
+	def stde(self, commands, host=None, user=None):
 		"""command execution which returns STDERR only"""
 		if host:
 			self.host = host
@@ -250,7 +238,7 @@ class Command(object):
 		if err:
 			return err.decode()
 
-	def erno(self, *commands, host=None, user=None):
+	def erno(self, commands, host=None, user=None):
 		"""command execution which returns the exitcode only"""
 		if host:
 			self.host = host
@@ -271,7 +259,7 @@ class Command(object):
 		prc.communicate()
 		return int(prc.returncode)
 
-	def oerc(self, *commands, host=None, user=None):
+	def oerc(self, commands, host=None, user=None):
 		"""command execution which returns STDERR only"""
 		if host:
 			self.host = host
