@@ -1,14 +1,7 @@
 import os
 import inspect
-from configparser import ConfigParser
 
-def bestlim(*strings):
-	return max(len(s) for s in strings)+4
-
-def lineno():
-	return inspect.currentframe().f_back.f_lineno
-
-def realpaths(*pathlist, base=os.getcwd()):
+def realpaths(pathlist, base=os.getcwd()):
 	def _absrelpath(path):
 		path = path.strip("'")
 		path = path.strip('"')
@@ -45,6 +38,7 @@ def confpaths(paths, conf, base=os.getcwd()):
     os.path.isfile('%s/%s' %(path, conf))]))
 
 def confdats(*confs):
+	from configparser import ConfigParser
 	cfg = ConfigParser()
 	confdats = {}
 	for conf in confs:

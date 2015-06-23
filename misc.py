@@ -9,6 +9,12 @@ import types
 # default vars
 __version__ = '1.0'
 
+def bestlim(*strings):
+	return max(len(s) for s in strings)+4
+
+def lineno():
+	return inspect.currentframe().f_back.f_lineno
+
 def which(prog):
 	for path in os.environ['PATH'].split(':'):
 		if os.access('%s/%s'%(path, prog), os.X_OK):
