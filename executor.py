@@ -3,7 +3,7 @@
 import os
 from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE #, DEVNULL
-from libs import which
+#from libs import which
 DEVNULL = open('/dev/null')
 
 class Command(object):
@@ -19,7 +19,7 @@ class Command(object):
             'UserKnownHostsFile=/dev/null', 'LogLevel=ERROR'],
         '4': None
         }
-	user = logeduser()
+	user = whoami()
 	host = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
