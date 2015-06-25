@@ -3,21 +3,8 @@
 import os
 from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE #, DEVNULL
-
+from libs import which
 DEVNULL = open('/dev/null')
-
-def which(prog):
-	for path in os.environ['PATH'].split(':'):
-		if os.access('%s/%s'%(path, prog), os.X_OK):
-			return '%s/%s'%(path, prog)
-
-def logeduser():
-	with open('/etc/passwd', 'r') as pwf:
-		pwds = pwf.readlines()
-	users = [l.split(':')[0] for l in pwds if (l and
-        l.split(':')[2] == os.getuid())]
-	return users[0] if users else False
-
 
 class Command(object):
 	"""(remote) command execution module"""
