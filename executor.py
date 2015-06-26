@@ -12,8 +12,6 @@ try:
 	from subprocess import DEVNULL
 except ImportError:
 	DEVNULL = open('/dev/null')
-import sys
-print(sys.path)
 
 class Command(object):
 	"""(remote) command execution module"""
