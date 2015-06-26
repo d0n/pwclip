@@ -6,6 +6,8 @@ from subprocess import call, Popen, PIPE #, DEVNULL
 #from libs import which
 DEVNULL = open('/dev/null')
 
+from libs import which, whoami
+
 class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
