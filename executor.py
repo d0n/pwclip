@@ -1,12 +1,19 @@
 #!/usr/bin/python3
 """executing (remote) commands module"""
 import os
+
 from socket import getfqdn as fqdn
-from subprocess import call, Popen, PIPE #, DEVNULL
-#from libs import which
-DEVNULL = open('/dev/null')
+from subprocess import call, Popen, PIPE
 
 from lib import which, whoami
+
+# for subprocess version compatibility while DEVNULL is new in subprocess
+try:
+	from subprocess import DEVNULL
+except ImportError:
+	DEVNULL = open('/dev/null')
+import sys
+print(sys.path)
 
 class Command(object):
 	"""(remote) command execution module"""
@@ -63,6 +70,7 @@ class Command(object):
 		try:
 			cmds = eval(commands)
 		except (SystemError, TypeError):
+			#print(commands)
 			for cmmd in commands:
 				if isinstance(cmmd, str):
 					if ' ' in cmmd:
@@ -78,7 +86,7 @@ class Command(object):
 	@staticmethod
 	def __str(*commands):
 		"""commands to str converter"""
-		return ' '.join(str(command) for command in commands)
+		return ' '.join(str(command) for command in list(commands))
 
 	@staticmethod
 	def _sudo():
@@ -87,7 +95,7 @@ class Command(object):
 			if int(call([which('sudo'), '-v'])) == 0:
 				return True
 
-	def _hostcmd(self, commands, host, user):
+	def _hostcmd(self, *commands, host, user):
 		"""ssh host prepending function"""
 		if not user:
 			user = self.user
@@ -106,7 +114,7 @@ class Command(object):
 		ssh.append(fqdn(host))
 		return ssh + commands
 
-	def _sudocmd(self, commands):
+	def _sudocmd(self, *commands):
 		"""sudo to cmd prepending function"""
 		if 'sudo' in commands[0]:
 			del commands[0]
@@ -118,7 +126,7 @@ class Command(object):
 				commands.insert(0, which('sudo'))
 		return commands
 
-	def run(self, commands, host=None, user=None):
+	def run(self, *commands, host=None, user=None):
 		"""just run the command and return the processes PID"""
 		commands = self.__list(*commands)
 		if self.su_:
@@ -137,7 +145,7 @@ class Command(object):
 		return Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
-	def call(self, commands, host=None, user=None):
+	def call(self, *commands, host=None, user=None):
 		"""
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
@@ -159,7 +167,7 @@ class Command(object):
                 'su =', self.su_, 'host =', self.host, 'user =', self.user)
 		return int(call(commands, shell=self.sh_))
 
-	def stdx(self, commands, host=None, user=None):
+	def stdx(self, *commands, host=None, user=None):
 		"""command execution which returns STDERR and/or STDOUT"""
 		if host:
 			self.host = host
@@ -183,7 +191,7 @@ class Command(object):
 		if err:
 			return err.decode()
 
-	def stdo(self, commands, host=None, user=None):
+	def stdo(self, *commands, host=None, user=None):
 		"""command execution which returns STDOUT only"""
 		if host:
 			self.host = host
@@ -205,7 +213,7 @@ class Command(object):
 		if out:
 			return out.decode()
 
-	def stde(self, commands, host=None, user=None):
+	def stde(self, *commands, host=None, user=None):
 		"""command execution which returns STDERR only"""
 		if host:
 			self.host = host
@@ -227,7 +235,7 @@ class Command(object):
 		if err:
 			return err.decode()
 
-	def erno(self, commands, host=None, user=None):
+	def erno(self, *commands, host=None, user=None):
 		"""command execution which returns the exitcode only"""
 		if host:
 			self.host = host
@@ -248,7 +256,7 @@ class Command(object):
 		prc.communicate()
 		return int(prc.returncode)
 
-	def oerc(self, commands, host=None, user=None):
+	def oerc(self, *commands, host=None, user=None):
 		"""command execution which returns STDERR only"""
 		if host:
 			self.host = host
