@@ -48,14 +48,14 @@ def csrgen(fqdn, host, alters=[], outdir=os.path.expanduser('~/'),
 		config = config + \
 		    'RANDFILE                = %s\n'%os.path.expanduser('~/.rnd')
 	config = config + \
-	    'oid_section             = new_oids\n' \
-	    '[ new_oids ]\n' \
-	    '[ req ]\n' \
-	    'default_days            = {days}\n' \
-	    'default_keyfile         = {keyfile}\n' \
-	    'distinguished_name      = req_distinguished_name\n' \
-	    'encrypt_key             = no\n' \
-	    'string_mask = nombstr\n'
+        'oid_section             = new_oids\n' \
+        '[ new_oids ]\n' \
+        '[ req ]\n' \
+        'default_days            = {days}\n' \
+        'default_keyfile         = {keyfile}\n' \
+        'distinguished_name      = req_distinguished_name\n' \
+        'encrypt_key             = no\n' \
+        'string_mask = nombstr\n'
 	if alters:
 		config = config + \
 		    'req_extensions = v3_req\n'
@@ -74,7 +74,7 @@ def csrgen(fqdn, host, alters=[], outdir=os.path.expanduser('~/'),
 	with open(tmpfile, 'w+') as tmpcfg:
 		tmpcfg.write(config.format(**cfgvals))
 	c.call('openssl req -batch -config %s -newkey rsa:4096 -sha1 -out %s'%(
-	    tmpfile, csroutfile))
+        tmpfile, csroutfile))
 	os.remove(tmpfile)
 
 
@@ -88,4 +88,3 @@ def csrgen(fqdn, host, alters=[], outdir=os.path.expanduser('~/'),
 if __name__ == '__main__':
 	# module debugging area
 	print('\n'.join(d for d in dir()))
-
