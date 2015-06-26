@@ -19,7 +19,6 @@ import os
 import sys
 
 from colortext import fatal
-from systools import which
 from executor import command as c
 from dpkg import DePyKG
 from network import askdns

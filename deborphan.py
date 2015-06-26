@@ -21,7 +21,6 @@ import sys
 
 from colortext import blu
 from executor import Command
-from systools import which
 
 # global default variables
 __version__ = '0.0'

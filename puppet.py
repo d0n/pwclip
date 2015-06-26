@@ -20,9 +20,8 @@ import os
 import sys
 
 # local relative imports
-from network import SecureSHell, fqdn, netcat as nc
+from network import SecureCoPy, fqdn, netcat as nc
 from executor import Command
-from systools import which
 
 # global default variables
 __version__ = '0.2'
@@ -35,7 +34,7 @@ class Puppet(Command):
 	_user = 'root'
 	_host = ''
 	_puptmpl = '%s/puppet.tmpl'%(os.path.expanduser('~/bin/config'))
-	scp = SecureSHell().put
+	scp = SecureCoPy().put
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
