@@ -23,7 +23,7 @@ import sys
 from cmd2 import Cmd
 
 # local relative imports
-from systools import stamp
+from system import stamp
 from executor import command as c
 
 # global default variables

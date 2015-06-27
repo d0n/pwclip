@@ -5,9 +5,9 @@ from colortext import blu, cya, grn, yel, tabd, abort, error, fatal
 
 from .csr import csrgen
 
-#from .blogger import BreitLogger
+from .blogger import BreitLogger
 
-#from .misc import listhosts, listclusters, jolofix
+from .misc import listhosts, listclusters, jolofix
 
 from .puppet import Puppet
 
