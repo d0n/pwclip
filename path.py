@@ -2,7 +2,7 @@ import os
 import inspect
 
 def realpaths(*pathlist, base=os.getcwd()):
-	print(pathlist, base)
+	#print(pathlist, base)
 	def _absrelpath(path):
 		path = path.strip("'")
 		path = path.strip('"')
