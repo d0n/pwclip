@@ -18,16 +18,7 @@ class Command(object):
 	_sh_ = False
 	_su_ = False
 	_dbg = False
-	__sshbin = which('ssh')
-	# default ssh options (usually we dont want a lib to be interactive)
-	__sshopts = {
-        'o': [
-            'StrictHostKeyChecking=no',
-            'UserKnownHostsFile=/dev/null', 'LogLevel=ERROR'],
-        '4': None
-        }
-	user = whoami()
-	host = ''
+	_user_ = whoami()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -60,6 +51,12 @@ class Command(object):
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val
+	@property                # user_ <str>
+	def user_(self):
+		return self._user_
+	@user_.setter
+	def user_(self, val):
+		self._user_ = val if type(val) is str else self._user_
 
 	@staticmethod
 	def __list(*commands):
@@ -93,95 +90,52 @@ class Command(object):
 			if int(call([which('sudo'), '-v'])) == 0:
 				return True
 
-	def _hostcmd(self, *commands, host, user):
-		"""ssh host prepending function"""
-		if not user:
-			user = self.user
-		self.__sshopts['l'] = user
-		ssh = [self.__sshbin]
-		for (key, vals) in self.__sshopts.items():
-			key = '-%s'%(key)
-			if isinstance(vals, list):
-				for val in vals:
-					ssh.append(key)
-					ssh.append(val)
-				continue
-			ssh.append(key)
-			if vals:
-				ssh.append(vals)
-		ssh.append(fqdn(host))
-		return ssh + commands
-
 	def _sudocmd(self, *commands):
 		"""sudo to cmd prepending function"""
 		if 'sudo' in commands[0]:
 			del commands[0]
-		if self.host:
-			if self.user != 'root' and self.su_:
-				commands.insert(0, which('sudo'))
-		else:
-			if self._sudo():
-				commands.insert(0, which('sudo'))
+		if self._sudo():
+			commands.insert(0, which('sudo'))
 		return commands
 
-	def run(self, *commands, host=None, user=None):
+	def run(self, *commands):
 		"""just run the command and return the processes PID"""
 		commands = self.__list(*commands)
 		if self.su_:
 			commands = self._sudocmd(commands)
-		if host or self.host:
-			commands = self._hostcmd(
-                commands,
-                host if host else self.host,
-                user if user else self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_,
-                'su =', self.su_, 'host =', self.host, 'user =', self.user)
+                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
 		return Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
-	def call(self, *commands, host=None, user=None):
+	def call(self, *commands):
 		"""
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
 		"""
-		if host:
-			self.host = host
-		if user:
-			self.user = user
 		commands = list(self.__list(*commands))
 		if self.su_:
 			commands = self._sudocmd(commands)
-		if self.host:
-			commands = self._hostcmd(commands, self.host, self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_,
-                'su =', self.su_, 'host =', self.host, 'user =', self.user)
+                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
 		return int(call(commands, shell=self.sh_))
 
-	def stdx(self, *commands, host=None, user=None):
+	def stdx(self, *commands):
 		"""command execution which returns STDERR and/or STDOUT"""
-		if host:
-			self.host = host
-		if user:
-			self.user = user
 		commands = list(self.__list(*commands))
 		if self.su_:
 			commands = self._sudocmd(commands)
-		if self.host:
-			commands = self._hostcmd(commands, self.host, self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_,
-                'su =', self.su_, 'host =', self.host, 'user =', self.user)
+                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		if out:
@@ -189,88 +143,60 @@ class Command(object):
 		if err:
 			return err.decode()
 
-	def stdo(self, *commands, host=None, user=None):
+	def stdo(self, *commands):
 		"""command execution which returns STDOUT only"""
-		if host:
-			self.host = host
-		if user:
-			self.user = user
 		commands = list(self.__list(*commands))
 		if self.su_:
 			commands = self._sudocmd(commands)
-		if self.host:
-			commands = self._hostcmd(commands, self.host, self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_,
-                'su =', self.su_, 'host =', self.host, 'user =', self.user)
+                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
 		prc = Popen(commands, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
 		out, _ = prc.communicate()
 		if out:
 			return out.decode()
 
-	def stde(self, *commands, host=None, user=None):
+	def stde(self, *commands):
 		"""command execution which returns STDERR only"""
-		if host:
-			self.host = host
-		if user:
-			self.user = user
 		commands = list(self.__list(*commands))
 		if self.su_:
 			commands = self._sudocmd(commands)
-		if self.host:
-			commands = self._hostcmd(commands, self.host, self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_,
-                'su =', self.su_, 'host =', self.host, 'user =', self.user)
+                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		_, err = prc.communicate()
 		if err:
 			return err.decode()
 
-	def erno(self, *commands, host=None, user=None):
+	def erno(self, *commands):
 		"""command execution which returns the exitcode only"""
-		if host:
-			self.host = host
-		if user:
-			self.user = user
 		commands = list(self.__list(*commands))
 		if self.su_:
 			commands = self._sudocmd(commands)
-		if self.host:
-			commands = self._hostcmd(commands, self.host, self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_,
-                'su =', self.su_, 'host =', self.host, 'user =', self.user)
+                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
 		prc = Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
 		prc.communicate()
 		return int(prc.returncode)
 
-	def oerc(self, *commands, host=None, user=None):
+	def oerc(self, *commands):
 		"""command execution which returns STDERR only"""
-		if host:
-			self.host = host
-		if user:
-			self.user = user
 		commands = list(self.__list(*commands))
 		if self.su_:
 			commands = self._sudocmd(commands)
-		if self.host:
-			commands = self._hostcmd(commands, self.host, self.user)
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_,
-                'su =', self.su_, 'host =', self.host, 'user =', self.user)
+                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		return out.decode(), err.decode(), prc.returncode
