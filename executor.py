@@ -90,7 +90,7 @@ class Command(object):
 			if int(call([which('sudo'), '-v'])) == 0:
 				return True
 
-	def _sudocmd(self, *commands):
+	def _sudocmd(self, commands):
 		"""sudo to cmd prepending function"""
 		if 'sudo' in commands[0]:
 			del commands[0]
