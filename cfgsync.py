@@ -8,9 +8,9 @@ import difflib
 # local relative imports
 
 from colortext import error
-from repos.git import GitRepo
+from repo import GitRepo
 from executor import Command
-from systools.users import Users
+from system import Users
 
 # default vars
 __version__ = '0.2'
