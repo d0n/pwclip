@@ -1,17 +1,16 @@
 #!/usr/bin/python3
 """executing (remote) commands module"""
 import os
-
 from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE
-
-from lib import which, whoami
-
 # for subprocess version compatibility while DEVNULL is new in subprocess
 try:
 	from subprocess import DEVNULL
 except ImportError:
 	DEVNULL = open('/dev/null')
+
+from lib.misc.which import which
+from lib.misc.whoami import whoami
 
 class Command(object):
 	"""(remote) command execution module"""
