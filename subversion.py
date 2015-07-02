@@ -21,8 +21,8 @@ import sys
 
 # local relative imports
 from lib import which
-from colortext import blu, grn, yel, abort, error
-from executor import Command
+from lib.colortext import blu, grn, yel, abort, error
+from lib.executor import Command
 
 # global default variables
 __version__ = '0.0'

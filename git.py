@@ -7,9 +7,9 @@ import sys
 
 # local relative imports
 from lib import which
-from executor import Command
-from system import realpaths
-from colortext import blu, yel
+from lib.executor import Command
+from lib.system import realpaths
+from lib.colortext import blu, yel
 
 # default vars
 __version__ = '0.1'

@@ -7,10 +7,10 @@ import shutil
 import difflib
 # local relative imports
 
-from colortext import error
-from repo import GitRepo
-from executor import Command
-from system import Users
+from .git import GitRepo
+from lib.colortext import error
+from lib.executor import Command
+from lib.system import Users
 
 # default vars
 __version__ = '0.2'
