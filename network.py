@@ -5,11 +5,11 @@ import re
 import os
 import sys
 import xml.etree.ElementTree as etree
+
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [
-    p for p in sys.path if p != os.path.expanduser('~/bin')]
-from modules.system.executor import Command
-from modules.system.common import which
+from lib import which
+from lib.executor import Command
+
 # default vars
 __me__ = os.path.basename(__file__)
 __at__ = os.path.dirname(
