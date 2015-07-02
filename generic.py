@@ -3,21 +3,11 @@
 # global imports
 import os
 import sys
+
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == os.path.expanduser('~/bin'))]
-try:
-	from .git import GitSync
-except SystemError:
-	from modules.repos.git import GitSync
-from modules.system.executor import command as c
+from .git import GitSync
+
 # default vars
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.readlink(os.path.dirname(os.path.abspath(__file__)))
 __version__ = '0.0'
 
 class RepoSync(GitSync):

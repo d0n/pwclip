@@ -20,19 +20,11 @@ import os
 import sys
 
 # local relative imports
-sys.path = [os.path.expanduser('~/bin')] + [p for p in sys.path if (
-    not p == os.path.expanduser('~/bin'))]
-from modules.colortext import blu, grn, yel, abort, error
-from modules.system.common import which
-from modules.system.executor import Command
+from lib import which
+from colortext import blu, grn, yel, abort, error
+from executor import Command
 
 # global default variables
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.path.abspath(os.readlink(os.path.dirname(__file__)))
 __version__ = '0.0'
 
 class SubVersion(Command):
