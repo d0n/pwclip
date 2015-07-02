@@ -18,10 +18,10 @@ import re
 import os
 import sys
 
-from colortext import fatal
-from executor import command as c
+from lib.colortext import fatal
+from lib.executor import command as c
 from dpkg import DePyKG
-from network import askdns
+from lib.network import askdns
 
 # global default variables
 __version__ = '0.0'

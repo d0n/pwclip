@@ -20,9 +20,14 @@ import os
 import sys
 
 # local relative imports
-from lib.network import SecureCoPy, fqdn, netcat as nc
-from netz.sshexe import SSHCommad
+try:
+	import netz
+	SSHCommand = netz.SSHCommand
+except ImportError:
+	from netz.sshexe import SSHCommad
 
+
+from lib.network import SecureCoPy, fqdn, netcat as nc
 # global default variables
 __version__ = '0.2'
 
@@ -31,11 +36,10 @@ class Puppet(SSHCommand):
 	_sh_ = True
 	_dbg = False
 	_bgr = False
-	_user = 'root'
-	_host = ''
+	_user_ = 'root'
+	_host_ = ''
 	_puptmpl = '%s/puppet.tmpl'%(os.path.expanduser('~/bin/config'))
 	scp = SecureCoPy().put
-
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -46,7 +50,7 @@ class Puppet(SSHCommand):
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
 		if self.dbg:
-			print(Puppetti.__mro__)
+			print(Puppet.__mro__)
 			for (key, val) in self.__dict__.items():
 				print(key, '=', val)
 	@property               # dbg <bool>
@@ -68,11 +72,11 @@ class Puppet(SSHCommand):
 	def host(self, val):
 		self._host = val if type(val) is str else self._host
 	@property               # user <str>
-	def user(self):
-		return self._user
-	@user.setter
-	def user(self, val):
-		self._user = val if type(val) is str else self._user
+	def user_(self):
+		return self._user_
+	@user_.setter
+	def user_(self, val):
+		self._user_ = val if type(val) is str else self._user_
 
 	def pupush(self):
 		"""push current svn revision to puppet master"""
@@ -153,14 +157,17 @@ class Puppet(SSHCommand):
 
 
 if __name__ == '__main__':
-	"""module debugging area"""
-	puppet = Puppetti(*('dbg'), **{'host':'accbuildtest01'})
+	exit(1)
+	#
+	# module debugging area
+	#
+	#puppet = Puppet(*('dbg'), **{'host':'accbuildtest01'})
 	#print(puppet.puppetrun())
 	#puppet.write_puppetconf()
 	#print(puppet.delcert('accspptest01'))
 	#for ln in puppet.push():
 	#	print(ln)
-	print(puppet.delssl())
-	print(puppet.delcert())
-	puppet.write_puppetconf()
-	print(puppet.puppetrun())
+	#print(puppet.delssl())
+	#print(puppet.delcert())
+	#puppet.write_puppetconf()
+	#print(puppet.puppetrun())

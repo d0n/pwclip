@@ -20,8 +20,8 @@ import os
 import sys
 
 # local relative imports
-from executor import Command
-from colortext import blu, red, yel, byel, error, fatal
+from lib.executor import Command
+from lib.colortext import blu, red, yel, byel, error, fatal
 
 # global default variables
 __version__ = '0.0'

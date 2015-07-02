@@ -21,8 +21,8 @@ import sys
 import time
 
 # local relative imports
-from colortext import abort
-from executor import Command
+from lib.colortext import abort
+from lib.executor import Command
 
 # global default variables
 __version__ = '0.0'

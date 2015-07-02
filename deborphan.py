@@ -19,8 +19,8 @@
 import os
 import sys
 
-from colortext import blu
-from executor import Command
+from lib.colortext import blu
+from lib.executor import Command
 
 # global default variables
 __version__ = '0.0'
