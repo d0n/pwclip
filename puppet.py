@@ -20,13 +20,13 @@ import os
 import sys
 
 # local relative imports
-from network import SecureCoPy, fqdn, netcat as nc
-from executor import Command
+from lib.network import SecureCoPy, fqdn, netcat as nc
+from netz.sshexe import SSHCommad
 
 # global default variables
 __version__ = '0.2'
 
-class Puppet(Command):
+class Puppet(SSHCommand):
 	"""puppet wrapper class"""
 	_sh_ = True
 	_dbg = False
@@ -35,6 +35,7 @@ class Puppet(Command):
 	_host = ''
 	_puptmpl = '%s/puppet.tmpl'%(os.path.expanduser('~/bin/config'))
 	scp = SecureCoPy().put
+
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)

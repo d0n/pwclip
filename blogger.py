@@ -23,8 +23,8 @@ import sys
 from cmd2 import Cmd
 
 # local relative imports
-from system import stamp
-from executor import command as c
+from lib.system import stamp
+from lib.executor import command as c
 
 # global default variables
 __me__ = os.path.basename(__file__)

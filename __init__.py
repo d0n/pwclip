@@ -1,8 +1,4 @@
 # stdlib imports
-from ldap3.core.exceptions import LDAPSocketOpenError
-
-from colortext import blu, cya, grn, yel, tabd, abort, error, fatal
-
 from .csr import csrgen
 
 from .blogger import BreitLogger
