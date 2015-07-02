@@ -20,13 +20,13 @@ class Command(object):
 	_user_ = whoami()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
+			arg = '_%s_'%(arg)
 			if hasattr(self, arg):
-				setattr(self, arg[1:], True)
+				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
+			key = '_%s_'%(key)
 			if hasattr(self, key):
-				setattr(self, key[1:], val)
+				setattr(self, key, val)
 		if self.dbg:
 			print(Command.__mro__)
 			for (key, val) in self.__dict__.items():
