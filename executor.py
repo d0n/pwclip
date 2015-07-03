@@ -9,8 +9,8 @@ try:
 except ImportError:
 	DEVNULL = open('/dev/null')
 
-from lib.misc.which import which
-from lib.misc.whoami import whoami
+from misc.which import which
+from misc.whoami import whoami
 
 class Command(object):
 	"""(remote) command execution module"""
