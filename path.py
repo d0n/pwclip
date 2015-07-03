@@ -26,6 +26,7 @@ def realpaths(*pathlist, base=os.getcwd()):
 
 
 def confpaths(paths, conf, base=os.getcwd()):
+	#print('%s\n%s\n%s'%(paths, conf, base))
 	return list(set(['%s/%s/%s' %(os.path.expanduser('~'), path[2:], conf) \
     for path in paths if path.startswith('~/') and \
     os.path.isfile('%s/%s/%s'%(os.path.expanduser('~'), path[2:], conf))] + \
@@ -39,12 +40,11 @@ def confpaths(paths, conf, base=os.getcwd()):
     os.path.isfile('%s/%s' %(path, conf))]))
 
 def confdats(*confs):
-	from configparser import ConfigParser
-	cfg = ConfigParser()
+	from configparser import ConfigParser as _ConfPars
+	cfg = _ConfPars()
 	confdats = {}
 	for conf in confs:
 		cfg.read(conf)
 		for section in cfg.sections():
 			confdats[section] = dict(cfg[section])
 	return confdats
-
