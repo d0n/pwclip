@@ -68,14 +68,20 @@ class Command(object):
 		"""commands to str converter"""
 		return ' '.join(str(command) for command in list(commands))
 
-	def _sudo(self, commands):
-		"""privilege checking function"""
+	@staticmethod
+	def __sucmd(commands):
 		if 'sudo' in commands[0]:
 			del commands[0]
-		if self.su_:
-			if int(os.getuid()) != 0 and int(call([which('sudo'), '-v'])) == 0:
-				commands.insert(0, which('sudo'))
+		if int(os.getuid()) != 0:
+			commands.insert(0, which('sudo'))
 		return commands
+
+	def _sudo(self, commands=None):
+		"""privilege checking function"""
+		if not commands:
+			if int(call([which('sudo'), '-v'])) == 0:
+				return True
+		return self._sucmd(commands)
 
 	def __cmdprep(self, commands):
 		commands = self.__list(commands)
