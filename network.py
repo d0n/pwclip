@@ -7,7 +7,7 @@ import sys
 import xml.etree.ElementTree as etree
 
 # local relative imports
-from lib import which
+from lib.misc import which
 from lib.executor import Command
 
 # default vars
