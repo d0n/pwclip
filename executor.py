@@ -81,7 +81,7 @@ class Command(object):
 		if not commands:
 			if int(call([which('sudo'), '-v'])) == 0:
 				return True
-		return self._sucmd(commands)
+		return self.__sucmd(commands)
 
 	def __cmdprep(self, commands):
 		commands = self.__list(commands)
