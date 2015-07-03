@@ -16,7 +16,7 @@ __version__ = '0.1'
 
 class GitRepo(Command):
 	# Command class attribute
-	_sh_ = True
+	sh_ = True
 	# own attributes
 	_dbg = False
 	_repodir = ''
@@ -213,8 +213,19 @@ class GitRepo(Command):
 
 
 class GitSync(GitRepo):
-	_sh_ = True
-	_ato = True
+	# external
+	sh_ = True
+	# internal
+	_dbg = False
+	_ato = False
+
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = val if type(val) is bool else self._dbg
+
 	@property               # ato <bool>
 	def ato(self):
 		return self._ato
@@ -234,14 +245,14 @@ class GitSync(GitRepo):
 		for branch in branchs:
 			if branch != self._head():
 				self.checkout(branch)
-			if self._isbehind():
-				self.pull()
 			status = self.gitstatus()
 			if status:
 				if self.ato:
 					self.add()
 					self.commit(status)
 			commits = self.genmessage(status)
+			if self._isbehind():
+				self.pull()
 			if self._isahead():
 				self.push()
 		if checkout and not checkout == self._head():

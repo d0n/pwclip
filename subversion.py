@@ -28,7 +28,7 @@ from lib.executor import Command
 __version__ = '0.0'
 
 class SubVersion(Command):
-	_sh_ = True
+	sh_ = True
 	_svnbin = which('svn')
 	@property               # svnbin <str>
 	def svnbin(self):

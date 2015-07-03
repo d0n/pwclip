@@ -11,34 +11,41 @@ from .git import GitSync
 __version__ = '0.0'
 
 class RepoSync(GitSync):
-	_ato = False
-	_branchs = []
+	sh_ = True
+	_dbg = False
 	def __init__(self, *args, **kwargs):
-		self._ato = True
 		for arg in args:
 			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
 			key = '_%s'%(key)
-			if hasattr(self, key):
+			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
-		if self._dbg:
-			print(GitRepo.__mro__)
-			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
-	@property               # ato <bool>
-	def ato(self):
-		return self._ato
-	@ato.setter
-	def ato(self, val):
-		self._ato = val if type(val) is bool else self._ato
-	@property               # branchs <list>
-	def branchs(self):
-		return self._branchs
-	@branchs.setter
-	def branchs(self, val):
-		self._branchs = val if type(val) is list else self._branchs
+		if self.dbg:
+			lim = int(max(len(k) for k in RepoSync.__dict__.keys()))+4
+			print('%s\n%s\n\n%s\n%s\n'%(
+                RepoSync.__mro__,
+                '\n'.join('  %s%s=\t%s'%(
+                    k, ' '*int(lim-len(k)), v
+                    ) for (k, v) in sorted(RepoSync.__dict__.items())),
+                RepoSync.__init__,
+                '\n'.join('  %s%s=\t%s'%(k[1:], ' '*int(
+                    int(max(len(i) for i in self.__dict__.keys())+4
+                    )-len(k)), v
+                ) for (k, v) in sorted(self.__dict__.items()))))
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = val if type(val) is bool else self._dbg
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = val if type(val) is bool else self._dbg
 
 	def sync(self, repo):
 		if os.path.exists(repo):
