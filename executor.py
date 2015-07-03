@@ -15,7 +15,7 @@ class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
 	_su_ = False
-	_dbg = True
+	_dbg = False
 	_user_ = whoami()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -107,7 +107,7 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+                'cmd = `%s`\n\tsh = %s, su = %s'%(commands, self.sh_, self.su_)
             )
 		return commands
 
