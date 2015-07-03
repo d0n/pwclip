@@ -18,6 +18,7 @@
 # global imports
 import os
 import sys
+from socket import getfqdn as fqdn
 
 # local relative imports
 try:
@@ -27,7 +28,7 @@ except ImportError:
 	from netz.sshexe import SSHCommad
 
 
-from lib.network import SecureCoPy, fqdn, netcat as nc
+from lib.network import SecureCoPy, netcat as nc
 # global default variables
 __version__ = '0.2'
 
