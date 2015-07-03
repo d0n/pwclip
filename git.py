@@ -6,7 +6,7 @@ import os
 import sys
 
 # local relative imports
-from lib import which
+from lib.misc import which
 from lib.executor import Command
 from lib.system import realpaths
 from lib.colortext import blu, yel
