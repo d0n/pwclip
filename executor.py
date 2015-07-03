@@ -15,7 +15,7 @@ class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
 	_su_ = False
-	_dbg = False
+	_dbg = True
 	_user_ = whoami()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
