@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """executing (remote) commands module"""
-import os
+import sys, os
 from socket import getfqdn as fqdn
 from subprocess import call, Popen, PIPE
 # for subprocess version compatibility while DEVNULL is new in subprocess
@@ -9,14 +9,13 @@ try:
 except ImportError:
 	DEVNULL = open('/dev/null')
 
-from misc.which import which
-from misc.whoami import whoami
+from misc import which, whoami
 
 class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
 	_su_ = False
-	_dbg = False
+	_dbg = True
 	_user_ = whoami()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -106,7 +105,8 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
+                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+            )
 		return Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
@@ -122,7 +122,8 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
+                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+            )
 		return int(call(commands, shell=self.sh_))
 
 	def stdx(self, *commands):
@@ -134,7 +135,8 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
+                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+            )
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		if out:
@@ -151,7 +153,8 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
+                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+            )
 		prc = Popen(commands, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
 		out, _ = prc.communicate()
 		if out:
@@ -166,7 +169,8 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
+                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+            )
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		_, err = prc.communicate()
 		if err:
@@ -181,7 +185,8 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
+                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+            )
 		prc = Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
 		prc.communicate()
 		return int(prc.returncode)
@@ -195,7 +200,8 @@ class Command(object):
 			commands = self.__str(*commands)
 		if self.dbg:
 			print(
-                'cmd =', commands, 'sh =', self.sh_, 'su =', self.su_)
+                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
+            )
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		return out.decode(), err.decode(), prc.returncode
