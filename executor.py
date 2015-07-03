@@ -15,13 +15,15 @@ class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
 	_su_ = False
-	_dbg = False
+	_dbg = True
 	_user_ = whoami()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s_'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+			elif hasattr(self, arg[:-1]):
+				setattr(self, arg[:-1], True)
 		for (key, val) in kwargs.items():
 			key = '_%s_'%(key)
 			if hasattr(self, key):
@@ -36,7 +38,8 @@ class Command(object):
 		return self._sh_
 	@sh_.setter
 	def sh_(self, val):
-		self._sh_ = val if isinstance(val, bool) else self._sh_
+		self._sh_ = val #if isinstance(val, bool) else self._sh_
+
 	@property               # su_ <bool>
 	def su_(self):
 		return self._su_
@@ -96,8 +99,7 @@ class Command(object):
 			commands.insert(0, which('sudo'))
 		return commands
 
-	def run(self, *commands):
-		"""just run the command and return the processes PID"""
+	def __cmdprep(self, commands):
 		commands = self.__list(*commands)
 		if self.su_:
 			commands = self._sudocmd(commands)
@@ -107,6 +109,11 @@ class Command(object):
 			print(
                 'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
             )
+		return commands
+
+	def run(self, *commands):
+		"""just run the command and return the processes PID"""
+		commands = self.__cmdprep(commands)
 		return Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
@@ -115,28 +122,13 @@ class Command(object):
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
 		"""
-		commands = list(self.__list(*commands))
-		if self.su_:
-			commands = self._sudocmd(commands)
-		if self.sh_:
-			commands = self.__str(*commands)
-		if self.dbg:
-			print(
-                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
-            )
+		commands = self.__cmdprep(commands)
 		return int(call(commands, shell=self.sh_))
 
 	def stdx(self, *commands):
 		"""command execution which returns STDERR and/or STDOUT"""
-		commands = list(self.__list(*commands))
-		if self.su_:
-			commands = self._sudocmd(commands)
-		if self.sh_:
-			commands = self.__str(*commands)
-		if self.dbg:
-			print(
-                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
-            )
+		commands = self.__cmdprep(commands)
+
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		if out:
@@ -146,15 +138,7 @@ class Command(object):
 
 	def stdo(self, *commands):
 		"""command execution which returns STDOUT only"""
-		commands = list(self.__list(*commands))
-		if self.su_:
-			commands = self._sudocmd(commands)
-		if self.sh_:
-			commands = self.__str(*commands)
-		if self.dbg:
-			print(
-                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
-            )
+		commands = self.__cmdprep(commands)
 		prc = Popen(commands, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
 		out, _ = prc.communicate()
 		if out:
@@ -162,15 +146,7 @@ class Command(object):
 
 	def stde(self, *commands):
 		"""command execution which returns STDERR only"""
-		commands = list(self.__list(*commands))
-		if self.su_:
-			commands = self._sudocmd(commands)
-		if self.sh_:
-			commands = self.__str(*commands)
-		if self.dbg:
-			print(
-                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
-            )
+		commands = self.__cmdprep(commands)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		_, err = prc.communicate()
 		if err:
@@ -178,30 +154,14 @@ class Command(object):
 
 	def erno(self, *commands):
 		"""command execution which returns the exitcode only"""
-		commands = list(self.__list(*commands))
-		if self.su_:
-			commands = self._sudocmd(commands)
-		if self.sh_:
-			commands = self.__str(*commands)
-		if self.dbg:
-			print(
-                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
-            )
+		commands = self.__cmdprep(commands)
 		prc = Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
 		prc.communicate()
 		return int(prc.returncode)
 
 	def oerc(self, *commands):
 		"""command execution which returns STDERR only"""
-		commands = list(self.__list(*commands))
-		if self.su_:
-			commands = self._sudocmd(commands)
-		if self.sh_:
-			commands = self.__str(*commands)
-		if self.dbg:
-			print(
-                'cmd = `%s`\nsh = %s, su = %s'%(commands, self.sh_, self.su_)
-            )
+		commands = self.__cmdprep(commands)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		return out.decode(), err.decode(), prc.returncode
