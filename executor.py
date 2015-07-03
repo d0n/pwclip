@@ -15,23 +15,12 @@ class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
 	_su_ = False
-	_dbg = False
-	_user_ = whoami()
-	def __init__(self, *args, **kwargs):
+	_dbg_ = False
+	def __init__(self, *args):
 		for arg in args:
 			arg = '_%s_'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, arg[:-1]):
-				setattr(self, arg[:-1], True)
-		for (key, val) in kwargs.items():
-			key = '_%s_'%(key)
-			if hasattr(self, key):
-				setattr(self, key, val)
-		if self.dbg:
-			print(Command.__mro__)
-			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
 	# rw properties
 	@property               # sh_ <bool>
 	def sh_(self):
@@ -46,18 +35,13 @@ class Command(object):
 	@su_.setter
 	def su_(self, val):
 		self._su_ = val if isinstance(val, bool) else self._su_
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val
-	@property                # user_ <str>
-	def user_(self):
-		return self._user_
-	@user_.setter
-	def user_(self, val):
-		self._user_ = val if type(val) is str else self._user_
+
+	@property                # dbg_ <bool>
+	def dbg_(self):
+		return self._dbg_
+	@dbg_.setter
+	def dbg_(self, val):
+		self._dbg_ = val if isinstance(val, bool) else self._dbg_
 
 	@staticmethod
 	def __list(*commands):
@@ -84,28 +68,22 @@ class Command(object):
 		"""commands to str converter"""
 		return ' '.join(str(command) for command in list(commands))
 
-	@staticmethod
-	def _sudo():
+	def _sudo(self, commands):
 		"""privilege checking function"""
-		if int(os.getuid()) != 0:
-			if int(call([which('sudo'), '-v'])) == 0:
-				return True
-
-	def _sudocmd(self, commands):
-		"""sudo to cmd prepending function"""
 		if 'sudo' in commands[0]:
 			del commands[0]
-		if self._sudo():
-			commands.insert(0, which('sudo'))
+		if self.su_:
+			if int(os.getuid()) != 0 and int(call([which('sudo'), '-v'])) == 0:
+				commands.insert(0, which('sudo'))
 		return commands
 
 	def __cmdprep(self, commands):
-		commands = self.__list(*commands)
+		commands = self.__list(commands)
 		if self.su_:
-			commands = self._sudocmd(commands)
+			commands = self._sudo(commands)
 		if self.sh_:
 			commands = self.__str(*commands)
-		if self.dbg:
+		if self.dbg_:
 			print(
                 'cmd = `%s`\n\tsh = %s, su = %s'%(commands, self.sh_, self.su_)
             )
