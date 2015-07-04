@@ -20,7 +20,7 @@ import os
 import sys
 
 from lib.colortext import blu
-from lib.executor import Command
+from netz import SSHCommand
 
 # global default variables
 __version__ = '0.0'
@@ -29,7 +29,7 @@ __version__ = '0.0'
 def orphan(server, background=None, debug=None):
 	if debug:
 		print(orphan)
-	c = Command(dbg=debug, host=server, user='root')
+	c = SSHCommand(dbg=debug, host=server, user='root')
 	xce = c.call
 	if background:
 		xce = c.erno
