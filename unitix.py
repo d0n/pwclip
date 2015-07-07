@@ -20,13 +20,14 @@ import os
 import sys
 
 # local relative imports
-from lib.executor import Command
 from lib.colortext import blu, red, yel, byel, error, fatal
+from lib.executor import SSHCommand
+
 
 # global default variables
 __version__ = '0.0'
 
-class UnitixUsers(Command):
+class UnitixUsers(SSHCommand):
 	sh_ = True
 	acclog = 'acclog.server.lan'
 	login = 'lpelzer'

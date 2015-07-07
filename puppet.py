@@ -21,14 +21,9 @@ import sys
 from socket import getfqdn as fqdn
 
 # local relative imports
-try:
-	import netz
-	SSHCommand = netz.SSHCommand
-except ImportError:
-	from netz.sshexe import SSHCommad
-
-
+from lib.executor import SSHCommand
 from lib.network import SecureCoPy, netcat as nc
+
 # global default variables
 __version__ = '0.2'
 

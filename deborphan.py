@@ -20,7 +20,7 @@ import os
 import sys
 
 from lib.colortext import blu
-from netz import SSHCommand
+from lib.executor import SSHCommand
 
 # global default variables
 __version__ = '0.0'

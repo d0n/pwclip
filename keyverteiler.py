@@ -22,16 +22,16 @@ import time
 
 # local relative imports
 from lib.colortext import abort
-from lib.executor import Command
+from lib.executor import SSHCommand
 
 # global default variables
 __version__ = '0.0'
 
 def kvntool(modes, hostgroups=':all'):
-	ssh = Command(
-	    'sh_',
-	    **{'user': 'keys', 'host': 'keyverteiler-neu.schlund.de'}
-	    )
+	ssh = SSHCommand(
+        'sh_',
+        **{'user': 'keys', 'host': 'keyverteiler-neu.schlund.de'}
+        )
 	def __distribute(hostgroup):
 		if not hostgroup.startswith('hg:') and not hostgroup == ':all':
 			hostgroup = 'hg:%s'%(hostgroup)
@@ -42,10 +42,11 @@ def kvntool(modes, hostgroups=':all'):
 		if mod in modes:
 			if mod == 'distribute':
 				if hostgroups != ':all':
-					if type(hostgroups) in (list, tuple):
+					if (isinstance(hostgroups, list) or 
+                          isinstance(hostgroups, tuple)):
 						for hostgroup in hostgroups:
 							__distribute(hostgroup)
-					elif type(hostgroups) is str:
+					elif isinstance(hostgroups, str):
 						__distribute(hostgroups)
 				else:
 					__distribute(hostgroups)
