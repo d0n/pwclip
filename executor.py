@@ -15,12 +15,14 @@ class Command(object):
 	"""(remote) command execution module"""
 	_sh_ = False
 	_su_ = False
-	_dbg_ = False
+	_dbg = False
 	def __init__(self, *args):
 		for arg in args:
 			arg = '_%s_'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+			elif hasattr(self, arg[:-1]):
+				setattr(self, arg[:-1], True)
 	# rw properties
 	@property               # sh_ <bool>
 	def sh_(self):
@@ -36,12 +38,12 @@ class Command(object):
 	def su_(self, val):
 		self._su_ = val if isinstance(val, bool) else self._su_
 
-	@property                # dbg_ <bool>
-	def dbg_(self):
-		return self._dbg_
-	@dbg_.setter
-	def dbg_(self, val):
-		self._dbg_ = val if isinstance(val, bool) else self._dbg_
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = val if isinstance(val, bool) else self._dbg
 
 	@staticmethod
 	def __list(*commands):
@@ -89,9 +91,9 @@ class Command(object):
 			commands = self._sudo(commands)
 		if self.sh_:
 			commands = self.__str(*commands)
-		if self.dbg_:
+		if self.dbg:
 			print(
-                'cmd = `%s`\n\tsh = %s, su = %s'%(commands, self.sh_, self.su_)
+                '`%s`\t{sh: %s, su: %s}'%(commands, self.sh_, self.su_)
             )
 		return commands
 
