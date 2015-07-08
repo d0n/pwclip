@@ -23,7 +23,7 @@ class NetworkInterfacesParser(object):
 	_prs = None
 	_netconf = '/etc/network/interfaces'
 	__tmpfile = '/tmp/network_interfaces'
-	sudo = Command('su_')
+	sudo = Command('su')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -150,7 +150,7 @@ class WPASupplicantParser(object):
 	_wpacfg = '/etc/wpa_supplicant/wpa_supplicant.conf'
 	__wpapasbin = which('wpa_passphrase')
 	cmdx = Command()
-	sudo = Command('su_')
+	sudo = Command('su')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
