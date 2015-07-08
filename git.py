@@ -16,7 +16,7 @@ __version__ = '0.1'
 
 class GitRepo(Command):
 	# Command class attribute
-	sh_ = True
+	_sh_ = True
 	# own attributes
 	_dbg = False
 	_repodir = ''
@@ -214,7 +214,7 @@ class GitRepo(Command):
 
 class GitSync(GitRepo):
 	# external
-	sh_ = True
+	_sh_ = True
 	# internal
 	_dbg = False
 	_ato = False

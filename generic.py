@@ -11,7 +11,7 @@ from .git import GitSync
 __version__ = '0.0'
 
 class RepoSync(GitSync):
-	sh_ = True
+	_sh_ = True
 	_dbg = False
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -53,9 +53,9 @@ class RepoSync(GitSync):
 			if os.path.isdir(repo+'/.git'):
 				self.gitsync()
 			if os.path.isdir(repo+'/.svn'):
-				c.call('svn up')
+				self.call('svn up')
 			if os.path.isdir(repo+'/CVS'):
-				c.call('cvs up -d -P')
+				self.call('cvs up -d -P')
 
 
 

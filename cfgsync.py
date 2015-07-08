@@ -16,7 +16,7 @@ from lib.system import Users
 __version__ = '0.2'
 
 class ConfigSyncer(GitRepo):
-	sh_ = True
+	_sh_ = True
 	_dbg = False
 	_dry = False
 	_frc = False
