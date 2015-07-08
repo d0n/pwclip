@@ -28,7 +28,7 @@ from lib.executor import SSHCommand
 __version__ = '0.0'
 
 class UnitixUsers(SSHCommand):
-	sh_ = True
+	_sh_ = True
 	acclog = 'acclog.server.lan'
 	login = 'lpelzer'
 	def _chkuser(self, user):

@@ -29,7 +29,7 @@ __version__ = '0.0'
 
 def kvntool(modes, hostgroups=':all'):
 	ssh = SSHCommand(
-        'sh_',
+        'sh',
         **{'user': 'keys', 'host': 'keyverteiler-neu.schlund.de'}
         )
 	def __distribute(hostgroup):
