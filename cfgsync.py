@@ -16,14 +16,19 @@ from lib.system import Users
 __version__ = '0.2'
 
 class ConfigSyncer(GitRepo):
+	"""
+	config syncer is iterating over files in a known directory (or repo)
+	and checks for differences of the files within against the ones found
+	on the running system
+	"""
 	_sh_ = True
 	_dbg = False
 	_dry = False
-	_frc = False
 	_r2s = False
-	_repodir = os.path.expanduser('~/cfg')
-	_branchs = ['master', os.uname()[1]]
-	_user = Users().name
+	frc = False
+	repodir = os.path.expanduser('~/cfg')
+	branchs = ['master', os.uname()[1]]
+	user = Users().name
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%arg
@@ -36,12 +41,10 @@ class ConfigSyncer(GitRepo):
 		if os.path.islink(self.repodir):
 			self.repodir = os.readlink(self.repodir)
 		if self.dbg:
-			print(SystemConfig.__mro__)
+			print(ConfigSyncer.__mro__)
 			for (key, val) in self.__dict__.items():
 				print(key, val, sep=' = ')
 			print()
-
-		#super().__init__(*args, **kwargs)
 
 	@property               # dbg <bool>
 	def dbg(self):
@@ -55,36 +58,12 @@ class ConfigSyncer(GitRepo):
 	@dry.setter
 	def dry(self, val):
 		self._dry = val if type(val) is bool else self._dry
-	@property               # frc <bool>
-	def frc(self):
-		return self._frc
-	@frc.setter
-	def frc(self, val):
-		self._frc = val if type(val) is bool else self._frc
 	@property               # r2s <bool>
 	def r2s(self):
 		return self._r2s
 	@r2s.setter
 	def r2s(self, val):
 		self._r2s = val if type(val) is bool else self._r2s
-	@property               # repodir <str>
-	def repodir(self):
-		return self._repodir
-	@repodir.setter
-	def repodir(self, val):
-		self._repodir = val if val and os.path.isdir(val) else self._repodir
-	@property               # user <str>
-	def user(self):
-		return self._user
-	@user.setter
-	def user(self, val):
-		self._user = val if type(val) is str else self._user
-	@property               # branchs <list>
-	def branchs(self):
-		return self._branchs
-	@branchs.setter
-	def branchs(self, val):
-		self._branchs = val if type(val) is list else self._branchs
 
 	def __delpat(self, rpofile):
 		return re.sub('USER', self.user, re.sub(self.repodir, '', rpofile))
@@ -102,7 +81,7 @@ class ConfigSyncer(GitRepo):
 
 	def __diff(self, srcfile, trgfile):
 		if (os.path.isfile(srcfile) and os.path.isfile(trgfile) and
-		      os.access(srcfile, os.R_OK) and os.access(trgfile, os.R_OK)):
+	          os.access(srcfile, os.R_OK) and os.access(trgfile, os.R_OK)):
 			try:
 				with open(srcfile, 'r') as srf, open(trgfile, 'r') as trf:
 					src = srf.readlines()
@@ -110,9 +89,9 @@ class ConfigSyncer(GitRepo):
 			except (UnicodeDecodeError, PermissionError):
 				return False
 			diff = [
-			    d.strip() for d in difflib.ndiff(src, trg) if (d and
-			        d.startswith('+ ') or d.startswith('- '))
-			    ]
+                d.strip() for d in difflib.ndiff(src, trg) if (d and
+                    d.startswith('+ ') or d.startswith('- '))
+                ]
 			if diff:
 				return diff
 
@@ -128,10 +107,10 @@ class ConfigSyncer(GitRepo):
 	def __stats(self, f):
 		if os.path.isfile(f):
 			return {
-			    'uid':os.stat(f).st_uid,
-			    'gid':os.stat(f).st_gid,
-			    'mod':os.stat(f).st_mode
-			    }
+                'uid':os.stat(f).st_uid,
+                'gid':os.stat(f).st_gid,
+                'mod':os.stat(f).st_mode
+                }
 
 	def __copy(self, src, trg, stat):
 		if not os.path.isdir(os.path.dirname(trg)):
@@ -177,7 +156,7 @@ class ConfigSyncer(GitRepo):
 		os.chdir(self.repodir)
 		if not self._gitdir():
 			raise RuntimeError(
-			    'not ".git" folder found in current path %s'%repodir)
+                'not ".git" folder found in current path %s'%repodir)
 		branchdiffs = {}
 		for branch in branchs:
 			filediffs = {}
@@ -207,7 +186,7 @@ class ConfigSyncer(GitRepo):
 						# from overriding each others changes
 						if self._head() == 'master':
 							srcfile, trgfile = self.__stampcomp(
-							    srcfile, trgfile)
+	                            srcfile, trgfile)
 						if not os.path.isfile(srcfile):
 							trg = srcfile
 							srcfile = trgfile
@@ -236,13 +215,13 @@ class ConfigSyncer(GitRepo):
 
 if __name__ == '__main__':
 	# module debugging area
-	#print('\n'.join(d for d in dir()))
-	syscfg = SystemConfig(*('dbg', ), **{'repodir': os.path.expanduser('~/cfg')})
-	branchdiffs = syscfg.sync()
-	for branch in branchdiffs:
-		print('%s:'%branch)
-		for files in branchdiffs[branch]:
-			print('\t%s:'%files)
-			if branchdiffs[branch][files]:
-				for diffs in branchdiffs[branch][files]:
-					print('\t\t%s'%diffs)
+	print('\n'.join(d for d in dir()))
+	#syscfg = ConfigSyncer(*('dbg', ), **{'repodir': os.path.expanduser('~/cfg')})
+	#branchdiffs = syscfg.sync()
+	#for branch in branchdiffs:
+	#	print('%s:'%branch)
+	#	for files in branchdiffs[branch]:
+	#		print('\t%s:'%files)
+	#		if branchdiffs[branch][files]:
+	#			for diffs in branchdiffs[branch][files]:
+	#				print('\t\t%s'%diffs)
