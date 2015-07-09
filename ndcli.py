@@ -18,6 +18,7 @@ import re
 import os
 import sys
 
+from lib.misc import which
 from lib.colortext import fatal
 from lib.executor import command as c
 from dpkg import DePyKG
