@@ -10,7 +10,7 @@ import difflib
 from .git import GitRepo
 from lib.colortext import error
 from lib.executor import Command
-from lib.system import Users
+from lib.misc import whoami
 
 # default vars
 __version__ = '0.2'
@@ -21,49 +21,58 @@ class ConfigSyncer(GitRepo):
 	and checks for differences of the files within against the ones found
 	on the running system
 	"""
-	_sh_ = True
 	_dbg = False
 	_dry = False
 	_r2s = False
-	frc = False
+	_frc = False
+	_iac = False
+	user = whoami()
 	repodir = os.path.expanduser('~/cfg')
 	branchs = ['master', os.uname()[1]]
-	user = Users().name
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%arg
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%key
 			if hasattr(self, key):
 				setattr(self, key, val)
-		if os.path.islink(self.repodir):
-			self.repodir = os.readlink(self.repodir)
 		if self.dbg:
 			print(ConfigSyncer.__mro__)
 			for (key, val) in self.__dict__.items():
 				print(key, val, sep=' = ')
 			print()
 
-	@property               # dbg <bool>
+	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val if type(val) is bool else self._dbg
-	@property               # dry <bool>
+	@property                # dry <bool>
 	def dry(self):
 		return self._dry
 	@dry.setter
 	def dry(self, val):
 		self._dry = val if type(val) is bool else self._dry
-	@property               # r2s <bool>
+	@property                # r2s <bool>
 	def r2s(self):
 		return self._r2s
 	@r2s.setter
 	def r2s(self, val):
 		self._r2s = val if type(val) is bool else self._r2s
+	@property                # iac <bool>
+	def iac(self):
+		return self._iac
+	@iac.setter
+	def iac(self, val):
+		self._iac = val if type(val) is bool else self._iac
+	@property                # frc <bool>
+	def frc(self):
+		return self._frc
+	@frc.setter
+	def frc(self, val):
+		self._frc = val if type(val) is bool else self._frc
 
 	def __delpat(self, rpofile):
 		return re.sub('USER', self.user, re.sub(self.repodir, '', rpofile))
@@ -129,16 +138,13 @@ class ConfigSyncer(GitRepo):
 		return True
 
 	def __mklink(self, sysfile, rpofile):
-		r = rpofile
-		s = sysfile
 		if self.r2s:
-			r = sysfile
-			s = rpofile
-		if os.path.islink(r):
+			sysfile, rpofile = rpofile, sysfile
+		if os.path.islink(rpofile):
 			lcwd = os.getcwd()
 			try:
-				os.chdir(os.path.dirname(s))
-				os.symlink(s, os.readlink(r))
+				os.chdir(os.path.dirname(sysfile))
+				os.symlink(sysfile, os.readlink(rpofile))
 			except PermissionError as err:
 				if self.dbg:
 					error(err)
@@ -146,11 +152,16 @@ class ConfigSyncer(GitRepo):
 				os.chdir(lcwd)
 			return True
 
+	def __dialog(self, srcfile, trgfile, stat):
+		yesno = input('overriding:\n  %s => %s [%s]\n\nare you sure? [Y/n]'%(
+            srcfile, trgfile, stat))
+		if not yesno.lower() == 'n':
+			return True
+
 	def sync(self, branchs=None):
 		if self.dbg:
 			print(self.sync)
-			if self.dry:
-				print('starting dryrun with rpo2sys =', self.r2s)
+			print('mode =', 'rpo2sys' if self.r2s else 'sys2rpo')
 		if not branchs:
 			branchs = self.branchs
 		os.chdir(self.repodir)
@@ -169,46 +180,38 @@ class ConfigSyncer(GitRepo):
 					if f == '.gitignore':
 						continue
 					srcfile, trgfile = self.__deref(
-						self.__delpat('%s/%s' %(dirs, f)), '%s/%s' %(dirs, f))
+                        self.__delpat('%s/%s' %(dirs, f)), '%s/%s' %(dirs, f))
 					if self.r2s:
 						srcfile, trgfile = '%s/%s'%(dirs, f), self.__delpat(
-							'%s/%s' %(dirs, f))
+                            '%s/%s' %(dirs, f))
+						diffs = self.__diff(trgfile, srcfile)
 					if self.__mklink(srcfile, trgfile):
 						continue
-					stat = None
-					if self.r2s:
-						# remember original file uid gid and mode
-						stat = self.__stats(trgfile)
-					else:
-						# system => repo
-						# if on master branch we need to check which file is
-						# newer to prevent other systems and the current one
-						# from overriding each others changes
-						if self._head() == 'master':
+					stat = self.__stats(srcfile)
+					if not self.r2s:
+						if branch == 'master' and not self.frc:
 							srcfile, trgfile = self.__stampcomp(
-	                            srcfile, trgfile)
-						if not os.path.isfile(srcfile):
-							trg = srcfile
-							srcfile = trgfile
-							trgfile = trg
-					# to get the right diff output (switch +/-)
-					diff = ''
-					if self.r2s:
-						diff = self.__diff(srcfile, trgfile)
-					else:
-						diff = self.__diff(trgfile, srcfile)
-					if diff:
-						if self.__copy(srcfile, trgfile, stat):
-							filediffs[srcfile] = diff
+                                srcfile, trgfile)
+						diffs = self.__diff(trgfile, srcfile)
+						stat = self.__stats(trgfile)
+					if not diffs: # and not self.frc:
+						continue
+					if not os.path.isfile(srcfile):
+						if not self.frc:
+							srcfile, trgfile = trgfile, srcfile
+
+					if self.iac:
+						print('\n===\n%s\n==='%'\n'.join(diff for diff in diffs))
+						self.__dialog(srcfile, trgfile, stat)
+					if diffs:
+						self.__copy(srcfile, trgfile, stat)
+						filediffs[trgfile] = diffs
 			if filediffs != {}:
 				self.add()
 				self.commit(self.gitstatus())
 				self.push()
 				branchdiffs[branch] = filediffs
 		return branchdiffs
-
-
-
 
 
 
