@@ -69,7 +69,7 @@ class GitRepo(Command):
 	def _fetch_(self, fetchall=None):
 		command = self.gitbin, 'fetch'
 		if fetchall:
-			command = self.gitbin, 'fetch', '--all'
+			command = '%s fetch --all'%self.gitbin
 		if self.erno(command) == 0:
 			return True
 
@@ -247,17 +247,16 @@ class GitSync(GitRepo):
 				self.checkout(branch)
 			status = self.gitstatus()
 			if status:
-				if self.ato:
-					self.add()
-					self.commit(status)
-			commits = self.genmessage(status)
+				self.add()
+				self.commit(status)
+			status = self.genmessage(status)
 			if self._isbehind():
 				self.pull()
 			if self._isahead():
 				self.push()
 		if checkout and not checkout == self._head():
 			self.checkout(checkout)
-		return commits
+		return status
 
 
 
