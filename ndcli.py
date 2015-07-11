@@ -18,14 +18,14 @@ import re
 import os
 import sys
 
-from lib.misc import which
-from lib.colortext import fatal
-from lib.executor import command as c
-from dpkg import DePyKG
-from lib.network import askdns
+from modules.lib.misc import which
+from modules.lib.colortext import fatal
+from modules.lib.executor import command as c
+from modules.lib.network import askdns
+from modules.deb import DePyKG
 
 # global default variables
-__version__ = '0.0'
+__version__ = '0.1'
 
 def ndcli(pattern):
 	if not DePyKG().isinstalled('ui-ndcli'):
