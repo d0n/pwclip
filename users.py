@@ -15,7 +15,7 @@
 """user module provides systems user information"""
 # global & stdlib imports
 import os
-
+from misc import which
 
 class Users(object):
 	_dbg = False
@@ -31,36 +31,48 @@ class Users(object):
 		if self.dbg:
 			lim = int(max(len(k) for k in Users.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
-			    Users.__mro__,
-			    '\n'.join('  %s%s=\t%s'%(
-			        k, ' '*int(lim-len(k)), v
-			    ) for (k, v) in sorted(Users.__dict__.items())),
-			    Users.__init__,
-			    '\n'.join('  %s%s=\t%s'%(k[1:], ' '*int(
-			        int(max(len(i) for i in self.__dict__.keys())+4
-			        )-len(k)), v
-			    ) for (k, v) in sorted(self.__dict__.items()))))
+                Users.__mro__,
+                '\n'.join('  %s%s=\t%s'%(
+                    k, ' '*int(lim-len(k)), v
+                ) for (k, v) in sorted(Users.__dict__.items())),
+                Users.__init__,
+                '\n'.join('  %s%s=\t%s'%(k[1:], ' '*int(
+                    int(max(len(i) for i in self.__dict__.keys())+4
+                    )-len(k)), v
+                ) for (k, v) in sorted(self.__dict__.items()))))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val if type(val) is bool else self._dbg
+
 	@staticmethod
 	def _passwd():
 		with open('/etc/passwd', 'r') as pwd:
 			return pwd.readlines()
+
 	@staticmethod
 	def _groups():
 		with open('/etc/groups', 'r') as grp:
 			return grp.readlines()
-	@property                # name <str>
-	def name(self):
+
+	def firstuser(self):
 		for line in self._passwd():
-			if int(line.split(':')[2]) == int(os.getuid()):
-				return line.split(':')[0].strip()
+			uid = int(line.split(':')[2])
+			if uid > 999 and uid < 65534:
+				return line.split(':')[0]
 
-
+	def adduser(self, name, *args, **kwargs):
+		aduopts = ['-%s'%a for a in args if len(a) == 1]
+		aduopts = aduopts + ['--%s'%a for a in args if len(a) > 1]
+		aduopts = aduopts + ['-%s %s'%(key, val) for (key, val) in kwargs.items()
+            if len(key) == 1]
+		aduopts = aduopts + ['--%s=%s'%(key, val) for (key, val) in kwargs.items()
+            if len(key) > 1]
+		aduopts.insert(0, which('useradd'))
+		aduopts.append(name)
+		return aduopts
 
 
 if __name__ == '__main__':
