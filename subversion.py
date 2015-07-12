@@ -48,7 +48,7 @@ class SubVersion(Command):
 		def __revs(svnfile):
 			revs = []
 			output = self.stdx(
-			    '%s log %s -q --stop-on-copy'%(self.svnbin, svnfile))
+                '%s log %s -q --stop-on-copy'%(self.svnbin, svnfile))
 			for line in output.split('\n'):
 				if line.startswith('r'):
 					revs.append(str(line.split(' ')[0])[1:])
@@ -57,28 +57,15 @@ class SubVersion(Command):
 			lastrev = ((int(rev)-1))
 			if verbose:
 				print(
-					blu('comparing revision'),
-					yel(lastrev), blu('and'), yel(rev))
+	                blu('comparing revision'),
+	                yel(lastrev), blu('and'), yel(rev))
 			diff = self.stdx(
-				'%s diff --old=%s@%s --new=%s@%s'%(
-					self.svnbin, path, lastrev, path, rev
-				))
+                '%s diff --old=%s@%s --new=%s@%s'%(
+	                self.svnbin, path, lastrev, path, rev
+                ))
 			if pattern and not pattern in diff:
 				continue
 			yield diff
-			"""
-			if diff:
-				dout = ''
-				if not verbose:
-					dout = '%s%s:\n'%(dout, rev)
-				if pattern:
-					dout = '%s\n%s'%()
-					print(pattern)
-					if pattern in diff:
-						__diffout(diff)
-				else:
-					__diffout(diff)
-			"""
 
 	def svnstatus(self):
 		status = self.stdx('%s status'%(self.svnbin))
@@ -117,8 +104,8 @@ class SubVersion(Command):
 				status = self.svnstatus()
 			print('\n'.join(l for l in status))
 			print(
-			    blu('committing the above changes with message'),
-			    '%s%s'%(yel(message), blu('...')))
+                blu('committing the above changes with message'),
+                '%s%s'%(yel(message), blu('...')))
 			input(grn('press any key to continue\n'))
 			commit = '%s commit -m "%s"' %(self.svnbin, message)
 			return int(self.call(commit))

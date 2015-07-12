@@ -8,7 +8,7 @@ import sys
 from .git import GitSync
 
 # default vars
-__version__ = '0.0'
+__version__ = '0.1'
 
 class RepoSync(GitSync):
 	_sh_ = True
@@ -34,12 +34,6 @@ class RepoSync(GitSync):
                     int(max(len(i) for i in self.__dict__.keys())+4
                     )-len(k)), v
                 ) for (k, v) in sorted(self.__dict__.items()))))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
