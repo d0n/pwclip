@@ -250,7 +250,7 @@ class GitSync(GitRepo):
 			if status:
 				self.add()
 				self.commit(status)
-			status = self.genmessage(status)
+				status = self.genmessage(status)
 			if self._isbehind():
 				self.pull()
 			if self._isahead():

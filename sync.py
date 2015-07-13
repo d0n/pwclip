@@ -12,7 +12,7 @@ __version__ = '0.1'
 
 class RepoSync(GitSync):
 	_sh_ = True
-	_ato = True
+	_ato = False
 	_dbg = False
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -40,9 +40,11 @@ class RepoSync(GitSync):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
+		self._dbg = val
 
 	def sync(self, repo):
+		if self.dbg:
+			print('%s\n%s'%(self.sync, repo))
 		if os.path.exists(repo):
 			os.chdir(repo)
 			if (os.path.isdir('%s/.git'%repo) or \
