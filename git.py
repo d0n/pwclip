@@ -234,9 +234,7 @@ class GitSync(GitRepo):
 		self._ato = val if type(val) is bool else self._ato
 
 	def gitsync(self, *branchs, checkout=None, syncall=None):
-		branchs = list(branchs)
-		if not branchs:
-			branchs = [self._head()]
+		branchs = list(branchs) if branchs else [self._head()]
 		if syncall:
 			branchs = branchs + [h for h in self._heads(
                 ) if not h in (self._head(), checkout)]
