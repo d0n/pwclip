@@ -21,7 +21,7 @@ import sys
 # default constant definition
 __version__ = '0.3'
 
-class SysFs(object):
+class SysFs:
 	_path_ = '/sys'
 	__dict__ = {}
 	def __init__(self, path='/sys'):
