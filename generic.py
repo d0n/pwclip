@@ -45,7 +45,9 @@ class RepoSync(GitSync):
 	def sync(self, repo):
 		if os.path.exists(repo):
 			os.chdir(repo)
-			if os.path.isdir(repo+'/.git'):
+			if (os.path.isdir('%s/.git'%repo) or \
+                  os.path.isfile('%s/.gitmodules'%repo) or \
+                  os.path.isfile('%s/.git'%repo)):
 				self.gitsync()
 			elif os.path.isdir(repo+'/.svn'):
 				self.call('svn up')
