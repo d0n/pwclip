@@ -244,10 +244,8 @@ class GitSync(GitRepo):
 			branchs = branchs + [h for h in self._heads(
                 ) if not h in (self._head(), checkout)]
 		if checkout:
-			branchs = branchs + [checkout]
+			branchs = [b for b in branchs if not b == checkout] + [checkout]
 		for branch in branchs:
-			if branch != self._head():
-				self.checkout(branch)
 			status = self.gitstatus()
 			if status:
 				self.add()
@@ -257,8 +255,6 @@ class GitSync(GitRepo):
 				self.pull()
 			if self._isahead():
 				self.push()
-		if checkout and not checkout == self._head():
-			self.checkout(checkout)
 		return status
 
 
