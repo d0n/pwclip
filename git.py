@@ -19,7 +19,7 @@ class GitRepo(Command):
 	_sh_ = True
 	# own attributes
 	_dbg = False
-	_repodir = ''
+	_gitdir = ''
 	_gitbin = which('git')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -36,7 +36,7 @@ class GitRepo(Command):
 				print(key, '=', val)
 		if not self.gitbin:
 			raise RuntimeError('could not find git binary in $PATH')
-		#super().__init__(*args, **kwargs)
+
 	# rw propereties
 	@property               # dbg <bool>
 	def dbg(self):
@@ -45,19 +45,24 @@ class GitRepo(Command):
 	def dbg(self, val):
 		self._dbg = val
 
-	@property               # repodir <str>
-	def repodir(self):
-		return self._repodir
-	@repodir.setter
-	def repodir(self, val):
-		self._repodir = val if type(val) is str else os.getcwd()
+	@property                # gitdir <str>
+	def gitdir(self):
+		return self._gitdir if self._gitdir else self.__gitdir(os.getcwd())
+	@gitdir.setter
+	def gitdir(self, val):
+		if os.path.isdir(val):
+			self._gitdir = self.__gitdir(val)
+		else:
+			raise ValueError(
+                'cannot set %s as directory while it does not exist'%val)
+
 	# ro properties
 	@property               # gitbin <str>
 	def gitbin(self):
 		return self._gitbin
 
-	def _gitdir(self):
-		repodir = self._repodir if self._repodir else os.getcwd()
+	@staticmethod
+	def __gitdir(repodir):
 		gitdir = '%s/.git'%(repodir)
 		c = len(repodir.split('/'))
 		while c != 0:
@@ -74,31 +79,31 @@ class GitRepo(Command):
 			return True
 
 	def _fetchref_(self):
-		fetchead = '%s/FETCH_HEAD' %(self._gitdir())
+		fetchead = '%s/FETCH_HEAD' %(self.gitdir)
 		if os.path.isfile(fetchead):
 			with open(fetchead, 'r') as f:
 				return f.read().split('\t')[0].strip()
 
 	def _headref_(self):
-		hrefile = '%s/refs/heads/%s'%(self._gitdir(), self._head())
+		hrefile = '%s/refs/heads/%s'%(self.gitdir, self._head())
 		if os.path.isfile(hrefile):
 			with open(hrefile, 'r') as f:
 				return f.read().split(' ')[0].strip()
 
 	def _heads(self):
-		if not os.path.exists('%s/refs/heads'%(self._gitdir())):
+		if not os.path.exists('%s/refs/heads'%(self.gitdir)):
 			errmsg = 'no basedir was set and current one is no git repo %s'%(
-                self._gitdir())
+                self.gitdir)
 			raise RuntimeError(errmsg)
-		return os.listdir('%s/refs/heads'%(self._gitdir()))
+		return os.listdir('%s/refs/heads'%(self.gitdir))
 
 	def _head(self):
-		with open('%s/HEAD'%(self._gitdir()), 'r') as f:
+		with open('%s/HEAD'%(self.gitdir), 'r') as f:
 			return f.read().split('/')[-1].strip()
 
 	def _remoteref(self):
 		self._fetch_(fetchall=True)
-		gitdir = self._gitdir()
+		gitdir = self.gitdir
 		remref = '%s/refs/remotes/origin/%s'%(gitdir, self._head())
 		if not os.path.isfile(remref):
 			remref = '%s/refs/remotes/origin/HEAD'%(gitdir)
@@ -107,7 +112,7 @@ class GitRepo(Command):
 
 	def _remotes(self):
 		return [rem for rem in os.listdir(
-	        '%s/refs/remotes/origin/'%(self._gitdir())) if rem != 'HEAD']
+	        '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
 
 	def _isbehind(self):
 		if self._remoteref() != self._headref_():
