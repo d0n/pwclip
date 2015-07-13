@@ -88,7 +88,7 @@ class GitRepo(Command):
 	def _heads(self):
 		if not os.path.exists('%s/refs/heads'%(self._gitdir())):
 			errmsg = 'no basedir was set and current one is no git repo %s'%(
-			    self._gitdir())
+                self._gitdir())
 			raise RuntimeError(errmsg)
 		return os.listdir('%s/refs/heads'%(self._gitdir()))
 
@@ -107,7 +107,7 @@ class GitRepo(Command):
 
 	def _remotes(self):
 		return [rem for rem in os.listdir(
-		    '%s/refs/remotes/origin/'%(self._gitdir())) if rem != 'HEAD']
+	        '%s/refs/remotes/origin/'%(self._gitdir())) if rem != 'HEAD']
 
 	def _isbehind(self):
 		if self._remoteref() != self._headref_():
@@ -121,8 +121,8 @@ class GitRepo(Command):
 		heads = self._heads()
 		if files:
 			command = '%s checkout %s %s'%(
-			    self.gitbin, branch,
-			    ' '.join(f for f in files if files and f))
+                self.gitbin, branch,
+                ' '.join(f for f in files if files and f))
 		elif not branch in heads:
 			command = '%s checkout -b %s'%(self.gitbin, branch)
 		else:
@@ -139,7 +139,7 @@ class GitRepo(Command):
 		command = '%s push %s %s'%(self.gitbin, origin, remote)
 		if setup or remote not in self._remotes():
 			command = '%s push --set-upstream %s %s'%(
-			    self.gitbin, origin, remote)
+                self.gitbin, origin, remote)
 		return int(self.call(command))
 
 	def add(self, *files):
@@ -204,8 +204,8 @@ class GitRepo(Command):
 		msg = '{ '
 		for typ in stats:
 			msg = '%s%s: [%s], '%(
-			    msg, blu('%s%s'%(typ[0].upper(), typ[1:])),
-			    ', '.join(yel(f) for f in stats[typ]))
+                msg, blu('%s%s'%(typ[0].upper(), typ[1:])),
+                ', '.join(yel(f) for f in stats[typ]))
 		msg = msg.strip(', ')
 		msg = '%s }'%(msg)
 		return msg
@@ -239,7 +239,7 @@ class GitSync(GitRepo):
 			branchs = [self._head()]
 		if syncall:
 			branchs = branchs + [h for h in self._heads(
-			    ) if not h in (self._head(), checkout)]
+                ) if not h in (self._head(), checkout)]
 		if checkout:
 			branchs = branchs + [checkout]
 		for branch in branchs:

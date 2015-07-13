@@ -12,6 +12,7 @@ __version__ = '0.1'
 
 class RepoSync(GitSync):
 	_sh_ = True
+	_ato = True
 	_dbg = False
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -26,7 +27,7 @@ class RepoSync(GitSync):
 			lim = int(max(len(k) for k in RepoSync.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
                 RepoSync.__mro__,
-                '\n'.join('  %s%s=\t%s'%(
+               '\n'.join('  %s%s=\t%s'%(
                     k, ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(RepoSync.__dict__.items())),
                 RepoSync.__init__,
@@ -46,9 +47,9 @@ class RepoSync(GitSync):
 			os.chdir(repo)
 			if os.path.isdir(repo+'/.git'):
 				self.gitsync()
-			if os.path.isdir(repo+'/.svn'):
+			elif os.path.isdir(repo+'/.svn'):
 				self.call('svn up')
-			if os.path.isdir(repo+'/CVS'):
+			elif os.path.isdir(repo+'/CVS'):
 				self.call('cvs up -d -P')
 
 
