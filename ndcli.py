@@ -18,19 +18,11 @@ import re
 import os
 import sys
 
-<<<<<<< HEAD
 from lib.misc import which
 from lib.colortext import error, fatal
 from lib.executor import command as c
 from lib.network import askdns
 from dpkg import DePyKG
-=======
-from modules.lib.misc import which
-from modules.lib.colortext import fatal
-from modules.lib.executor import command as c
-from modules.lib.network import askdns
-from modules.deb import DePyKG
->>>>>>> 65993b2f324ecab51473299d5c63914e66467da2
 
 # global default variables
 __version__ = '0.1'
