@@ -52,7 +52,7 @@ class RepoSync(GitSync):
 			if (os.path.isdir('%s/.git'%repo) or \
 				  os.path.isfile('%s/.gitmodules'%repo) or \
 				  os.path.isfile('%s/.git'%repo)):
-				return self.gitsync()
+				return self.genmessage(self.gitsync())
 			elif os.path.isdir(repo+'/.svn'):
 				return self.stdx('svn up')
 
