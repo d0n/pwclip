@@ -284,6 +284,7 @@ class GitSync(GitRepo):
 		if branchstats != {}:
 			return branchstats
 
+"""
 	def itergits(self, *branchs, remode='sync', syncall=None):
 		if self.dbg:
 			print(self.itergits)
@@ -291,11 +292,10 @@ class GitSync(GitRepo):
 		for sub in self.gitsubs(os.getcwd()):
 			self.gitsync(mode=remode)
 
-		"""
 			if self.aal:
 				yield self.gitsync(self._heads(), mode=remode)
 			yield self.gitsync(mode=remode)
-		"""
+"""
 
 class GitClone(GitRepo):
 	user = os.getenv('USER')
