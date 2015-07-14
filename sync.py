@@ -54,6 +54,8 @@ class RepoSync(GitSync):
 				  os.path.isfile('%s/.git'%repo)):
 				commits = self.gitsync()
 				for branch in commits:
+					print(branch)
+					exit()
 					return self.genmessage(commits[branch])
 			elif os.path.isdir(repo+'/.svn'):
 				return self.stdx('svn up')
