@@ -5,6 +5,8 @@ import os
 import sys
 
 # local relative imports
+from lib.colortext import blu, yel
+
 from .git import GitSync
 
 # default vars
@@ -12,7 +14,7 @@ __version__ = '0.1'
 
 class RepoSync(GitSync):
 	_sh_ = True
-	_ato = False
+	_aal = False
 	_dbg = False
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -42,19 +44,18 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-	def sync(self, repo):
+	def sync(self, repo, mode='current'):
 		if self.dbg:
-			print('%s\n%s'%(self.sync, repo))
+			print('%s'%self.sync)
 		if os.path.exists(repo):
 			os.chdir(repo)
 			if (os.path.isdir('%s/.git'%repo) or \
-                  os.path.isfile('%s/.gitmodules'%repo) or \
-                  os.path.isfile('%s/.git'%repo)):
-				self.gitsync()
+				  os.path.isfile('%s/.gitmodules'%repo) or \
+				  os.path.isfile('%s/.git'%repo)):
+				for commit in self.itergits(mode):
+					print(commit)
 			elif os.path.isdir(repo+'/.svn'):
-				self.call('svn up')
-			elif os.path.isdir(repo+'/CVS'):
-				self.call('cvs up -d -P')
+				return self.stdx('svn up')
 
 
 

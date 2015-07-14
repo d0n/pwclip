@@ -222,43 +222,80 @@ class GitSync(GitRepo):
 	_sh_ = True
 	# internal
 	_dbg = False
-	_ato = False
+	_aal = False
 
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
+		self._dbg = val if isinstance(val, bool) is bool else self._dbg
 
-	@property               # ato <bool>
-	def ato(self):
-		return self._ato
-	@ato.setter
-	def ato(self, val):
-		self._ato = val if type(val) is bool else self._ato
+	@property                # aal <bool>
+	def aal(self):
+		return self._aal
+	@aal.setter
+	def aal(self, val):
+		self._aal = val if isinstance(val, bool) is bool else self._aal
 
-	def gitsync(self, *branchs, checkout=None, syncall=None):
-		branchs = list(branchs) if branchs else [self._head()]
+	@staticmethod
+	def gitsubs(repo):
+		def _modpaths(gitdir):
+			def __gitmods(modfile):
+				with open(modfile, 'r') as gmf:
+					modlines = gmf.readlines()
+				return [
+                    l.split('=')[1].strip() for l in modlines if 'path =' in l
+                    ]
+			modfile = '%s/.gitmodules'%gitdir
+			if os.path.isfile(modfile):
+				return ['%s/%s'%(gitdir, m) for m in __gitmods(modfile)]
+		mods = _modpaths(repo)
+		if mods:
+			return self.gitsubs(mods) + repo
+		return repo
+
+	def gitsync(
+          self, branchs=['master'], mode='sync', checkout=None, syncall=None):
+		if self.dbg:
+			print(self.gitsync)
+		syncall = syncall if syncall else self.aal
+		_head = self._head()
+		branchs = list(branchs) if branchs else [_head]
 		if syncall:
-			branchs = branchs + [h for h in self._heads(
-                ) if not h in (self._head(), checkout)]
-		if checkout:
-			branchs = [b for b in branchs if not b == checkout] + [checkout]
+			branchs = [h for h in self._heads() if h != checkout]
+		branchs = [b for b in branchs if b != checkout] + [
+            checkout if checkout else _head]
+		branchstats = {}
 		for branch in branchs:
-			status = self.gitstatus()
-			if status:
-				self.add()
-				self.commit(status)
-				status = self.genmessage(status)
-			if self._isbehind():
-				self.pull()
-			if self._isahead():
-				self.push()
-		return status
+			self.checkout(branch)
+			if mode in ('sync', 'push'):
+				status = self.gitstatus()
+				if status:
+					self.add()
+					self.commit(status)
+					status = self.genmessage(status)
+					branchstats[branch] = status
+			if mode in ('sync', 'pull'):
+				if self._isbehind():
+					self.pull()
+			if mode in ('sync', 'push'):
+				if self._isahead():
+					self.push()
+		return branchstats
 
+	def itergits(self, *branchs, remode='sync', syncall=None):
+		if self.dbg:
+			print(self.itergits)
+		branchs = branchs if branchs else ['master']
+		for sub in self.gitsubs(os.getcwd()):
+			self.gitsync(mode=remode)
 
-
+		"""
+			if self.aal:
+				yield self.gitsync(self._heads(), mode=remode)
+			yield self.gitsync(mode=remode)
+		"""
 
 class GitClone(GitRepo):
 	user = os.getenv('USER')
