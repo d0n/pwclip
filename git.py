@@ -274,7 +274,6 @@ class GitSync(GitRepo):
 				if status:
 					self.add()
 					self.commit(status)
-					status = self.genmessage(status)
 					branchstats[branch] = status
 			if mode in ('sync', 'pull'):
 				if self._isbehind():
@@ -282,7 +281,8 @@ class GitSync(GitRepo):
 			if mode in ('sync', 'push'):
 				if self._isahead():
 					self.push()
-		return branchstats
+		if branchstats != {}:
+			return branchstats
 
 	def itergits(self, *branchs, remode='sync', syncall=None):
 		if self.dbg:
