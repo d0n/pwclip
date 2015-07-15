@@ -238,8 +238,7 @@ class GitSync(GitRepo):
 	def aal(self, val):
 		self._aal = val if isinstance(val, bool) is bool else self._aal
 
-	@staticmethod
-	def gitsubs(repo):
+	def _gitsubs(self, repo):
 		def _modpaths(gitdir):
 			def __gitmods(modfile):
 				with open(modfile, 'r') as gmf:
@@ -252,7 +251,7 @@ class GitSync(GitRepo):
 				return ['%s/%s'%(gitdir, m) for m in __gitmods(modfile)]
 		mods = _modpaths(repo)
 		if mods:
-			return self.gitsubs(mods) + repo
+			return self._gitsubs(mods) + [repo]
 		return repo
 
 	def gitsync(
@@ -284,13 +283,17 @@ class GitSync(GitRepo):
 		if branchstats != {}:
 			return branchstats
 
+<<<<<<< HEAD
 """
 	def itergits(self, *branchs, remode='sync', syncall=None):
+=======
+	def itergits(self, *branchs, mode='sync', syncall=None):
+>>>>>>> 7b76e8738d97ec878ad64a88b863f28603a0dad5
 		if self.dbg:
 			print(self.itergits)
 		branchs = branchs if branchs else ['master']
-		for sub in self.gitsubs(os.getcwd()):
-			self.gitsync(mode=remode)
+		for sub in self._gitsubs(os.getcwd()):
+			yield self.gitsync(mode=mode)
 
 			if self.aal:
 				yield self.gitsync(self._heads(), mode=remode)

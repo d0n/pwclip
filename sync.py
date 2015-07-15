@@ -52,9 +52,15 @@ class RepoSync(GitSync):
 			if (os.path.isdir('%s/.git'%repo) or \
 				  os.path.isfile('%s/.gitmodules'%repo) or \
 				  os.path.isfile('%s/.git'%repo)):
+<<<<<<< HEAD
 				self.gitsync()
+=======
+				for commit in self.itergits(mode):
+					if commit:
+						print(commit)
+>>>>>>> 7b76e8738d97ec878ad64a88b863f28603a0dad5
 			elif os.path.isdir(repo+'/.svn'):
-				return self.stdx('svn up')
+				self.call('svn up')
 
 
 
