@@ -53,7 +53,6 @@ class RepoSync(GitSync):
                   os.path.isfile('%s/.gitmodules'%repo) or \
                   os.path.isfile('%s/.git'%repo)):
 				self.gitsync(branchs, mode, syncall)
-				print(repo)
 			elif os.path.isdir(repo+'/.svn'):
 				# on svn repositories i can only sync remote to local
 				self.call('svn up')
