@@ -283,12 +283,8 @@ class GitSync(GitRepo):
 		if branchstats != {}:
 			return branchstats
 
-<<<<<<< HEAD
 """
-	def itergits(self, *branchs, remode='sync', syncall=None):
-=======
 	def itergits(self, *branchs, mode='sync', syncall=None):
->>>>>>> 7b76e8738d97ec878ad64a88b863f28603a0dad5
 		if self.dbg:
 			print(self.itergits)
 		branchs = branchs if branchs else ['master']
