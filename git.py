@@ -255,7 +255,7 @@ class GitSync(GitRepo):
 		return repo
 
 	def gitsync(
-          self, branchs=['master'], mode='sync', checkout=None, syncall=None):
+          self, branchs=['master'], mode='sync', syncall=None, checkout=None):
 		if self.dbg:
 			print(self.gitsync)
 		syncall = syncall if syncall else self.aal
@@ -283,18 +283,6 @@ class GitSync(GitRepo):
 		if branchstats != {}:
 			return branchstats
 
-"""
-	def itergits(self, *branchs, mode='sync', syncall=None):
-		if self.dbg:
-			print(self.itergits)
-		branchs = branchs if branchs else ['master']
-		for sub in self._gitsubs(os.getcwd()):
-			yield self.gitsync(mode=mode)
-
-			if self.aal:
-				yield self.gitsync(self._heads(), mode=remode)
-			yield self.gitsync(mode=remode)
-"""
 
 class GitClone(GitRepo):
 	user = os.getenv('USER')

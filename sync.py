@@ -44,7 +44,7 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-	def sync(self, repo, mode='current'):
+	def sync(self, repo, branchs=[], mode='sync', syncall=None):
 		if self.dbg:
 			print('%s'%self.sync)
 		if os.path.exists(repo):
@@ -52,7 +52,7 @@ class RepoSync(GitSync):
 			if (os.path.isdir('%s/.git'%repo) or \
                   os.path.isfile('%s/.gitmodules'%repo) or \
                   os.path.isfile('%s/.git'%repo)):
-				self.gitsync()
+				self.gitsync(branchs, mode, syncall)
 			elif os.path.isdir(repo+'/.svn'):
 				self.call('svn up')
 
