@@ -238,10 +238,10 @@ class GitRepo(Command):
 	def genmessage(self, stats=None):
 		if self.dbg:
 			print(self.genmessage)
-#		if not stats:
-#			stats = self.gitstatus()
-#			if not stats:
-#				return
+		if not stats:
+			stats = self.gitstatus()
+			if not stats:
+				return
 		msg = '{ '
 		for typ in stats:
 			msg = '%s%s: [%s], '%(
