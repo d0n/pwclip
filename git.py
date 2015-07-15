@@ -260,7 +260,6 @@ class GitSync(GitRepo):
 						self.add()
 						self.commit(status)
 						branchstats[branch] = status
-				exit()
 				if mode in ('sync', 'pull'):
 					self.pull()
 				if mode in ('sync', 'push'):
