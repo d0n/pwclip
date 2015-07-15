@@ -287,8 +287,8 @@ class GitSync(GitRepo):
             checkout if checkout else _head]
 		branchstats = {}
 		for branch in branchs:
-			#if not branch == self._head():
-			#self.checkout(branch)
+			if not branch == self._head():
+				self.checkout(branch)
 			status = self.gitstatus()
 			if status:
 				if mode in ('sync', 'push'):
