@@ -202,7 +202,7 @@ class GitRepo(Command):
 			return stats
 
 	def genmessage(self, stats=None):
-		if stats:
+		if not stats:
 			stats = self.gitstatus()
 			if not stats:
 				return
