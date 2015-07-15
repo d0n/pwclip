@@ -54,7 +54,9 @@ class RepoSync(GitSync):
                   os.path.isfile('%s/.git'%repo)):
 				self.gitsync(branchs, mode, syncall)
 			elif os.path.isdir(repo+'/.svn'):
+				# on svn repositories i can only sync remote to local
 				self.call('svn up')
+			# i lack support of any other versioning too till now
 
 
 

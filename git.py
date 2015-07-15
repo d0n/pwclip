@@ -72,14 +72,14 @@ class GitRepo(Command):
 			c-=1
 
 	def _fetch_(self, fetchall=None):
-		command = self.gitbin, 'fetch'
+		command = '%s fetch'%self.gitbin
 		if fetchall:
 			command = '%s fetch --all'%self.gitbin
 		if self.erno(command) == 0:
 			return True
 
 	def _fetchref_(self):
-		fetchead = '%s/FETCH_HEAD' %(self.gitdir)
+		fetchead = '%s/FETCH_HEAD'%self.gitdir
 		if os.path.isfile(fetchead):
 			with open(fetchead, 'r') as f:
 				return f.read().split('\t')[0].strip()
@@ -202,7 +202,7 @@ class GitRepo(Command):
 			return stats
 
 	def genmessage(self, stats=None):
-		if not stats:
+		if stats != {}:
 			stats = self.gitstatus()
 			if not stats:
 				return
@@ -238,22 +238,6 @@ class GitSync(GitRepo):
 	def aal(self, val):
 		self._aal = val if isinstance(val, bool) is bool else self._aal
 
-	def _gitsubs(self, repo):
-		def _modpaths(gitdir):
-			def __gitmods(modfile):
-				with open(modfile, 'r') as gmf:
-					modlines = gmf.readlines()
-				return [
-                    l.split('=')[1].strip() for l in modlines if 'path =' in l
-                    ]
-			modfile = '%s/.gitmodules'%gitdir
-			if os.path.isfile(modfile):
-				return ['%s/%s'%(gitdir, m) for m in __gitmods(modfile)]
-		mods = _modpaths(repo)
-		if mods:
-			return self._gitsubs(mods) + [repo]
-		return repo
-
 	def gitsync(
           self, branchs=['master'], mode='sync', syncall=None, checkout=None):
 		if self.dbg:
@@ -267,7 +251,8 @@ class GitSync(GitRepo):
             checkout if checkout else _head]
 		branchstats = {}
 		for branch in branchs:
-			self.checkout(branch)
+			if not branch == self._head():
+				self.checkout(branch)
 			if mode in ('sync', 'push'):
 				status = self.gitstatus()
 				if status:
@@ -275,11 +260,9 @@ class GitSync(GitRepo):
 					self.commit(status)
 					branchstats[branch] = status
 			if mode in ('sync', 'pull'):
-				if self._isbehind():
-					self.pull()
+				self.pull()
 			if mode in ('sync', 'push'):
-				if self._isahead():
-					self.push()
+				self.push()
 		if branchstats != {}:
 			return branchstats
 
