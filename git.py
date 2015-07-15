@@ -277,7 +277,7 @@ class GitSync(GitRepo):
 	def gitsync(
           self, branchs=['master'], mode='sync', syncall=None, checkout=None):
 		if self.dbg:
-			print(self.gitsync)
+			print(' ', self.gitsync)
 		syncall = syncall if syncall else self.aal
 		_head = self._head()
 		branchs = list(branchs) if branchs else [_head]
