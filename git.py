@@ -158,7 +158,9 @@ class GitRepo(Command):
 		if self.dbg:
 			print(self.pull)
 		command = '%s pull %s' %(self.gitbin, origin)
-		return int(self.call(command))
+		out = self.stdx(command)
+		if out:
+			return out
 
 	def push(self, remote=None, origin='origin', setup=None):
 		if self.dbg:
