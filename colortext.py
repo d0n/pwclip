@@ -96,11 +96,14 @@ def error(*args, **kwargs):
 	#sys.stderr.flush()
 	errfile = ''
 	errline = ''
+	buzzword = 'ERROR:'
 	if 'file' in kwargs.keys():
 		errfile = '%s:'%(kwargs['file'])
 	if 'line' in kwargs.keys():
 		errline = '%s:'%(kwargs['line'])
-	msgs = [errfile+errline+red('ERROR:')]
+	if 'warn' in kwargs.keys():
+		buzzword = 'WARNING:'
+	msgs = [errfile+errline+red(buzzword)]
 	for arg in args:
 		if (args.index(arg) % 2) == 0:
 			msgs.append(red(arg))
