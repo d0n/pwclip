@@ -21,6 +21,7 @@ import sys
 from socket import getfqdn as fqdn
 
 # local relative imports
+from lib.misc import which
 from lib.executor import SSHCommand
 from lib.network import SecureCoPy, netcat as nc
 
@@ -34,7 +35,7 @@ class Puppet(SSHCommand):
 	_bgr = False
 	_user_ = 'root'
 	_host_ = ''
-	_puptmpl = '%s/puppet.tmpl'%(os.path.expanduser('~/bin/config'))
+	_puptmpl = '%s/puppet.tmpl'%os.path.expanduser('~/.config/%s'%sys.argv[0])
 	scp = SecureCoPy().put
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -91,8 +92,8 @@ class Puppet(SSHCommand):
 		if self.dbg:
 			print(self.pupssl)
 		if self.call(
-		      'rm -rf /var/lib/puppet/ssl/',
-		      host=fqdn(self.host)) == 0:
+              'rm -rf /var/lib/puppet/ssl/',
+              host=fqdn(self.host)) == 0:
 			return True
 
 	def pupini(self, background=None):
@@ -105,29 +106,29 @@ class Puppet(SSHCommand):
 		if background:
 			xec = self.run
 		debver = self.stdo(
-		    'cat /etc/debian_version',
-		    host=fqdn(self.host))[0].split('.')[0]
+            'cat /etc/debian_version',
+            host=fqdn(self.host))[0].split('.')[0]
 		aptopts = '-y'
 		if debver and debver == '6':
 			bprpo = self.stdo(
-			    'grep -r "squeeze-backports" "/etc/apt/sources.list.d"',
-			    host=fqdn(self.host))
+                'grep -r "squeeze-backports" "/etc/apt/sources.list.d"',
+                host=fqdn(self.host))
 			if not bprpo:
 				xec(
-				    'echo "deb http://debian.schlund.de/debian-backports ' \
-				    'squeeze-backports main contrib non-free" > ' \
-				    '/etc/apt/sources.list.d/debian-backports.list',
-				    host=fqdn(self.host))
+                    'echo "deb http://debian.schlund.de/debian-backports ' \
+                    'squeeze-backports main contrib non-free" > ' \
+                    '/etc/apt/sources.list.d/debian-backports.list',
+                    host=fqdn(self.host))
 			aptopts = '-y -t squeeze-backports'
 		for cmd in (
-		      'aptitude update', 'aptitude -y full-upgrade',
-		      'aptitude install %s puppet lsb-release'%(aptopts)):
+              'aptitude update', 'aptitude -y full-upgrade',
+              'aptitude install %s puppet lsb-release'%(aptopts)):
 			xec(cmd, host=fqdn(self.host))
 		self.run(
-		    '%s -o User="root" -o StrictHostKeyChecking=no ' \
-		    '-o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ' \
-		    '%s %s:/etc/puppet/puppet.conf'%(which('scp'),
-		    self._puptmpl, fqdn(self.host)))
+            '%s -o User="root" -o StrictHostKeyChecking=no ' \
+            '-o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ' \
+            '%s %s:/etc/puppet/puppet.conf'%(which('scp'),
+            self._puptmpl, fqdn(self.host)))
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
