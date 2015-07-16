@@ -261,7 +261,7 @@ class GitSync(GitRepo):
 	# internal
 	_dbg = False
 	_aal = False
-
+	_branchs = ['master']
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
@@ -276,10 +276,9 @@ class GitSync(GitRepo):
 	def aal(self, val):
 		self._aal = val if isinstance(val, bool) is bool else self._aal
 
-	def gitsync(
-          self, branchs=['master'], mode='sync', syncall=None, checkout=None):
+	def gitsync(self, *branchs, mode='sync', syncall=None, checkout=None):
 		if self.dbg:
-			print(self.gitsync)
+			print('\n%s'%self.gitsync)
 		syncall = syncall if syncall else self.aal
 		_head = self._head()
 		branchs = list(branchs) if branchs else [_head]
