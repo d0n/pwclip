@@ -26,6 +26,7 @@ from lib.executor import SSHCommand
 from lib.network import SecureCoPy, netcat as nc
 
 # global default variables
+__me__ = os.path.dirname(os.path.basename(sys.argv[0])).split('.')[0]
 __version__ = '0.2'
 
 class Puppet(SSHCommand):
@@ -35,7 +36,7 @@ class Puppet(SSHCommand):
 	_bgr = False
 	_user_ = 'root'
 	_host_ = ''
-	_puptmpl = '%s/puppet.tmpl'%os.path.expanduser('~/.config/%s'%sys.argv[0])
+	puptmpl = os.path.expanduser('~/.config/%s/puppet.tmpl'%sys.argv[0])
 	scp = SecureCoPy().put
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -124,11 +125,7 @@ class Puppet(SSHCommand):
               'aptitude update', 'aptitude -y full-upgrade',
               'aptitude install %s puppet lsb-release'%(aptopts)):
 			xec(cmd, host=fqdn(self.host))
-		self.run(
-            '%s -o User="root" -o StrictHostKeyChecking=no ' \
-            '-o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ' \
-            '%s %s:/etc/puppet/puppet.conf'%(which('scp'),
-            self._puptmpl, fqdn(self.host)))
+		self.scp(self.puptmpl, '/etc/puppet/puppet.conf', fqdn(self.host))
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
