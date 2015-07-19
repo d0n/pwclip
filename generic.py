@@ -25,7 +25,6 @@ class RepoSync(GitSync):
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			print(key, val)
 			setattr(self, key, val)
 		if self.dbg:
 			lim = int(max(len(k) for k in RepoSync.__dict__.keys()))+4
