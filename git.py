@@ -314,6 +314,7 @@ class GitSync(GitRepo):
 				branchs = [h for h in self._heads() if h != _head] + [_head]
 			branchstats = {}
 			for branch in branchs:
+				print(blu('syncing branch'), yel(branch), blu('in'), yel(repo))
 				if not branch == self._head():
 					self.checkout(branch)
 				status = self.gitstatus()
