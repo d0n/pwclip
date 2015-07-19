@@ -305,6 +305,7 @@ class GitSync(GitRepo):
 		_all = syncall if syncall else self.aal
 		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
+			print(blu('syncing'), yel(repo))
 			if not os.path.exists(repo):
 				continue
 			os.chdir(repo)
@@ -314,7 +315,6 @@ class GitSync(GitRepo):
 				branchs = [h for h in self._heads() if h != _head] + [_head]
 			branchstats = {}
 			for branch in branchs:
-				print(blu('syncing branch'), yel(branch), blu('in'), yel(repo))
 				if not branch == self._head():
 					self.checkout(branch)
 				status = self.gitstatus()
