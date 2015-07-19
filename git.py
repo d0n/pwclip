@@ -305,6 +305,8 @@ class GitSync(GitRepo):
 		_all = syncall if syncall else self.aal
 		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
+			if not os.path.exists(repo):
+				continue
 			os.chdir(repo)
 			_head = checkout if checkout else self._head()
 			branchs = [_head]
