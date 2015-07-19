@@ -299,7 +299,8 @@ class GitSync(GitRepo):
 				repos = self._gitsubmods(mods) + list(repos)
 		return repos
 
-	def syncgits(self, *repos, mode=None, syncall=None, checkout=None):
+	def syncgits(
+          self, *repos, branchs=[], mode='', syncall=False, checkout=None):
 		if self.dbg:
 			print(self.syncgits)
 		_all = syncall if syncall else self.aal
