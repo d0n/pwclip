@@ -328,8 +328,8 @@ class GitSync(GitRepo):
 						self.pull()
 					if mode in ('sync', 'push'):
 						self.push()
-			if branchstats != {}:
-				return branchstats
+		if branchstats != {}:
+			return branchstats
 
 class GitClone(GitRepo):
 	user = os.getenv('USER')
