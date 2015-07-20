@@ -305,6 +305,7 @@ class GitSync(GitRepo):
 			print(self.syncgits)
 		_all = syncall if syncall else self.aal
 		mode = mode if mode else self.mode
+		repobranchstats = {}
 		for repo in self._gitsubmods(repos):
 			if not os.path.exists(repo):
 				continue
@@ -329,7 +330,9 @@ class GitSync(GitRepo):
 					if mode in ('sync', 'push'):
 						self.push()
 			if branchstats != {}:
-				yield {repo: branchstats}
+				repobranchstats[repo] = branchstats
+		if repobranchstats != {}:
+			return repobranchstats
 
 class GitClone(GitRepo):
 	user = os.getenv('USER')

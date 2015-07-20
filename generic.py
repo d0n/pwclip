@@ -47,35 +47,19 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-	@staticmethod
-	def _syncmsg(branchstats):
-		print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-
 	def sync(self, repotypes):
 		if self.dbg:
 			print(self.sync)
-		for (repo, typ) in repotypes.items():
-			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			if typ == 'git':
-				for branchstat in self.syncgits(*[repo]):
-					print(branchstat)
-			if typ == 'svn':
-				_chdir(repo)
-				if self.call('%s update'%which('svn')) != 0:
-					error('svn command exited with non zero status')
-
-		"""
 		gits = [r for (r, t) in repotypes.items() if t == 'git']
 		svns = [r for (r, t) in repotypes.items() if t == 'svn']
 		if gits:
-			for branchstat in self.syncgits(*gits), svns:
-				print(branchstat)
+			print(self.syncgits(*gits))
 		if svns:
 			for svnrpo in svns:
 				_chdir(svnrpo)
 				if self.call('%s update'%which('svn')) != 0:
 					error('svn command exited with non zero status')
-		"""
+
 
 
 
