@@ -54,7 +54,7 @@ class RepoSync(GitSync):
 		svns = [r for (r, t) in repotypes.items() if t == 'svn']
 		if svns:
 			for svnrpo in svns:
-				self.svn.svnupdate(svnrepo)
+				self.svn.svnupdate(svnrpo)
 
 
 
