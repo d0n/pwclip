@@ -309,6 +309,7 @@ class GitSync(GitRepo):
 		for repo in self._gitsubmods(repos):
 			if not os.path.exists(repo):
 				continue
+			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			os.chdir(repo)
 			_head = checkout if checkout else self._head()
 			branchs = [_head]
