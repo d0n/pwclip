@@ -53,7 +53,7 @@ class RepoSync(GitSync):
 		gits = [r for (r, t) in repotypes.items() if t == 'git']
 		svns = [r for (r, t) in repotypes.items() if t == 'svn']
 		if gits:
-			print(self.syncgits(*gits))
+			self.syncgits(*gits)
 		if svns:
 			for svnrpo in svns:
 				print(blu('syncing'), '%s%s'%(yel(svnrpo), blu('...')))
