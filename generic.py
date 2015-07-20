@@ -6,7 +6,7 @@ from os.path import exists as _exists, isdir as _isdir
 
 # local relative imports
 from lib.colortext import blu, yel
-from .subversion import SubVersion
+#from .subversion import SubVersion
 
 from .git import GitSync
 
@@ -18,7 +18,6 @@ class RepoSync(GitSync):
 	_aal = None
 	_dbg = False
 	_mode = 'sync'
-	svn = SubVersion()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -50,11 +49,16 @@ class RepoSync(GitSync):
 	def sync(self, repotypes):
 		if self.dbg:
 			print(self.sync)
-		self.syncgits(*[r for (r, t) in repotypes.items() if t == 'git'])
+		gits = [r for (r, t) in repotypes.items() if t == 'git']
 		svns = [r for (r, t) in repotypes.items() if t == 'svn']
+		if gits:
+			for branchstat in self.syncgits(*gits):
+				print(branchstat)
 		if svns:
 			for svnrpo in svns:
-				self.svn.svnupdate(svnrpo)
+				os.chdir(svnrpo)
+				if self.call('%s update'%which('svn')) != 0:
+					error('svn command exited with non zero status')
 
 
 
