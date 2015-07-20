@@ -34,6 +34,11 @@ class SubVersion(Command):
 	def svnbin(self):
 		return self._svnbin
 
+	def svnupdate(self, path):
+		os.chdir(path)
+		if self.call('svn up') == 0:
+			return True
+
 	def svndiffs(self, path, pattern=None, verbose=None):
 		def __diffout(diff):
 			diffout = ''
