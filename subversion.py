@@ -113,7 +113,7 @@ class SubVersion(Command):
                 '%s%s'%(yel(message), blu('...')))
 			input(grn('press any key to continue\n'))
 			commit = '%s commit -m "%s"' %(self.svnbin, message)
-			return int(self.call(commit))
+			return self.call(commit)
 		print(blu('nothing to commit'))
 
 

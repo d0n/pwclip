@@ -1,15 +1,6 @@
 #!/usr/bin/env python3
 """repo common functions module"""
 # global imports
-<<<<<<< HEAD
-import os
-import sys
-
-# local relative imports
-from modules.lib.colortext import blu, yel
-
-from modules.repo import GitSync
-=======
 from os import listdir as _listdir, chdir as _chdir
 from os.path import exists as _exists, isdir as _isdir
 
@@ -18,7 +9,6 @@ from lib.colortext import blu, yel
 from .subversion import SubVersion
 
 from .git import GitSync
->>>>>>> 3cabfc8e133237046ff5fb204d59ccde90c8af7d
 
 # default vars
 __version__ = '0.1'
@@ -57,19 +47,14 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-	def sync(self, repo, *branchs, mode='sync', syncall=None):
+	def sync(self, repotypes):
 		if self.dbg:
-			print('%s'%self.sync)
-		if os.path.exists(repo):
-			os.chdir(repo)
-			if (os.path.isdir('%s/.git'%repo) or \
-                  os.path.isfile('%s/.gitmodules'%repo) or \
-                  os.path.isfile('%s/.git'%repo)):
-				self.gitsync(branchs, mode, syncall)
-			elif os.path.isdir(repo+'/.svn'):
-				# on svn repositories i can only sync remote to local
-				self.call('svn up')
-			# i lack support of any other versioning too till now
+			print(self.sync)
+		self.syncgits(*[r for (r, t) in repotypes.items() if t == 'git'])
+		svns = [r for (r, t) in repotypes.items() if t == 'svn']
+		if svns:
+			for svnrpo in svns:
+				self.svn.svnupdate(svnrepo)
 
 
 
