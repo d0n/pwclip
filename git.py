@@ -305,7 +305,6 @@ class GitSync(GitRepo):
 			print(self.syncgits)
 		_all = syncall if syncall else self.aal
 		mode = mode if mode else self.mode
-		print(repos)
 		for repo in self._gitsubmods(repos):
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			if not os.path.exists(repo):
