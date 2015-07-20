@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import sys
 
 # get color escape sequence from string
 def __colorize(color, text):
@@ -30,6 +29,7 @@ def __colorize(color, text):
 # one for normal and one for bold text
 
 def blu(text):
+	#import sys
 	#func = sys._getframe().f_code.co_name
 	return __colorize('blu', text)
 def bblu(text):
@@ -77,8 +77,6 @@ def error(*args, **kwargs):
 	one or more primary causes i want the text parts printed
 	in red and the causes printed in yellow as follows
 	'''
-	#sys.stdout.flush()
-	#sys.stderr.flush()
 	errfile = ''
 	errline = ''
 	buzzword = 'ERROR:'
@@ -95,8 +93,6 @@ def error(*args, **kwargs):
 		else:
 			msgs.append(yel(arg))
 	print(' '.join(msg for msg in msgs), flush=True)
-	#sys.stdout.flush()
-	#sys.stderr.flush()
 
 
 def fatal(*args, **kwargs):
@@ -104,8 +100,6 @@ def fatal(*args, **kwargs):
 	does exactly the same as "error" except it prints texts
 	in bold and kills its parent processes
 	'''
-	#sys.stdout.flush()
-	#sys.stderr.flush()
 	errfile = ''
 	errline = ''
 	if 'file' in kwargs.keys():
@@ -119,8 +113,6 @@ def fatal(*args, **kwargs):
 		else:
 			msgs.append(yel(arg))
 	print(' '.join(msg for msg in msgs), flush=True)
-	#sys.stdout.flush()
-	#sys.stderr.flush()
 	exit(1)
 
 def abort(*messages):
@@ -139,7 +131,6 @@ def abort(*messages):
 		else:
 			msgs.append(yel(msg))
 	print(' '.join(msg for msg in msgs), flush=True)
-	#sys.stdout.flush()
 	exit(0)
 
 def tabd(keyvals):
@@ -155,4 +146,5 @@ def tabd(keyvals):
 
 if __name__ == "__main__":
 	# module debugging area
-	print('\n'.join(m for m in dir()))
+	#print('\n'.join(m for m in dir()))
+	exit(1)
