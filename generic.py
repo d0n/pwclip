@@ -25,28 +25,19 @@ __version__ = '0.1'
 
 class RepoSync(GitSync):
 	_sh_ = True
-<<<<<<< HEAD
-	_aal = False
-	_dbg = False
-=======
 	_aal = None
 	_dbg = False
 	_mode = 'sync'
 	svn = SubVersion()
->>>>>>> 3cabfc8e133237046ff5fb204d59ccde90c8af7d
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-<<<<<<< HEAD
 			key = '_%s'%(key)
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
-=======
-			setattr(self, key, val)
->>>>>>> 3cabfc8e133237046ff5fb204d59ccde90c8af7d
 		if self.dbg:
 			lim = int(max(len(k) for k in RepoSync.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -66,7 +57,6 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-<<<<<<< HEAD
 	def sync(self, repo, *branchs, mode='sync', syncall=None):
 		if self.dbg:
 			print('%s'%self.sync)
@@ -81,18 +71,6 @@ class RepoSync(GitSync):
 				self.call('svn up')
 			# i lack support of any other versioning too till now
 
-
-
-=======
-	def sync(self, repotypes):
-		if self.dbg:
-			print(self.sync)
-		self.syncgits(*[r for (r, t) in repotypes.items() if t == 'git'])
-		svns = [r for (r, t) in repotypes.items() if t == 'svn']
-		if svns:
-			for svnrpo in svns:
-				self.svn.svnupdate(svnrepo)
->>>>>>> 3cabfc8e133237046ff5fb204d59ccde90c8af7d
 
 
 
