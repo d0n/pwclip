@@ -30,60 +30,45 @@ def __colorize(color, text):
 # one for normal and one for bold text
 
 def blu(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	#func = sys._getframe().f_code.co_name
+	return __colorize('blu', text)
 def bblu(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('bblu', text)
 
 def cya(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('cya', text)
 def bcya(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('bcya', text)
 
 def gre(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('gre', text)
 def bgre(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('bgre', text)
 
 def grn(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('grn', text)
 def bgrn(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('bgrn', text)
 
 def red(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('red', text)
 def bred(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('bred', text)
 
 def vio(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('vio', text)
 def bvio(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('bvio', text)
 
 def whi(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('whi', text)
 def bwhi(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('bwhi', text)
 
 def yel(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('yel', text)
 def byel(text):
-	func = sys._getframe().f_code.co_name
-	return __colorize(func, text)
+	return __colorize('byel', text)
 
 # functions for some high frequent use cases:
 def error(*args, **kwargs):
