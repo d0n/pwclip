@@ -330,7 +330,7 @@ class GitSync(GitRepo):
 					if mode in ('sync', 'push'):
 						self.push()
 			if branchstats != {}:
-				yield branchstats
+				yield {repo: branchstats}
 
 class GitClone(GitRepo):
 	user = os.getenv('USER')
