@@ -56,6 +56,7 @@ class RepoSync(GitSync):
 			print(self.syncgits(*gits))
 		if svns:
 			for svnrpo in svns:
+				print(blu('syncing'), '%s%s'%(yel(svnrpo), blu('...')))
 				_chdir(svnrpo)
 				if self.call('%s update'%which('svn')) != 0:
 					error('svn command exited with non zero status')
