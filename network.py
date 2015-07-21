@@ -7,6 +7,7 @@ import sys
 import xml.etree.ElementTree as etree
 
 # local relative imports
+from lib.colortext import bgre
 from lib.misc import which
 from lib.executor import Command
 
@@ -34,9 +35,9 @@ class NetworkInterfacesParser(object):
 			if hasattr(self, key):
 				setattr(self, key, val)
 		if self.dbg:
-			print(NetworkInterfaces.__mro__)
+			print(bgre(NetworkInterfaces.__mro__))
 			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
+				print(bgre(key, '=', val))
 	# rw properties
 	@property               # dbg <bool>
 	def dbg(self):
@@ -107,7 +108,7 @@ class NetworkInterfacesParser(object):
 
 	def write_netconf(self, iface, mode='dhcp', auto=None, config=None):
 		if self.dbg:
-			print(self.write_netconf)
+			print(bgre(self.write_netconf))
 		if auto in (True, False):
 			self.prs = auto
 		if mode == 'wpa':
@@ -161,9 +162,9 @@ class WPASupplicantParser(object):
 			if hasattr(self, key) and type(getattr(self, key)) is not bool:
 				setattr(self, key, val)
 		if self.dbg:
-			print(ETHConfig.__mro__)
+			print(bgre(ETHConfig.__mro__))
 			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
+				print(bgre(key, '=', val))
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
