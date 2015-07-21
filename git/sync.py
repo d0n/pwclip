@@ -10,7 +10,7 @@ import sys
 from lib.misc import which
 from lib.executor import Command
 from lib.system import realpaths
-from lib.colortext import blu, yel, error
+from lib.colortext import blu, yel, bgre, error
 
 from .repo import GitRepo
 
@@ -60,7 +60,7 @@ class GitSync(GitRepo):
 
 	def gitsync(self, branchs=['master'], mode=''):
 		if self.dbg:
-			print(self.gitsync)
+			print(bgre(self.gitsync))
 		mode = mode if mode else self.mode
 		branchstats = {}
 		for branch in branchs:
@@ -80,7 +80,7 @@ class GitSync(GitRepo):
 
 	def itergits(self, repos, branchs=[], mode='', checkout=None):
 		if self.dbg:
-			print(self.itergits)
+			print(bgre(self.itergits))
 		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
 			if not os.path.exists(repo):

@@ -10,7 +10,7 @@ import sys
 from lib.misc import which
 from lib.executor import Command
 from lib.system import realpaths
-from lib.colortext import blu, yel
+from lib.colortext import blu, yel, bgre
 
 from .repo import GitRepo
 
@@ -32,10 +32,10 @@ class GitClone(GitRepo):
 		if 'rpodir' in kwargs.keys():
 			self.rpodir = kwargs['rpodir']
 		if self.dbg:
-			print(GitClone.__mro__)
-			print('user', self.user)
-			print('remote', self.remote)
-			print('repodir', self.rpodir)
+			print(bgre(GitClone.__mro__))
+			print(bgre('user', self.user))
+			print(bgre('remote', self.remote))
+			print(bgre('repodir', self.rpodir))
 			print()
 
 	def clone(self, repo, target=None):

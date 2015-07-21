@@ -5,7 +5,7 @@ from os import listdir as _listdir, chdir as _chdir
 from os.path import exists as _exists, isdir as _isdir
 
 # local relative imports
-from lib.colortext import blu, yel
+from lib.colortext import blu, yel, bgre
 from lib.misc import which
 #from .subversion import SubVersion
 
@@ -30,7 +30,7 @@ class RepoSync(GitSync):
 				setattr(self, key, val)
 		if self.dbg:
 			lim = int(max(len(k) for k in RepoSync.__dict__.keys()))+4
-			print('%s\n%s\n\n%s\n%s\n'%(
+			print(bgre('%s\n%s\n\n%s\n%s\n'%(
                 RepoSync.__mro__,
                '\n'.join('  %s%s=\t%s'%(
                     k, ' '*int(lim-len(k)), v
@@ -39,7 +39,7 @@ class RepoSync(GitSync):
                 '\n'.join('  %s%s=\t%s'%(k[1:], ' '*int(
                     int(max(len(i) for i in self.__dict__.keys())+4
                     )-len(k)), v
-                ) for (k, v) in sorted(self.__dict__.items()))))
+                ) for (k, v) in sorted(self.__dict__.items())))))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
@@ -49,7 +49,7 @@ class RepoSync(GitSync):
 
 	def rposync(self, repotypes):
 		if self.dbg:
-			print(self.rposync)
+			print(bgre(self.rposync))
 		for (repo, typ) in repotypes.items():
 			repostats = {}
 			_chdir(repo)
