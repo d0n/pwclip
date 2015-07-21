@@ -47,19 +47,17 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-	def sync(self, repotypes):
+	def rposync(self, repotypes):
 		if self.dbg:
-			print(self.sync)
+			print(self.rposync)
+		rpostats = {}
 		for (repo, typ) in repotypes.items():
-			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
+			_chdir(repo)
 			if typ == 'git':
-				for git in self._gitsubmods(repo):
-					yield self.gitsync(git)
+				for rpostats in self.itergits([repo], branchs=['master'], mode='sync'):
+					yield rpostats
 			elif typ == 'svn':
-				_chdir(repo)
-				if self.call('%s update'%which('svn')) != 0:
-					error('svn command exited with non zero status')
-
+				yield self.stdo('%s update'%which('svn'))
 
 
 if __name__ == '__main__':

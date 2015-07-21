@@ -12,7 +12,7 @@ from lib.executor import Command
 from lib.system import realpaths
 from lib.colortext import blu, yel
 
-from ._repo import GitRepo
+from .repo import GitRepo
 
 # default vars
 __version__ = '0.1'

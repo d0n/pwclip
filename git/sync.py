@@ -18,22 +18,23 @@ class GitSync(GitRepo):
 	# external
 	_sh_ = True
 	# internal
-	_dbg = False
 	_abr = False
-	_mode = ''
+	_dbg = False
+	_mode = 'sync'
+
+	@property                # abr <bool>
+	def abr(self):
+		return self._abr
+	@abr.setter
+	def abr(self, val):
+		self._abr = val if isinstance(val, bool) else self._abr
+
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val if isinstance(val, bool) else self._dbg
-
-	@property                # aal <bool>
-	def aal(self):
-		return self._aal
-	@aal.setter
-	def aal(self, val):
-		self._aal = val if isinstance(val, bool) else self._aal
 
 	@property                # mode <str>
 	def mode(self):
@@ -57,44 +58,43 @@ class GitSync(GitRepo):
 				repos = self._gitsubmods(mods) + list(repos)
 		return repos
 
-	def gitsync(branchs, mode, recurse=True):
-		
-
-	def itergits(
-          self, *repos, branchs=[], mode='', allbranchs=False, checkout=None):
+	def gitsync(self, branchs=['master'], mode=''):
 		if self.dbg:
-			print(self.syncgits)
-		_all = syncall if syncall else self.aal
+			print(self.gitsync)
 		mode = mode if mode else self.mode
-		repobranchstats = {}
+		branchstats = {}
+		for branch in branchs:
+			status = self.gitstatus()
+			if status:
+				if mode in ('sync', 'push'):
+					if status:
+						self.add()
+						self.commit(status)
+						branchstats[branch] = status
+				if mode in ('sync', 'pull'):
+					self.pull()
+				if mode in ('sync', 'push'):
+					self.push()
+		if branchstats != {}:
+			return branchstats
+
+
+
+	def itergits(self, repos, branchs=[], mode='', checkout=None):
+		if self.dbg:
+			print(self.itergits)
+		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
+			os.chdir(repo)
 			if not os.path.exists(repo):
 				continue
-			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			os.chdir(repo)
-			_head = checkout if checkout else self._head()
-			branchs = [_head]
-			if _all:
-				branchs = [h for h in self._heads() if h != _head] + [_head]
-			branchstats = {}
-			for branch in branchs:
-				if not branch == self._head():
-					self.checkout(branch)
-				status = self.gitstatus()
-				if status:
-					if mode in ('sync', 'push'):
-						if status:
-							self.add()
-							self.commit(status)
-							branchstats[branch] = status
-					if mode in ('sync', 'pull'):
-						self.pull()
-					if mode in ('sync', 'push'):
-						self.push()
-			if branchstats != {}:
-				repobranchstats[repo] = branchstats
-		if repobranchstats != {}:
-			return repobranchstats
+			if not branchs:
+				branchs = [self._head()]
+				if self.abr:
+					branchs = self._heads()
+			if checkout:
+				branchs = [b for b in branchs if b != checkout] + [checkout]
+			yield self.gitsync(branchs, mode)
 
 if __name__ == '__main__':
 	exit(1)

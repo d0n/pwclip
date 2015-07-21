@@ -1,3 +1,3 @@
-from ._repo import GitRepo
-from ._sync import GitSync
-from ._clone import GitClone
+from .repo import GitRepo
+from .sync import GitSync
+from .clone import GitClone
