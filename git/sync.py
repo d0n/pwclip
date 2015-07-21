@@ -19,7 +19,7 @@ class GitSync(GitRepo):
 	_sh_ = True
 	# internal
 	_dbg = False
-	_aal = False
+	_abr = False
 	_mode = ''
 	@property                # dbg <bool>
 	def dbg(self):
@@ -57,10 +57,11 @@ class GitSync(GitRepo):
 				repos = self._gitsubmods(mods) + list(repos)
 		return repos
 
-	
+	def gitsync(branchs, mode, recurse=True):
+		
 
-	def syncgits(
-          self, *repos, branchs=[], mode='', syncall=False, checkout=None):
+	def itergits(
+          self, *repos, branchs=[], mode='', allbranchs=False, checkout=None):
 		if self.dbg:
 			print(self.syncgits)
 		_all = syncall if syncall else self.aal
