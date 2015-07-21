@@ -25,9 +25,9 @@ class SSHCommand(Command):
 			if hasattr(self, key):
 				setattr(self, key[1:], val)
 		if self.dbg:
-			print(SSHCommand.__mro__)
+			print('\033[01;30m%s\033[0m'%SSHCommand.__mro__)
 			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
+				print('\033[01;30m%s = %s\033[0m'%(key, val))
 
 	@property                # dbg <bool>
 	def dbg(self):

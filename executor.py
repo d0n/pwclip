@@ -88,7 +88,6 @@ class Command(object):
 			sucmds = self.__sucmd(commands)
 		return sucmds
 
-
 	def __cmdprep(self, commands):
 		commands = self.__list(commands)
 		if self.su_:
@@ -96,9 +95,7 @@ class Command(object):
 		if self.sh_:
 			commands = self.__str(*commands)
 		if self.dbg:
-			print(
-                '`%s`\t{sh: %s, su: %s}'%(commands, self.sh_, self.su_)
-            )
+			print('\033[01;30m`%s`\t{sh: %s, su: %s}\033[0m'%(commands, self.sh_, self.su_))
 		return commands
 
 	def run(self, *commands):
