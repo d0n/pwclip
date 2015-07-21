@@ -59,7 +59,8 @@ class RepoSync(GitSync):
 					repostats[rpo] = stats
 			elif typ == 'svn':
 				repostats[repo] = self.stdo('%s update'%which('svn'))
-			yield repostats
+			if repostats != {}:
+				yield repostats
 
 
 if __name__ == '__main__':
