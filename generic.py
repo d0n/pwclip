@@ -50,8 +50,8 @@ class RepoSync(GitSync):
 	def rposync(self, repotypes):
 		if self.dbg:
 			print(self.rposync)
-		repostats = {}
 		for (repo, typ) in repotypes.items():
+			repostats = {}
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			_chdir(repo)
 			if typ == 'git':
