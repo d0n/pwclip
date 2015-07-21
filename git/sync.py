@@ -85,6 +85,9 @@ class GitSync(GitRepo):
 			print(self.itergits)
 		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
+			if not os.path.exists(repo):
+				error('path %s does not exist and has been omitted'%repo)
+				continue
 			os.chdir(repo)
 			if not os.path.exists(repo):
 				continue
