@@ -10,7 +10,7 @@ import sys
 from lib.misc import which
 from lib.executor import Command
 from lib.system import realpaths
-from lib.colortext import blu, yel
+from lib.colortext import blu, yel, error
 
 from .repo import GitRepo
 
