@@ -78,8 +78,6 @@ class GitSync(GitRepo):
 		if branchstats != {}:
 			return branchstats
 
-
-
 	def itergits(self, repos, branchs=[], mode='', checkout=None):
 		if self.dbg:
 			print(self.itergits)
@@ -89,6 +87,7 @@ class GitSync(GitRepo):
 				error('path %s does not exist and has been omitted'%repo)
 				continue
 			os.chdir(repo)
+			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			if not os.path.exists(repo):
 				continue
 			if not branchs:
@@ -97,7 +96,7 @@ class GitSync(GitRepo):
 					branchs = self._heads()
 			if checkout:
 				branchs = [b for b in branchs if b != checkout] + [checkout]
-			yield self.gitsync(branchs, mode)
+			yield repo, self.gitsync(branchs, mode)
 
 if __name__ == '__main__':
 	exit(1)

@@ -50,15 +50,15 @@ class RepoSync(GitSync):
 	def rposync(self, repotypes):
 		if self.dbg:
 			print(self.rposync)
-		rpostats = {}
+		repostats = {}
 		for (repo, typ) in repotypes.items():
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			_chdir(repo)
 			if typ == 'git':
-				for rpostats in self.itergits([repo], branchs=['master'], mode='sync'):
-					yield rpostats
+				for (rpo, stats) in self.itergits([repo], branchs=['master'], mode='sync'):
+					repostats[rpo] = stats
 			elif typ == 'svn':
-				yield self.stdo('%s update'%which('svn'))
+				repostats[repo] = self.stdo('%s update'%which('svn'))
 
 
 if __name__ == '__main__':
