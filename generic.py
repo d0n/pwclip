@@ -52,6 +52,7 @@ class RepoSync(GitSync):
 			print(self.rposync)
 		rpostats = {}
 		for (repo, typ) in repotypes.items():
+			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			_chdir(repo)
 			if typ == 'git':
 				for rpostats in self.itergits([repo], branchs=['master'], mode='sync'):
