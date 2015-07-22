@@ -9,7 +9,7 @@ try:
 except ImportError:
 	DEVNULL = open('/dev/null')
 
-from misc import which
+from system import which
 
 class Command(object):
 	"""(remote) command execution module"""

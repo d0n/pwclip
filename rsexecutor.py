@@ -1,4 +1,4 @@
-from misc import which, whoami, hostname
+from system import which, whoami, hostname
 from .executor import Command
 
 class SSHCommand(Command):
