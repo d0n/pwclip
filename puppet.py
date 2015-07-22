@@ -22,7 +22,7 @@ from socket import getfqdn as fqdn
 
 # local relative imports
 from lib.colortext import bgre
-from lib.misc import which
+from lib.system import which
 from lib.executor import SSHCommand
 from lib.network import SecureCoPy, netcat as nc
 

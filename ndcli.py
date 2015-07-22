@@ -18,7 +18,7 @@ import re
 import os
 import sys
 
-from lib.misc import which
+from lib.system import which
 from lib.colortext import error, fatal
 from lib.executor import command as c
 from lib.network import askdns
