@@ -50,9 +50,7 @@ class RepoSync(GitSync):
 	def rposync(self, repotypes):
 		if self.dbg:
 			print(bgre(self.rposync))
-		print(repotypes)
-		repos = sorted(repotypes)
-		print([(k, repotypes[k]) for k in repos])
+		print(sorted(repotypes))
 		for (repo, typ) in repotypes.items():
 			repostats = {}
 			_chdir(repo)
