@@ -50,14 +50,13 @@ class RepoSync(GitSync):
 	def rposync(self, repotypes):
 		if self.dbg:
 			print(bgre(self.rposync))
-		print(dict((k, repotypes[k]) for k in sorted(repotypes)))
-		for (repo, typ) in repotypes.items():
+		for repo in sorted(repotypes):
 			repostats = {}
 			_chdir(repo)
-			if typ == 'git':
+			if repotypes[repo] == 'git':
 				for (rpo, stats) in self.itergits([repo], branchs=['master'], mode='sync'):
 					repostats[rpo] = stats
-			elif typ == 'svn':
+			elif repotypes[repo] == 'svn':
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				repostats[repo] = self.stdo('%s update'%which('svn'))
 			if repostats != {}:
