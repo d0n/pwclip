@@ -20,7 +20,7 @@ import os
 import sys
 
 # local relative imports
-from lib.misc import which
+from lib.system import which
 from lib.colortext import blu, grn, yel, abort, error
 from lib.executor import Command
 

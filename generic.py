@@ -6,7 +6,7 @@ from os.path import exists as _exists, isdir as _isdir
 
 # local relative imports
 from lib.colortext import blu, yel, bgre
-from lib.misc import which
+from lib.system import which
 #from .subversion import SubVersion
 
 from .git import GitSync

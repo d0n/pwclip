@@ -7,9 +7,8 @@ from os.path import isfile as _isfile
 import sys
 
 # local relative imports
-from lib.misc import which
 from lib.executor import Command
-from lib.system import realpaths
+from lib.system import realpaths, which
 from lib.colortext import blu, yel, bgre
 
 # default vars
