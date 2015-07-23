@@ -61,25 +61,23 @@ class GitSync(GitRepo):
 
 	def gitsync(self, branchs=['master'], mode=''):
 		if self.dbg:
-			print(bgre('%s %s %s'%(self.gitsync, branchs, mode)))
+			print(bgre('%s\n  branchs = %s\n  mode = %s'%(
+                self.gitsync, branchs, mode)))
 		mode = mode if mode else self.mode
 		branchstats = {}
 		for branch in branchs:
-			if not self._fetch_():
-				error('could not fetch remote ref')
-			if self._isbehind():
-				self.pull(branch)
+			if mode in ('pull', 'sync'):
+				if not self._fetch_():
+					error('could not fetch remote ref')
+				if self._isbehind():
+					self.pull(branch)
 			status = self.gitstatus()
-			if status:
-				print(status)
-				if mode in ('sync', 'push'):
-					if status:
-						self.add()
-						self.commit(status)
-						branchstats[branch] = status
-				if mode in ('sync', 'pull'):
-					self.pull()
-				if mode in ('sync', 'push'):
+			if status and mode in ('sync', 'push'):
+				if status:
+					self.add()
+					self.commit(status)
+					branchstats[branch] = status
+				if self._isahead():
 					self.push()
 		if branchstats != {}:
 			return branchstats
