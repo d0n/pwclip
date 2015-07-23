@@ -71,10 +71,9 @@ class GitSync(GitRepo):
 					self.pull(branch)
 			status = self.gitstatus()
 			if status and mode in ('sync', 'push'):
-				if status:
-					self.add()
-					self.commit(status)
-					branchstats[branch] = status
+				self.add()
+				self.commit(status)
+				branchstats[branch] = status
 				if self._isahead():
 					self.push()
 		if branchstats != {}:
