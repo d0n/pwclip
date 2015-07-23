@@ -2,8 +2,8 @@
 """git wrapping module"""
 # global imports
 import re
-import os
-from os.path import isfile as _isfile
+from os import chdir as _chdir
+from os.path import isfile as _isfile, exists as _exists
 import sys
 
 # local relative imports
@@ -83,13 +83,11 @@ class GitSync(GitRepo):
 			print(bgre(self.itergits))
 		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
-			if not os.path.exists(repo):
+			if not _exists(repo):
 				error('path %s does not exist and has been omitted'%repo)
 				continue
-			os.chdir(repo)
+			_chdir(repo)
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			if not os.path.exists(repo):
-				continue
 			if not branchs:
 				branchs = [self._head()]
 				if self.abr:
