@@ -111,16 +111,14 @@ class GitRepo(Command):
 		with open('%s/HEAD'%(self.gitdir), 'r') as f:
 			return f.read().split('/')[-1].strip()
 
-	def _remoteref(self):
+	def _remoteref_(self):
 		if self.dbg:
-			print(bgre(self._remoteref))
-		self._fetch_(fetchall=True)
+			print(bgre(self._remoteref_))
 		gitdir = self.gitdir
 		remref = '%s/refs/remotes/origin/%s'%(gitdir, self._head())
-		if not os.path.isfile(remref):
-			remref = '%s/refs/remotes/origin/HEAD'%(gitdir)
-		with open(remref, 'r') as f:
-			return f.read().strip()
+		if os.path.isfile(remref):
+			with open(remref, 'r') as f:
+				return f.read().strip()
 
 	def _remotes(self):
 		if self.dbg:
@@ -131,7 +129,10 @@ class GitRepo(Command):
 	def _isbehind(self):
 		if self.dbg:
 			print(bgre(self._isbehind))
-		if self._remoteref() != self._headref_():
+		remoref = self._remoteref_()
+		headref = self._headref_()
+		print(remoref, headref)
+		if remoref != headref:
 			return True
 
 	def _isahead(self):

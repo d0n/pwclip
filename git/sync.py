@@ -67,15 +67,16 @@ class GitSync(GitRepo):
 		branchstats = {}
 		for branch in branchs:
 			if mode in ('pull', 'sync'):
-				if self._isbehind():
-					self.pull(branch)
-			status = self.gitstatus()
-			if status and mode in ('sync', 'push'):
-				self.add()
-				self.commit(status)
-				branchstats[branch] = status
-				if self._isahead():
-					self.push()
+				#if self._isbehind():
+				self.pull(branch)
+			if mode in ('sync', 'push'):
+				status = self.gitstatus()
+				if status:
+					self.add()
+					self.commit(status)
+					branchstats[branch] = status
+					if self._isahead():
+						self.push()
 		if branchstats != {}:
 			return branchstats
 
