@@ -206,7 +206,7 @@ class GitRepo(Command):
 
 	def gitstatus(self, mode='--porcelain'):
 		if self.dbg:
-			print(bgre('%s %s'%(self.gitstatus, mode)))
+			print(bgre('%s\n mode = %s'%(self.gitstatus, mode)))
 		out = self.stdx('%s status %s'%(self.gitbin, mode))
 		if not out or mode != '--porcelain':
 			return out
