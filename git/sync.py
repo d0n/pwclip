@@ -67,8 +67,6 @@ class GitSync(GitRepo):
 		branchstats = {}
 		for branch in branchs:
 			if mode in ('pull', 'sync'):
-				if not self._fetch_():
-					error('could not fetch remote ref')
 				if self._isbehind():
 					self.pull(branch)
 			status = self.gitstatus()
