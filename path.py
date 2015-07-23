@@ -15,14 +15,23 @@ def realpaths(*pathlist, base=os.getcwd()):
 			os.chdir(base)
 			path = os.path.abspath(path)
 			os.chdir(pwd)
-		return path
-	for paths in pathlist:
-		if type(paths) in (list, tuple):
-			for path in paths:
-				paths = [_absrelpath(path) for path in paths]
-		else:
-			paths = _absrelpath(paths)
-	return paths
+		return path.rstrip('/')
+	paths = []
+	for path in pathlist:
+		if isinstance(path, list) or isinstance(path, tuple):
+			print('list/tuple')
+			for pat in path:
+				paths = paths + [_absrelpath(p) for p in path]
+		elif isinstance(path, str):
+			if ' ' in path:
+				print('liststring')
+				paths = paths + [_absrelpath(p.strip()) for p in path.strip('[]').split(',')]
+			else:
+				print('string', path)
+				paths.append(_absrelpath(path))
+	if len(paths) > 1:
+		return paths
+	return paths[0]
 
 
 def confpaths(paths, conf, base=os.getcwd()):
