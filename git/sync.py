@@ -67,6 +67,7 @@ class GitSync(GitRepo):
 		for branch in branchs:
 			status = self.gitstatus()
 			if status:
+				print(status)
 				if mode in ('sync', 'push'):
 					if status:
 						self.add()
