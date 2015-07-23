@@ -47,15 +47,16 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-	def rposync(self, repotypes):
+	def rposync(self, repotypes, mode=''):
 		if self.dbg:
-			print(bgre(self.rposync))
+			print(bgre('%s\n  repotypes = %s\n  mode = %s'%(
+                self.rposync, repotypes, mode)))
+		mode = mode if mode else self.mode
 		for repo in sorted(repotypes):
 			repostats = {}
 			_chdir(repo)
 			if repotypes[repo] == 'git':
-				for (rpo, stats) in self.itergits(
-                      [repo], branchs=['master'], mode='sync'):
+				for (rpo, stats) in self.itergits([repo], branchs=['master'], mode=mode):
 					repostats[rpo] = stats
 			elif repotypes[repo] == 'svn':
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
