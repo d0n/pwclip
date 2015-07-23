@@ -154,10 +154,10 @@ class GitRepo(Command):
 			command = '%s checkout %s'%(self.gitbin, branch)
 		return self.erno(command)
 
-	def pull(self, origin='origin'):
+	def pull(self, branch='master', origin='origin'):
 		if self.dbg:
 			print(bgre(self.pull))
-		command = '%s pull %s' %(self.gitbin, origin)
+		command = '%s pull %s %s' %(self.gitbin, origin, branch)
 		out = self.stdx(command)
 		if out:
 			return out
