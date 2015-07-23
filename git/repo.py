@@ -207,8 +207,6 @@ class GitRepo(Command):
 	def gitstatus(self, mode='--porcelain'):
 		if self.dbg:
 			print(bgre('%s\n mode = %s'%(self.gitstatus, mode)))
-		if not self._fetch_():
-			error('could not fetch remote ref')
 		out = self.stdx('%s status %s'%(self.gitbin, mode))
 		if not out or mode != '--porcelain':
 			return out
