@@ -43,6 +43,8 @@ class GitSync(GitRepo):
 		self._mode = val if isinstance(val, str) else self._mode
 
 	def _gitsubmods(self, repos):
+		if self.dbg:
+			print(self._gitsubmods)
 		def __gitmods(gitmodfile):
 			with open(gitmodfile, 'r') as gmf:
 				modlines = gmf.readlines()
@@ -59,13 +61,12 @@ class GitSync(GitRepo):
 
 	def gitsync(self, branchs=['master'], mode=''):
 		if self.dbg:
-			print(bgre(self.gitsync))
+			print(bgre('%s %s %s'%(self.gitsync, branchs, mode)))
 		mode = mode if mode else self.mode
 		branchstats = {}
 		for branch in branchs:
 			status = self.gitstatus()
 			if status:
-				print(mode)
 				if mode in ('sync', 'push'):
 					if status:
 						self.add()
