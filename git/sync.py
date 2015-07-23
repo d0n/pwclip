@@ -44,7 +44,7 @@ class GitSync(GitRepo):
 
 	def _gitsubmods(self, repos):
 		if self.dbg:
-			print(self._gitsubmods)
+			print(bgre(self._gitsubmods))
 		def __gitmods(gitmodfile):
 			with open(gitmodfile, 'r') as gmf:
 				modlines = gmf.readlines()
