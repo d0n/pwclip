@@ -18,7 +18,7 @@ def realpaths(*pathlist, base=os.getcwd()):
 		return path.rstrip('/')
 	paths = []
 	for path in pathlist:
-		if isinstance(path, list) or isinstance(path, tuple):
+		if isinstance(path, (list, tuple)):
 			#print('list/tuple')
 			for pat in path:
 				paths = paths + [_absrelpath(p) for p in path]
@@ -55,5 +55,17 @@ def confdats(*confs):
 	for conf in confs:
 		cfg.read(conf)
 		for section in cfg.sections():
-			confdats[section] = dict(cfg[section])
+			for (key, val) in dict(cfg[section]).items():
+				if val.startswith('[') and val.endswith(']'):
+					val = [v.strip(" ',") for v in val.strip('[]').split(',') if v]
+				
+	return confdats
+
+def jconfdats(*confs):
+	from json import load as _load
+	confdats = {}
+	for conf in confs:
+		with open(conf, 'r') as stream:
+			for (key, val) in _load(stream).items():
+				confdats[key] = val
 	return confdats
