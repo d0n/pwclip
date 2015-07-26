@@ -66,8 +66,7 @@ class GitRepo(Command):
 		gitdir = '%s/.git'%(repodir)
 		if os.path.isfile(gitdir):
 			with open(gitdir, 'r') as gitf:
-				gitdir = gitf.read().split('gitdir:')[1].strip()
-				print(gitdir)
+				return '%s/%s'%(repodir, gitf.read().split('gitdir:')[1].strip())
 		c = len(repodir.split('/'))
 		while c != 0:
 			if os.path.isdir(gitdir):
