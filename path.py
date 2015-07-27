@@ -55,10 +55,7 @@ def confdats(*confs):
 	for conf in confs:
 		cfg.read(conf)
 		for section in cfg.sections():
-			for (key, val) in dict(cfg[section]).items():
-				if val.startswith('[') and val.endswith(']'):
-					val = [v.strip(" ',") for v in val.strip('[]').split(',') if v]
-				
+			confdats[section] = dict(cfg[section])
 	return confdats
 
 def jconfdats(*confs):
