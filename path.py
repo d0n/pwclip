@@ -21,18 +21,17 @@ def realpaths(*pathlist, base=os.getcwd()):
 		if isinstance(path, (list, tuple)):
 			#print('list/tuple')
 			for pat in path:
-				paths = paths + [_absrelpath(p) for p in path]
+				paths = [_absrelpath(p) for p in path]
 		elif isinstance(path, str):
 			if ' ' in path:
 				#print('liststring')
-				paths = paths + [_absrelpath(p.strip()) for p in path.strip('[]').split(',')]
+				paths = [_absrelpath(p.strip()) for p in path.strip('[]').split(',')]
+				break
 			else:
 				#print('string', path)
 				paths.append(_absrelpath(path))
 	if paths:
-		if len(paths) > 1:
-			return paths
-		return paths[0]
+		return paths
 
 def confpaths(paths, conf, base=os.getcwd()):
 	#print('%s\n%s\n%s'%(paths, conf, base))
