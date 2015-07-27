@@ -31,7 +31,9 @@ def realpaths(*pathlist, base=os.getcwd()):
 				#print('string', path)
 				paths.append(_absrelpath(path))
 	if paths:
-		return paths
+		if len(paths) > 1:
+			return paths
+		return paths[0]
 
 def confpaths(paths, conf, base=os.getcwd()):
 	#print('%s\n%s\n%s'%(paths, conf, base))
