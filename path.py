@@ -1,35 +1,38 @@
 import os
 import inspect
 
+
+def absrelpath(path, base=os.getcwd()):
+	path = path.strip("'")
+	path = path.strip('"')
+	if path.startswith('~'):
+		path = os.path.expanduser(path)
+	if os.path.islink(path):
+		path = os.readlink(path)
+	if '..' in path or not path.startswith('/'):
+		pwd = os.getcwd()
+		os.chdir(base)
+		path = os.path.abspath(path)
+		os.chdir(pwd)
+	return path.rstrip('/')
+
+
 def realpaths(*pathlist, base=os.getcwd()):
 	#print(pathlist, base)
-	def _absrelpath(path):
-		path = path.strip("'")
-		path = path.strip('"')
-		if path.startswith('~'):
-			path = os.path.expanduser(path)
-		if os.path.islink(path):
-			path = os.readlink(path)
-		if '..' in path or not path.startswith('/'):
-			pwd = os.getcwd()
-			os.chdir(base)
-			path = os.path.abspath(path)
-			os.chdir(pwd)
-		return path.rstrip('/')
 	paths = []
 	for path in pathlist:
 		if isinstance(path, (list, tuple)):
 			#print('list/tuple')
 			for pat in path:
-				paths = [_absrelpath(p) for p in path]
+				paths = [absrelpath(p, base) for p in path]
 		elif isinstance(path, str):
 			if ' ' in path:
 				#print('liststring')
-				paths = [_absrelpath(p.strip()) for p in path.strip('[]').split(',')]
+				paths = [absrelpath(p.strip(), base) for p in path.strip('[]').split(',')]
 				break
 			else:
 				#print('string', path)
-				paths.append(_absrelpath(path))
+				paths.append(absrelpath(path), base)
 	if paths:
 		if len(paths) > 1:
 			return paths
