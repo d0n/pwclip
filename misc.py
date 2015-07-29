@@ -44,7 +44,7 @@ def listhosts(stageha):
 def listclusters(name):
 	stages = ('dev', 'test', 'cert', 'ac1', 'prod', 'build')
 	stageha = re.sub('\d{1,2}$', '', name)
-	name = re.sub('^(ac1)|(dev|test|cert)?$', '', stageha)
+	name = re.sub('^(ac1)|(dev|test|cert|build)?$', '', stageha)
 	cluster = {}
 	for stage in stages:
 		stageha = name
