@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from sys import stderr as _stderr
 
 # get color escape sequence from string
 def __colorize(color, text):
@@ -92,7 +93,7 @@ def error(*args, **kwargs):
 			msgs.append(red(arg))
 		else:
 			msgs.append(yel(arg))
-	print(' '.join(msg for msg in msgs), flush=True)
+	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
 
 
 def fatal(*args, **kwargs):
@@ -112,7 +113,7 @@ def fatal(*args, **kwargs):
 			msgs.append(bred(arg))
 		else:
 			msgs.append(yel(arg))
-	print(' '.join(msg for msg in msgs), flush=True)
+	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
 	exit(1)
 
 def abort(*messages):
