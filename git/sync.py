@@ -80,7 +80,7 @@ class GitSync(GitRepo):
 		if branchstats != {}:
 			return branchstats
 
-	def itergits(self, repos, branchs=[], mode='', checkout=None):
+	def itergits(self, repos, mode='', syncall=None):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  branchs = %s\n  mode = %s\n  checkout = %s'%(self.itergits, repos, branchs, mode, checkout)))
 		mode = mode if mode else self.mode
@@ -90,12 +90,9 @@ class GitSync(GitRepo):
 				continue
 			_chdir(repo)
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			if not branchs:
-				branchs = [self._head()]
-				if self.abr:
-					branchs = self._heads()
-			if checkout:
-				branchs = [b for b in branchs if b != checkout] + [checkout]
+			branchs = [self._head()]
+			if syncall or self.abr:
+				branchs = self._heads()
 			yield repo, self.gitsync(branchs, mode)
 
 if __name__ == '__main__':
