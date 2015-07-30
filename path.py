@@ -71,14 +71,7 @@ def jconfdats(*confs):
 				confdats[key] = val
 	return confdats
 
-def userauthsock():
-	if os.path.isdir('/run/user'):
-		for (dirs, subs, files) in os.walk('/run/user'):
-			for data in files:
-				path = '%s/%s'%(dirs, data)
-				try:
-					mode = os.stat(path).st_mode
-				except PermissionError:
-					continue
-				if data == 'ssh' and _S_ISSOCK(mode):
-					return path
+def usersshsock(user):
+	socklink = '/home/%s/.ssh/auth.sock'%user
+	if os.path.islink(socklink):
+		return os.readlink(socklink)

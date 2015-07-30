@@ -3,7 +3,7 @@ __version__ = '0.1'
 from .cronologic import stamp, fileage
 
 from .path import absrelpath, realpaths, confpaths, confdats, jconfdats, \
-    userauthsock
+    usersshsock
 
 from .blockdevice import BlockDevice
 
