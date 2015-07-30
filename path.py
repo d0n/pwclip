@@ -1,6 +1,6 @@
 import os
 import inspect
-
+from stat import S_ISSOCK as _S_ISSOCK
 
 def absrelpath(path, base=os.getcwd()):
 	path = path.strip("'")
@@ -70,3 +70,15 @@ def jconfdats(*confs):
 			for (key, val) in _load(stream).items():
 				confdats[key] = val
 	return confdats
+
+def userauthsock():
+	if os.path.isdir('/run/user'):
+		for (dirs, subs, files) in os.walk('/run/user'):
+			for data in files:
+				path = '%s/%s'%(dirs, data)
+				try:
+					mode = os.stat(path).st_mode
+				except PermissionError:
+					continue
+				if data == 'ssh' and _S_ISSOCK(mode):
+					return path
