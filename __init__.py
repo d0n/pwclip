@@ -14,14 +14,13 @@ from .lineno import lineno
 
 from .which import which
 
-from .whoami import whoami
-
 from .random import random
 
 from .string2bool import string2bool
 
 from .hostname import hostname
 
-from .firstuser import firstuser
-
 from .gpgagent import agentinfo
+
+from .user.whoami import whoami
+from .user.find import userfind
