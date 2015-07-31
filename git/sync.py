@@ -82,7 +82,8 @@ class GitSync(GitRepo):
 
 	def itergits(self, repos, mode='', syncall=None):
 		if self.dbg:
-			print(bgre('%s\n  repos = %s\n  branchs = %s\n  mode = %s\n  checkout = %s'%(self.itergits, repos, branchs, mode, checkout)))
+			print(bgre('%s\n  repos = %s\n  mode = %s\n  syncall = %s'%(
+                self.itergits, repos, mode, syncall)))
 		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
 			if not _exists(repo):
