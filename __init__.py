@@ -2,8 +2,7 @@ __version__ = '0.1'
 
 from .cronologic import stamp, fileage
 
-from .path import absrelpath, realpaths, confpaths, confdats, jconfdats, \
-    usersshsock
+from .path import absrelpath, realpaths, confpaths, confdats, jconfdats
 
 from .blockdevice import BlockDevice
 
@@ -24,3 +23,5 @@ from .string2bool import string2bool
 from .hostname import hostname
 
 from .firstuser import firstuser
+
+from .gpgagent import agentinfo

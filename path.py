@@ -71,7 +71,3 @@ def jconfdats(*confs):
 				confdats[key] = val
 	return confdats
 
-def usersshsock(user):
-	socklink = '/home/%s/.ssh/auth.sock'%user
-	if os.path.islink(socklink):
-		return os.readlink(socklink)
