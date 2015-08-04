@@ -96,5 +96,7 @@ class GitSync(GitRepo):
 				branchs = self._heads()
 			yield repo, self.gitsync(branchs, mode)
 
+
+
 if __name__ == '__main__':
 	exit(1)
