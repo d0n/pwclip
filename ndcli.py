@@ -22,7 +22,7 @@ from lib.system import which
 from lib.colortext import error, fatal
 from lib.executor import command as c
 from lib.network import askdns
-from deb import DePyKG
+from dpkg import DePyKG
 
 # global default variables
 __version__ = '0.1'
