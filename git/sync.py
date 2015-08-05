@@ -59,26 +59,22 @@ class GitSync(GitRepo):
 				repos = self._gitsubmods(mods) + list(repos)
 		return repos
 
-	def gitsync(self, branchs=['master'], mode=''):
+	def gitsync(self, branch, mode=''):
 		if self.dbg:
 			print(bgre('%s\n  branchs = %s\n  mode = %s'%(
                 self.gitsync, branchs, mode)))
 		mode = mode if mode else self.mode
-		branchstats = {}
-		for branch in branchs:
-			if mode in ('pull', 'sync'):
-				#if self._isbehind():
-				self.pull(branch)
-			if mode in ('sync', 'push'):
-				status = self.gitstatus()
-				if status:
-					self.add()
-					self.commit(status)
-					branchstats[branch] = status
-					if self._isahead():
-						self.push()
-		if branchstats != {}:
-			return branchstats
+		if mode in ('pull', 'sync'):
+			#if self._isbehind():
+			self.pull(branch)
+		if mode in ('sync', 'push'):
+			status = self.gitstatus()
+			if status:
+				self.add()
+				self.commit(status)
+				if self._isahead():
+					self.push()
+				return {branch: status}
 
 	def itergits(self, repos, mode='', syncall=None):
 		if self.dbg:
@@ -94,7 +90,7 @@ class GitSync(GitRepo):
 			branchs = [self._head()]
 			if syncall or self.abr:
 				branchs = self._heads()
-			yield repo, self.gitsync(branchs, mode)
+			yield repo, {b: self.gitsync(b, mode) for b in branchs}
 
 
 
