@@ -199,6 +199,8 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitstatus))
 		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
+		ahbes = [l for l in stats if l.startswith('##')]
+		print(ahbes)
 		ahbe, num = stats[0].split('[')[-1].strip(']').split()
 		status = {}
 		status['sync'] = ahbe
