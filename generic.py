@@ -47,11 +47,13 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = val
 
-	def rposync(self, repotypes, mode='', syncall=None):
+	def rposync(self, repotypes, mode=None, syncall=None):
 		if self.dbg:
 			print(bgre('%s\n  repotypes = %s\n  mode = %s'%(
                 self.rposync, repotypes, mode)))
 		mode = mode if mode else self.mode
+		if self.dbg:
+			print(bgre(mode))
 		for repo in sorted(repotypes):
 			repostats = {}
 			_chdir(repo)
