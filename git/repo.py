@@ -118,8 +118,8 @@ class GitRepo(Command):
 	def _remoteref_(self):
 		if self.dbg:
 			print(bgre(self._remoteref_))
-		gitdir = self.gitdir
-		remref = '%s/refs/remotes/origin/%s'%(gitdir, self._head())
+		self._fetch_()
+		remref = '%s/refs/remotes/origin/%s'%(self.gitdir, self._head())
 		if os.path.isfile(remref):
 			with open(remref, 'r') as f:
 				return f.read().strip()
@@ -130,19 +130,39 @@ class GitRepo(Command):
 		return [rem for rem in os.listdir(
 	        '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
 
+	def _lastlogrefs_(self):
+		with open('%s/logs/HEAD'%self.gitdir) as log:
+			lastlog = log.readlines()[-1]
+			return lastlog.split(' ')[1], lastlog.split(' ')[0]
+
 	def _isbehind(self):
 		if self.dbg:
 			print(bgre(self._isbehind))
 		remoref = self._remoteref_()
+		fechref = self._fetchref_()
 		headref = self._headref_()
-		print(remoref, headref)
-		if remoref != headref:
+		lastref, nextref = self._lastlogrefs_()
+		print(remoref)
+		print(fechref)
+		print(headref)
+		print(nextref)
+		#print('isbehind:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
+		if remoref != nextref:
 			return True
 
 	def _isahead(self):
 		if self.dbg:
 			print(bgre(self._isahead))
-		if self._headref_() != self._fetchref_():
+		remoref = self._remoteref_()
+		fechref = self._fetchref_()
+		headref = self._headref_()
+		lastref, nextref = self._lastlogrefs_()
+		print(remoref)
+		print(fechref)
+		print(headref)
+		print(nextref)
+		#print('isahead:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
+		if remoref == nextref:
 			return True
 
 	def checkout(self, branch, *files):
@@ -159,9 +179,10 @@ class GitRepo(Command):
 			command = '%s checkout %s'%(self.gitbin, branch)
 		return self.erno(command)
 
-	def pull(self, branch='master', origin='origin'):
+	def pull(self, branch=None, origin='origin'):
 		if self.dbg:
 			print(bgre(self.pull))
+		branch = branch if branch else self._head()
 		command = '%s pull %s %s' %(self.gitbin, origin, branch)
 		out = self.stdx(command)
 		if out:
@@ -170,8 +191,7 @@ class GitRepo(Command):
 	def push(self, remote=None, origin='origin', setup=None):
 		if self.dbg:
 			print(bgre(self.push))
-		if not remote:
-			remote = self._head()
+		remote = remote if remote else self._head()
 		command = '%s push %s %s'%(self.gitbin, origin, remote)
 		if setup or remote not in self._remotes():
 			command = '%s push --set-upstream %s %s'%(
