@@ -65,6 +65,7 @@ class GitSync(GitRepo):
                 self.gitsync, branch, mode)))
 		mode = mode if mode else self.mode
 		status = self.gitstatus()
+		print(status)
 		if status:
 			if status['sync'] == 'behind':
 				self.pull()
