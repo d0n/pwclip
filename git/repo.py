@@ -66,30 +66,13 @@ class GitRepo(Command):
 		else:
 			raise ValueError('directory %s does not exist'%val)
 
-	@property                # isa <bool>
-	def isa(self):
-		__href = self._headref_()
-		__rref = self._remoteref_()
-		__logs = self._logrefs_()
-		if __href == __rref and __href not in __logs:
-			return True
-
-	@property                # isb <bool>
-	def isb(self):
-		__href = self._headref_()
-		__rref = self._remoteref_()
-		__logs = self._logrefs_()
-		if __href != __rref and __href in __logs:
-			if self.dbg:
-				print(bgre('behind:\n\t%s\n\t%s\n\t%s'%(__href, __rref, __logs)))
-			return True
-
 	# ro properties
 	@property               # gitbin <str>
 	def gitbin(self):
 		return self._gitbin
 
-	def __gitdir_(self, repodir):
+	@staticmethod
+	def __gitdir_(repodir):
 		gitdir = '%s/.git'%(repodir)
 		if os.path.isfile(gitdir):
 			with open(gitdir, 'r') as gitf:
@@ -104,13 +87,6 @@ class GitRepo(Command):
                             d for d in repodir.split('/')[:c])+'/.git')
 				c-=1
 			return gitdir
-
-	def __fetch_(self, fetchall=None):
-		if self.dbg:
-			print(bgre(self.__fetch_))
-		cmd = '%s fetch --all'%self.gitbin if fetchall else '%s fetch'%self.gitbin
-		if self.erno(cmd) == 0:
-			return True
 
 	def _headref_(self):
 		if self.dbg:
@@ -154,15 +130,6 @@ class GitRepo(Command):
 		with open('%s/logs/refs/heads/%s'%(
               self.gitdir, self._head())) as log:
 			return [l.split()[:2] for l in  log.readlines()]
-
-	def _isbehind(self):
-		if self.dbg:
-			print(bgre(self._isbehind))
-		return self.isb
-
-	def _isahead(self):
-		if self.dbg:
-			print(bgre(self._isahead))
 
 	def checkout(self, branch, *files):
 		if self.dbg:
@@ -234,7 +201,7 @@ class GitRepo(Command):
 		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
 		ahbe, num = stats[0].split('[')[-1].strip(']').split()
 		status = {}
-		sync = ahbe
+		status['sync'] = ahbe
 		adds = []
 		mods = []
 		dels = []
