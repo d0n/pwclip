@@ -178,13 +178,13 @@ class GitRepo(Command):
 		headref = self._headref_()
 		lastref, nextref = self._lastlogrefs_()
 		#print(self.gitdir)
-		print(remoref)
-		print(fechref)
-		print(headref)
-		print(nextref)
+		#print(remoref)
+		#print(fechref)
+		#print(headref)
+		#print(nextref)
 		if not fechref or fechref != remoref:
 			if headref != nextref:
-				print('ahead')
+				print('behind')
 				return True
 		#print('isahead:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
 
