@@ -66,14 +66,13 @@ class GitSync(GitRepo):
 		mode = mode if mode else self.mode
 		status = self.gitstatus()
 		print(status)
-		if status:
-			if status['isbehind'] != 0:
-				self.pull()
-			self.add()
-			self.commit(status)
-			if status['isahead'] != 0:
-				self.push()
-			return {branch: status}
+		if status['isbehind'] != 0:
+			self.pull()
+		self.add()
+		self.commit(status)
+		if status['isahead'] != 0:
+			self.push()
+		return {branch: status}
 
 	def itergits(self, repos, mode='', syncall=None):
 		if self.dbg:
