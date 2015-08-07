@@ -90,7 +90,13 @@ class GitSync(GitRepo):
 			branchs = [self._head()]
 			if syncall or self.abr:
 				branchs = self._heads()
-			yield repo, {b: self.gitsync(b, mode) for b in branchs}
+			syncstats = {}
+			for branch in branchs:
+				stats = self.gitsync(branch, mode)
+				if not stats:
+					continue
+				syncstats[branch] = stats
+			yield {repo: syncstats}
 
 if __name__ == '__main__':
 	exit(1)
