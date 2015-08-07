@@ -228,19 +228,18 @@ class GitRepo(Command):
 			cmd = '%s show -s --format=%%at' %(self.gitbin)
 		return self.stdo(cmd).strip()
 
-	def gitstatus(self, mode='--porcelain'):
+	def gitstatus(self):
 		if self.dbg:
-			print(bgre('%s\n mode = %s'%(self.gitstatus, mode)))
-		self.__fetch_(True)
-		out = self.stdx('%s status %s'%(self.gitbin, mode))
-		if not out or mode != '--porcelain':
-			return out
-		stats = {}
+			print(bgre(self.gitstatus))
+		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
+		ahbe = stats[0][-1]
+		print(ahbe, stats)
+		status = {}
 		adds = []
 		mods = []
 		dels = []
 		rens = []
-		for line in out.split('\n'):
+		for line in stats:
 			if not line:
 				continue
 			if line.split()[0] in ('A', '??', '?'):
@@ -252,15 +251,15 @@ class GitRepo(Command):
 			elif line.split()[0] == 'R':
 				rens.append(line.split()[1:])
 		if mods != []:
-			stats['modified'] = mods
+			status['modified'] = mods
 		if dels != []:
-			stats['deleted'] = dels
+			status['deleted'] = dels
 		if adds != []:
-			stats['added'] = adds
+			status['added'] = adds
 		if rens != []:
-			stats['renamed'] = rens
-		if stats != {}:
-			return stats
+			status['renamed'] = rens
+		if status != {}:
+			return status
 
 	def genmessage(self, stats=None):
 		if self.dbg:
