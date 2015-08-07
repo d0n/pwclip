@@ -19,6 +19,7 @@ class GitRepo(Command):
 	_sh_ = True
 	# own attributes
 	_dbg = False
+	_lwd = ''
 	_gitdir = ''
 	_gitbin = which('git')
 	def __init__(self, *args, **kwargs):
@@ -45,16 +46,27 @@ class GitRepo(Command):
 	def dbg(self, val):
 		self._dbg = val
 
+	@property                # lwd <str>
+	def lwd(self):
+		return self._lwd
+	@lwd.setter
+	def lwd(self, val):
+		self._lwd = os.path.abspath(val) if val != self._lwd else os.getcwd()
+
 	@property                # gitdir <str>
 	def gitdir(self):
-		return self._gitdir if self._gitdir else self.__gitdir(os.getcwd())
+		cwd = os.getcwd()
+		return self._gitdir if self._gitdir and cwd != self._lwd else self.__gitdir(cwd)
 	@gitdir.setter
 	def gitdir(self, val):
 		if os.path.isdir(val):
-			self._gitdir = self.__gitdir(val)
+			try:
+				self._gitdir = self.__gitdir(val)
+			finally:
+				self.__fetch_()
 		else:
 			raise ValueError(
-                'cannot set %s as directory while it does not exist'%val)
+                'directory %s does not exist'%val)
 
 	# ro properties
 	@property               # gitbin <str>
@@ -66,27 +78,34 @@ class GitRepo(Command):
 		gitdir = '%s/.git'%(repodir)
 		if os.path.isfile(gitdir):
 			with open(gitdir, 'r') as gitf:
-				return '%s/%s'%(
-                    repodir, gitf.read().split('gitdir:')[1].strip())
-		c = len(repodir.split('/'))
-		while c != 0:
-			if os.path.isdir(gitdir):
-				return gitdir
-			gitdir = '/'.join(d for d in repodir.split('/')[:c])+'/.git'
-			c-=1
+				return '%s/%s'%(repodir, gitf.read().split('gitdir:')[1].strip())
+		else:
+			c = len(repodir.split('/'))
+			while c != 0:
+				if not os.path.isdir(gitdir):
+					gitdir = '%s/%s'%(gitdir, '/'.join(d for d in repodir.split('/')[:c])+'/.git')
+				c-=1
+			return gitdir
 
-	def _fetch_(self, fetchall=None):
-		if self.dbg:
-			print(bgre(self._fetch_))
-		command = '%s fetch'%self.gitbin
-		if fetchall:
-			command = '%s fetch --all'%self.gitbin
-		if self.erno(command) == 0:
-			return True
+	def __fetch_(self, mode='auto'): # <force, all>
+		cwd = os.getcwd()
+		if mode in ('auto', 'force'):
+			cmd = '%s fetch'%(self.gitbin)
+			if mode == 'auto':
+				if not self._lwd or (sel._lwd and cwd != self._lwd):
+					print('auto', self._lwd, cwd)
+					self._lwd = cwd
+				else:
+					return
+			else:
+				print('auto', self._lwd, cwd)
+		elif mode == 'all':
+			print('all', self._lwd, cwd)
+			cmd = '%s fetch --all'%(self.gitbin)
 
-	def _fetchref_(self):
+	def _fetchheadref_(self):
 		if self.dbg:
-			print(bgre(self._fetchref_))
+			print(bgre(self._fetchheadref_))
 		fetchead = '%s/FETCH_HEAD'%self.gitdir
 		if os.path.isfile(fetchead):
 			with open(fetchead, 'r') as f:
@@ -118,7 +137,6 @@ class GitRepo(Command):
 	def _remoteref_(self):
 		if self.dbg:
 			print(bgre(self._remoteref_))
-		self._fetch_()
 		remref = '%s/refs/remotes/origin/%s'%(self.gitdir, self._head())
 		if os.path.isfile(remref):
 			with open(remref, 'r') as f:
@@ -139,13 +157,17 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self._isbehind))
 		remoref = self._remoteref_()
-		fechref = self._fetchref_()
+		fechref = self._fetchheadref_()
 		headref = self._headref_()
 		lastref, nextref = self._lastlogrefs_()
-		#print(remoref)
-		#print(fechref)
-		#print(headref)
-		#print(nextref)
+		print(self.gitdir)
+		print(remoref)
+		print(fechref)
+		print(headref)
+		print(nextref)
+		if fechref:
+			if headref == nextref:
+				print(headref)
 		#print('isbehind:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
 		if remoref != nextref:
 			return True
@@ -154,16 +176,17 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self._isahead))
 		remoref = self._remoteref_()
-		fechref = self._fetchref_()
+		fechref = self._fetchheadref_()
 		headref = self._headref_()
 		lastref, nextref = self._lastlogrefs_()
-		#print(remoref)
-		#print(fechref)
-		#print(headref)
-		#print(nextref)
+		print(remoref)
+		print(fechref)
+		print(headref)
+		print(nextref)
+		if not fechref or fechref == remoref:
+			if headref != nextref:
+				return True
 		#print('isahead:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
-		if remoref == nextref:
-			return True
 
 	def checkout(self, branch, *files):
 		if self.dbg:

@@ -56,20 +56,14 @@ class RepoSync(GitSync):
 			repostats = {}
 			_chdir(repo)
 			if repotypes[repo] == 'git':
-				print(self._isbehind())
-				print(self._isahead())
-
-			"""
 				aal = syncall if syncall else self._aal
-				for (rpo, stats) in self.itergits(
-                      [repo], mode=mode, syncall=aal):
+				for (rpo, stats) in self.itergits([repo], mode=mode, syncall=aal):
 					repostats[rpo] = stats
 			elif repotypes[repo] == 'svn':
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				repostats[repo] = self.stdo('%s update'%which('svn'))
 			if repostats != {}:
 				yield repostats
-			"""
 
 
 if __name__ == '__main__':

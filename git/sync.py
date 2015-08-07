@@ -62,7 +62,7 @@ class GitSync(GitRepo):
 	def gitsync(self, branch, mode=''):
 		if self.dbg:
 			print(bgre('%s\n  branchs = %s\n  mode = %s'%(
-                self.gitsync, branchs, mode)))
+                self.gitsync, branch, mode)))
 		mode = mode if mode else self.mode
 		if mode in ('pull', 'sync'):
 			if self._isbehind():
@@ -82,17 +82,15 @@ class GitSync(GitRepo):
                 self.itergits, repos, mode, syncall)))
 		mode = mode if mode else self.mode
 		for repo in self._gitsubmods(repos):
+			_chdir(repo)
 			if not _exists(repo):
 				error('path %s does not exist and has been omitted'%repo)
 				continue
-			_chdir(repo)
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			branchs = [self._head()]
 			if syncall or self.abr:
 				branchs = self._heads()
 			yield repo, {b: self.gitsync(b, mode) for b in branchs}
-
-
 
 if __name__ == '__main__':
 	exit(1)
