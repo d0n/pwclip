@@ -200,10 +200,16 @@ class GitRepo(Command):
 			print(bgre(self.gitstatus))
 		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
 		ahbes = [l for l in stats if l.startswith('##')]
-		print(ahbes)
-		ahbe, num = stats[0].split('[')[-1].strip(']').split()
+		aheadnum, behindnum = 0, 0
+		for ahbe in ahbes:
+			ahbe, num = ahbe.split('[')[-1].strip(']').split()
+			if ahbe == 'ahead':
+				aheadnum = num
+			elif ahbe == 'behind':
+				behindnum = num
 		status = {}
-		status['sync'] = ahbe
+		status['isahead'] = aheadnum
+		status['isbehind'] = behindnum
 		adds = []
 		mods = []
 		dels = []
