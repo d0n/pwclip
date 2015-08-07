@@ -142,10 +142,10 @@ class GitRepo(Command):
 		fechref = self._fetchref_()
 		headref = self._headref_()
 		lastref, nextref = self._lastlogrefs_()
-		print(remoref)
-		print(fechref)
-		print(headref)
-		print(nextref)
+		#print(remoref)
+		#print(fechref)
+		#print(headref)
+		#print(nextref)
 		#print('isbehind:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
 		if remoref != nextref:
 			return True
@@ -157,10 +157,10 @@ class GitRepo(Command):
 		fechref = self._fetchref_()
 		headref = self._headref_()
 		lastref, nextref = self._lastlogrefs_()
-		print(remoref)
-		print(fechref)
-		print(headref)
-		print(nextref)
+		#print(remoref)
+		#print(fechref)
+		#print(headref)
+		#print(nextref)
 		#print('isahead:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
 		if remoref == nextref:
 			return True
