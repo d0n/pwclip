@@ -19,8 +19,8 @@ class GitRepo(Command):
 	_sh_ = True
 	# own attributes
 	_dbg = False
-	_lwd = ''
-	_gitdir = ''
+	_lwd = None
+	_gitdir = None
 	_gitbin = which('git')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -68,18 +68,21 @@ class GitRepo(Command):
 
 	@property                # isa <bool>
 	def isa(self):
-		cwd = os.getcwd()
-		if not self._lwd or (self.lwd and self.lwd != cwd):
-			self.__fetch_()
-		lastref, headref = self._logrefs_()[-1]
-		print(lastref, headref, self._remoteref_())
-		exit()
-		if headref == self._remoteref_():
+		__href = self._headref_()
+		__rref = self._remoteref_()
+		__logs = self._logrefs_()
+		if __href == __rref and __href not in __logs:
 			return True
 
 	@property                # isb <bool>
 	def isb(self):
-		return self._isb
+		__href = self._headref_()
+		__rref = self._remoteref_()
+		__logs = self._logrefs_()
+		if __href != __rref and __href in __logs:
+			if self.dbg:
+				print(bgre('behind:\n\t%s\n\t%s\n\t%s'%(__href, __rref, __logs)))
+			return True
 
 	# ro properties
 	@property               # gitbin <str>
@@ -102,10 +105,10 @@ class GitRepo(Command):
 				c-=1
 			return gitdir
 
-	def __fetch_(self, aal=None):
+	def __fetch_(self, fetchall=None):
 		if self.dbg:
-			print(self.__fetch_)
-		cmd = '%s fetch --all'%self.gitbin if aal else '%s fetch'%self.gitbin
+			print(bgre(self.__fetch_))
+		cmd = '%s fetch --all'%self.gitbin if fetchall else '%s fetch'%self.gitbin
 		if self.erno(cmd) == 0:
 			return True
 
@@ -147,13 +150,15 @@ class GitRepo(Command):
 	        '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
 
 	def _logrefs_(self):
-		with open('%s/logs/refs/remotes/origin/%s'%(
+		rlog = '%s/logs/refs/heads/%s'%(self.gitdir, self._head())
+		with open('%s/logs/refs/heads/%s'%(
               self.gitdir, self._head())) as log:
 			return [l.split()[:2] for l in  log.readlines()]
 
 	def _isbehind(self):
 		if self.dbg:
 			print(bgre(self._isbehind))
+		return self.isb
 
 	def _isahead(self):
 		if self.dbg:
@@ -226,6 +231,7 @@ class GitRepo(Command):
 	def gitstatus(self, mode='--porcelain'):
 		if self.dbg:
 			print(bgre('%s\n mode = %s'%(self.gitstatus, mode)))
+		self.__fetch_(True)
 		out = self.stdx('%s status %s'%(self.gitbin, mode))
 		if not out or mode != '--porcelain':
 			return out
