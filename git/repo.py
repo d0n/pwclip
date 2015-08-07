@@ -69,7 +69,7 @@ class GitRepo(Command):
 	@property                # isa <bool>
 	def isa(self):
 		cwd = os.getcwd()
-		if  self.lwd != cwd:
+		if not self._lwd or (self.lwd and self.lwd != cwd):
 			self.__fetch_()
 		lastref, headref = self._logrefs_()[-1]
 		print(lastref, headref, self._remoteref_())
