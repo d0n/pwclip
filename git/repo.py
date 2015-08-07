@@ -232,7 +232,7 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitstatus))
 		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
-		ahbe = stats[0][-1]
+		ahbe = stats[0].split(' ')[-1]
 		print(ahbe, stats)
 		status = {}
 		adds = []
