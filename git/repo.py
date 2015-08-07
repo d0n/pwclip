@@ -167,7 +167,8 @@ class GitRepo(Command):
 		#print(nextref)
 		if remoref and not fechref:
 			if headref != nextref:
-				print('ahead')
+				if self.dbg:
+					print(bgre('ahead'))
 				return True
 
 	def _isahead(self):
@@ -184,7 +185,8 @@ class GitRepo(Command):
 		#print(nextref)
 		if not fechref or fechref != remoref:
 			if headref != nextref:
-				print('behind')
+				if self.dbg:
+					print(bgre('behind'))
 				return True
 		#print('isahead:\nrref:%s\nlref:%s\nnref:%s'%(remoref, lastref, nextref))
 
