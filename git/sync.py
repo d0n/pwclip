@@ -67,11 +67,11 @@ class GitSync(GitRepo):
 		status = self.gitstatus()
 		print(status)
 		if status:
-			if status['isbehind']:
+			if status['isbehind'] != 0:
 				self.pull()
 			self.add()
 			self.commit(status)
-			if status['isahead']:
+			if status['isahead'] != 0:
 				self.push()
 			return {branch: status}
 
