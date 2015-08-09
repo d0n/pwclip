@@ -72,14 +72,14 @@ class GitSync(GitRepo):
 			isahead = True
 			del status['A']
 		if 'B' in status.keys():
-			isbehind = True 
+			isbehind = True
 			del statsu['B']
-		if isahead:
-			self.push(branch)
 		self.add()
 		self.commit(status)
 		if isbehind:
 			self.pull(branch)
+		if isahead:
+			self.push(branch)
 		return {branch: status}
 
 	def itergits(self, repos, mode='', syncall=None):
