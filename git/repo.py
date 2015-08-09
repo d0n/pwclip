@@ -94,15 +94,6 @@ class GitRepo(Command):
 		with open('%s/HEAD'%(self.gitdir), 'r') as f:
 			return f.read().split('/')[-1].strip()
 
-	"""
-	def _headref_(self):
-		if self.dbg:
-			print(bgre(self._headref_))
-		hrefile = '%s/refs/heads/%s'%(self.gitdir, self._head())
-		if os.path.isfile(hrefile):
-			with open(hrefile, 'r') as f:
-				return f.read().split(' ')[0].strip()
-
 	def _heads(self):
 		if self.dbg:
 			print(bgre(self._heads))
@@ -112,6 +103,21 @@ class GitRepo(Command):
 			raise RuntimeError(errmsg)
 		return os.listdir('%s/refs/heads'%(self.gitdir))
 
+	def _remotes(self):
+		if self.dbg:
+			print(bgre(self._remotes))
+		return [rem for rem in os.listdir(
+	        '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
+
+	"""
+	def _headref_(self):
+		if self.dbg:
+			print(bgre(self._headref_))
+		hrefile = '%s/refs/heads/%s'%(self.gitdir, self._head())
+		if os.path.isfile(hrefile):
+			with open(hrefile, 'r') as f:
+				return f.read().split(' ')[0].strip()
+
 	def _remoteref_(self):
 		if self.dbg:
 			print(bgre(self._remoteref_))
@@ -119,12 +125,6 @@ class GitRepo(Command):
 		if os.path.isfile(remref):
 			with open(remref, 'r') as f:
 				return f.read().strip()
-
-	def _remotes(self):
-		if self.dbg:
-			print(bgre(self._remotes))
-		return [rem for rem in os.listdir(
-	        '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
 
 	def _logrefs_(self):
 		rlog = '%s/logs/refs/heads/%s'%(self.gitdir, self._head())
@@ -205,7 +205,6 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitstatus))
 		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
-		print(stats)
 		ablines = [l for l in stats if l.startswith('##')]
 		anum, bnum = 0, 0
 		for abline in ablines:
