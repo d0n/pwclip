@@ -165,7 +165,8 @@ class GitRepo(Command):
 		if setup or remote not in self._remotes():
 			command = '%s push --set-upstream %s %s'%(
                 self.gitbin, origin, remote)
-		return int(self.call(command))
+		print(command)
+		self.call(command)
 		#out = self.stdx(command)
 		#if out:
 		#	return out
