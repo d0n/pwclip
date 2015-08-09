@@ -65,6 +65,8 @@ class GitSync(GitRepo):
                 self.gitsync, branch, mode)))
 		mode = mode if mode else self.mode
 		status, isahead, isbehind = self.gitstatus()
+		if status == {} and not isahead and not isbehind:
+			return
 		if status != {}:
 			self.add()
 			self.commit(status)

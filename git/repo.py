@@ -101,7 +101,8 @@ class GitRepo(Command):
 			errmsg = 'no basedir was set and current one is no git repo %s'%(
                 self.gitdir)
 			raise RuntimeError(errmsg)
-		return os.listdir('%s/refs/heads'%(self.gitdir))
+		head, heads = self._head(), os.listdir('%s/refs/heads'%(self.gitdir))
+		return [head] + [h for h in heads if h != head]
 
 	def _remotes(self):
 		if self.dbg:
