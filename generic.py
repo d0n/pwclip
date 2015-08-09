@@ -62,7 +62,7 @@ class RepoSync(GitSync):
 				for gitstats in self.itergits([repo], mode, syncall):
 					print(gitstats)
 					exit()
-					repostats[rpo] = stats
+					repostats[rpo] = gitstats
 			elif repotypes[repo] == 'svn':
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				repostats[repo] = self.stdo('%s update'%which('svn'))
