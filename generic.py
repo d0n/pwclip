@@ -16,9 +16,10 @@ __version__ = '0.1'
 
 class RepoSync(GitSync):
 	_sh_ = True
-	_aal = None
+	_aal = False
 	_dbg = False
 	_mode = 'sync'
+
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -40,28 +41,28 @@ class RepoSync(GitSync):
                     int(max(len(i) for i in self.__dict__.keys())+4
                     )-len(k)), v
                 ) for (k, v) in sorted(self.__dict__.items())))))
+
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val
+		self._dbg = True if val else False
 
 	def rposync(self, repotypes, mode=None, syncall=None):
 		if self.dbg:
 			print(bgre('%s\n  repotypes = %s\n  mode = %s'%(
                 self.rposync, repotypes, mode)))
 		mode = mode if mode else self.mode
-		if self.dbg:
-			print(bgre(mode))
+		syncall = syncall if syncall else self._aal
 		for repo in sorted(repotypes):
 			repostats = {}
 			_chdir(repo)
 			if repotypes[repo] == 'git':
-				aal = syncall if syncall else self._aal
-				for rpostats in self.itergits([repo], mode=mode, syncall=aal):
-					if repostats != {}:
-						yield repostats
+				for gitstats in self.itergits([repo], mode, syncall):
+					print(gitstats)
+					exit()
+					repostats[rpo] = stats
 			elif repotypes[repo] == 'svn':
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				repostats[repo] = self.stdo('%s update'%which('svn'))

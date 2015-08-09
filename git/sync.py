@@ -3,7 +3,7 @@
 # global imports
 import re
 from os import chdir as _chdir
-from os.path import isfile as _isfile, exists as _exists
+from os.path import isfile as _isfile, exists as _exists, basename as _basename
 import sys
 
 # local relative imports
@@ -17,23 +17,23 @@ class GitSync(GitRepo):
 	# external
 	_sh_ = True
 	# internal
-	_abr = False
+	_aal = False
 	_dbg = False
 	_mode = 'sync'
 
-	@property                # abr <bool>
-	def abr(self):
-		return self._abr
-	@abr.setter
-	def abr(self, val):
-		self._abr = val if isinstance(val, bool) else self._abr
+	@property                # aal <bool>
+	def aal(self):
+		return self._aal
+	@aal.setter
+	def aal(self, val):
+		self._aal = True if val else False
 
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if isinstance(val, bool) else self._dbg
+		self._dbg = True if val else False
 
 	@property                # mode <str>
 	def mode(self):
@@ -65,13 +65,22 @@ class GitSync(GitRepo):
                 self.gitsync, branch, mode)))
 		mode = mode if mode else self.mode
 		status = self.gitstatus()
+		if not status:
+			return
 		print(status)
-		if status['isbehind'] != 0:
-			self.pull()
+		isahead, isbehind = False, False
+		if 'A' in status.keys():
+			isahead = True
+			del status['A']
+		if 'B' in status.keys():
+			isbehind = True 
+			del statsu['B']
+		if isahead:
+			self.pull(branch)
 		self.add()
 		self.commit(status)
-		if status['isahead'] != 0:
-			self.push()
+		if isbehind:
+			self.push(branch)
 		return {branch: status}
 
 	def itergits(self, repos, mode='', syncall=None):
@@ -79,22 +88,22 @@ class GitSync(GitRepo):
 			print(bgre('%s\n  repos = %s\n  mode = %s\n  syncall = %s'%(
                 self.itergits, repos, mode, syncall)))
 		mode = mode if mode else self.mode
+		syncall = syncall if syncall else self._aal
 		for repo in self._gitsubmods(repos):
 			_chdir(repo)
 			if not _exists(repo):
 				error('path %s does not exist and has been omitted'%repo)
 				continue
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			branchs = [self._head()]
-			if syncall or self.abr:
-				branchs = self._heads()
+			branchs = self._heads() if syncall else [self._head()]
 			syncstats = {}
 			for branch in branchs:
 				stats = self.gitsync(branch, mode)
 				if not stats:
 					continue
-				syncstats[branch] = stats
-			yield {repo: syncstats}
+				syncstats.update(stats)
+			if syncstats:
+				yield {_basename(repo): syncstats}
 
 if __name__ == '__main__':
 	exit(1)

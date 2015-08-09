@@ -88,6 +88,13 @@ class GitRepo(Command):
 				c-=1
 			return gitdir
 
+	def _head(self):
+		if self.dbg:
+			print(bgre(self._head))
+		with open('%s/HEAD'%(self.gitdir), 'r') as f:
+			return f.read().split('/')[-1].strip()
+
+	"""
 	def _headref_(self):
 		if self.dbg:
 			print(bgre(self._headref_))
@@ -104,12 +111,6 @@ class GitRepo(Command):
                 self.gitdir)
 			raise RuntimeError(errmsg)
 		return os.listdir('%s/refs/heads'%(self.gitdir))
-
-	def _head(self):
-		if self.dbg:
-			print(bgre(self._head))
-		with open('%s/HEAD'%(self.gitdir), 'r') as f:
-			return f.read().split('/')[-1].strip()
 
 	def _remoteref_(self):
 		if self.dbg:
@@ -130,6 +131,7 @@ class GitRepo(Command):
 		with open('%s/logs/refs/heads/%s'%(
               self.gitdir, self._head())) as log:
 			return [l.split()[:2] for l in  log.readlines()]
+	"""
 
 	def checkout(self, branch, *files):
 		if self.dbg:
@@ -204,12 +206,14 @@ class GitRepo(Command):
 		for ahbe in ahbes:
 			ahbe, num = ahbe.split('[')[-1].strip(']').split()
 			if ahbe == 'ahead':
-				aheadnum = num
+				aheadnum = int(num)
 			elif ahbe == 'behind':
-				behindnum = num
+				behindnum = int(num)
 		status = {}
-		status['isahead'] = aheadnum
-		status['isbehind'] = behindnum
+		if aheadnum > 0:
+			status['isahead'] = aheadnum
+		if behindnum > 0:
+			status['isbehind'] = behindnum
 		adds = []
 		mods = []
 		dels = []
