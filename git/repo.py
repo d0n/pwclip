@@ -201,19 +201,19 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitstatus))
 		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
-		ahbes = [l for l in stats if l.startswith('##')]
-		aheadnum, behindnum = 0, 0
-		for ahbe in ahbes:
-			ahbe, num = ahbe.split('[')[-1].strip(']').split()
-			if ahbe == 'ahead':
-				aheadnum = int(num)
-			elif ahbe == 'behind':
-				behindnum = int(num)
+		ablines = [l for l in stats if l.startswith('##')]
+		anum, bnum = 0, 0
+		for abline in ablines:
+			isab, num = abline.split('[')[-1].strip(']').split()
+			if isab == 'ahead':
+				anum = int(num)
+			elif isab == 'behind':
+				bnum = int(num)
 		status = {}
-		if aheadnum > 0:
-			status['isahead'] = aheadnum
-		if behindnum > 0:
-			status['isbehind'] = behindnum
+		if anum > 0:
+			status['A'] = anum
+		if bnum > 0:
+			status['B'] = bnum
 		adds = []
 		mods = []
 		dels = []
