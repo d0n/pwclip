@@ -205,6 +205,7 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitstatus))
 		stats = self.stdx('%s status -b --porcelain'%self.gitbin).split('\n')
+		print(stats)
 		ablines = [l for l in stats if l.startswith('##')]
 		anum, bnum = 0, 0
 		for abline in ablines:
