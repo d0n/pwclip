@@ -152,9 +152,10 @@ class GitRepo(Command):
 			print(bgre(self.pull))
 		branch = branch if branch else self._head()
 		command = '%s pull %s %s' %(self.gitbin, origin, branch)
-		out = self.stdx(command)
-		if out:
-			return out
+		return int(self.call(command))
+		#out = self.stdx(command)
+		#if out:
+		#	return out
 
 	def push(self, remote=None, origin='origin', setup=None):
 		if self.dbg:
@@ -164,9 +165,10 @@ class GitRepo(Command):
 		if setup or remote not in self._remotes():
 			command = '%s push --set-upstream %s %s'%(
                 self.gitbin, origin, remote)
-		out = self.stdx(command)
-		if out:
-			return out
+		return int(self.call(command))
+		#out = self.stdx(command)
+		#if out:
+		#	return out
 
 	def add(self, *files):
 		if self.dbg:
