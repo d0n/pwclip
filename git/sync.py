@@ -72,9 +72,9 @@ class GitSync(GitRepo):
 			self.commit(status)
 		_, isahead, _ = self.gitstatus()
 		if isbehind:
-			print(self.pull(branch))
+			self.pull(branch)
 		if isahead:
-			print(self.push(branch))
+			self.push(branch)
 		return {branch: status}
 
 	def itergits(self, repos, mode='', syncall=None):

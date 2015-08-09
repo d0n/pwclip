@@ -69,8 +69,6 @@ class RepoSync(GitSync):
 
 
 
-
-
 if __name__ == '__main__':
 	# module debugging area
 	print('\n'.join(d for d in dir()))
