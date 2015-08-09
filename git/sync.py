@@ -74,6 +74,9 @@ class GitSync(GitRepo):
 		if 'B' in status.keys():
 			isbehind = True
 			del statsu['B']
+		print(status)
+		print(isahead)
+		print(isbehind)
 		if status != {}:
 			self.add()
 			self.commit(status)

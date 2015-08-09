@@ -15,9 +15,9 @@ from lib.colortext import blu, yel, bgre
 __version__ = '0.1'
 
 class GitRepo(Command):
-	# Command class attribute
+	# Command attribute
 	_sh_ = True
-	# own attributes
+	# GitRepo attributes
 	_dbg = False
 	_lwd = None
 	_gitdir = None
