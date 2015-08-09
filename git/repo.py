@@ -212,10 +212,6 @@ class GitRepo(Command):
 			elif isab == 'behind':
 				bnum = int(num)
 		status = {}
-		if anum > 0:
-			status['A'] = anum
-		if bnum > 0:
-			status['B'] = bnum
 		adds = []
 		mods = []
 		dels = []
@@ -239,8 +235,7 @@ class GitRepo(Command):
 			status['added'] = adds
 		if rens != []:
 			status['renamed'] = rens
-		if status != {}:
-			return status
+		return status, anum, bnum
 
 	def genmessage(self, stats=None):
 		if self.dbg:
