@@ -99,5 +99,7 @@ class GitSync(GitRepo):
 			if syncstats:
 				yield {_basename(repo): syncstats}
 
+
+
 if __name__ == '__main__':
 	exit(1)
