@@ -112,6 +112,12 @@ class GitRepo(Command):
 				c-=1
 			return gitdir
 
+	def _fetch(self, fetchall=True):
+		cmd = '%s fetch'%self.gitbin
+		if fetchall:
+			cmd = '%s --fetch'%cmd
+		return self.call(cmd)
+
 	def _head(self):
 		if self.dbg:
 			print(bgre(self._head))
