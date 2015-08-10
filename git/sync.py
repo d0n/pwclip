@@ -67,12 +67,12 @@ class GitSync(GitRepo):
 		status, isahead, isbehind = self.gitstatus()
 		if status == {} and not isahead and not isbehind:
 			return
+		if isbehind:
+			self.pull(branch)
 		if status != {}:
 			self.add()
 			self.commit(status)
 		_, isahead, _ = self.gitstatus()
-		if isbehind:
-			self.pull(branch)
 		if isahead:
 			self.push(branch)
 		return {branch: status}
