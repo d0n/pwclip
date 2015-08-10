@@ -205,12 +205,11 @@ class GitRepo(Command):
 		for abline in ablines:
 			if not '[' in abline or not ']' in abline:
 				continue
-			print(abline)
-			ahbe, num = abline.split('[')[-1].strip(']').split()
-			if ahbe == 'ahead':
-				anum = int(num)
-			elif ahbe == 'behind':
-				bnum = int(num)
+			__ahbe = abline.split('[')[-1].strip(']')
+			if ',' in __ahbe:
+				isa, num = __ahbe.split(',')[0].splpit(' ')
+				isb, num = __ahbe.split(',')[1].splpit(' ')
+				
 		status = {}
 		adds = []
 		mods = []
