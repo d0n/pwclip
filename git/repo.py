@@ -88,7 +88,7 @@ class GitRepo(Command):
 				c-=1
 			return gitdir
 
-	def _fetch(self, fetchall=True):
+	def _fetch(self, fetchall=False):
 		cmd = '%s fetch'%self.gitbin
 		if fetchall:
 			cmd = '%s --all'%cmd
