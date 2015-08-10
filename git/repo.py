@@ -115,7 +115,7 @@ class GitRepo(Command):
 	def _fetch(self, fetchall=True):
 		cmd = '%s fetch'%self.gitbin
 		if fetchall:
-			cmd = '%s --fetch'%cmd
+			cmd = '%s --all'%cmd
 		return self.call(cmd)
 
 	def _head(self):
