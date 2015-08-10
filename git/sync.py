@@ -67,7 +67,9 @@ class GitSync(GitRepo):
 		status, isahead, isbehind = self.gitstatus()
 		if status == {} and not isahead and not isbehind:
 			return
-		print(status)
+		print()
+		print(status, isahead, isbehind)
+		print()
 		if isbehind:
 			self.pull(branch)
 		if status != {}:
