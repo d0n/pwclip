@@ -205,6 +205,7 @@ class GitRepo(Command):
 		for abline in ablines:
 			if not '[' in abline or not ']' in abline:
 				continue
+			print(abline)
 			ahbe, num = abline.split('[')[-1].strip(']').split()
 			if ahbe == 'ahead':
 				anum = int(num)
