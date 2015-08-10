@@ -207,8 +207,8 @@ class GitRepo(Command):
 				continue
 			__ahbe = abline.split('[')[-1].strip(']')
 			if ',' in __ahbe:
-				isa, num = __ahbe.split(',')[0].splpit(' ')
-				isb, num = __ahbe.split(',')[1].splpit(' ')
+				isa, num = __ahbe.split(',')[0].split(' ')
+				isb, num = __ahbe.split(',')[1].split(' ')
 				
 		status = {}
 		adds = []
