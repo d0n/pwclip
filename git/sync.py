@@ -59,10 +59,10 @@ class GitSync(GitRepo):
 				repos = self._gitsubmods(mods) + list(repos)
 		return repos
 
-	def gitsync(self, branch, mode=''):
+	def gitsync(self, branch=None, mode=''):
 		if self.dbg:
-			print(bgre('%s\n  branchs = %s\n  mode = %s'%(
-                self.gitsync, branch, mode)))
+			print(bgre(self.gitsync))
+		branch = branch if branch else self._head()
 		mode = mode if mode else self.mode
 		status, ahead, behind = self.gitstatus()
 		if status == {} and not ahead and not behind:
