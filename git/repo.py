@@ -209,13 +209,13 @@ class GitRepo(Command):
 			print(__ahbe)
 			if ',' in __ahbe:
 				isanum, isbnum = __ahbe.split(',')
-				_, anum = isanum.split(' ')
-				_, bnum = isbnum.split(' ')
+				_, anum = isanum.split(' ').strip()
+				_, bnum = isbnum.split(' ').strip()
 			elif 'ahead' in __ahbe:
-				_, anum = __ahbe.split(' ')
-				_, anum = __ahbe.split(' ')
+				_, anum = __ahbe.split(' ').strip()
+				_, anum = __ahbe.split(' ').strip()
 			elif 'behind' in __ahbe:
-				_, bnum = __ahbe.split(' ')
+				_, bnum = __ahbe.split(' ').strip()
 			
 
 		status = {}
