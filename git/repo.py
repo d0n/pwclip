@@ -206,10 +206,18 @@ class GitRepo(Command):
 			if not '[' in abline or not ']' in abline:
 				continue
 			__ahbe = abline.split('[')[-1].strip(']')
+			print(__ahbe)
 			if ',' in __ahbe:
-				isa, num = __ahbe.split(',')[0].split(' ')
-				isb, num = __ahbe.split(',')[1].split(' ')
-				
+				isanum, isbnum = __ahbe.split(',')
+				_, anum = isanum.split(' ')
+				_, bnum = isbnum.split(' ')
+			elif 'ahead' in __ahbe:
+				_, anum = __ahbe.split(' ')
+				_, anum = __ahbe.split(' ')
+			elif 'behind' in __ahbe:
+				_, bnum = __ahbe.split(' ')
+			
+
 		status = {}
 		adds = []
 		mods = []
@@ -234,7 +242,7 @@ class GitRepo(Command):
 			status['added'] = adds
 		if rens != []:
 			status['renamed'] = rens
-		return status, anum, bnum
+		return status, int(anum), int(bnum)
 
 	def genmessage(self, stats=None):
 		if self.dbg:
