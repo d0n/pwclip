@@ -207,6 +207,12 @@ class GitRepo(Command):
 				continue
 			__ahbe = abline.split('[')[-1].strip(']').split(',')
 			print(__ahbe)
+			if len(__ahbe) > 1:
+				anum, bnum = __ahbe[0].split(' ')[1], __ahbe[1].split(' ')[1]
+			elif 'ahead' in __ahbe[0]:
+				anum = __ahbe[0].split(' ')[1]
+			elif 'behind' in __ahbe[0]:
+				bnum = __ahbe[0].split(' ')[1]
 
 
 		status = {}
