@@ -203,7 +203,11 @@ class GitRepo(Command):
 		ablines = [l for l in stats if l.startswith('##')]
 		anum, bnum = 0, 0
 		for abline in ablines:
-			isab, num = abline.split('[')[-1].strip(']').split()
+			if not '[' in abline or not ']' in abline:
+				continue
+			abnum = abline.split('[')[-1].strip(']').split()
+			print(abnum)
+			exit()
 			if isab == 'ahead':
 				anum = int(num)
 			elif isab == 'behind':
