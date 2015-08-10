@@ -14,30 +14,6 @@ from lib.colortext import blu, yel, bgre
 # default vars
 __version__ = '0.1'
 
-"""
-def _headref_(self):
-	if self.dbg:
-		print(bgre(self._headref_))
-	hrefile = '%s/refs/heads/%s'%(self.gitdir, self._head())
-	if os.path.isfile(hrefile):
-		with open(hrefile, 'r') as f:
-			return f.read().split(' ')[0].strip()
-
-def _remoteref_(self):
-	if self.dbg:
-		print(bgre(self._remoteref_))
-	remref = '%s/refs/remotes/origin/%s'%(self.gitdir, self._head())
-	if os.path.isfile(remref):
-		with open(remref, 'r') as f:
-			return f.read().strip()
-
-def _logrefs_(self):
-	rlog = '%s/logs/refs/heads/%s'%(self.gitdir, self._head())
-	with open('%s/logs/refs/heads/%s'%(
-		  self.gitdir, self._head())) as log:
-		return [l.split()[:2] for l in  log.readlines()]
-"""
-
 class GitRepo(Command):
 	# Command attribute
 	_sh_ = True
@@ -116,7 +92,8 @@ class GitRepo(Command):
 		cmd = '%s fetch'%self.gitbin
 		if fetchall:
 			cmd = '%s --all'%cmd
-		return self.call(cmd)
+		if self.erno(cmd) == 0:
+			return True
 
 	def _head(self):
 		if self.dbg:
