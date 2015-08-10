@@ -90,7 +90,7 @@ class GitRepo(Command):
 
 	def _fetch_(self, fetchall=False):
 		if self.dbg:
-			print(self._fetch_)
+			print(bgre(self._fetch_))
 		cmd = '%s fetch'%self.gitbin
 		if fetchall:
 			cmd = '%s --all'%cmd
