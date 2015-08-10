@@ -212,7 +212,6 @@ class GitRepo(Command):
 				anum = __ahbe[0].split(' ')[1].strip()
 			elif 'behind' in __ahbe[0]:
 				bnum = __ahbe[0].split(' ')[1].strip()
-		print(anum, bnum)
 		status = {}
 		adds = []
 		mods = []
