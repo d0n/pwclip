@@ -64,19 +64,18 @@ class GitSync(GitRepo):
 			print(bgre('%s\n  branchs = %s\n  mode = %s'%(
                 self.gitsync, branch, mode)))
 		mode = mode if mode else self.mode
-		status, isahead, isbehind = self.gitstatus()
-		if status == {} and not isahead and not isbehind:
+		status, ahead, behind = self.gitstatus()
+		if status == {} and not ahead and not behind:
 			return
-		print()
-		print(status, isahead, isbehind)
-		print()
-		if isbehind:
+		if behind:
 			self.pull(branch)
+		if ahead:
+			self.push(branch)
 		if status != {}:
 			self.add()
 			self.commit(status)
-		_, isahead, _ = self.gitstatus()
-		if isahead:
+		_, ahead, _ = self.gitstatus()
+		if ahead:
 			self.push(branch)
 		return {branch: status}
 
