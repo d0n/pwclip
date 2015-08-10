@@ -205,7 +205,7 @@ class GitRepo(Command):
 		for abline in ablines:
 			if not '[' in abline or not ']' in abline:
 				continue
-			__ahbe = abline.split('[')[-1].strip(']')
+			__ahbe = abline.split('[')[-1].strip(']').split(',')
 			print(__ahbe)
 
 
