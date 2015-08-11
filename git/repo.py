@@ -76,6 +76,7 @@ class GitRepo(Command):
 	"""
 	@staticmethod
 	def __gitdir_(repodir):
+		repodir = repodir.rstrip('/')
 		gitdir = '%s/.git'%(repodir)
 		if os.path.isfile(gitdir):
 			with open(gitdir, 'r') as gitf:
