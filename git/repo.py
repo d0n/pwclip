@@ -86,7 +86,7 @@ class GitRepo(Command):
 			c = len(repodir.split('/'))
 			while c != 0:
 				if not os.path.isdir(gitdir):
-					gitdir = '%s/%s'%(
+					gitdir = '%s%s'%(
                         repodir, '/'.join(
                             d for d in repodir.split('/')[:c])+'/.git')
 				c-=1
