@@ -71,6 +71,9 @@ class GitRepo(Command):
 	def gitbin(self):
 		return self._gitbin
 
+	"""
+	 /home/lpelzer/bin/pypkg/cryptalot/.git//home/lpelzer/bin/pypkg/cryptalot/.git//home/lpelzer/bin/pypkg/.git//home/lpelzer/bin/.git//home/lpelzer/.git//home/.git//.git/HEAD
+	"""
 	@staticmethod
 	def __gitdir_(repodir):
 		gitdir = '%s/.git'%(repodir)
@@ -83,7 +86,7 @@ class GitRepo(Command):
 			while c != 0:
 				if not os.path.isdir(gitdir):
 					gitdir = '%s/%s'%(
-                        gitdir, '/'.join(
+                        repodir, '/'.join(
                             d for d in repodir.split('/')[:c])+'/.git')
 				c-=1
 			return gitdir
