@@ -64,11 +64,8 @@ class RepoSync(GitSync):
 					repostats.update(gitstats)
 			elif repotypes[repo] == 'svn':
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-				out, err, erno = self.oerc('%s update'%which('svn'))
+				out = self.stdx('%s update'%which('svn'))
 				print(out)
-				out = 'o: %s'%out
-				if err:
-					out = '%s ;e: %s'%err
 				repostats[repo] = out
 			if repostats != {}:
 				yield repostats
