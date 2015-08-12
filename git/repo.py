@@ -86,15 +86,12 @@ class GitRepo(Command):
 			return __file(gitdir)
 		else:
 			c = len(repodir.split('/'))
-			while c != 0:
-				if os.path.isfile(gitdir):
-					return __file(gitdir)
-				if not os.path.isdir(gitdir):
-					gitdir = '%s%s'%(
-                        repodir, '/'.join(
-                            d for d in repodir.split('/')[:c])+'/.git')
+			while c > 0:
+				if os.path.isdir(gitdir):
+					return gitdir
+				gitdir = '%s/.git'%'/'.join(d for d in repodir.split('/')[:c])
 				c-=1
-			return gitdir
+		return False
 
 	def _fetch_(self, fetchall=False):
 		if self.dbg:
