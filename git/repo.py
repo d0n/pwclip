@@ -91,7 +91,7 @@ class GitRepo(Command):
 					return gitdir
 				gitdir = '%s/.git'%'/'.join(d for d in repodir.split('/')[:c])
 				c-=1
-		return False
+		raise FileNotFoundError('no .git directory present in %s'%repodir)
 
 	def _fetch_(self, fetchall=False):
 		if self.dbg:
