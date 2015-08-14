@@ -1,2 +1,2 @@
-def bestlim(*strings):
-	return max(len(s) for s in strings)+4
+def bestlim(*strings, minlim=0):
+	return max(len(s) for s in strings)+minlim
