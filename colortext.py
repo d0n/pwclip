@@ -72,6 +72,24 @@ def byel(text):
 	return __colorize('byel', text)
 
 # functions for some high frequent use cases:
+def abort(*messages):
+	if not messages:
+		messages = ('\naborted by keystroke', )
+	'''
+	prints all text in blu by using STDOUT but also kills its
+	parent processes and returns 0 (OK) instead of 1 (ERROR)
+	by default used for aborting on STRG+C (see message,
+	for "KeyboardInterrupt" exceptions)
+	'''
+	msgs = []
+	for msg in messages:
+		if (messages.index(msg) % 2) == 0:
+			msgs.append(blu(msg))
+		else:
+			msgs.append(yel(msg))
+	print(' '.join(msg for msg in msgs), flush=True)
+	exit(1)
+
 def error(*args, **kwargs):
 	'''
 	while i most often want to display error texts which heave
@@ -115,24 +133,6 @@ def fatal(*args, **kwargs):
 			msgs.append(yel(arg))
 	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
 	exit(1)
-
-def abort(*messages):
-	if not messages:
-		messages = ('\naborted by keystroke', )
-	'''
-	prints all text in blu by using STDOUT but also kills its
-	parent processes and returns 0 (OK) instead of 1 (ERROR)
-	by default used for aborting on STRG+C (see message,
-	for "KeyboardInterrupt" exceptions)
-	'''
-	msgs = []
-	for msg in messages:
-		if (messages.index(msg) % 2) == 0:
-			msgs.append(blu(msg))
-		else:
-			msgs.append(yel(msg))
-	print(' '.join(msg for msg in msgs), flush=True)
-	exit(0)
 
 def tabd(keyvals):
 	if not type(keyvals) is dict:
