@@ -1,15 +1,16 @@
 #!/usr/bin/python3
 """executing (remote) commands module"""
-import sys, os
-from socket import getfqdn as fqdn
-from subprocess import call, Popen, PIPE
+from os import access as _access, environ as _environ, \
+    getuid as _getuid, X_OK as _X_OK
+from socket import getfqdn as _fqdn
+from subprocess import call as _call, Popen as _Popen, PIPE as _PIPE
+
 # for subprocess version compatibility while DEVNULL is new in subprocess
 try:
 	from subprocess import DEVNULL
 except ImportError:
 	DEVNULL = open('/dev/null')
 
-from system import which
 
 class Command(object):
 	"""(remote) command execution module"""
@@ -21,8 +22,8 @@ class Command(object):
 			arg = '_%s_'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, arg[:-1]):
-				setattr(self, arg[:-1], True)
+		if self.dbg:
+			print(Command.__mro__)
 	# rw properties
 	@property               # sh_ <bool>
 	def sh_(self):
@@ -44,6 +45,12 @@ class Command(object):
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val if isinstance(val, bool) else self._dbg
+
+	@staticmethod
+	def __which(prog):
+		for path in _environ['PATH'].split(':'):
+			if _access('%s/%s'%(path, prog), _X_OK):
+				return '%s/%s'%(path, prog)
 
 	@staticmethod
 	def __list(*commands):
@@ -71,21 +78,22 @@ class Command(object):
 		return ' '.join(str(command) for command in list(commands))
 
 	@staticmethod
-	def __sucmd(commands):
+	def __sucmd(sudobin, commands):
 		if 'sudo' in commands[0]:
 			del commands[0]
-		if int(os.getuid()) != 0:
-			commands.insert(0, which('sudo'))
+		if int(_getuid()) != 0:
+			commands.insert(0, sudobin)
 		return commands
 
 	def _sudo(self, commands=None):
+		sudo = self.__which('sudo')
 		"""privilege checking function"""
 		if not commands:
-			if int(call([which('sudo'), '-v'])) == 0:
+			if int(_call([sudo, '-v'])) == 0:
 				return True
 			sucmds = None
 		else:
-			sucmds = self.__sucmd(commands)
+			sucmds = self.__sucmd(sudo, commands)
 		return sucmds
 
 	def __cmdprep(self, commands):
@@ -101,7 +109,7 @@ class Command(object):
 	def run(self, *commands):
 		"""just run the command and return the processes PID"""
 		commands = self.__cmdprep(commands)
-		return Popen(
+		return _Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
 	def call(self, *commands):
@@ -110,13 +118,12 @@ class Command(object):
 		prints STDERR, STDOUT and returns the exitcode
 		"""
 		commands = self.__cmdprep(commands)
-		return int(call(commands, shell=self.sh_))
+		return int(_call(commands, shell=self.sh_))
 
 	def stdx(self, *commands):
 		"""command execution which returns STDERR and/or STDOUT"""
 		commands = self.__cmdprep(commands)
-
-		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
+		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		if out:
 			return out.decode()
@@ -126,7 +133,7 @@ class Command(object):
 	def stdo(self, *commands):
 		"""command execution which returns STDOUT only"""
 		commands = self.__cmdprep(commands)
-		prc = Popen(commands, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
+		prc = _Popen(commands, stdout=_PIPE, stderr=DEVNULL, shell=self.sh_)
 		out, _ = prc.communicate()
 		if out:
 			return out.decode()
@@ -134,7 +141,7 @@ class Command(object):
 	def stde(self, *commands):
 		"""command execution which returns STDERR only"""
 		commands = self.__cmdprep(commands)
-		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
+		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
 		_, err = prc.communicate()
 		if err:
 			return err.decode()
@@ -142,16 +149,29 @@ class Command(object):
 	def erno(self, *commands):
 		"""command execution which returns the exitcode only"""
 		commands = self.__cmdprep(commands)
-		prc = Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
+		prc = _Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
 		prc.communicate()
 		return int(prc.returncode)
 
 	def oerc(self, *commands):
 		"""command execution which returns STDERR only"""
 		commands = self.__cmdprep(commands)
-		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
+		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
 		out, err = prc.communicate()
 		return out.decode(), err.decode(), prc.returncode
+
+
+command = Command('sh')
+sucommand = Command('sh', 'su')
+
+def sudofork(*args):
+	enr = 0
+	try:
+		enr = sucommand.call(*args)
+	except KeyboardInterrupt:
+		abort()
+	finally:
+		exit(enr)
 
 
 
