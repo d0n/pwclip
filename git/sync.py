@@ -2,9 +2,9 @@
 """git wrapping module"""
 # global imports
 import re
+import sys
 from os import chdir as _chdir
 from os.path import isfile as _isfile, exists as _exists, basename as _basename
-import sys
 
 # local relative imports
 from lib.executor import Command
