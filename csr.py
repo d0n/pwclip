@@ -73,7 +73,7 @@ def csrgen(fqdn, host, alters=[], outdir=os.path.expanduser('~/'),
 	    '# -------------- END custom openssl.cnf -----'
 	with open(tmpfile, 'w+') as tmpcfg:
 		tmpcfg.write(config.format(**cfgvals))
-	c.call('openssl req -batch -config %s -newkey rsa:4096 -sha1 -out %s'%(
+	c.call('openssl req -batch -config %s -newkey rsa:4096 -sha512 -out %s'%(
         tmpfile, csroutfile))
 	os.remove(tmpfile)
 
