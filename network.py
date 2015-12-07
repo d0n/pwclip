@@ -7,9 +7,9 @@ import sys
 import xml.etree.ElementTree as etree
 
 # local relative imports
-from lib.colortext import bgre
-from lib.system import which
-from lib.executor import Command
+from colortext import bgre
+from system import which
+from executor import Command
 
 # default vars
 __me__ = os.path.basename(__file__)
