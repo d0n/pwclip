@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-from sys import stderr as _stderr
+from sys import \
+    stderr as _stderr
 
 # get color escape sequence from string
 def __colorize(color, text):
@@ -112,6 +113,7 @@ def error(*args, **kwargs):
 		else:
 			msgs.append(yel(arg))
 	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
+		
 
 
 def fatal(*args, **kwargs):
