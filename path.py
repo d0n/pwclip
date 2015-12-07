@@ -2,7 +2,9 @@ import os
 import inspect
 from stat import S_ISSOCK as _S_ISSOCK
 
-def absrelpath(path, base=os.getcwd()):
+def absrelpath(path, base=None):
+	base = base if base else os.path.dirname(path)
+	base = base if base else os.getcwd()
 	path = path.strip("'")
 	path = path.strip('"')
 	if path.startswith('~'):
@@ -11,13 +13,14 @@ def absrelpath(path, base=os.getcwd()):
 		path = os.readlink(path)
 	if '..' in path or not path.startswith('/'):
 		pwd = os.getcwd()
+		base = os.getcwd() if base is None else base
 		os.chdir(base)
 		path = os.path.abspath(path)
 		os.chdir(pwd)
 	return path.rstrip('/')
 
 
-def realpaths(*pathlist, base=os.getcwd()):
+def realpaths(*pathlist, base=None):
 	#print(pathlist, base)
 	paths = []
 	for path in pathlist:
