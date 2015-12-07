@@ -7,9 +7,9 @@ from os.path import isfile as _isfile
 import sys
 
 # local relative imports
-from lib.executor import Command
-from lib.system import realpaths, which
-from lib.colortext import blu, yel, bgre
+from executor import Command
+from system import realpaths, which
+from colortext import blu, yel, bgre
 
 # default vars
 __version__ = '0.1'

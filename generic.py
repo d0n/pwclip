@@ -5,8 +5,8 @@ from os import listdir as _listdir, chdir as _chdir
 from os.path import exists as _exists, isdir as _isdir
 
 # local relative imports
-from lib.colortext import blu, yel, bgre
-from lib.system import which
+from colortext import blu, yel, bgre
+from system import which
 #from .subversion import SubVersion
 
 from .git import GitSync
@@ -59,7 +59,7 @@ class RepoSync(GitSync):
 			repostats = {}
 			_chdir(repo)
 			if repotypes[repo] == 'git':
-				self._fetch_(fetchall=True)
+				self._fetch_(True)
 				for gitstats in self.itergits([repo], mode, syncall):
 					repostats.update(gitstats)
 			elif repotypes[repo] == 'svn':
