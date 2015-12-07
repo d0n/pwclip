@@ -20,8 +20,8 @@ import os
 import sys
 
 # local relative imports
-from lib.colortext import blu, red, yel, byel, error, fatal
-from lib.executor import SSHCommand
+from colortext import blu, red, yel, byel, error, fatal
+from executor import SSHCommand
 
 
 # global default variables

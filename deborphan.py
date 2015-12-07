@@ -19,8 +19,8 @@
 import os
 import sys
 
-from lib.colortext import blu
-from lib.executor import SSHCommand
+from colortext import blu
+from executor import SSHCommand
 
 # global default variables
 __version__ = '0.0'

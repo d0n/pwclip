@@ -21,10 +21,10 @@ import sys
 from socket import getfqdn as fqdn
 
 # local relative imports
-from lib.colortext import bgre
-from lib.system import which
-from lib.executor import SSHCommand
-from lib.network import SecureCoPy, netcat as nc
+from colortext import bgre
+from system import which
+from executor import SSHCommand
+from network import SecureCoPy, netcat as nc
 
 # global default variables
 __me__ = os.path.basename(sys.argv[0]).split('.')[0]

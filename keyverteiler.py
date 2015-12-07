@@ -21,8 +21,8 @@ import sys
 import time
 
 # local relative imports
-from lib.colortext import abort
-from lib.executor import SSHCommand
+from colortext import abort
+from executor import SSHCommand
 
 # global default variables
 __version__ = '0.0'

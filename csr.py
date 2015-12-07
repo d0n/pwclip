@@ -21,7 +21,7 @@ import sys
 from tempfile import mkstemp
 
 # local relative imports
-from lib.executor import command as c
+from executor import command as c
 
 # global default variables
 __version__ = '0.0'

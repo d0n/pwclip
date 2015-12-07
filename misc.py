@@ -20,9 +20,9 @@ import os
 import sys
 from socket import getfqdn as fqdn
 
-from lib.colortext import blu, yel, error
-from lib.network import askdns, netcat as nc
-from lib.executor import command as c
+from colortext import blu, yel, error
+from network import askdns, netcat as nc
+from executor import command as c
 
 # global default variables
 __version__ = '0.0'

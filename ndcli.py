@@ -18,10 +18,10 @@ import re
 import os
 import sys
 
-from lib.system import which
-from lib.colortext import error, fatal
-from lib.executor import command as c
-from lib.network import askdns
+from system import which
+from colortext import error, fatal
+from executor import command as c
+from network import askdns
 from dpkg import DePyKG
 
 # global default variables
