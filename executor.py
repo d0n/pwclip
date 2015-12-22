@@ -74,7 +74,7 @@ class Command(object):
 
 	@staticmethod
 	def __str(*commands):
-		"""commands to str converter"""
+		"""list/tuple to str converter"""
 		return ' '.join(str(command) for command in list(commands))
 
 	@staticmethod
@@ -86,8 +86,8 @@ class Command(object):
 		return commands
 
 	def _sudo(self, commands=None):
-		sudo = self.__which('sudo')
 		"""privilege checking function"""
+		sudo = self.__which('sudo')
 		if not commands:
 			if int(_call([sudo, '-v'])) == 0:
 				return True
