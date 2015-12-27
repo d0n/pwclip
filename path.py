@@ -3,7 +3,6 @@ import inspect
 from stat import S_ISSOCK as _S_ISSOCK
 
 def absrelpath(path, base=None):
-	base = base if base else os.path.dirname(path)
 	base = base if base else os.getcwd()
 	path = path.strip("'")
 	path = path.strip('"')
@@ -20,8 +19,8 @@ def absrelpath(path, base=None):
 	return path.rstrip('/')
 
 
-def realpaths(*pathlist, base=None):
-	#print(pathlist, base)
+def realpaths(pathlist, base=None):
+	base = base if base else os.getcwd()
 	paths = []
 	for path in pathlist:
 		if isinstance(path, (list, tuple)):
