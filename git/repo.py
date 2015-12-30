@@ -8,7 +8,7 @@ import sys
 
 # local relative imports
 from executor import Command
-from system import realpaths, which
+from system import absrelpath, which
 from colortext import blu, yel, bgre
 
 # default vars
@@ -172,7 +172,7 @@ class GitRepo(Command):
 	def commitstamp(self, rpofile):
 		if self.dbg:
 			print(bgre(self.commitstamp))
-		rpofile = realpaths(rpofile)
+		rpofile = absrelpath(rpofile)
 		stamp = self.stdo('%s log -1 --format=%%at %s'%(self.gitbin, rpofile))
 		if stamp:
 			stamp = stamp.strip()

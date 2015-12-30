@@ -8,7 +8,7 @@ from os.path import isfile as _isfile, exists as _exists, basename as _basename
 
 # local relative imports
 from executor import Command
-from system import realpaths, which
+from system import absrelpath, which
 from colortext import blu, yel, bgre, error
 
 from .repo import GitRepo
