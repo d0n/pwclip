@@ -8,7 +8,7 @@ import sys
 
 # local relative imports
 from executor import Command
-from system import realpaths, which
+from system import which
 from colortext import blu, yel, bgre
 
 from .repo import GitRepo
