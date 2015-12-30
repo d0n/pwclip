@@ -19,7 +19,7 @@ def absrelpath(path, base=None):
 	return path.rstrip('/')
 
 
-def realpaths(pathlist, base=None):
+def realpaths(*pathlist, base=None):
 	base = base if base else os.getcwd()
 	paths = []
 	for path in pathlist:
