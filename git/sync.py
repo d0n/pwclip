@@ -59,37 +59,34 @@ class GitSync(GitRepo):
 				repos = self._gitsubmods(mods) + list(repos)
 		return repos
 
-	def gitsync(self, branch=None, mode=''):
+	def gitsync(self, branch=None, mode=None):
 		if self.dbg:
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
 		mode = mode if mode else self.mode
 		status, ahead, behind = self.gitstatus()
-		if status == {} and not ahead and not behind:
-			return
-		if behind:
-			self.pull(branch)
-		if ahead:
-			self.push(branch)
+		if status == {} and not ahead and not behind: return
+		if behind: self.pull(branch)
+		if ahead: self.push(branch)
 		if status != {}:
 			self.add()
 			self.commit(status)
 		_, ahead, _ = self.gitstatus()
-		if ahead:
-			self.push(branch)
+		if ahead: self.push(branch)
 		return {branch: status}
 
-	def itergits(self, repos, mode='', syncall=None):
+	def itergits(self, repos, mode=None, syncall=None):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  mode = %s\n  syncall = %s'%(
                 self.itergits, repos, mode, syncall)))
 		mode = mode if mode else self.mode
 		syncall = syncall if syncall else self._aal
 		for repo in self._gitsubmods(repos):
-			_chdir(repo)
 			if not _exists(repo):
-				error('path %s does not exist and has been omitted'%repo)
+				error('path', repo, 'does not exist and has been omitted')
 				continue
+			else:
+				_chdir(repo)
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			branchs = self._heads() if syncall else [self._head()]
 			syncstats = {}
