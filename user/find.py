@@ -18,20 +18,15 @@ def userfind(pattern='1000', mode='user'):
 	home = 5
 	shell = 6
 	mode = int(eval(mode))
+	pstr = str(pattern)
 	try:
 		with open('/etc/passwd', 'r') as pwd:
-			hits = [
-                l.split(':') for l in [
-                    l.strip() for l in pwd.readlines()] if str(pattern) in l]
+			hits = [f.split(':') for f in [l for l in pwd.readlines() if pstr in l] if pstr in f][0]
+			#hits = [
+            #    l.split(':') for l in [
+            #        l.strip() for l in pwd.readlines()] if str(pattern) in l]
 	except PermissionError as err:
 		print(err, file=sys.stderr)
 		return err
 	if hits:
-		hits = list(set(
-            [hit[mode] for hit in hits for h in hit if h == pattern]))
-
-		if mode in (2, 3):
-			hits = [int(h) for h in hits]
-		if len(hits) >= 1:
-			return hits[0]
-		return hits
+		return list(hits)[mode]
