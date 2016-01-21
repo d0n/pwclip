@@ -1,5 +1,16 @@
-from sys import stderr as _stderr
+from sys import \
+    stderr as _stderr
+from os import \
+    stat as _stat
+from stat import \
+    S_ISSOCK as _ISSOCK
+
 def agentinfo(user):
+	stdsock = '/home/%s/.gnupg/S.gpg-agent.ssh' 
+	if user == 'root':
+		stdsock = '/root/.gnupg/S.gpg-agent.ssh'
+	if _ISSOCK(_stat(stdsock).st_mode):
+		return stdsock
 	agentinfo = '/home/%s/.gnupg/agent.env'%user
 	try:
 		with open(agentinfo, 'r') as agi:
