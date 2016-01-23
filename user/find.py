@@ -21,10 +21,11 @@ def userfind(pattern='1000', mode='user'):
 	pstr = str(pattern)
 	try:
 		with open('/etc/passwd', 'r') as pwd:
-			hits = [f.split(':') for f in [l for l in pwd.readlines() if pstr in l] if pstr in f][0]
-			#hits = [
-            #    l.split(':') for l in [
-            #        l.strip() for l in pwd.readlines()] if str(pattern) in l]
+			try:
+				hits = [f.split(':') for f in [l for l in pwd.readlines() if pstr in l] if pstr in f][0]
+			except IndexError as err:
+				print(err, file=_stderr)
+				hits = []
 	except PermissionError as err:
 		print(err, file=sys.stderr)
 		return err
