@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 from os.path import \
-    expanduser as _expanduser
-from gnupg import GPG
+    expanduser as _expanduser, \
+    walk as _walk
+
+from gnupg import GPG as _GPG
+import tarfile
+
 
 class GPGTool(object):
 	_dbg = False
-	gpg = GPG(homedir=_expanduser('~/.gnupg'), binary='/usr/bin/gpg2')
+	gpg = _GPG()
+	tar = tarfile
+	vault = _expanduser('~/.vault')
+	weakz = _expanduser('~/.weaknez')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -36,7 +43,26 @@ class GPGTool(object):
 	def dbg(self, val):
 		self._dbg = True if val else False
 
+	def _entar(self, target):
+		tar = self.tar.open(self.vault, "w:gz")
+		for (dirs, subs, files) in _walk(target):
+			for dat in files:
+				tar.add('%s/%s'%(dirs, dat))
+		tar.close()
+		return self.vault
+
+	def _untar(self, target):
+		tar = self.tar.open(target, "r:gz"):
+		tar.extractall()
+		tar.close()
+
 	def identities(self):
 		"""return list of known identies (in keyring)"""
 		return [i for i in [u['uids'] for u in self.gpg.list_keys()]]
+
+	def encrypt(self):
+		pass
+	
+	def decrypt(self):
+		pass
 
