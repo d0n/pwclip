@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
-from os.path import \
-    expanduser as _expanduser, \
+from os import \
     walk as _walk
+
+from os.path import \
+    expanduser as _expanduser
 
 from gnupg import GPG as _GPG
 import tarfile
 
 
-class GPGTool(object):
+class GPGTool(_GPG):
 	_dbg = False
-	gpg = _GPG()
 	tar = tarfile
 	vault = _expanduser('~/.vault')
-	weakz = _expanduser('~/.weaknez')
+	weakd = _expanduser('~/.weaknez')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -52,7 +53,7 @@ class GPGTool(object):
 		return self.vault
 
 	def _untar(self, target):
-		tar = self.tar.open(target, "r:gz"):
+		tar = self.tar.open(target, "r:gz")
 		tar.extractall()
 		tar.close()
 
