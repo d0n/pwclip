@@ -60,7 +60,7 @@ class RepoSync(GitSync):
 			_chdir(repo)
 			if repotypes[repo] == 'git':
 				self._fetch_(True)
-				for gitstats in self.itergits([repo], mode, syncall):
+				for gitstats in self.itergits([repo], syncall):
 					repostats.update(gitstats)
 			elif repotypes[repo] == 'svn':
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))

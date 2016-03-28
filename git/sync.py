@@ -59,11 +59,11 @@ class GitSync(GitRepo):
 				repos = self._gitsubmods(mods) + list(repos)
 		return repos
 
-	def gitsync(self, branch=None, mode=None):
+	def gitsync(self, branch=None):
 		if self.dbg:
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
-		mode = mode if mode else self.mode
+		if branch != self._head(): self.checkout(branch)
 		status, ahead, behind = self.gitstatus()
 		if status == {} and not ahead and not behind: return
 		if behind: self.pull(branch)
@@ -75,12 +75,11 @@ class GitSync(GitRepo):
 		if ahead: self.push(branch)
 		return {branch: status}
 
-	def itergits(self, repos, mode=None, syncall=None):
+	def itergits(self, repos, syncall=None):
 		if self.dbg:
-			print(bgre('%s\n  repos = %s\n  mode = %s\n  syncall = %s'%(
-                self.itergits, repos, mode, syncall)))
-		mode = mode if mode else self.mode
-		syncall = syncall if syncall else self._aal
+			print(bgre(self.itergits))
+			print(bgre('repos = %s\n  mode = %s\n  syncall = %s'%(
+                repos, syncall)))
 		for repo in self._gitsubmods(repos):
 			if not _exists(repo):
 				error('path', repo, 'does not exist and has been omitted')
@@ -91,10 +90,10 @@ class GitSync(GitRepo):
 			branchs = self._heads() if syncall else [self._head()]
 			syncstats = {}
 			for branch in branchs:
-				stats = self.gitsync(branch, mode)
+				stats = self.gitsync(branch)
 				if not stats:
 					continue
-				syncstats.update(stats)
+				syncstats[branch] = stats
 			if syncstats:
 				yield {_basename(repo): syncstats}
 
