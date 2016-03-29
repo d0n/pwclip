@@ -169,7 +169,7 @@ def sudofork(*args):
 	try:
 		enr = sucommand.call(*args)
 	except KeyboardInterrupt:
-		abort()
+		print('\n\033[34maborted by keystroke\033[0m')
 	finally:
 		exit(enr)
 
