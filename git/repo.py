@@ -119,7 +119,7 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self._remotes))
 		return [rem for rem in os.listdir(
-	        '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
+            '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
 
 	def checkout(self, branch, *files):
 		if self.dbg:
@@ -199,7 +199,8 @@ class GitRepo(Command):
 				continue
 			__ahbe = abline.split('[')[-1].strip(']').split(',')
 			if len(__ahbe) > 1:
-				anum, bnum = __ahbe[0].strip().split(' ')[1], __ahbe[1].strip().split(' ')[1]
+				anum, bnum = __ahbe[0].strip().split(' ')[1], \
+                             __ahbe[1].strip().split(' ')[1]
 			elif 'ahead' in __ahbe[0]:
 				anum = __ahbe[0].split(' ')[1].strip()
 			elif 'behind' in __ahbe[0]:
