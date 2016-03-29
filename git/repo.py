@@ -187,7 +187,10 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitstatus))
 		stats, ermsg, ernum = self.oerc(
-            '%s status -b --porcelain'%self.gitbin) 
+            '%s status -b --porcelain'%self.gitbin)
+		if ermsg or ernum != 0:
+			error('`git status` exited with errorcode %d and message:\n%s'%(
+                ernum, ermsg))
 		stats = stats.split('\n')
 		ablines = [l for l in stats if l.startswith('##')]
 		anum, bnum = 0, 0
@@ -225,7 +228,7 @@ class GitRepo(Command):
 			status['added'] = adds
 		if rens != []:
 			status['renamed'] = rens
-		return status, int(anum), int(bnum), int(ernum)
+		return status, int(anum), int(bnum)
 
 	def genmessage(self, stats=None):
 		if self.dbg:

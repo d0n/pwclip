@@ -64,18 +64,14 @@ class GitSync(GitRepo):
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
 		if branch != self._head(): self.checkout(branch)
-		status, ahead, behind, ernum = self.gitstatus()
-		if ernum != 0:
-			error('git status exited with error %d'%ernum)
+		status, ahead, behind = self.gitstatus()
 		if status == {} and not ahead and not behind: return
 		if behind: self.pull(branch)
 		if ahead: self.push(branch)
 		if status != {}:
 			self.add()
 			self.commit(status)
-		_, ahead, _, ernum = self.gitstatus()
-		if ernum != 0:
-			error('git status exited with error %d'%ernum)
+		_, ahead, _ = self.gitstatus()
 		if ahead: self.push(branch)
 		return {branch: status}
 
