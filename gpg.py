@@ -57,6 +57,7 @@ class GPGTool(object):
                 ) for (k, v) in sorted(self.__dict__.items()))))
 	@property                # dbg <bool>
 	def dbg(self):
+		"""bool"""
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
@@ -64,6 +65,7 @@ class GPGTool(object):
 
 	@property                # gpgdir <str>
 	def gnupghome(self):
+		"""string"""
 		return self._gnupghome
 	@gnupghome.setter
 	def gnupghome(self, val):
@@ -73,6 +75,7 @@ class GPGTool(object):
 
 	@property                # gpgbin <str>
 	def gpgbinary(self):
+		"""string"""
 		return self._gpgbinary
 	@gpgbinary.setter
 	def gpgbinary(self, val):
@@ -83,6 +86,7 @@ class GPGTool(object):
 
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
+		"""object"""
 		return _GPG(gnupghome=self.gnupghome, gpgbinary=self.gpgbinary)
 
 	@staticmethod

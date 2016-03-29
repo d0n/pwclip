@@ -1,11 +1,12 @@
-#!/usr/bin/env python3
+""" init"""
 import os
 from getpass import getpass as _getpass
 
 # local/relative imports
-from gpgp import enhmacsha, dehmacsha
+from .hmacsha import enhmacsha, dehmacsha
 
 def main():
+	"""main"""
 	tocrypt = input('gimme file to encrypt:').strip()
 	if not os.path.isfile(tocrypt):
 		print('cannot encrypt non existing file')
@@ -15,6 +16,7 @@ def main():
 
 
 def enhsfile(plainf):
+	"""encrypt using hmachsha function"""
 	passwd = _getpass('tell me ya secret:')
 	plainf = os.path.expanduser(plainf)
 	with open(plainf, 'rb') as bpf:
@@ -26,6 +28,7 @@ def enhsfile(plainf):
 
 
 def dehsfile(cryptf):
+	"""decrypt using hmachsha function"""
 	passwd = _getpass('tell me ya secret:')
 	cryptf = os.path.expanduser(cryptf)
 	with open(cryptf, 'rb') as vcf:
