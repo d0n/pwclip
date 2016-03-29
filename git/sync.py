@@ -65,8 +65,8 @@ class GitSync(GitRepo):
 		branch = branch if branch else self._head()
 		if branch != self._head(): self.checkout(branch)
 		status, ahead, behind, ernum = self.gitstatus()
-		if ernum != 0:
-			error('git status exited with error %d'%ernum)
+		#if ernum != 0:
+		error('git status exited with error %d'%ernum)
 		if status == {} and not ahead and not behind: return
 		if behind: self.pull(branch)
 		if ahead: self.push(branch)
