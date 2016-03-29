@@ -225,7 +225,7 @@ class GitRepo(Command):
 			status['added'] = adds
 		if rens != []:
 			status['renamed'] = rens
-		return status, int(anum), int(bnum)
+		return status, int(anum), int(bnum), int(ernum)
 
 	def genmessage(self, stats=None):
 		if self.dbg:
