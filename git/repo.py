@@ -71,9 +71,6 @@ class GitRepo(Command):
 	def gitbin(self):
 		return self._gitbin
 
-	"""
-	 /home/lpelzer/bin/pypkg/cryptalot/.git//home/lpelzer/bin/pypkg/cryptalot/.git//home/lpelzer/bin/pypkg/.git//home/lpelzer/bin/.git//home/lpelzer/.git//home/.git//.git/HEAD
-	"""
 	@staticmethod
 	def __gitdir_(repodir):
 		def __file(git):
