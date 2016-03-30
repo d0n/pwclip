@@ -18,23 +18,17 @@
 # (std)lib imports
 from os.path import \
     basename as _basename, \
+    dirname as _dirname, \
+    expanduser as _expanduser, \
     isdir as _isdir, \
-    isfile as _isfile
     isfile as _isfile
 
 class PasswordListParser(object):
 	_dbg = False
 	_pwlist = []
 	_listfile = ''
-	def __init__(self, *args, **kwargs):
-		for arg in args:
-			arg = '_%s'%(arg)
-			if hasattr(self, arg):
-				setattr(self, arg, True)
-		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
-			if hasattr(self, key) and not isinstance(val, bool):
-				setattr(self, key, val)
+	def __init__(self, listfile):
+		self.listfile = listfile
 		if self.dbg:
 			lim = int(max(len(k) for k in PasswordListParser.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -59,6 +53,17 @@ class PasswordListParser(object):
 		return self._listfile
 	@listfile.setter
 	def listfile(self, val):
-		if not _isfile(val):
-			
-		self._listfile = val if isinstance(val, str) else self._listfile
+		if val.startswith('~'):
+			val = _expanduser(val)
+		if not _isdir(_dirname(val)):
+			raise FileNotFoundError(val)
+		if _isfile(val):
+			with open(val, 'r') as pwf:
+				self._pwlist = [l.strip() for l in pwf.readlines()]
+		self._listfile = val
+
+	@property                # pwlist <list>
+	def pwlist(self):
+		return self._pwlist
+
+	
