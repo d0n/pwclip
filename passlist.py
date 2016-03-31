@@ -17,18 +17,19 @@
 """password list parsing library"""
 # (std)lib imports
 from os.path import \
-    basename as _basename, \
-    dirname as _dirname, \
-    expanduser as _expanduser, \
     isdir as _isdir, \
-    isfile as _isfile
+    isfile as _isfile, \
+    dirname as _dirname, \
+    basename as _basename, \
+    expanduser as _expanduser
+
+
 
 class PasswordListParser(object):
 	_dbg = False
-	_pwlist = []
-	_listfile = ''
-	def __init__(self, listfile):
-		self.listfile = listfile
+	_usrpwds = {}
+	def __init__(self, usrpass):
+		self._usrpass = usrpass
 		if self.dbg:
 			lim = int(max(len(k) for k in PasswordListParser.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -48,22 +49,16 @@ class PasswordListParser(object):
 	def dbg(self, val):
 		self._dbg = True if val else False
 
-	@property                # listfile <str>
-	def listfile(self):
-		return self._listfile
-	@listfile.setter
-	def listfile(self, val):
-		if val.startswith('~'):
-			val = _expanduser(val)
-		if not _isdir(_dirname(val)):
-			raise FileNotFoundError(val)
-		if _isfile(val):
-			with open(val, 'r') as pwf:
-				self._pwlist = [l.strip() for l in pwf.readlines()]
-		self._listfile = val
+	@property                # usrpwds <dict>
+	def usrpwds(self):
+		return self._usrpwds
 
-	@property                # pwlist <list>
-	def pwlist(self):
-		return self._pwlist
+	def search(self, pattern):
+		for (usr, pwd) in self.usrpwds.items():
+			if pattern in usr:
+				yield pwd
+			elif pattern in pwd:
+				yield usr
 
-	
+
+
