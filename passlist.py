@@ -25,11 +25,11 @@ from os.path import \
 
 
 
-class PasswordListParser(object):
+class PasswordListParser(dict):
 	_dbg = False
 	_usrpwds = {}
-	def __init__(self, usrpass):
-		self._usrpass = usrpass
+	def __init__(self, usrpwds):
+		self._usrpwds = 
 		if self.dbg:
 			lim = int(max(len(k) for k in PasswordListParser.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
