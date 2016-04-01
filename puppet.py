@@ -109,7 +109,8 @@ class Puppet(SSHCommand):
 			xec = self.run
 		debver = self.stdo(
             'cat /etc/debian_version',
-            host=fqdn(self.host))[0].split('.')[0]
+            host=self.host)
+		debver = debver[0].split('.')[0]
 		aptopts = '-y'
 		if debver and debver == '6':
 			bprpo = self.stdo(
