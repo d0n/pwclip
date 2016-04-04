@@ -27,31 +27,33 @@ from executor import SSHCommand
 # global default variables
 __version__ = '0.0'
 
-def kvntool(modes, hostgroups=':all'):
+def kvntool(modes, hostgroups=':all', users=[]):
 	ssh = SSHCommand(
         'sh',
-        **{'user': 'keys', 'host': 'keyverteiler-neu.schlund.de'}
-        )
+        **{'user': 'keys', 'host': 'keyverteiler-neu.schlund.de'})
 	def __distribute(hostgroup):
 		if not hostgroup.startswith('hg:') and not hostgroup == ':all':
 			hostgroup = 'hg:%s'%(hostgroup)
 		cmd = 'distribute %s'%(hostgroup)
 		return ssh.call(cmd)
-
-	for mod in ('export', 'make', 'distribute'):
-		if mod in modes:
-			if mod == 'distribute':
-				if hostgroups != ':all':
-					if (isinstance(hostgroups, list) or 
-                          isinstance(hostgroups, tuple)):
-						for hostgroup in hostgroups:
-							__distribute(hostgroup)
-					elif isinstance(hostgroups, str):
+	if users:
+		for user in users:
+			ssh.call('userinfo', user)
+	else:
+		for mod in ('export', 'make', 'distribute'):
+			if mod in modes:
+				if mod == 'distribute':
+					if hostgroups != ':all':
+						if (isinstance(hostgroups, list) or
+							  isinstance(hostgroups, tuple)):
+							for hostgroup in hostgroups:
+								__distribute(hostgroup)
+						elif isinstance(hostgroups, str):
+							__distribute(hostgroups)
+					else:
 						__distribute(hostgroups)
 				else:
-					__distribute(hostgroups)
-			else:
-				ssh.call(mod)
+					ssh.call(mod)
 
 
 
