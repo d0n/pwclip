@@ -32,7 +32,7 @@ class GPGTool(object):
 	one - also i can prepare some program related stuff in here
 	"""
 	_dbg = False
-	_gnupghome = '.gnupg'
+	_gnupghome = _expanduser('~/.gnupg')
 	_gpgbinary = '/usr/local/bin/gpg2'
 	if not _isfile(_gpgbinary):
 		print(_gpgbinary)
@@ -133,21 +133,21 @@ class GPGTool(object):
             kgi['key_length'])))
 		return self._gpg_.gen_key(self._gpg_.gen_key_input(**kgi))
 
-	def export(self):
+	def export(self, pattern=None):
 		"""
 		key-export method
 		"""
 		if self.dbg:
 			print(bgre(self.export))
-		for key in self._gpg_.list_keys():
-			for k in key.keys():
-				if k == 'subkeys':
-					for sub in key[k]:
-						finger, typs = sub
+		for keys in self._gpg_.list_keys():
+			for key in keys.keys():
+				if key == 'subkeys':
+					for sub in keys[key]:
+						finger, typs, subf = sub
 						if 'e' in typs:
-							si = key[k].index(sub)
-							ki = key[k][si].index(finger)
-							return self._gpg_.export_keys(key[k][si][ki])
+							si = keys[key].index(sub)
+							ki = keys[key][si].index(finger)
+							return self._gpg_.export_keys(keys[key][si][ki])
 
 	def encrypt(self, message, keystr=None):
 		"""
@@ -171,6 +171,4 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.decrypt))
-		text = self._gpg_.decrypt(
-            message, **{'passphrase': self.__passwd(False)})
-		return text
+		return self._gpg_.decrypt(str(message))
