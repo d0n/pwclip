@@ -15,9 +15,13 @@ from colortext import blu, yel, bgre
 __version__ = '0.1'
 
 class GitRepo(Command):
-	# Command attribute
+	"""
+	git repo class derives the Command class to provide wrapping methods using
+	the git binary found on the system
+	"""
+	# external attributes
 	_sh_ = True
-	# GitRepo attributes
+	# class attributes
 	_dbg = False
 	_lwd = None
 	_gitdir = None
@@ -37,8 +41,6 @@ class GitRepo(Command):
 				print(bgre(key, '=', val))
 		if not self.gitbin:
 			raise RuntimeError('could not find git binary in $PATH')
-
-	# rw propereties
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
@@ -65,8 +67,6 @@ class GitRepo(Command):
 			self._gitdir = self.__gitdir_(val)
 		else:
 			raise ValueError('directory %s does not exist'%val)
-
-	# ro properties
 	@property               # gitbin <str>
 	def gitbin(self):
 		return self._gitbin
