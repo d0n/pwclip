@@ -168,7 +168,7 @@ def tabd(keyvals, add=2):
 	blibablubb  = bla
 	^^indent "bar" and "b" as much as needed ("add" is added to each length)
 	"""
-	if isinstance(keyvals, dict):
+	if not isinstance(keyvals, dict):
 		raise TypeError('cannot process type %s expected dict'%type(keyvals))
 	tabbed = ''
 	lim = max(len(k) for k in keyvals.keys())+int(add)
