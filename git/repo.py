@@ -154,9 +154,7 @@ class GitRepo(Command):
 		if setup or remote not in self._remotes():
 			command = '%s push --set-upstream %s %s'%(
                 self.gitbin, origin, remote)
-		out, _, erno = self.oerc(command)
-		print(out.strip())
-		return int(erno)
+		return int(self.call(command))
 
 	def add(self, *files):
 		if self.dbg:
