@@ -9,7 +9,7 @@ import sys
 # local relative imports
 from executor import Command
 from system import absrelpath, which
-from colortext import blu, yel, bgre
+from colortext import blu, yel, bgre, error
 
 # default vars
 __version__ = '0.1'
@@ -140,8 +140,13 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.pull))
 		branch = branch if branch else self._head()
-		command = '%s pull %s %s' %(self.gitbin, origin, branch)
-		return int(self.call(command))
+		out, err, erno = self.oerc(
+            '%s pull %s %s' %(self.gitbin, origin, branch))
+		if self.vrb:
+			print(out)
+		if err:
+			error(err)
+		return erno
 
 	def push(self, remote=None, origin='origin', setup=None):
 		if self.dbg:
