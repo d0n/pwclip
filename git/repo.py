@@ -142,11 +142,9 @@ class GitRepo(Command):
 		branch = branch if branch else self._head()
 		out, err, erno = self.oerc(
             '%s pull %s %s' %(self.gitbin, origin, branch))
-		if self.vrb:
-			print(out)
-		if err:
-			error(err)
-		return erno
+		if self.vrb: print(out)
+		if err: error(err)
+		return int(erno)
 
 	def push(self, remote=None, origin='origin', setup=None):
 		if self.dbg:
@@ -156,6 +154,11 @@ class GitRepo(Command):
 		if setup or remote not in self._remotes():
 			command = '%s push --set-upstream %s %s'%(
                 self.gitbin, origin, remote)
+		out, err, erno = self.oerc(command)
+		print(out)
+		if err: error(err)
+		return int(erno)
+
 		return int(self.call(command))
 
 	def add(self, *files):
