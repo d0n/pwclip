@@ -155,7 +155,7 @@ class GitRepo(Command):
 			command = '%s push --set-upstream %s %s'%(
                 self.gitbin, origin, remote)
 		out, _, erno = self.oerc(command)
-		print(out)
+		print(out.strip())
 		return int(erno)
 
 	def add(self, *files):
