@@ -22,7 +22,8 @@ class GitRepo(Command):
 	# external attributes
 	_sh_ = True
 	# class attributes
-	_dbg = False
+	_dbg = None
+	_vrb = None
 	_lwd = None
 	_gitdir = None
 	_gitbin = which('git')
