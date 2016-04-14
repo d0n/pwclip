@@ -156,7 +156,6 @@ class GitRepo(Command):
                 self.gitbin, origin, remote)
 		out, err, erno = self.oerc(command)
 		print(out)
-		if err: error(err)
 		return int(erno)
 
 		return int(self.call(command))
