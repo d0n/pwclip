@@ -49,6 +49,13 @@ class GitRepo(Command):
 	def dbg(self, val):
 		self._dbg = val
 
+	@property                # vrb <bool>
+	def vrb(self):
+		return self._vrb
+	@vrb.setter
+	def vrb(self, val):
+		self._vrb = True if val else False
+
 	@property                # lwd <str>
 	def lwd(self):
 		return self._lwd
