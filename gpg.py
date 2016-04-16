@@ -33,7 +33,7 @@ class GPGTool(object):
 	"""
 	_dbg = False
 	_gnupghome = _expanduser('~/.gnupg')
-	_gpgbinary = '/usr/local/bin/gpg2'
+	_gpgbinary = '/usr/bin/gpg'
 	if not _isfile(_gpgbinary):
 		print(_gpgbinary)
 		_gpgbinary = '/usr/bin/gpg2'
@@ -107,31 +107,31 @@ class GPGTool(object):
 			except KeyboardInterrupt:
 				abort()
 
-	def _genkeys(self):
+	def genkeys(self, kginput=None):
 		"""
 		gpg-key-pair generator method
 		"""
 		if self.dbg:
-			print(bgre(self._genkeys))
-		if not self.kginput:
+			print(bgre(self.genkeys))
+		kginput = kginput if kginput else self.kginput
+		if not kginput:
 			error('no key-gen input received')
 			return
 		print(
             blu('generating new keys using:\n '),
             '\n  '.join('%s%s=  %s'%(
                 blu(k),
-                ' '*int(max(len(s) for s in self.kginput.keys())-len(k)+2),
+                ' '*int(max(len(s) for s in kginput.keys())-len(k)+2),
                 yel(v)
-            ) for (k, v) in self.kginput.items()))
-		kgi = self.kginput
-		if 'passphrase' in kgi.keys():
-			if kgi['passphrase'] == 'nopw':
-				del kgi['passphrase']
-			elif kgi['passphrase'] == 'stdin':
-				kgi['passphrase'] = self.__passwd()
+            ) for (k, v) in kginput.items()))
+		if 'passphrase' in kginput.keys():
+			if kginput['passphrase'] == 'nopw':
+				del kginput['passphrase']
+			elif kginput['passphrase'] == 'stdin':
+				kginput['passphrase'] = self.__passwd()
 		print(red('generating %s-bit keys - this WILL take some time'%(
-            kgi['key_length'])))
-		return self._gpg_.gen_key(self._gpg_.gen_key_input(**kgi))
+            kginput['key_length'])))
+		return self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 
 	def export(self, pattern=None):
 		"""
@@ -171,4 +171,4 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.decrypt))
-		return self._gpg_.decrypt(str(message))
+		text = self._gpg_.decrypt(message.encode())
