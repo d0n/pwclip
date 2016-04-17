@@ -32,11 +32,12 @@ class GPGTool(object):
 	one - also i can prepare some program related stuff in here
 	"""
 	_dbg = False
-	_gnupghome = _expanduser('~/.gnupg')
-	_gpgbinary = '/usr/bin/gpg'
-	if not _isfile(_gpgbinary):
-		print(_gpgbinary)
-		_gpgbinary = '/usr/bin/gpg2'
+	#_gnupghome = _expanduser('~/.gnupg')
+	#_gpgbinary = '/usr/local/bin/gpg2'
+	_homedir = _expanduser('~/.gnupg')
+	_binary = '/usr/local/bin/gpg2'
+	if not _isfile(_binary):
+		_binary = '/usr/bin/gpg'
 	kginput = {}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -63,31 +64,30 @@ class GPGTool(object):
 	def dbg(self, val):
 		self._dbg = True if val else False
 
-	@property                # gpgdir <str>
-	def gnupghome(self):
-		"""string"""
-		return self._gnupghome
-	@gnupghome.setter
-	def gnupghome(self, val):
-		self._gnupghome = _expanduser(val) if val.startswith('~') else val
-		if not self._gnupghome.startswith('/'):
-			self._gnupghome = '%s/%s'%(_getcwd(), val)
+	@property                # homedir <str>
+	def homedir(self):
+		return self._homedir
+	@homedir.setter
+	def homedir(self, val):
+		self._homedir = val if not val.startswith('~') else _expanduser(val)
+		if not self._homedir.startswith('/'):
+			self._homedir = '%s/%s'%(_getcwd(), val)
 
 	@property                # gpgbin <str>
-	def gpgbinary(self):
+	def binary(self):
 		"""string"""
-		return self._gpgbinary
-	@gpgbinary.setter
-	def gpgbinary(self, val):
+		return self._binary
+	@binary.setter
+	def binary(self, val):
 		if _isfile(val) and _access(val, _XOK):
-			self._gpgbinary = val
-		if not _isfile(self._gpgbinary) or not _access(self._gpgbinary, _XOK):
-			raise RuntimeError('%s needs to be executable'%self._gpgbinary)
+			self._binary = val
+		if not _isfile(self._binary) or not _access(self._binary, _XOK):
+			raise RuntimeError('%s needs to be executable'%self._binary)
 
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
-		return _GPG(gnupghome=self.gnupghome, gpgbinary=self.gpgbinary)
+		return _GPG(homedir=self.homedir, binary=self.binary)
 
 	@staticmethod
 	def __passwd(rpt=True):
@@ -107,13 +107,13 @@ class GPGTool(object):
 			except KeyboardInterrupt:
 				abort()
 
-	def genkeys(self, kginput=None):
+	def genkeys(self, **kginput):
 		"""
 		gpg-key-pair generator method
 		"""
 		if self.dbg:
 			print(bgre(self.genkeys))
-		kginput = kginput if kginput else self.kginput
+		kginput = kginput if kginput != {} else self.kginput
 		if not kginput:
 			error('no key-gen input received')
 			return
@@ -143,7 +143,7 @@ class GPGTool(object):
 			for key in keys.keys():
 				if key == 'subkeys':
 					for sub in keys[key]:
-						finger, typs, subf = sub
+						finger, typs = sub
 						if 'e' in typs:
 							si = keys[key].index(sub)
 							ki = keys[key][si].index(finger)
@@ -171,4 +171,4 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.decrypt))
-		text = self._gpg_.decrypt(message.encode())
+		return self._gpg_.decrypt(str(message))
