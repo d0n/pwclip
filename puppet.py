@@ -21,7 +21,7 @@ import sys
 from socket import getfqdn as fqdn
 
 # local relative imports
-from colortext import bgre
+from colortext import bgre, Debugger
 from system import which
 from executor import SSHCommand
 from network import SecureCoPy, netcat as nc
@@ -30,10 +30,11 @@ from network import SecureCoPy, netcat as nc
 __me__ = os.path.basename(sys.argv[0]).split('.')[0]
 __version__ = '0.2'
 
-class Puppet(SSHCommand):
+class Puppet(SSHCommand, Debugger):
 	"""puppet wrapper class"""
 	_sh_ = True
 	_dbg = False
+	_vrb = False
 	_bgr = False
 	_user_ = 'root'
 	_host_ = ''
@@ -48,16 +49,19 @@ class Puppet(SSHCommand):
 			key = '_%s'%(key)
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
-		if self.dbg:
-			print(bgre(Puppet.__mro__))
-			for (key, val) in self.__dict__.items():
-				print(bgre(key, '=', val))
+		self.debug()
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
+		self._dbg = val if val else False
+	@property                # vrb <bool>
+	def vrb(self):
+		return self._vrb
+	@vrb.setter
+	def vrb(self, val):
+		self._vrb = True if val else False
 	@property               # bgr <bool>
 	def bgr(self):
 		return self._bgr
@@ -79,20 +83,17 @@ class Puppet(SSHCommand):
 
 	def pupush(self):
 		"""push current svn revision to puppet master"""
-		if self.dbg:
-			print(bgre(self.pupush))
+		self.debug()
 		return nc('puppetsync.server.lan', '18140', 'itoacclive')
 
 	def pupcrt(self):
 		"""remove puppet ssl certificates on puppetca"""
-		if self.dbg:
-			print(bgre(self.pupcrt))
+		self.debug()
 		return nc('puppetca.dlan.cinetic.de', '18140', fqdn(self.host))
 
 	def pupssl(self):
 		"""remove puppet ssl certificates remotely"""
-		if self.dbg:
-			print(bgre(self.pupssl))
+		self.debug()
 		if self.call(
               'rm -rf /var/lib/puppet/ssl/',
               host=fqdn(self.host)) == 0:
@@ -100,8 +101,7 @@ class Puppet(SSHCommand):
 
 	def pupini(self, background=None):
 		"""puppet writing method by using template"""
-		if self.dbg:
-			print(bgre(self.pupini))
+		self.debug()
 		if not background:
 			background = self.bgr
 		xec = self.call
@@ -132,8 +132,7 @@ class Puppet(SSHCommand):
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
-		if self.dbg:
-			print(bgre(self.puprun))
+		self.debug()
 		if not bgr:
 			bgr = self.bgr
 		xec = self.call
