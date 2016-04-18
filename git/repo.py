@@ -251,8 +251,8 @@ class GitRepo(Command):
 		msg = '{ '
 		for typ in stats:
 			msg = '%s%s: [%s], '%(
-                msg, blu('%s%s'%(typ[0].upper(), typ[1:])),
-                ', '.join(yel(f) for f in stats[typ]))
+                msg, blu('%s%s'%(typ[0].upper(),
+                typ[1:])), ', '.join(yel(f) for f in stats[typ]))
 		msg = msg.strip(', ')
 		msg = '%s }'%(msg)
 		return msg
