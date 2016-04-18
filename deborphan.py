@@ -36,16 +36,16 @@ def orphan(server, background=None, debug=None):
 	if int(
 	      c.erno('dpkg -s deborphan')
 	      ) != 0:
-		xce('aptitude -y install deborphan')
+		xce('apt-get -y install deborphan')
 	orphpks = c.stdo('deborphan |tr "\n" " "')
-	legacys = c.stdo('dpkg -l |grep "^rc.*" |awk \'{print $2}\' |tr "\n" " "')
+	confdps = c.stdo('dpkg -l |grep "^rc.*" |awk \'{print $2}\' |tr "\n" " "')
 	pkgs = []
 	if orphpks:
 		pkgs = orphpks.split(' ')
-	if legacys:
-		pkgs = pkgs + legacys.split(' ')
+	if confdps:
+		pkgs = pkgs + confdps.split(' ')
 	if pkgs:
-		if int(xce('aptitude -y purge %s'%(' '.join(p for p in pkgs)))) == 0:
+		if int(xce('apt-get -y purge %s'%(' '.join(p for p in pkgs)))) == 0:
 			return pkgs
 	
 

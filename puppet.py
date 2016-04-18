@@ -124,8 +124,8 @@ class Puppet(SSHCommand, Debugger):
                     host=fqdn(self.host))
 			aptopts = '-y -t squeeze-backports'
 		for cmd in (
-              'aptitude update', 'aptitude -y full-upgrade',
-              'aptitude install %s puppet lsb-release'%(aptopts)):
+              'apt-get update', 'apt-get -y upgrade',
+              'apt-get install -y puppet lsb-release'): # %(aptopts)):
 			xec(cmd, host=fqdn(self.host))
 		#print(self.puptmpl, '/etc/puppet/puppet.conf')
 		self.scp(self.puptmpl, '/etc/puppet/puppet.conf', host=fqdn(self.host))
