@@ -147,11 +147,7 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.pull))
 		branch = branch if branch else self._head()
-		out, err, erno = self.oerc(
-            '%s pull %s %s' %(self.gitbin, origin, branch))
-		if self.vrb: print(out)
-		if err: error(err)
-		return int(erno)
+		return self.call('%s pull %s %s'%(self.gitbin, origin, branch))
 
 	def push(self, remote=None, origin='origin', setup=None):
 		if self.dbg:
