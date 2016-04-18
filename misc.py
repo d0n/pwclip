@@ -22,10 +22,12 @@ from socket import getfqdn as fqdn
 
 from colortext import blu, yel, error
 from network import askdns, netcat as nc
-from executor import command as c
+from executor import SSHCommand
 
 # global default variables
 __version__ = '0.0'
+
+ssh = SSHCommand()
 
 def listhosts(stageha):
 	servers = []
@@ -60,7 +62,7 @@ def listclusters(name):
 	return cluster
 
 def slotdir(fqdn, slotno):
-	slotdir = c.stdx(
+	slotdir = ssh.stdx(
 	    'ls /home/jboss/ |egrep -i "^slot\-?%s$"'%(slotno),
 	    host=fqdn, user='root')
 	if slotdir:
@@ -71,7 +73,7 @@ def jolofix(fqdn, slotno):
 	print(
 	    blu('searching on'), yel(fqdn),
 	     blu('for appropriate jolokia war file to slot'), yel(sltdir))
-	out = c.stdo(
+	out = ssh.stdo(
 	    'find /home/jboss -type f -name "jolokia*.war"',
 	     host=fqdn, user='root')
 	if out:
@@ -83,7 +85,7 @@ def jolofix(fqdn, slotno):
 			jololn = jololns[0]
 		if jololn:
 			print(blu('touching'), yel(jololn))
-			c.call('touch %s' %(jololn), host=fqdn, user='root')
+			ssh.call('touch %s' %(jololn), host=fqdn, user='root')
 
 
 
