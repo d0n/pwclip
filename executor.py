@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""executing (remote) commands module"""
+"""command module of executor"""
 from os import access as _access, environ as _environ, \
     getuid as _getuid, X_OK as _X_OK
 from socket import getfqdn as _fqdn
@@ -13,7 +13,7 @@ except ImportError:
 
 
 class Command(object):
-	"""(remote) command execution module"""
+	"""command execution class"""
 	_sh_ = False
 	_su_ = False
 	_dbg = False
@@ -48,6 +48,7 @@ class Command(object):
 
 	@staticmethod
 	def __which(prog):
+		"""pretty much like the which cmd-util (see `man which`)"""
 		for path in _environ['PATH'].split(':'):
 			if _access('%s/%s'%(path, prog), _X_OK):
 				return '%s/%s'%(path, prog)
@@ -158,7 +159,7 @@ class Command(object):
 		commands = self.__cmdprep(commands)
 		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
 		out, err = prc.communicate()
-		return out.decode(), err.decode(), prc.returncode
+		return out.decode(), err.decode(), int(prc.returncode)
 
 
 command = Command('sh')
