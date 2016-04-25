@@ -1,22 +1,31 @@
-
-
-
-
-
-
+# -*- coding: utf-8 -*-
+#
+# This file is free software by d0n <d0n@janeiskla.de>
+#
+# You can redistribute it and/or modify it under the terms of the GNU -
+# Lesser General Public License as published by the Free Software Foundation
+#
+# This is distributed in the hope that it will be useful somehow.
+# !WITHOUT ANY WARRANTY!
+#
+# Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+# details.
+#
+from colortext import fatal
 
 class FstabParser(object):
 	_dbg = False
 	tabmap = {
-		1: 'device',
-		2: 'mounto',
-		3: 'fstype',
-		4: 'ptions',
-		5: 'dmp',
-		6: 'pas',
-	}
-	_tfile = '/etc/fstab'
-	_fstab = []
+        0: 'device',
+        1: 'mounto',
+        2: 'fstype',
+        3: 'fsopts',
+        4: 'dmp',
+        5: 'pas',
+    }
+	fstab = '/etc/fstab'
+	_tablist = []
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -45,18 +54,33 @@ class FstabParser(object):
 	def dbg(self, val):
 		self._dbg = True if val else False
 
-	@property                # fstab <list>
-	def fstab(self):
-		self._fstab = self._fstab if self._fstab else self.__tablist()
-		return self._fstab
+	@property                # tablist <list>
+	def tablist(self):
+		return self._tablist if self._tablist else self.__tablist(self.fstab)
+	@tablist.setter          # tablist <list>
+	def tablist(self, val):
+		if not self.__istablist(val):
+			raise ValueError(
+                'value %s not processable, need list of lists'%val)
+		self._tablist = val
 
 	@staticmethod
-	def __tablist(tabfile='/etc/fstab'):
-		with open(tabfile, 'r') as tab:
-			return [[i.strip() for i in l.split()] for l in tab.readlines() if l and not l[0].startswith('#')]
-	
+	def __istablist(tablist):
+		if max(max(list(len(i) for i in l) for l in tablist)) != 1:
+			return True
 
 	@staticmethod
-	def __writetab(self, tablist):
-		pass
+	def __tablist(fstab='/etc/fstab'):
+		with open(fstab, 'r') as tab:
+			return [
+                [i.strip() for i in l.split()
+                ] for l in tab.readlines() if l and not l[0].startswith('#')]
+
+
+	def writetab(self, tablist=[[]]):
+		if not self.__istablist(tablist):
+			fatal('cannot process', val, 'need list of lists', '[[]]')
+		with open(self.fstab, 'w+') as fsh:
+			fsh.write('\n'.join(' '.join(i for i in l) for l in self.tablist))
+
 
