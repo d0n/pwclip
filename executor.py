@@ -48,15 +48,17 @@ class Command(object):
 
 	@staticmethod
 	def __which(prog):
-		"""pretty much like the which cmd-util (see `man which`)"""
+		"""pretty much like the `which` command (see `man which`)"""
 		for path in _environ['PATH'].split(':'):
 			if _access('%s/%s'%(path, prog), _X_OK):
 				return '%s/%s'%(path, prog)
 
 	def __list(self, commands):
-		"""commands string to list converter"""
+		"""
+		    commands string to list converter assuming at least one part 
+			"""
 		for cmd in commands:
-			if max(len(c) for c in cmd) == 1:
+			if max(len(c) for c in cmd) == 1 and len(cmd) >= 1:
 				return list(commands)
 			return list(self.__list(cmd))
 		#cmds = []
