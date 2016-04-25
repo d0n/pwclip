@@ -30,21 +30,21 @@ class Command(object):
 		return self._sh_
 	@sh_.setter
 	def sh_(self, val):
-		self._sh_ = val #if isinstance(val, bool) else self._sh_
+		self._sh_ = val if val else False
 
 	@property               # su_ <bool>
 	def su_(self):
 		return self._su_
 	@su_.setter
 	def su_(self, val):
-		self._su_ = val if isinstance(val, bool) else self._su_
+		self._su_ = val if val else False
 
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if isinstance(val, bool) else self._dbg
+		self._dbg = val if val else False
 
 	@staticmethod
 	def __which(prog):
@@ -53,25 +53,28 @@ class Command(object):
 			if _access('%s/%s'%(path, prog), _X_OK):
 				return '%s/%s'%(path, prog)
 
-	@staticmethod
-	def __list(*commands):
-		"""commands to list converter"""
-		cmds = []
-		try:
-			cmds = eval(commands)
-		except (SystemError, TypeError):
-			#print(commands)
-			for cmmd in commands:
-				if isinstance(cmmd, str):
-					if ' ' in cmmd:
-						for cmd in cmmd.split(' '):
-							cmds.append(cmd)
-					else:
-						cmds.append(cmmd)
-				else:
-					for cmd in cmmd:
-						cmds.append(cmd)
-		return list(cmds)
+	def __list(self, commands):
+		"""commands string to list converter"""
+		for cmd in commands:
+			if max(len(c) for c in cmd) == 1:
+				return list(commands)
+			return list(self.__list(cmd))
+		#cmds = []
+		#try:
+		#	cmds = eval(commands)
+		#except (SystemError, TypeError):
+		#	#print(commands)
+		#	for cmmd in commands:
+		#		if isinstance(cmmd, str):
+		#			if ' ' in cmmd:
+		#				for cmd in cmmd.split(' '):
+		#					cmds.append(cmd)
+		#			else:
+		#				cmds.append(cmmd)
+		#		else:
+		#			for cmd in cmmd:
+		#				cmds.append(cmd)
+		#return list(cmds)
 
 	@staticmethod
 	def __str(*commands):
