@@ -19,8 +19,13 @@ import re
 import os
 import sys
 
+from stat import \
+    S_ISBLK as _isblk
+
 # local relative imports
 from .sysfs import SysFs
+
+from system import absrelpath
 
 # global default variables
 __version__ = '0.0'
@@ -55,9 +60,36 @@ class BlockDevice(object):
 	def dbg(self, val):
 		self._dbg = val if type(val) is bool else self._dbg
 
-	def _disks(self):
-		pass
+	def linkeds(self):
+		devlnks = {}
+		for (dirs, subs, files) in os.walk('/dev'):
+			for dat in files:
+				device = '%s/%s'%(dirs, dat)
+				try:
+					if (_isblk(os.stat(device).st_mode) and \
+                          os.path.islink(device)):
+						devlnks[device] = absrelpath(
+                            os.readlink(device), base=os.path.dirname(device))
+				except FileNotFoundError:
+					pass
+		return devlnks
 
+	def devices(self):
+		blkdevs = []
+		for (dirs, subs, files) in os.walk('/dev'):
+			for dat in files:
+				device = '%s/%s'%(dirs, dat)
+				try:
+					if (_isblk(os.stat(device).st_mode) and not \
+                          os.path.islink(device)):
+						blkdevs.append(device)
+				except FileNotFoundError:
+					pass
+		return sorted(blkdevs)
+
+
+
+"""
 	def hddsize(self, hdd, magic=1000.0):
 		device = re.sub(r'\d$', '', hdd.split('/')[-1])
 		sysfs = SysFs(os.path.realpath('/sys/block/%s'%device))
@@ -83,7 +115,7 @@ class BlockDevice(object):
 					      hdd == os.path.basename(os.readlink(mapped))):
 						hdd = os.readlink('/dev/mapper/%s'%mapped)
 		return float(os.statvfs(hdd).f_bfree)/(magic*magic*magic)
-
+"""
 
 
 
