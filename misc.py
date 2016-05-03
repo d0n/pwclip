@@ -31,7 +31,7 @@ ssh = SSHCommand()
 
 def listhosts(stageha):
 	servers = []
-	for i in range(1, 4):
+	for i in range(1, 20):
 		if askdns(stageha+str(0)+str(i)):
 			servers.append(fqdn(stageha+str(0)+str(i)))
 		elif askdns(stageha+str(i)):
