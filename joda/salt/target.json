@@ -1,6 +1,0 @@
-{
-  "cli_path": "/opt/ui/opt/ui-service-process-platform-2-4-15/data/bin/jboss-cli.sh",
-  "controller": "10.88.6.22:10099",
-  "cli_user": "root",
-  "cli_password": "Henning"
-}
