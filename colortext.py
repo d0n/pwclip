@@ -5,7 +5,10 @@ text colorisation functions - due to extendet use of the python3 print
 function this is for python3 only
 """
 from sys import \
-    stderr as _stderr
+    stderr as _stderr, \
+    stdout as _stdout
+__echo = _stdout.write
+__puke = _stderr.write
 
 from inspect import \
     stack as _stack
@@ -113,7 +116,7 @@ def abort(*messages):
 			msgs.append(blu(msg))
 		else:
 			msgs.append(yel(msg))
-	print(' '.join(msg for msg in msgs), flush=True)
+	__echo(' '.join(msg for msg in msgs))
 	exit(1)
 
 def error(*args, **kwargs):
@@ -137,7 +140,7 @@ def error(*args, **kwargs):
 			msgs.append(red(arg))
 		else:
 			msgs.append(yel(arg))
-	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
+	__puke(' '.join(msg for msg in msgs))
 
 
 
@@ -158,7 +161,7 @@ def fatal(*args, **kwargs):
 			msgs.append(bred(arg))
 		else:
 			msgs.append(yel(arg))
-	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
+	__puke(' '.join(msg for msg in msgs))
 	exit(1)
 
 def tabd(keyvals, add=2):
@@ -219,7 +222,7 @@ class Debugger(object):
 					log.write(message)
 				if not vrb:
 					return
-			print(bgre(message))
+			__echo(bgre(message))
 
 
 
