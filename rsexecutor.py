@@ -71,30 +71,30 @@ class SSHCommand(Command):
 		ssh.append(host)
 		return ssh + [c for c in commands]
 
-	def run(self, *commands, host=None, user=None):
+	def run(self, commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
 		return super().run(*commands)
 
-	def call(self, *commands, host=None, user=None):
+	def call(self, commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
 		return super().call(*commands)
 
-	def stdx(self, *commands, host=None, user=None):
+	def stdx(self, commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
 		return super().stdx(*commands)
 
-	def stdo(self, *commands, host=None, user=None):
+	def stdo(self, commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
 		return super().stdo(*commands)
 
-	def stde(self, *commands, host=None, user=None):
+	def stde(self, commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
 		return super().stde(*commands)
 
-	def erno(self, *commands, host=None, user=None):
+	def erno(self, commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
 		return super().erno(*commands)
 
-	def oerc(self, *commands, host=None, user=None):
+	def oerc(self, commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
 		return super().oerc(*commands)

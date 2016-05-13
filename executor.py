@@ -2,6 +2,12 @@
 """command module of executor"""
 from os import access as _access, environ as _environ, \
     getuid as _getuid, X_OK as _X_OK
+from sys import \
+    stdout as _stdout, \
+    stdout as _stderr
+__echo = _stdout.write
+__puke = _stderr.write
+
 from socket import getfqdn as _fqdn
 from subprocess import call as _call, Popen as _Popen, PIPE as _PIPE
 
