@@ -1,4 +1,4 @@
-from re import search as _search, U as _U, A as _A
+from re import search as _search
 from os import urandom as _urandom
 
 def random(limit=10, pattern='[\w -~]'):
