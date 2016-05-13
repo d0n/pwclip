@@ -4,7 +4,10 @@ text colorisation functions  due to extendet use of the python3 print
 function this is for python3 only
 """
 from sys import \
-    stderr as _stderr
+    stderr as _stderr, \
+    stdout as _stdout
+__echo = _stdout.write
+__puke = _stderr.write
 
 from inspect import \
     stack as _stack
@@ -112,7 +115,7 @@ def abort(*messages):
 			msgs.append(blu(msg))
 		else:
 			msgs.append(yel(msg))
-	print(' '.join(msg for msg in msgs), flush=True)
+	__echo(' '.join(msg for msg in msgs))
 	exit(1)
 
 def error(*args, **kwargs):
@@ -136,7 +139,7 @@ def error(*args, **kwargs):
 			msgs.append(red(arg))
 		else:
 			msgs.append(yel(arg))
-	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
+	__puke(' '.join(msg for msg in msgs))
 
 
 
@@ -157,7 +160,7 @@ def fatal(*args, **kwargs):
 			msgs.append(bred(arg))
 		else:
 			msgs.append(yel(arg))
-	print(' '.join(msg for msg in msgs), flush=True, file=_stderr)
+	__puke(' '.join(msg for msg in msgs))
 	exit(1)
 
 def tabd(keyvals, add=2):
@@ -178,75 +181,47 @@ def tabd(keyvals, add=2):
 		tabbed = '%s%s%s= %s\n'%(tabbed, key, ' '*int(limlen(key)), val)
 	return tabbed.strip()
 
-def didict(keyvals, delimiter='=', indent=2):
-	lim = max(len(k) for k in keyvals.keys())+int(indent)
-	distr = ''
-	for (key, val) in sorted(keyvals.items()):
-		distr = '%s%s%s= %s\n'%(distr, key, ' '*int(limlen(key)), val)
-	return distr.strip()
-
-
-def pprind(*strs, **strdic):
-	"""
-	universal pretty printing with custom or auto delimiter
-	"""
-	if '__color__' in strdic.keys():
-		color = strdic['__color__']
-	if '__delim__' in strdic.keys():
-		delim = strdic['__delim__']
-	if '__indin__' in strdic.keys():
-		indin = strdic['__indin__']
-	if strdic:
-		print(didict(strdic))
-	
 
 class Debugger(object):
-		_dbg = False
-		_vrb = False
-		_logfile = ''
-		@property                # dbg <bool>
-		def dbg(self):
-			   return self._dbg
-		@dbg.setter
-		def dbg(self, val):
-				self._dbg = True if val else False
-		@property                # vrb <bool>
-		def vrb(self):
-				return self._vrb
-		@vrb.setter
-		def vrb(self, val):
-				self._vrb = True if val else False
-		@property                # logfile <str>
-		def logfile(self):
-				return self._logfile
-		@logfile.setter
-		def logfile(self, val):
-				self._logfile = val if not val.startswith('~') else _expanduser(val)
-				if not _isdir(_dirname(val)):
-						raise FileNotFoundError(
-				 '"%s" no such file or directory'%_dirname(val))
-		def debug(self, message='', debug=None, verbose=None):
-				dbg = debug if debug is not None else self.dbg
-				vrb = verbose if verbose is not None else self.vrb
-				if dbg:
-						__stack = '%s: %s'%(_stack()[-1][1], str(_stack()[2]).strip('()'))
-						if message:
-								message = message if not vrb else '%s << %s >>'%(
-					 __stack, message)
-						message = __stack if not message else message
-						if self.logfile:
-								with open(self.logfile, 'r') as log:
-										log.write(message)
-								if not vrb:
-										return
-						print(bgre(message))
-
-
-
-
-
-
-
+	_dbg = False
+	_vrb = False
+	_logfile = ''
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = True if val else False
+	@property                # vrb <bool>
+	def vrb(self):
+		return self._vrb
+	@vrb.setter
+	def vrb(self, val):
+		self._vrb = True if val else False
+	@property                # logfile <str>
+	def logfile(self):
+		return self._logfile
+	@logfile.setter
+	def logfile(self, val):
+		self._logfile = val if not val.startswith('~') else _expanduser(val)
+		if not _isdir(_dirname(val)):
+			raise FileNotFoundError(
+                '"%s" no such file or directory'%_dirname(val))
+	def debug(self, message='', debug=None, verbose=None):
+		dbg = debug if debug is not None else self.dbg
+		vrb = verbose if verbose is not None else self.vrb
+		if dbg:
+			__stack = '%s: %s'%(_stack()[-1][1], str(_stack()[2]).strip('()'))
+			if message:
+				message = message if not vrb else '%s << %s >>'%(
+                    __stack, message)
+			message = __stack if not message else message
+			if self.logfile:
+				with open(self.logfile, 'r') as log:
+					log.write(message)
+				if not vrb:
+					return
+			__echo(bgre(message))
 
 
 
