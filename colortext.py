@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# *- coding: utf-8 -*-
 """
-text colorisation functions - due to extendet use of the python3 print
+text colorisation functions  due to extendet use of the python3 print
 function this is for python3 only
 """
 from sys import \
@@ -11,7 +11,7 @@ from inspect import \
 
 # get color escape sequence from string
 def __colorize(color, text):
-	"""color-tag prepending and end-tag appending function"""
+	"""colortag prepending and end-tag appending function"""
 	string = '\033['
 	if len(color) == 4:
 		color = color[1:]
@@ -44,56 +44,56 @@ def blu(text):
 	#func = sys._getframe().f_code.co_name
 	return __colorize('blu', text)
 def bblu(text):
-	"""function for color bold-blue"""
+	"""function for color boldblue"""
 	return __colorize('bblu', text)
 
 def cya(text):
 	"""function for color cyan"""
 	return __colorize('cya', text)
 def bcya(text):
-	"""function for color bold-cyan"""
+	"""function for color boldcyan"""
 	return __colorize('bcya', text)
 
 def gre(text):
 	"""function for color grey"""
 	return __colorize('gre', text)
 def bgre(text):
-	"""function for color bold-grey"""
+	"""function for color boldgrey"""
 	return __colorize('bgre', text)
 
 def grn(text):
 	"""function for color green"""
 	return __colorize('grn', text)
 def bgrn(text):
-	"""function for color bold-green"""
+	"""function for color boldgreen"""
 	return __colorize('bgrn', text)
 
 def red(text):
 	"""function for color red"""
 	return __colorize('red', text)
 def bred(text):
-	"""function for color bold-red"""
+	"""function for color boldred"""
 	return __colorize('bred', text)
 
 def vio(text):
 	"""function for color violet"""
 	return __colorize('vio', text)
 def bvio(text):
-	"""function for color bold-violet"""
+	"""function for color boldviolet"""
 	return __colorize('bvio', text)
 
 def whi(text):
 	"""function for color white"""
 	return __colorize('whi', text)
 def bwhi(text):
-	"""function for color bold-white"""
+	"""function for color boldwhite"""
 	return __colorize('bwhi', text)
 
 def yel(text):
-	"""function for color guess what? - yellow ;)"""
+	"""function for color guess what?  yellow ;)"""
 	return __colorize('yel', text)
 def byel(text):
-	"""function for color and you already guessed it... bold-yellow"""
+	"""function for color and you already guessed it... boldyellow"""
 	return __colorize('byel', text)
 
 # functions for some high frequent use cases:
@@ -163,7 +163,7 @@ def fatal(*args, **kwargs):
 def tabd(keyvals, add=2):
 	"""
 	this is a function where i try to guess the best indentation for text
-	representation of key-value paires with best matching indentation
+	representation of keyvalue paires with best matching indentation
 	e.g:
 	foo         = bar
 	a           = b
@@ -175,14 +175,14 @@ def tabd(keyvals, add=2):
 	tabbed = ''
 	lim = max(len(k) for k in keyvals.keys())+int(add)
 	for (key, val) in sorted(keyvals.items()):
-		tabbed = '%s%s%s= %s\n'%(tabbed, key, ' '*int(lim-len(key)), val)
+		tabbed = '%s%s%s= %s\n'%(tabbed, key, ' '*int(limlen(key)), val)
 	return tabbed.strip()
 
 def didict(keyvals, delimiter='=', indent=2):
 	lim = max(len(k) for k in keyvals.keys())+int(indent)
 	distr = ''
 	for (key, val) in sorted(keyvals.items()):
-		distr = '%s%s%s= %s\n'%(distr, key, ' '*int(lim-len(key)), val)
+		distr = '%s%s%s= %s\n'%(distr, key, ' '*int(limlen(key)), val)
 	return distr.strip()
 
 
@@ -200,6 +200,46 @@ def pprind(*strs, **strdic):
 		print(didict(strdic))
 	
 
+class Debugger(object):
+		_dbg = False
+		_vrb = False
+		_logfile = ''
+		@property                # dbg <bool>
+		def dbg(self):
+			   return self._dbg
+		@dbg.setter
+		def dbg(self, val):
+				self._dbg = True if val else False
+		@property                # vrb <bool>
+		def vrb(self):
+				return self._vrb
+		@vrb.setter
+		def vrb(self, val):
+				self._vrb = True if val else False
+		@property                # logfile <str>
+		def logfile(self):
+				return self._logfile
+		@logfile.setter
+		def logfile(self, val):
+				self._logfile = val if not val.startswith('~') else _expanduser(val)
+				if not _isdir(_dirname(val)):
+						raise FileNotFoundError(
+				 '"%s" no such file or directory'%_dirname(val))
+		def debug(self, message='', debug=None, verbose=None):
+				dbg = debug if debug is not None else self.dbg
+				vrb = verbose if verbose is not None else self.vrb
+				if dbg:
+						__stack = '%s: %s'%(_stack()[-1][1], str(_stack()[2]).strip('()'))
+						if message:
+								message = message if not vrb else '%s << %s >>'%(
+					 __stack, message)
+						message = __stack if not message else message
+						if self.logfile:
+								with open(self.logfile, 'r') as log:
+										log.write(message)
+								if not vrb:
+										return
+						print(bgre(message))
 
 
 
