@@ -163,7 +163,7 @@ def fatal(*args, **kwargs):
 	__puke(' '.join(msg for msg in msgs))
 	exit(1)
 
-def tabd(keyvals, add=2):
+def tabd(keyvals, add=2, ind=0):
 	"""
 	this is a function where i try to guess the best indentation for text
 	representation of keyvalue paires with best matching indentation
@@ -178,7 +178,11 @@ def tabd(keyvals, add=2):
 	tabbed = ''
 	lim = max(len(k) for k in keyvals.keys())+int(add)
 	for (key, val) in sorted(keyvals.items()):
-		tabbed = '%s%s%s= %s\n'%(tabbed, key, ' '*int(limlen(key)), val)
+		if type(val) is dict:
+			iind=ind+2
+			tabbed = '%s%s:\n%s%s\n'%(tabbed, key, ' '*iind, tabd(val, ind=iind))
+			continue
+		tabbed = '%s%s%s%s= %s\n'%(tabbed, ' '*ind, key, ' '*int(lim-len(key)), val)
 	return tabbed.strip()
 
 
