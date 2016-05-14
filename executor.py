@@ -64,7 +64,6 @@ class Command(object):
 		commands string to list converter assuming at least one part
 		"""
 		for cmd in list(commands):
-			print(cmd)
 			if cmd and max(len(c) for c in cmd) == 1 and len(cmd) >= 1:
 				return list(commands)
 			return self.__list(list(cmd))
