@@ -29,16 +29,16 @@ __version__ = '0.0'
 def orphan(server, background=None, debug=None):
 	if debug:
 		print(orphan)
-	c = SSHCommand(dbg=debug, host=server, user='root')
-	xce = c.call
+	ssh = SSHCommand(*('dbg'), **{'host': server, 'user': 'root'})
+	ssh.call('ls')
+	exit()
+	xce = ssh.call
 	if background:
-		xce = c.erno
-	if int(
-	      c.erno('dpkg -s deborphan')
-	      ) != 0:
+		xce = ssh.erno
+	if int(xce('dpkg -s deborphan')) != 0:
 		xce('apt-get -y install deborphan')
-	orphpks = c.stdo('deborphan |tr "\n" " "')
-	confdps = c.stdo('dpkg -l |grep "^rc.*" |awk \'{print $2}\' |tr "\n" " "')
+	orphpks = ssh.stdo('deborphan |tr "\n" " "')
+	confdps = ssh.stdo('dpkg -l |grep "^rc.*" |awk \'{print $2}\' |tr "\n" " "')
 	pkgs = []
 	if orphpks:
 		pkgs = orphpks.split(' ')
