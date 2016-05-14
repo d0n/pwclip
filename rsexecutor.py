@@ -1,6 +1,7 @@
 from system import which, whoami, hostname
 from .executor import Command
 
+
 class SSHCommand(Command):
 	_dbg = False
 	_sh_ = True
@@ -14,43 +15,50 @@ class SSHCommand(Command):
         }
 	_host_ = hostname()
 	_user_ = whoami()
-
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%arg
+			arg = '_%s'%(arg)
 			if hasattr(self, arg):
-				setattr(self, arg[1:], True)
+				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s_'%key
-			if hasattr(self, key):
-				setattr(self, key[1:], val)
+			key = '_%s'%(key)
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
 		if self.dbg:
-			print('\033[01;30m%s\033[0m'%SSHCommand.__mro__)
-			for (key, val) in self.__dict__.items():
-				print('\033[01;30m%s = %s\033[0m'%(key, val))
+			lim = int(max(len(k) for k in SSHCommand.__dict__.keys()))+4
+			print('%s\n%s\n\n%s\n%s\n'%(
+                SSHCommand.__mro__,
+                '\n'.join('  %s%s=    %s'%(
+                    k, ' '*int(lim-len(k)), v
+                ) for (k, v) in sorted(SSHCommand.__dict__.items())),
+                SSHCommand.__init__,
+                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(
+                    int(max(len(i) for i in self.__dict__.keys())+4
+                    )-len(k)), v
+                ) for (k, v) in sorted(self.__dict__.items()))))
 
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
+		self._dbg = val if val else False
 
 	@property                # host_ <str>
 	def host_(self):
 		return self._host_
 	@host_.setter
 	def host_(self, val):
-		self._host_ = val if type(val) is str else self._host_
+		self._host_ = val
 
 	@property                # user_ <str>
 	def user_(self):
 		return self._user_
 	@user_.setter
 	def user_(self, val):
-		self._user_ = val if type(val) is str else self._user_
+		self._user_ = val
 
-	def _hostcmd(self, commands, host=None, user=None):
+	def _hostcmd(self, *commands, host=None, user=None):
 		"""ssh host prepending function"""
 		if not user:
 			user = self.user_
@@ -69,32 +77,32 @@ class SSHCommand(Command):
 			if vals:
 				ssh.append(vals)
 		ssh.append(host)
-		return ssh + [c for c in commands]
+		return ssh + list(commands)
 
-	def run(self, commands, host=None, user=None):
+	def run(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
-		return super().run(*commands)
+		return super().run(commands)
 
-	def call(self, commands, host=None, user=None):
+	def call(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
-		return super().call(*commands)
+		return super().call(commands)
 
-	def stdx(self, commands, host=None, user=None):
+	def stdx(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
-		return super().stdx(*commands)
+		return super().stdx(commands)
 
-	def stdo(self, commands, host=None, user=None):
+	def stdo(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
-		return super().stdo(*commands)
+		return super().stdo(commands)
 
-	def stde(self, commands, host=None, user=None):
+	def stde(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
-		return super().stde(*commands)
+		return super().stde(commands)
 
-	def erno(self, commands, host=None, user=None):
+	def erno(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
-		return super().erno(*commands)
+		return super().erno(commands)
 
-	def oerc(self, commands, host=None, user=None):
+	def oerc(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)
-		return super().oerc(*commands)
+		return super().oerc(commands)

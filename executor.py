@@ -61,12 +61,13 @@ class Command(object):
 
 	def __list(self, commands):
 		"""
-		    commands string to list converter assuming at least one part 
-			"""
-		for cmd in commands:
-			if max(len(c) for c in cmd) == 1 and len(cmd) >= 1:
+		commands string to list converter assuming at least one part
+		"""
+		for cmd in list(commands):
+			print(cmd)
+			if cmd and max(len(c) for c in cmd) == 1 and len(cmd) >= 1:
 				return list(commands)
-			return list(self.__list(cmd))
+			return self.__list(list(cmd))
 		#cmds = []
 		#try:
 		#	cmds = eval(commands)
@@ -85,8 +86,9 @@ class Command(object):
 		#return list(cmds)
 
 	@staticmethod
-	def __str(*commands):
+	def __str(commands):
 		"""list/tuple to str converter"""
+		print(commands)
 		return ' '.join(str(command) for command in list(commands))
 
 	@staticmethod
@@ -113,7 +115,7 @@ class Command(object):
 		if self.su_:
 			commands = self._sudo(commands)
 		if self.sh_:
-			commands = self.__str(*commands)
+			commands = self.__str(commands)
 		if self.dbg:
 			print('\033[01;30m`%s`\t{sh: %s, su: %s}\033[0m'%(commands, self.sh_, self.su_))
 		return commands
