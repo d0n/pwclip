@@ -9,9 +9,6 @@ from sys import \
 __echo = _stdout.write
 __puke = _stderr.write
 
-from inspect import \
-    stack as _stack
-
 # get color escape sequence from string
 def __colorize(color, text):
 	"""colortag prepending and end-tag appending function"""
@@ -139,9 +136,7 @@ def error(*args, **kwargs):
 			msgs.append(red(arg))
 		else:
 			msgs.append(yel(arg))
-	__puke(' '.join(msg for msg in msgs))
-
-
+	__puke('%s\n'%' '.join(msg for msg in msgs))
 
 def fatal(*args, **kwargs):
 	'''
@@ -163,7 +158,7 @@ def fatal(*args, **kwargs):
 	__puke(' '.join(msg for msg in msgs))
 	exit(1)
 
-def tabd(keyvals, add=2, ind=0):
+def tabd(dats, add=2, ind=0):
 	"""
 	this is a function where i try to guess the best indentation for text
 	representation of keyvalue paires with best matching indentation
@@ -173,59 +168,22 @@ def tabd(keyvals, add=2, ind=0):
 	blibablubb  = bla
 	^^indent "bar" and "b" as much as needed ("add" is added to each length)
 	"""
-	if not isinstance(keyvals, dict):
-		raise TypeError('cannot process type %s expected dict'%type(keyvals))
+	if not dats: return
+	if not isinstance(dats, dict):
+		raise TypeError(
+            'cannot process %s expected <class \'dict\'>'%dats.__class__)
+	lim = max(len(k) for k in dats)+int(add)
 	tabbed = ''
-	lim = max(len(k) for k in keyvals.keys())+int(add)
-	for (key, val) in sorted(keyvals.items()):
-		if type(val) is dict:
-			iind=ind+2
-			tabbed = '%s%s%s:\n%s%s\n'%(tabbed, ' '*ind if tabbed else '', key, ' '*iind, tabd(val, ind=iind))
+	for (key, val) in sorted(dats.items()):
+		iind = ind
+		if isinstance(val, dict):
+			iind = ind+2
+			tabbed = '%s\n%s%s:\n%s%s'%(
+                tabbed, ' '*ind, key, ' '*iind, tabd(val, ind=iind).lstrip())
 			continue
-		tabbed = '%s%s%s%s= %s\n'%(tabbed, ' '*ind if tabbed else '', key, ' '*int(lim-len(key)), val)
-	return tabbed
-
-
-class Debugger(object):
-	_dbg = False
-	_vrb = False
-	_logfile = ''
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True if val else False
-	@property                # vrb <bool>
-	def vrb(self):
-		return self._vrb
-	@vrb.setter
-	def vrb(self, val):
-		self._vrb = True if val else False
-	@property                # logfile <str>
-	def logfile(self):
-		return self._logfile
-	@logfile.setter
-	def logfile(self, val):
-		self._logfile = val if not val.startswith('~') else _expanduser(val)
-		if not _isdir(_dirname(val)):
-			raise FileNotFoundError(
-                '"%s" no such file or directory'%_dirname(val))
-	def debug(self, message='', debug=None, verbose=None):
-		dbg = debug if debug is not None else self.dbg
-		vrb = verbose if verbose is not None else self.vrb
-		if dbg:
-			__stack = '%s: %s'%(_stack()[-1][1], str(_stack()[2]).strip('()'))
-			if message:
-				message = message if not vrb else '%s << %s >>'%(
-                    __stack, message)
-			message = __stack if not message else message
-			if self.logfile:
-				with open(self.logfile, 'r') as log:
-					log.write(message)
-				if not vrb:
-					return
-			__echo(bgre(message))
+		tabbed = '%s\n%s%s%s= %s'%(
+            tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(key)), val)
+	return '%s\n'%tabbed
 
 
 
