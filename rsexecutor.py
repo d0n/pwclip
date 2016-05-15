@@ -22,8 +22,10 @@ class SSHCommand(Command):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
 			key = '_%s'%(key)
-			if hasattr(self, key) and not isinstance(val, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
+			elif hasattr(self, '%s_'%key):
+				setattr(self, '%s_'%key, val)
 		if self.dbg:
 			lim = int(max(len(k) for k in SSHCommand.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -36,6 +38,7 @@ class SSHCommand(Command):
                     int(max(len(i) for i in self.__dict__.keys())+4
                     )-len(k)), v
                 ) for (k, v) in sorted(self.__dict__.items()))))
+		super().__init__(*args, **kwargs)
 
 	@property                # dbg <bool>
 	def dbg(self):
@@ -77,11 +80,11 @@ class SSHCommand(Command):
 			if vals:
 				ssh.append(vals)
 		ssh.append(host)
-		return ssh + list(commands)
+		return ssh + self._list(commands)
 
 	def run(self, *commands, host=None, user=None):
-		commands = self._hostcmd(commands, host, user)
-		return super().run(commands)
+		commands = self._hostcmd(*commands, host, user)
+		return super().run(*commands)
 
 	def call(self, *commands, host=None, user=None):
 		commands = self._hostcmd(commands, host, user)

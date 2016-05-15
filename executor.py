@@ -5,8 +5,8 @@ from os import access as _access, environ as _environ, \
 from sys import \
     stdout as _stdout, \
     stdout as _stderr
-__echo = _stdout.write
-__puke = _stderr.write
+_echo_ = _stdout.write
+_puke_ = _stderr.write
 
 from socket import getfqdn as _fqdn
 from subprocess import call as _call, Popen as _Popen, PIPE as _PIPE
@@ -17,19 +17,38 @@ try:
 except ImportError:
 	DEVNULL = open('/dev/null')
 
-
 class Command(object):
-	"""command execution class"""
-	_sh_ = False
+	_sh_ = True
 	_su_ = False
 	_dbg = False
-	def __init__(self, *args):
+	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s_'%(arg)
+			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			key = '_%s'%(key)
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
 		if self.dbg:
-			print(Command.__mro__)
+			lim = int(max(len(k) for k in Command.__dict__.keys()))+4
+			print('%s\n%s\n\n%s\n%s\n'%(
+                Command.__mro__,
+                '\n'.join('  %s%s=    %s'%(
+                    k, ' '*int(lim-len(k)), v
+                ) for (k, v) in sorted(Command.__dict__.items())),
+                Command.__init__,
+                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(
+                    int(max(len(i) for i in self.__dict__.keys())+4
+                    )-len(k)), v
+                ) for (k, v) in sorted(self.__dict__.items()))))
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = True if val else False
+
 	# rw properties
 	@property               # sh_ <bool>
 	def sh_(self):
@@ -45,13 +64,6 @@ class Command(object):
 	def su_(self, val):
 		self._su_ = val if val else False
 
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if val else False
-
 	@staticmethod
 	def __which(prog):
 		"""pretty much like the `which` command (see `man which`)"""
@@ -59,14 +71,14 @@ class Command(object):
 			if _access('%s/%s'%(path, prog), _X_OK):
 				return '%s/%s'%(path, prog)
 
-	def __list(self, commands):
+	def _list(self, commands):
 		"""
 		commands string to list converter assuming at least one part
 		"""
 		for cmd in list(commands):
-			if cmd and max(len(c) for c in cmd) == 1 and len(cmd) >= 1:
+			if cmd and max(len(c) for c in cmd if c) == 1 and len(cmd) >= 1:
 				return list(commands)
-			return self.__list(list(cmd))
+			return self._list(list(cmd))
 		#cmds = []
 		#try:
 		#	cmds = eval(commands)
@@ -85,7 +97,7 @@ class Command(object):
 		#return list(cmds)
 
 	@staticmethod
-	def __str(commands):
+	def _str(commands):
 		"""list/tuple to str converter"""
 		return ' '.join(str(command) for command in list(commands))
 
@@ -109,13 +121,14 @@ class Command(object):
 		return sucmds
 
 	def __cmdprep(self, commands):
-		commands = self.__list(commands)
+		commands = self._list(commands)
 		if self.su_:
 			commands = self._sudo(commands)
 		if self.sh_:
-			commands = self.__str(commands)
+			commands = self._str(commands)
 		if self.dbg:
-			print('\033[01;30m`%s`\t{sh: %s, su: %s}\033[0m'%(commands, self.sh_, self.su_))
+			print(commands)
+			_echo_('\033[01;30m`%s`\t{sh: %s, su: %s}\033[0m\n'%(commands, self.sh_, self.su_))
 		return commands
 
 	def run(self, *commands):
@@ -181,7 +194,7 @@ def sudofork(*args):
 	try:
 		enr = sucommand.call(*args)
 	except KeyboardInterrupt:
-		print('\n\033[34maborted by keystroke\033[0m')
+		_echo_('\n\033[34maborted by keystroke\033[0m\n')
 	finally:
 		exit(enr)
 
