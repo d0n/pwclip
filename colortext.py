@@ -180,10 +180,10 @@ def tabd(keyvals, add=2, ind=0):
 	for (key, val) in sorted(keyvals.items()):
 		if type(val) is dict:
 			iind=ind+2
-			tabbed = '%s%s:\n%s%s\n'%(tabbed, key, ' '*iind, tabd(val, ind=iind))
+			tabbed = '%s%s%s:\n%s%s\n'%(tabbed, ' '*ind if tabbed else '', key, ' '*iind, tabd(val, ind=iind))
 			continue
-		tabbed = '%s%s%s%s= %s\n'%(tabbed, ' '*ind, key, ' '*int(lim-len(key)), val)
-	return tabbed.strip()
+		tabbed = '%s%s%s%s= %s\n'%(tabbed, ' '*ind if tabbed else '', key, ' '*int(lim-len(key)), val)
+	return tabbed
 
 
 class Debugger(object):
