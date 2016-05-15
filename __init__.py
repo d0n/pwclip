@@ -7,4 +7,4 @@ if _isdir(__miscdir__):
 	sys.path = [__miscdir__] + [p for p in sys.path if p != __miscdir__]
 
 from .executor import Command, command, sucommand, sudofork
-from .rsexecutor import SSHCommand
+from .rexecutor import SSHCommand

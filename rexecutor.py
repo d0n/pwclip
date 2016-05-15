@@ -15,6 +15,7 @@ class SSHCommand(Command):
         }
 	_host_ = hostname()
 	_user_ = whoami()
+	_tout_ = 5
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -60,6 +61,13 @@ class SSHCommand(Command):
 	@user_.setter
 	def user_(self, val):
 		self._user_ = val
+
+	@property                # tout <int>
+	def tout(self):
+		return self._tout
+	@tout.setter
+	def tout(self, val):
+		self._tout = val if isinstance(val, int) else self._tout
 
 	def _hostcmd(self, *commands, host=None, user=None):
 		"""ssh host prepending function"""

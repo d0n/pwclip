@@ -21,6 +21,7 @@ class Command(object):
 	_sh_ = True
 	_su_ = False
 	_dbg = False
+	_tout_ = 5
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -63,6 +64,13 @@ class Command(object):
 	@su_.setter
 	def su_(self, val):
 		self._su_ = val if val else False
+
+	@property                # tout <int>
+	def tout(self):
+		return self._tout
+	@tout.setter
+	def tout(self, val):
+		self._tout = val if isinstance(val, int) else self._tout
 
 	@staticmethod
 	def __which(prog):
@@ -181,8 +189,9 @@ class Command(object):
 	def oerc(self, *commands):
 		"""command execution which returns STDERR only"""
 		commands = self.__cmdprep(commands)
-		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
-		out, err = prc.communicate()
+		prc = _Popen(
+            commands, stdout=_PIPE, stderr=_PIPE, stdin=_PIPE, shell=self.sh_)
+		out, err = prc.communicate(b'P\n')
 		return out.decode(), err.decode(), int(prc.returncode)
 
 
