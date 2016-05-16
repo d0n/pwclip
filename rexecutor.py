@@ -46,7 +46,7 @@ class SSHCommand(Command):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if val else False
+		self._dbg = val
 
 	@property                # host_ <str>
 	def host_(self):

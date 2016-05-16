@@ -48,7 +48,7 @@ class Command(object):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = True if val else False
+		self._dbg = val
 
 	# rw properties
 	@property               # sh_ <bool>
@@ -56,14 +56,14 @@ class Command(object):
 		return self._sh_
 	@sh_.setter
 	def sh_(self, val):
-		self._sh_ = val if val else False
+		self._sh_ = val
 
 	@property               # su_ <bool>
 	def su_(self):
 		return self._su_
 	@su_.setter
 	def su_(self, val):
-		self._su_ = val if val else False
+		self._su_ = val
 
 	@property                # tout <int>
 	def tout(self):
@@ -191,7 +191,7 @@ class Command(object):
 		commands = self.__cmdprep(commands)
 		prc = _Popen(
             commands, stdout=_PIPE, stderr=_PIPE, stdin=_PIPE, shell=self.sh_)
-		out, err = prc.communicate()
+		out, err = prc.communicate(timeout=self._tout_)
 		return out.decode(), err.decode(), int(prc.returncode)
 
 
