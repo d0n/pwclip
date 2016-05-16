@@ -107,7 +107,7 @@ class Command(object):
 			commands.insert(0, sudobin)
 		return commands
 
-	def _sudo(self, commands):
+	def _sudo(self, commands=None):
 		"""privilege checking function"""
 		sudo = self.__which('sudo')
 		if not commands:
