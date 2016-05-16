@@ -23,14 +23,19 @@ class Command(object):
 	_dbg = False
 	_tout_ = 5
 	def __init__(self, *args, **kwargs):
+		
 		for arg in args:
 			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+			elif hasattr(self, '%s_'%arg):
+				setattr(self, '%s_'%arg, True)
 		for (key, val) in kwargs.items():
 			key = '_%s'%(key)
-			if hasattr(self, key) and not isinstance(val, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
+			elif hasattr(self, '%s_'%key):
+				setattr(self, '%s_'%key, val)
 		if self.dbg:
 			lim = int(max(len(k) for k in Command.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -83,26 +88,11 @@ class Command(object):
 		"""
 		commands string to list converter assuming at least one part
 		"""
+		#print(commands)
 		for cmd in list(commands):
 			if cmd and max(len(c) for c in cmd if c) == 1 and len(cmd) >= 1:
 				return list(commands)
 			return self._list(list(cmd))
-		#cmds = []
-		#try:
-		#	cmds = eval(commands)
-		#except (SystemError, TypeError):
-		#	#print(commands)
-		#	for cmmd in commands:
-		#		if isinstance(cmmd, str):
-		#			if ' ' in cmmd:
-		#				for cmd in cmmd.split(' '):
-		#					cmds.append(cmd)
-		#			else:
-		#				cmds.append(cmmd)
-		#		else:
-		#			for cmd in cmmd:
-		#				cmds.append(cmd)
-		#return list(cmds)
 
 	@staticmethod
 	def _str(commands):
@@ -117,7 +107,7 @@ class Command(object):
 			commands.insert(0, sudobin)
 		return commands
 
-	def _sudo(self, commands=None):
+	def _sudo(self, commands):
 		"""privilege checking function"""
 		sudo = self.__which('sudo')
 		if not commands:
@@ -135,7 +125,6 @@ class Command(object):
 		if self.sh_:
 			commands = self._str(commands)
 		if self.dbg:
-			print(commands)
 			_echo_('\033[01;30m`%s`\t{sh: %s, su: %s}\033[0m\n'%(commands, self.sh_, self.su_))
 		return commands
 
