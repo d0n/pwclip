@@ -191,7 +191,7 @@ class Command(object):
 		commands = self.__cmdprep(commands)
 		prc = _Popen(
             commands, stdout=_PIPE, stderr=_PIPE, stdin=_PIPE, shell=self.sh_)
-		out, err = prc.communicate(b'P\n')
+		out, err = prc.communicate()
 		return out.decode(), err.decode(), int(prc.returncode)
 
 
@@ -201,7 +201,7 @@ sucommand = Command('sh', 'su')
 def sudofork(*args):
 	enr = 0
 	try:
-		enr = sucommand.call(*args)
+		enr = sucommand.call(args)
 	except KeyboardInterrupt:
 		_echo_('\n\033[34maborted by keystroke\033[0m\n')
 	finally:
