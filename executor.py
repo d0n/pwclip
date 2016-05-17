@@ -21,7 +21,7 @@ class Command(object):
 	_sh_ = True
 	_su_ = False
 	_dbg = False
-	_tout_ = 10
+	_tout_ = None
 	def __init__(self, *args, **kwargs):
 		
 		for arg in args:
