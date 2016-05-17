@@ -78,8 +78,7 @@ class GitSync(GitRepo):
 	def itergits(self, repos, syncall=None):
 		if self.dbg:
 			print(bgre(self.itergits))
-			print(bgre('repos = %s\n  mode = %s\n  syncall = %s'%(
-                repos, syncall)))
+			print(bgre('repos = %s syncall = %s'%(repos, syncall)))
 		for repo in self._gitsubmods(repos):
 			if not _exists(repo):
 				error('path', repo, 'does not exist and has been omitted')
