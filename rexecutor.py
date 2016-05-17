@@ -13,9 +13,9 @@ class SSHCommand(Command):
             'UserKnownHostsFile=/dev/null', 'LogLevel=ERROR'],
         '4': None
         }
-	_host_ = hostname()
+	_host_ = ''
 	_user_ = whoami()
-	_tout_ = 5
+	_tout_ = 30
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -91,7 +91,7 @@ class SSHCommand(Command):
 		return ssh + self._list(commands)
 
 	def run(self, *commands, host=None, user=None):
-		commands = self._hostcmd(*commands, host, user)
+		commands = self._hostcmd(*commands, host=host, user=user)
 		return super().run(*commands)
 
 	def call(self, *commands, host=None, user=None):

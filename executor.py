@@ -21,7 +21,7 @@ class Command(object):
 	_sh_ = True
 	_su_ = False
 	_dbg = False
-	_tout_ = 5
+	_tout_ = 10
 	def __init__(self, *args, **kwargs):
 		
 		for arg in args:
@@ -146,7 +146,7 @@ class Command(object):
 		"""command execution which returns STDERR and/or STDOUT"""
 		commands = self.__cmdprep(commands)
 		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
-		out, err = prc.communicate()
+		out, err = prc.communicate(timeout=self._tout_)
 		if out:
 			return out.decode()
 		if err:
@@ -156,7 +156,7 @@ class Command(object):
 		"""command execution which returns STDOUT only"""
 		commands = self.__cmdprep(commands)
 		prc = _Popen(commands, stdout=_PIPE, stderr=DEVNULL, shell=self.sh_)
-		out, _ = prc.communicate()
+		out, _ = prc.communicate(timeout=self._tout_)
 		if out:
 			return out.decode()
 
@@ -164,7 +164,7 @@ class Command(object):
 		"""command execution which returns STDERR only"""
 		commands = self.__cmdprep(commands)
 		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
-		_, err = prc.communicate()
+		_, err = prc.communicate(timeout=self._tout_)
 		if err:
 			return err.decode()
 
@@ -172,7 +172,7 @@ class Command(object):
 		"""command execution which returns the exitcode only"""
 		commands = self.__cmdprep(commands)
 		prc = _Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
-		prc.communicate()
+		prc.communicate(timeout=self._tout_)
 		return int(prc.returncode)
 
 	def oerc(self, *commands):
