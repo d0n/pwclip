@@ -112,7 +112,7 @@ def abort(*messages):
 			msgs.append(blu(msg))
 		else:
 			msgs.append(yel(msg))
-	__echo(' '.join(msg for msg in msgs))
+	__echo('%s\n'%' '.join(msg for msg in msgs))
 	exit(1)
 
 def error(*args, **kwargs):
@@ -155,7 +155,7 @@ def fatal(*args, **kwargs):
 			msgs.append(bred(arg))
 		else:
 			msgs.append(yel(arg))
-	__puke(' '.join(msg for msg in msgs))
+	__puke('%s\n'%' '.join(msg for msg in msgs))
 	exit(1)
 
 def tabd(dats, add=2, ind=0):
