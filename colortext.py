@@ -158,6 +158,9 @@ def fatal(*args, **kwargs):
 	__puke('%s\n'%' '.join(msg for msg in msgs))
 	exit(1)
 
+def lisp(liss, add=2, ind=0):
+	return '\n'.join('%s%s'%(' '*add, i) for i in liss)
+
 def tabd(dats, add=2, ind=0):
 	"""
 	this is a function where i try to guess the best indentation for text
@@ -168,10 +171,8 @@ def tabd(dats, add=2, ind=0):
 	blibablubb  = bla
 	^^indent "bar" and "b" as much as needed ("add" is added to each length)
 	"""
-	if not dats: return
-	if not isinstance(dats, dict):
-		raise TypeError(
-            'cannot process %s expected <class \'dict\'>'%dats.__class__)
+	if not isinstance(dats, (dict, list, )):
+		return dats
 	lim = max(len(k) for k in dats)+int(add)
 	tabbed = ''
 	for (key, val) in sorted(dats.items()):
@@ -181,6 +182,9 @@ def tabd(dats, add=2, ind=0):
 			tabbed = '%s\n%s%s:\n%s%s'%(
                 tabbed, ' '*ind, key, ' '*iind, tabd(val, ind=iind).lstrip())
 			continue
+		elif isinstance(val, dict):
+			iind = ind+2
+			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, liss(val, ind=iind))
 		tabbed = '%s\n%s%s%s= %s'%(
             tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(key)), val)
 	return '%s\n'%tabbed
