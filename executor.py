@@ -96,6 +96,7 @@ class Command(object):
 	@staticmethod
 	def _str(commands):
 		"""list/tuple to str converter"""
+		#print(commands)
 		return ' '.join(str(command) for command in list(commands))
 
 	@staticmethod
