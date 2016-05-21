@@ -171,23 +171,23 @@ def tabd(dats, add=2, ind=0):
 	blibablubb  = bla
 	^^indent "bar" and "b" as much as needed ("add" is added to each length)
 	"""
-	if not isinstance(dats, (dict, list, )):
-		return dats
-	lim = max(len(k) for k in dats)+int(add)
+	if dats == {} or not isinstance(dats, (dict, list, )):
+		return ''
+	lim = max(len(k) for k in dats if k)+int(add)
 	tabbed = ''
 	for (key, val) in sorted(dats.items()):
 		iind = ind
 		if isinstance(val, dict):
 			iind = ind+2
 			tabbed = '%s\n%s%s:\n%s%s'%(
-                tabbed, ' '*ind, key, ' '*iind, tabd(val, ind=iind).lstrip())
+                tabbed, ' '*ind, key, ' '*iind, tabd(val, ind=iind).strip())
 			continue
 		elif isinstance(val, dict):
 			iind = ind+2
 			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, liss(val, ind=iind))
 		tabbed = '%s\n%s%s%s= %s'%(
             tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(key)), val)
-	return '%s\n'%tabbed
+	return '%s\n'%tabbed.strip()
 
 
 
