@@ -158,10 +158,10 @@ def fatal(*args, **kwargs):
 	__puke('%s\n'%' '.join(msg for msg in msgs))
 	exit(1)
 
-def lisp(liss, add=2, ind=0):
+def lisp(liss, ind=0, add=2):
 	return '\n'.join('%s%s'%(' '*add, i) for i in liss)
 
-def tabd(dats, add=2, ind=0):
+def tabd(dats, ind=0, add=2):
 	"""
 	this is a function where i try to guess the best indentation for text
 	representation of keyvalue paires with best matching indentation
@@ -174,7 +174,7 @@ def tabd(dats, add=2, ind=0):
 	if dats == {} or not isinstance(dats, (dict, list, )):
 		return ''
 	lim = max(len(k) for k in dats if k)+int(add)
-	tabbed = ''
+	tabbed = '' #'%s'%' '*ind
 	for (key, val) in sorted(dats.items()):
 		iind = ind
 		if isinstance(val, dict):
@@ -187,7 +187,7 @@ def tabd(dats, add=2, ind=0):
 			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, liss(val, ind=iind))
 		tabbed = '%s\n%s%s%s= %s'%(
             tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(key)), val)
-	return '%s\n'%tabbed.strip()
+	return '%s\n'%tabbed.strip('\n')
 
 
 
