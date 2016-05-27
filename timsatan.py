@@ -1,8 +1,6 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-from os.path import \
-    expanduser as _expanduser
-
 from datetime import \
     date as _date
 
@@ -12,34 +10,28 @@ from ssl import \
 from lxml import \
     html as _html
 
-from urllib import \
+from urllib.parse import \
     urlencode as _urlencode
 
-from urllib2 import \
-    HTTPCookieProcessor as _HTTPCookieProcessor, \
+from urllib.request import \
+    build_opener as _opener, \
     HTTPSHandler as _HTTPSHandler, \
-    build_opener as _opener
+    HTTPCookieProcessor as _HTTPCookieProcessor
 
-from cookielib import \
+from http.cookiejar import \
     CookieJar as _CookieJar
 
-
 class TimeSatan(object):
-	_dbg = False
-    _url = 'https://login.1and1.org/ims-sso/login?service=http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
-	_usr = ''
-	_pwd = ''
-	_cfgs = {
-        'username': self.usr, 'password': self.pwd,
-        'lt': form.find('.//input[@name="lt"]').value,
-        'execution': form.find('.//input[@name="execution"]').value,
-        '_eventId': form.find('.//input[@name="_eventId"]').value,
-        'submit': form.find('.//input[@name="submit"]').value}
-
-
+	dbg = False
+	_url = 'https://login.1and1.org/ims-sso/login?service=http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
+	_cokj = ''
+	_sslc = ''
+	username = ''
+	password = ''
+	cacert = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
+			#arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
@@ -56,35 +48,45 @@ class TimeSatan(object):
                 TimeSatan.__init__,
                 '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()))))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True
-
 	@property                # url <str>
 	def url(self):
 		return self._url
 
-	@property                # usr <str>
-	def usr(self):
-		return self._usr
-	@usr.setter
-	def usr(self, val):
-		self._usr = val if isinstance(val, str) else self._usr
+	@property                # cokj <CookieJar>
+	def cokj(self):
+		if not self._cpkj:
+			self._cokj = _CookieJar()
+		return self._cokj
 
-	@property                # pwd <str>
-	def pwd(self):
-		return self._pwd
-	@pwd.setter
-	def pwd(self, val):
-		self._pwd = val if isinstance(val, str) else self._pwd
+	@property                # sslc <create_default_context>
+	def sslc(self):
+		if not self._sslc:
+			self._sslc = _sslcontext(cacert=self.cacert)
+		return self._sslc
 
-	def _webmagic_(self):
-		cookjar = _CookieJar()
-		sslcntx = _sslcontext(cafile=self.cfgs['ssl'])
+	def _urlopen_(self):
+		return _opener(
+            _HTTPCookieProcessor(self.cokj),
+            _HTTPSHandler(debuglevel=0,context=self.sslc))
+
+	def _post_(self):
 		__satan = _opener(
-            _HTTPCookieProcessor(cookjar),
-            _HTTPSHandler(debuglevel=0,context=sslcntx))
-		hell = __satan.open(self.url, _urlencode(self.cfgs))
+            _HTTPCookieProcessor(self.cokj),
+            _HTTPSHandler(debuglevel=0, context=self.sslc))
+		_hell = __satan.open(self.url, _urlencode(self.cfgs))
+		_tree = _html.fromstring(_hell.read())
+		_form = _tree.find('.//form')
+		_post = __satan.open(self.url)
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+	exit(1)
