@@ -7,8 +7,8 @@ from datetime import \
 from ssl import \
     create_default_context as _sslcontext
 
-from lxml import \
-    html as _html
+from lxml.html import \
+    fromstring as _fromstring
 
 from urllib.parse import \
     urlencode as _urlencode
@@ -23,19 +23,16 @@ from http.cookiejar import \
 
 class TimeSatan(object):
 	dbg = False
-	_url = 'https://login.1and1.org/ims-sso/login?service=http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
-	_cokj = ''
-	_sslc = ''
-	username = ''
-	password = ''
-	cacert = ''
+	_url = 'https://login.1and1.org/ims-sso/login?' \
+        'service=http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
+	crt = ''
+	usr = ''
+	pwd = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			#arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key) and not isinstance(val, bool):
 				setattr(self, key, val)
 		if self.dbg:
@@ -52,35 +49,23 @@ class TimeSatan(object):
 	def url(self):
 		return self._url
 
-	@property                # cokj <CookieJar>
-	def cokj(self):
-		if not self._cpkj:
-			self._cokj = _CookieJar()
-		return self._cokj
-
-	@property                # sslc <create_default_context>
-	def sslc(self):
-		if not self._sslc:
-			self._sslc = _sslcontext(cacert=self.cacert)
-		return self._sslc
-
-	def _urlopen_(self):
+	def _satan_(self):
 		return _opener(
-            _HTTPCookieProcessor(self.cokj),
-            _HTTPSHandler(debuglevel=0,context=self.sslc))
+                _HTTPCookieProcessor(_CookieJar()),
+                _HTTPSHandler(
+                    debuglevel=0,
+                    context=_sslcontext(cafile=crt)))
 
-	def _post_(self):
-		__satan = _opener(
-            _HTTPCookieProcessor(self.cokj),
-            _HTTPSHandler(debuglevel=0, context=self.sslc))
-		_hell = __satan.open(self.url, _urlencode(self.cfgs))
-		_tree = _html.fromstring(_hell.read())
-		_form = _tree.find('.//form')
-		_post = __satan.open(self.url)
-
-
-
-
+	def _login(self):
+		_hell = _fromstring(self._satan_().open(self.url).read()).find('.//form')
+		_doom_ = self._satan_().open(self.url, _urlencode({
+            'username': self.usr,
+            'password': self.pwd,
+            'lt': _hell.find('.//input[@name="lt"]').value,
+            'execution': _hell.find('.//input[@name="execution"]').value,
+            '_eventId': _hell.find('.//input[@name="_eventId"]').value,
+            'submit': _hell.find('.//input[@name="submit"]').value}))
+		print(_doom_.read())
 
 
 

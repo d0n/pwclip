@@ -6,3 +6,4 @@ from .keyverteiler import kvntool
 from .ndcli import ndcli
 from .deborphan import orphan
 from .unitix import UnitixUsers
+from .timsatan import TimeSatan
