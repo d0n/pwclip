@@ -49,7 +49,7 @@ class TimeSatan(object):
 	def url(self):
 		return self._url
 
-	def _satan_(self):
+	def _hell_(self):
 		return _opener(
                 _HTTPCookieProcessor(_CookieJar()),
                 _HTTPSHandler(
@@ -57,19 +57,26 @@ class TimeSatan(object):
                     context=_sslcontext(cafile=crt)))
 
 	def _login(self):
-		_hell = _fromstring(self._satan_().open(self.url).read()).find('.//form')
-		_doom_ = self._satan_().open(self.url, _urlencode({
+		_satan = self._hell_.open(self.url)
+		_fire = _fromstring(_satan.read()).find('.//form')
+		_pain = self._hell_.open(self.url, _urlencode({
             'username': self.usr,
             'password': self.pwd,
-            'lt': _hell.find('.//input[@name="lt"]').value,
-            'execution': _hell.find('.//input[@name="execution"]').value,
-            '_eventId': _hell.find('.//input[@name="_eventId"]').value,
-            'submit': _hell.find('.//input[@name="submit"]').value}))
-		print(_doom_.read())
+            'lt': _fire.find('.//input[@name="lt"]').value,
+            'execution': _fire.find('.//input[@name="execution"]').value,
+            '_eventId': _fire.find('.//input[@name="_eventId"]').value,
+            'submit': _fire.find('.//input[@name="submit"]').value}))
+		if _pain.geturl().startswith('https://login.1and1.org/'):
+			if post.read().find('Invalid credentials'):
+				raise RuntimeError('Login failed')
+			else:
+				raise RuntimeError('Forward to timsato failed')
+		return _pain.geturl()
 
 
-
-
+	def _book_(self, day, duration, project, task, comment=''):
+		_date = ()
+		pass
 
 
 
