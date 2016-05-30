@@ -28,8 +28,8 @@ from dpkg import DePyKG
 __version__ = '0.1'
 
 def ndcli(pattern):
-	if not DePyKG().isinstalled('ui-ndcli'):
-		fatal('packet', 'ui-ndcli', 'is not installed')
+	#if not DePyKG().isinstalled('ui-ndcli'):
+	#	fatal('packet', 'ui-ndcli', 'is not installed')
 	ndcli = which('ndcli')
 	def __ndclicmd(pattern):
 		ndclicmd = None
