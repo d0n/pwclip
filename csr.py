@@ -16,7 +16,11 @@
 
 # global & stdlib imports
 #import re
-import os
+from os import \
+    remove as _remove
+from os.path import \
+    expanduser as _expanduser
+
 import sys
 from tempfile import mkstemp
 
@@ -26,56 +30,76 @@ from executor import command as c
 # global default variables
 __version__ = '0.0'
 
+cfghead = """
+# --- BEGIN custom openssl.cnf ---
+HOST                = {fqdn}
+RANDFILE            = {rnd}
+oid_section         = new_oids
 
-def csrgen(fqdn, host, alters=[], outdir=os.path.expanduser('~/'),
-           keyfile=None, csrfile=None, days=730, comname='1&1 Internet AG'):
+[ new_oids ]
+
+[ req ]
+default_days        = {days}
+default_keyfile     = {keyfile}
+distinguished_name  = req_distinguished_name
+encrypt_key         = no
+string_mask         = nombstr"""
+
+cfgreqs = """
+req_extensions      = v3_req"""
+
+cfgbody = """
+
+[ req_distinguished_name ]
+C                   = {country}
+L                   = {location}
+commonName          = {organisation}
+commonName_default  = {fqdn}
+
+[ v3_req ]"""
+
+
+cfgalts = """
+subjectAltName      = {altnames}"""
+
+cfgtail = """
+# --- END custom openssl.cnf ---"""
+
+
+
+def csrgen(fqdn, alters=[], days=730,
+           country='DE', location='KA',
+           organisation='1&1 Internet AG',
+           orgunit='Middleware Operations',
+           outdir='~/wrk/ssl', keyfile=None, csrfile=None):
 	"""
 	ugly, dirty, evil csr template generating and openssl forking function
 	"""
-	keyoutfile = '%s/%s'%(outdir, keyfile)
-	if not keyfile:
-		keyoutfile = '%s/%s-key.pem'%(outdir, fqdn)
-	csroutfile = '%s/%s'%(outdir, csrfile)
-	if not csrfile:
-		csroutfile = '%s/%s-csr.pem'%(outdir, fqdn)
+	outdir = _expanduser(outdir)
+	keyoutfile = '%s/%s'%(outdir, keyfile) if keyfile else '%s/%s-key.pem'%(
+        outdir, fqdn)
+	csroutfile = '%s/%s'%(outdir, csrfile) if csrfile else '%s/csr/%s-csr.pem'%(
+        outdir, fqdn)
 	cfgvals = {
-	    'host': host, 'fqdn': fqdn, 'days': days,
-	    'comname': comname, 'keyfile': keyoutfile}
+        'fqdn': fqdn, 'days': days,
+        'rnd': _expanduser('~/.rnd'),
+        'country': country, 'location': location,
+        'organisation': organisation,
+        'keyfile': keyoutfile, 'orgunit': orgunit}
+	config = '%s%s%s'%(cfghead, cfgbody, cfgtail)
+	if alters:
+		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(alters)
+		config = '%s%s%s%s%s'%(cfghead, cfgreqs, cfgbody, cfgalts, cfgtail)
+
+		
 	_, tmpfile = mkstemp(prefix='openssl-conf.')
-	config = '# -------------- BEGIN custom openssl.cnf -----\n' \
-	    'HOST                    = {host}\n'
-	if os.uname()[0] == 'HP-UX':
-		config = config + \
-		    'RANDFILE                = %s\n'%os.path.expanduser('~/.rnd')
-	config = config + \
-        'oid_section             = new_oids\n' \
-        '[ new_oids ]\n' \
-        '[ req ]\n' \
-        'default_days            = {days}\n' \
-        'default_keyfile         = {keyfile}\n' \
-        'distinguished_name      = req_distinguished_name\n' \
-        'encrypt_key             = no\n' \
-        'string_mask = nombstr\n'
-	if alters:
-		config = config + \
-		    'req_extensions = v3_req\n'
-	config = config + \
-	    '[ req_distinguished_name ]\n' \
-	    'commonName              = {comname}\n' \
-	    'commonName_default      = {fqdn}\n' \
-	    'commonName_max          = 64\n' \
-	    '[ v3_req ]\n'
-	if alters:
-		cfgvals['altnames'] = 'DNS:%s'%',DNS:'.join(a for a in alters)
-		config = config + \
-		    'subjectAltName          = {altnames}\n'
-	config = config + \
-	    '# -------------- END custom openssl.cnf -----'
+	config = config.format(**cfgvals)
+	print(config)
 	with open(tmpfile, 'w+') as tmpcfg:
-		tmpcfg.write(config.format(**cfgvals))
+		tmpcfg.write(config)
 	c.call('openssl req -batch -config %s -newkey rsa:4096 -sha512 -out %s'%(
         tmpfile, csroutfile))
-	os.remove(tmpfile)
+	_remove(tmpfile)
 
 
 
