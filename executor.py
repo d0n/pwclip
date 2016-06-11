@@ -1,20 +1,15 @@
 #!/usr/bin/python3
 """command module of executor"""
-from os import \
-    access as _access, \
-    environ as _environ, \
-    getuid as _getuid, \
-    X_OK as _X_OK
+from os import access as _access, environ as _environ, \
+    getuid as _getuid, X_OK as _X_OK
 from sys import \
     stdout as _stdout, \
     stdout as _stderr
 _echo_ = _stdout.write
 _puke_ = _stderr.write
 
-from subprocess import \
-    call as _call, \
-    Popen as _Popen, \
-    PIPE as _PIPE
+from socket import getfqdn as _fqdn
+from subprocess import call as _call, Popen as _Popen, PIPE as _PIPE
 
 # for subprocess version compatibility while DEVNULL is new in subprocess
 try:
@@ -187,6 +182,20 @@ class Command(object):
             commands, stdout=_PIPE, stderr=_PIPE, stdin=_PIPE, shell=self.sh_)
 		out, err = prc.communicate(timeout=self._tout_)
 		return out.decode(), err.decode(), int(prc.returncode)
+
+
+command = Command('sh')
+sucommand = Command('sh', 'su')
+
+def sudofork(*args):
+	enr = 0
+	try:
+		enr = sucommand.call(args)
+	except KeyboardInterrupt:
+		_echo_('\n\033[34maborted by keystroke\033[0m\n')
+	finally:
+		exit(enr)
+
 
 
 if __name__ == '__main__':
