@@ -31,11 +31,13 @@ class GPGTool(object):
 	main code more easy to understand by wrapping multiple gnupg functions to
 	one - also i can prepare some program related stuff in here
 	"""
-	_dbg = False
+	_dbg = True
 	#_gnupghome = _expanduser('~/.gnupg')
 	#_gpgbinary = '/usr/local/bin/gpg2'
 	_homedir = _expanduser('~/.gnupg')
-	_binary = '/usr/local/bin/gpg2'
+	_binary = '/usr/bin/gpg2'
+	#_keyring = '%s/pubring.kbx'%_homedir
+	#_secring = '%s/.gnupg/private-keys-v1.d'%_homedir
 	if not _isfile(_binary):
 		_binary = '/usr/bin/gpg'
 	kginput = {}
@@ -87,7 +89,9 @@ class GPGTool(object):
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
-		return _GPG(homedir=self.homedir, binary=self.binary)
+		#return _GPG(gnupghome=self.homedir, gpgbinary=self.binary)
+		return _GPG(
+            homedir=self.homedir, binary=self.binary, keyring=self._keyring)
 
 	@staticmethod
 	def __passwd(rpt=True):
@@ -133,21 +137,36 @@ class GPGTool(object):
             kginput['key_length'])))
 		return self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 
-	def export(self, pattern=None):
+	def export(self, pattern=None, privat=False, typ='a'):
 		"""
 		key-export method
 		"""
 		if self.dbg:
 			print(bgre(self.export))
+		pubs = []
 		for keys in self._gpg_.list_keys():
-			for key in keys.keys():
+			if pattern:
+				if not [v for kv in keys.values() for v in kv if pattern in v]:
+					continue
+			for (key, val) in keys.items():
+				#rint(key, val)
 				if key == 'subkeys':
 					for sub in keys[key]:
 						finger, typs = sub
 						if 'e' in typs:
 							si = keys[key].index(sub)
 							ki = keys[key][si].index(finger)
-							return self._gpg_.export_keys(keys[key][si][ki])
+							pubs.append(
+								self._gpg_.export_keys(keys[key][si][ki]))
+		if pubs and len(pubs) == 1:
+			return pubs[0]
+		return pubs
+
+	def _keystrencrypt(self, message, keystr):
+		for result in self._gpg_.import_keys(keystr).results:
+			finger = result['fingerprint']
+			return self._gpg_.encrypt(
+                message, finger, **{'always_trust': True})
 
 	def encrypt(self, message, keystr=None):
 		"""
@@ -155,15 +174,8 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.encrypt))
-		for result in self._gpg_.import_keys(keystr).results:
-			finger = result['fingerprint']
-			for key in self._gpg_.list_keys():
-				if str(key['fingerprint']) == str(finger):
-					mail = key['uids'][0].split(' ')[-1].strip('<>')
-					crypt = self._gpg_.encrypt(
-                        message, mail, **{'always_trust': True})
-					if crypt:
-						return crypt
+		if keystr:
+			return self._keystrencrypt(message, keystr)
 
 	def decrypt(self, message):
 		"""
@@ -171,4 +183,6 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.decrypt))
-		return self._gpg_.decrypt(str(message))
+		plain = self._gpg_.decrypt(message)
+		print(plain)
+		return plain
