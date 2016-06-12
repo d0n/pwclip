@@ -31,13 +31,10 @@ class GPGTool(object):
 	main code more easy to understand by wrapping multiple gnupg functions to
 	one - also i can prepare some program related stuff in here
 	"""
-	_dbg = True
-	#_gnupghome = _expanduser('~/.gnupg')
-	#_gpgbinary = '/usr/local/bin/gpg2'
+	_dbg = False
 	_homedir = _expanduser('~/.gnupg')
 	_binary = '/usr/bin/gpg2'
-	#_keyring = '%s/pubring.kbx'%_homedir
-	#_secring = '%s/.gnupg/private-keys-v1.d'%_homedir
+	_keyring = '%s/pubring.kbx'%_homedir
 	if not _isfile(_binary):
 		_binary = '/usr/bin/gpg'
 	kginput = {}
@@ -91,7 +88,8 @@ class GPGTool(object):
 		"""object"""
 		#return _GPG(gnupghome=self.homedir, gpgbinary=self.binary)
 		return _GPG(
-            homedir=self.homedir, binary=self.binary, keyring=self._keyring)
+            homedir=self.homedir, binary=self.binary, use_agent=True,
+            keyring=self._keyring, secring=self._keyring)
 
 	@staticmethod
 	def __passwd(rpt=True):
@@ -183,6 +181,4 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.decrypt))
-		plain = self._gpg_.decrypt(message)
-		print(plain)
-		return plain
+		return self._gpg_.decrypt(str(message).encode(), always_trust=True)
