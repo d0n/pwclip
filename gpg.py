@@ -135,13 +135,13 @@ class GPGTool(object):
             kginput['key_length'])))
 		return self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 
-	def export(self, pattern=None, privat=False, typ='a'):
+	def export(self, pattern=None, secret=False, typ='A'):
 		"""
 		key-export method
 		"""
 		if self.dbg:
 			print(bgre(self.export))
-		pubs = []
+		pubs = {}
 		for keys in self._gpg_.list_keys():
 			if pattern:
 				if not [v for kv in keys.values() for v in kv if pattern in v]:
@@ -151,16 +151,15 @@ class GPGTool(object):
 				if key == 'subkeys':
 					for sub in keys[key]:
 						finger, typs = sub
-						if 'e' in typs:
+						if typ == 'A' or typ in typs:
 							si = keys[key].index(sub)
 							ki = keys[key][si].index(finger)
-							pubs.append(
-								self._gpg_.export_keys(keys[key][si][ki]))
-		if pubs and len(pubs) == 1:
-			return pubs[0]
+							kstr = self._gpg_.export_keys(
+                                keys[key][si][ki], secret=secret)
+							pubs['%s:%s'%(typs, finger)] = kstr
 		return pubs
 
-	def _keystrencrypt(self, message, keystr):
+	def _encryptwithkey(self, message, keystr):
 		for result in self._gpg_.import_keys(keystr).results:
 			finger = result['fingerprint']
 			return self._gpg_.encrypt(
@@ -173,7 +172,7 @@ class GPGTool(object):
 		if self.dbg:
 			print(bgre(self.encrypt))
 		if keystr:
-			return self._keystrencrypt(message, keystr)
+			return self._encryptwithkey(message, keystr)
 
 	def decrypt(self, message):
 		"""
