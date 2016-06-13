@@ -173,7 +173,7 @@ def tabd(dats, ind=0, add=2):
 	"""
 	if dats == {} or not isinstance(dats, (dict, list, )):
 		return ''
-	lim = max(len(k) for k in dats if k)+int(add)
+	lim = max(len(str(k)) for k in dats if k)+int(add)
 	tabbed = '' #'%s'%' '*ind
 	for (key, val) in sorted(dats.items()):
 		iind = ind
@@ -182,11 +182,15 @@ def tabd(dats, ind=0, add=2):
 			tabbed = '%s\n%s%s:\n%s%s'%(
                 tabbed, ' '*ind, key, ' '*iind, tabd(val, ind=iind).strip())
 			continue
-		elif isinstance(val, dict):
+		elif isinstance(val, list):
 			iind = ind+2
-			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, liss(val, ind=iind))
+			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, lisp(val, ind=iind))
+#		elif isinstance(val, str):
+#			if val.startswith('[') and val.endswith(']'):
+#				iind = ind+2
+#				tabbed = '%s\n%s%s'%(tabbed, ' '*ind, lisp(val, ind=iind))
 		tabbed = '%s\n%s%s%s= %s'%(
-            tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(key)), val)
+            tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(str(key))), val)
 	return '%s\n'%tabbed.strip('\n')
 
 
