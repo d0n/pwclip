@@ -26,7 +26,7 @@ def userfind(pattern='1000', mode='user'):
 			try:
 				hits = [f.split(':') for f in [l for l in pwd.readlines() if pstr in l] if pstr in f][0]
 			except IndexError as err:
-				__puke(err)
+				__puke(str(err))
 				hits = []
 	except PermissionError as err:
 		__puke(str(err))
