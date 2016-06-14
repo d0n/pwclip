@@ -40,6 +40,7 @@ class GPGTool(object):
 	kginput = {}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
+			arg = '_%s'%arg
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
@@ -83,13 +84,29 @@ class GPGTool(object):
 		if not _isfile(self._binary) or not _access(self._binary, _XOK):
 			raise RuntimeError('%s needs to be executable'%self._binary)
 
+	@property                # keyring <str>
+	def keyring(self):
+		return self._keyring
+	@keyring.setter
+	def keyring(self, val):
+		if not _isfile(val) and not val.startswith('/'):
+			val = '%s/%s'%(self.homedir, val)
+		self._keyring = val
+
+	@property                # secring <str>
+	def secring(self):
+		if self.binary.endswith('2') and self.keyring.endswith('gpg'):
+			return '%s/secring.gpg'%self.homedir
+		return self.keyring
+
+
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
 		#return _GPG(gnupghome=self.homedir, gpgbinary=self.binary)
 		return _GPG(
-            homedir=self.homedir, binary=self.binary, use_agent=True,
-            keyring=self._keyring, secring=self._keyring)
+            homedir=self.homedir, binary=self.binary,
+            keyring=self.keyring, secring=self.secring)
 
 	@staticmethod
 	def __passwd(rpt=False):
