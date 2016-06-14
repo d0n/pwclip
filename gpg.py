@@ -105,7 +105,7 @@ class GPGTool(object):
 		"""object"""
 		#return _GPG(gnupghome=self.homedir, gpgbinary=self.binary)
 		return _GPG(
-            homedir=self.homedir, binary=self.binary,
+            homedir=self.homedir, binary=self.binary, #use_agent=True,
             keyring=self.keyring, secring=self.secring)
 
 	@staticmethod
@@ -170,11 +170,11 @@ class GPGTool(object):
 					for sub in keys[key]:
 						finger, typs = sub
 						#print(finger, typs)
-						if typ == 'A' or typ in typs:
+						if typ == 'A' or (typ in typs):
 							si = keys[key].index(sub)
 							ki = keys[key][si].index(finger)
 							kstr = self._gpg_.export_keys(
-                                keys[key][si][ki], secret=False)
+                                keys[key][si][ki], secret=secret)
 							#print(kstr)
 							pubs['%s:%s'%(typs, finger)] = kstr
 		return pubs
