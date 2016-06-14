@@ -31,7 +31,7 @@ class GPGTool(object):
 	main code more easy to understand by wrapping multiple gnupg functions to
 	one - also i can prepare some program related stuff in here
 	"""
-	_dbg = False
+	_dbg = True
 	_homedir = _expanduser('~/.gnupg')
 	_binary = '/usr/bin/gpg2'
 	_keyring = '%s/pubring.kbx'%_homedir
@@ -92,7 +92,7 @@ class GPGTool(object):
             keyring=self._keyring, secring=self._keyring)
 
 	@staticmethod
-	def __passwd(rpt=True):
+	def __passwd(rpt=False):
 		"""
 		password questioning function
 		"""
@@ -130,7 +130,7 @@ class GPGTool(object):
 			if kginput['passphrase'] == 'nopw':
 				del kginput['passphrase']
 			elif kginput['passphrase'] == 'stdin':
-				kginput['passphrase'] = self.__passwd()
+				kginput['passphrase'] = self.__passwd(rpt=True)
 		print(red('generating %s-bit keys - this WILL take some time'%(
             kginput['key_length'])))
 		return self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
@@ -147,23 +147,26 @@ class GPGTool(object):
 				if not [v for kv in keys.values() for v in kv if pattern in v]:
 					continue
 			for (key, val) in keys.items():
-				#rint(key, val)
+				#print(key, val)
 				if key == 'subkeys':
+					#print(key)
 					for sub in keys[key]:
 						finger, typs = sub
+						#print(finger, typs)
 						if typ == 'A' or typ in typs:
 							si = keys[key].index(sub)
 							ki = keys[key][si].index(finger)
 							kstr = self._gpg_.export_keys(
-                                keys[key][si][ki], secret=secret)
+                                keys[key][si][ki], secret=False)
+							#print(kstr)
 							pubs['%s:%s'%(typs, finger)] = kstr
 		return pubs
 
 	def _encryptwithkey(self, message, keystr):
 		for result in self._gpg_.import_keys(keystr).results:
 			finger = result['fingerprint']
-			return self._gpg_.encrypt(
-                message, finger, **{'always_trust': True})
+			return str(self._gpg_.encrypt(
+                message, finger, **{'always_trust': True}))
 
 	def encrypt(self, message, keystr=None):
 		"""
@@ -180,4 +183,6 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.decrypt))
-		return self._gpg_.decrypt(str(message).encode(), always_trust=True)
+
+		return self._gpg_.decrypt(
+		    message, always_trust=True)
