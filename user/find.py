@@ -29,7 +29,7 @@ def userfind(pattern='1000', mode='user'):
 				__puke(err)
 				hits = []
 	except PermissionError as err:
-		__puke(err)
+		__puke(str(err))
 		return err
 	if hits:
 		return list(hits)[mode]
