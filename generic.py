@@ -59,7 +59,6 @@ class RepoSync(GitSync):
 			for repo in sorted(repotypes['git']):
 				repostats = {}
 				_chdir(repo)
-				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				self._fetch_(True)
 				for gitstats in self.itergits([repo], syncall):
 					repostats.update(gitstats)
