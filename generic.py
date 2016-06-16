@@ -63,7 +63,7 @@ class RepoSync(GitSync):
 				self._fetch_(True)
 				for gitstats in self.itergits([repo], syncall):
 					repostats.update(gitstats)
-		elif 'svn' in repotypes.keys():
+		if 'svn' in repotypes.keys():
 			for repos in sorted(repotypes['git']):
 				repostats = {}
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
