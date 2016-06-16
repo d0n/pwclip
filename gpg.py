@@ -8,7 +8,8 @@ gpgtool module
 from os import \
     X_OK as _XOK, \
     access as _access, \
-    getcwd as _getcwd
+    getcwd as _getcwd, \
+    environ as _environ
 
 from os.path import \
     isfile as _isfile, \
@@ -72,6 +73,7 @@ class GPGTool(object):
 		self._homedir = val if not val.startswith('~') else _expanduser(val)
 		if not self._homedir.startswith('/'):
 			self._homedir = '%s/%s'%(_getcwd(), val)
+		_environ['GPG_AGENT_INFO'] = '%s/S.gpg-agent'%self._homedir
 
 	@property                # gpgbin <str>
 	def binary(self):
@@ -105,7 +107,7 @@ class GPGTool(object):
 	def _gpg_(self):
 		"""object"""
 		return _GPG(
-            homedir=self.homedir, binary=self.binary,
+            homedir=self.homedir, binary=self.binary, use_agent=True, verbose=6,
             keyring=self.keyring, secring=self.secring)
 
 	@staticmethod
