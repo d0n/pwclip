@@ -97,15 +97,16 @@ class GPGTool(object):
 	def secring(self):
 		if self.binary.endswith('2') and self.keyring.endswith('gpg'):
 			return '%s/secring.gpg'%self.homedir
+		elif not self.binary.endswith('2'):
+			return '%s/secring.gpg'%self.homedir
 		return self.keyring
-
 
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
 		#return _GPG(gnupghome=self.homedir, gpgbinary=self.binary)
 		return _GPG(
-            homedir=self.homedir, binary=self.binary, #use_agent=True,
+            homedir=self.homedir, binary=self.binary, use_agent=True,
             keyring=self.keyring, secring=self.secring)
 
 	@staticmethod
@@ -200,6 +201,6 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.decrypt))
-
+		print(self.__dict__.items())
 		return self._gpg_.decrypt(
 		    message, always_trust=True)
