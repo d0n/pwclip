@@ -158,10 +158,15 @@ def fatal(*args, **kwargs):
 	__puke('%s\n'%' '.join(msg for msg in msgs))
 	exit(1)
 
-def lisp(liss, ind=0, add=2):
-	return '\n'.join('%s%s'%(' '*add, i) for i in liss)
+def tabs(dat, ind=0, ll=80):
+	return '\n'.join(
+        '%s%s'%(' '*ind, dat[i:int(i+ll)]) for i in range(0, len(dat), ll))
 
-def tabd(dats, ind=0, add=2):
+def tabl(dats, ind=0):
+	if isinstance(dats, (list, tuple)):
+		return '\n'.join('%s%s'%(' '*ind, i) for i in dats)
+
+def tabd(dats, ind=0):
 	"""
 	this is a function where i try to guess the best indentation for text
 	representation of keyvalue paires with best matching indentation
@@ -173,7 +178,7 @@ def tabd(dats, ind=0, add=2):
 	"""
 	if dats == {} or not isinstance(dats, (dict, list, )):
 		return ''
-	lim = max(len(str(k)) for k in dats if k)+int(add)
+	lim = max(len(str(k)) for k in dats if k)+int(ind)
 	tabbed = '' #'%s'%' '*ind
 	for (key, val) in sorted(dats.items()):
 		iind = ind
@@ -182,13 +187,9 @@ def tabd(dats, ind=0, add=2):
 			tabbed = '%s\n%s%s:\n%s%s'%(
                 tabbed, ' '*ind, key, ' '*iind, tabd(val, ind=iind).strip())
 			continue
-		elif isinstance(val, list):
+		elif isinstance(val, (list, tuple)):
 			iind = ind+2
-			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, lisp(val, ind=iind))
-#		elif isinstance(val, str):
-#			if val.startswith('[') and val.endswith(']'):
-#				iind = ind+2
-#				tabbed = '%s\n%s%s'%(tabbed, ' '*ind, lisp(val, ind=iind))
+			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, tabl(val, ind=iind))
 		tabbed = '%s\n%s%s%s= %s'%(
             tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(str(key))), val)
 	return '%s\n'%tabbed.strip('\n')
