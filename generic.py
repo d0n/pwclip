@@ -64,7 +64,7 @@ class RepoSync(GitSync):
 				for gitstats in self.itergits([repo], syncall):
 					repostats.update(gitstats)
 		if 'svn' in repotypes.keys():
-			for repos in sorted(repotypes['git']):
+			for repos in sorted(repotypes['svn']):
 				repostats = {}
 				_chdir(repo)
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
