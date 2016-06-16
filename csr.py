@@ -17,8 +17,11 @@
 # global & stdlib imports
 #import re
 from os import \
-    remove as _remove
+    remove as _remove, \
+    makedirs as _makedirs
+
 from os.path import \
+    isdir as _isdir, \
     expanduser as _expanduser
 
 import sys
@@ -67,31 +70,34 @@ cfgtail = """
 
 
 
-def csrgen(fqdn, alters=[], days=730,
-           country='DE', location='KA',
-           organisation='1&1 Internet AG',
-           orgunit='Middleware Operations',
-           outdir='~/wrk/ssl', keyfile=None, csrfile=None):
+def csrgen(fqdn, *names, **cfgvals):
 	"""
+	expire=730,
+	country='DE', location='KA',
+	organisation='1&1 Internet AG',
+	orgunit='Middleware Operations',
+	outdir='~/wrk/ssl', keyfile=None, csrfile=None):
 	ugly, dirty, evil csr template generating and openssl forking function
 	"""
-	outdir = _expanduser(outdir)
-	keyoutfile = '%s/%s'%(outdir, keyfile) if keyfile else '%s/%s-key.pem'%(
-        outdir, fqdn)
-	csroutfile = '%s/%s'%(outdir, csrfile) if csrfile else '%s/csr/%s-csr.pem'%(
-        outdir, fqdn)
+	outdir = _expanduser(cfgvals['outdir'])
+	if not _isdir(outdir):
+		_makedirs(outdir)
+	if not _isdir('%s/csr'%outdir):
+		_makedirs('%s/csr'%outdir)
+	keyoutfile = '%s/%s'%(outdir, cfgvals['keyfile']) if (
+        'keyfile' in cfgvals.keys()) else '%s/%s-key.pem'%(outdir, fqdn)
+	csroutfile = '%s/%s'%(outdir, cfgvals['csrfile']) if (
+        'csrfile' in cfgvals.keys()) else '%s/csr/%s-csr.pem'%(outdir, fqdn)
 	cfgvals = {
-        'fqdn': fqdn, 'days': days,
+        'fqdn': fqdn, 'days': cfgvals['expire'],
         'rnd': _expanduser('~/.rnd'),
-        'country': country, 'location': location,
-        'organisation': organisation,
-        'keyfile': keyoutfile, 'orgunit': orgunit}
+        'country': cfgvals['country'], 'location': cfgvals['location'],
+        'organisation': cfgvals['organisation'],
+        'keyfile': keyoutfile, 'orgunit': cfgvals['unit']}
 	config = '%s%s%s'%(cfghead, cfgbody, cfgtail)
-	if alters:
-		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(alters)
+	if names:
+		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(*names)
 		config = '%s%s%s%s%s'%(cfghead, cfgreqs, cfgbody, cfgalts, cfgtail)
-
-		
 	_, tmpfile = mkstemp(prefix='openssl-conf.')
 	config = config.format(**cfgvals)
 	print(config)
