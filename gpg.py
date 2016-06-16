@@ -107,8 +107,8 @@ class GPGTool(object):
 	def _gpg_(self):
 		"""object"""
 		return _GPG(
-            homedir=self.homedir, binary=self.binary, use_agent=True, verbose=6,
-            keyring=self.keyring, secring=self.secring)
+            homedir=self.homedir, binary=self.binary, use_agent=True,
+            verbose=self.dbg, keyring=self.keyring, secring=self.secring)
 
 	@staticmethod
 	def __passwd(rpt=False):
