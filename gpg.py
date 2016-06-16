@@ -104,9 +104,8 @@ class GPGTool(object):
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
-		#return _GPG(gnupghome=self.homedir, gpgbinary=self.binary)
 		return _GPG(
-            homedir=self.homedir, binary=self.binary, use_agent=True,
+            homedir=self.homedir, binary=self.binary,
             keyring=self.keyring, secring=self.secring)
 
 	@staticmethod
@@ -151,7 +150,10 @@ class GPGTool(object):
 				kginput['passphrase'] = self.__passwd(rpt=True)
 		print(red('generating %s-bit keys - this WILL take some time'%(
             kginput['key_length'])))
-		return self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
+		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
+		if self.dbg:
+			print('key has been generated:\n%s'%str(key))
+		return key
 
 	def export(self, pattern=None, secret=False, typ='A'):
 		"""
@@ -200,7 +202,6 @@ class GPGTool(object):
 		text decrypting function
 		"""
 		if self.dbg:
-			print(bgre(self.decrypt))
-		print(self.__dict__.items())
-		return self._gpg_.decrypt(
-		    message, always_trust=True)
+			print(bgre('%s\ntrying to decrypt:\n%s'%(self.decrypt, message)))
+		return self._gpg_.decrypt(message.encode(), always_trust=True)
+
