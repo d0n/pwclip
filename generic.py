@@ -66,6 +66,7 @@ class RepoSync(GitSync):
 		if 'svn' in repotypes.keys():
 			for repos in sorted(repotypes['git']):
 				repostats = {}
+				_chdir(repo)
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				out = self.stdx('%s update'%which('svn'))
 				print(out.strip())
