@@ -122,7 +122,7 @@ class GitRepo(Command):
                 self.gitdir)
 			raise RuntimeError(errmsg)
 		head, heads = self._head(), os.listdir('%s/refs/heads'%(self.gitdir))
-		return [head] + [h for h in heads if h != head]
+		return [h for h in heads if h != head] + [head]
 
 	def _remotes(self):
 		if self.dbg:
