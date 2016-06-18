@@ -31,9 +31,11 @@ from system.user import userfind
 # local imports
 from colortext import bgre
 
+class LoginFailedError(Exception): pass
+
 
 class TimeSatan(object):
-	_dbg = True
+	_dbg = False
 	opener = None
 	url = 'https://login.1and1.org/ims-sso/login?service=' \
 	    'http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
@@ -41,10 +43,22 @@ class TimeSatan(object):
 	__passwd = None
 	casslpem = _expanduser('~/.config/catrust/ssl.pem')
 	def __init__(self, *args, **kwargs):
+		self._dbg = True if 'dbg' in args else self._dbg
 		self.username = self.username if (
             'username' not in kwargs.keys()) else kwargs['username']
 		self.casslpem = self.casslpem if (
 		    'casslpem' not in kwargs.keys()) else kwargs['casslpem']
+		if self.dbg:
+			lim = int(max(len(k) for k in TimeSatan.__dict__.keys()))+4
+			print(bgre('%s\n%s\n\n%s\n%s\n'%(
+                TimeSatan.__mro__,
+                '\n'.join('  %s%s=    %s'%(
+                    k, ' '*int(lim-len(k)), v
+                ) for (k, v) in sorted(TimeSatan.__dict__.items())),
+                TimeSatan.__init__,
+                '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
+                    ) for (k, v) in sorted(self.__dict__.items()
+                    ) if not k.startswith('_TimeSatan__')))))
 		if 'password' in kwargs.keys():
 			self.__passwd = kwargs['password']
 		elif not self.__passwd:
@@ -69,31 +83,54 @@ class TimeSatan(object):
 		if purl.startswith('https://login.1and1.org/'):
 			invcrd = post.find("Invalid credentials".encode())
 			if post.find("Invalid credentials".encode()) != -1:
-				raise Exception('Login failed (invalid credentials) %s'%invcrd)
+				raise LoginFailedError(
+                    'Login failed (invalid credentials) %s'%invcrd)
 			elif post.find("Change password".encode()) != -1:
 				print('password change required')
 			else:
 				print(post.decode())
-				raise Exception('unknown error')
+				raise LoginFailedError()
 		self.curday = _date.today()
-		self.url = _post.geturl()
-		if self.dbg:
-			lim = int(max(len(k) for k in TimeSatan.__dict__.keys()))+4
-			print(bgre('%s\n%s\n\n%s\n%s\n'%(
-                TimeSatan.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(TimeSatan.__dict__.items())),
-                TimeSatan.__init__,
-                '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
-                    ) for (k, v) in sorted(self.__dict__.items()
-                    ) if not k.startswith('_TimeSatan__')))))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = True if val else False
+		self._dbg = val
+
+	def __login_(self):
+		if 'password' in kwargs.keys():
+			self.__passwd = kwargs['password']
+		elif not self.__passwd:
+			self.__passwd = _getpass('enter password for %s: '%self.username)
+		cj = _CookieJar()
+		cxt = _create_default_context(cafile=self.casslpem)
+		self.opener = _build_opener(
+                _HTTPCookieProcessor(cj),
+                _HTTPSHandler(debuglevel=0,context=cxt))
+		home = self.opener.open(self.url)
+		tree = _html.fromstring(home.read())
+		form = tree.find('.//form')
+		_post = self.opener.open(self.url,
+                _urlencode({"username": self.username,
+                    "password": self.__passwd,
+                    "lt": form.find('.//input[@name="lt"]').value,
+                    "execution": form.find('.//input[@name="execution"]').value,
+                    "_eventId": form.find('.//input[@name="_eventId"]').value,
+                    "submit": form.find('.//input[@name="submit"]').value
+                }).encode())
+		purl, post = _post.geturl(), _post.read()
+		if purl.startswith('https://login.1and1.org/'):
+			invcrd = post.find("Invalid credentials".encode())
+			if post.find("Invalid credentials".encode()) != -1:
+				raise LoginFailedError(
+                    'Login failed (invalid credentials) %s'%invcrd)
+			elif post.find("Change password".encode()) != -1:
+				print('password change required')
+			else:
+				print(post.decode())
+				raise LoginFailedError()
+
 
 	def _book_(self, duration, project, task, day=None, comment=''):
 		#
