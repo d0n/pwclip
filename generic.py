@@ -55,6 +55,7 @@ class RepoSync(GitSync):
                 self.rposync, repotypes, mode)))
 		mode = mode if mode else self.mode
 		syncall = syncall if syncall else self._aal
+		repostats = {}
 		if 'git' in repotypes.keys():
 			for repo in sorted(repotypes['git']):
 				repostats = {}
