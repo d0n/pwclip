@@ -95,12 +95,13 @@ def csrgen(fqdn, *names, **cfgvals):
         'organisation': cfgvals['organisation'],
         'keyfile': keyoutfile, 'orgunit': cfgvals['unit']}
 	config = '%s%s%s'%(cfghead, cfgbody, cfgtail)
+	#print(names)
 	if names:
 		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(*names)
 		config = '%s%s%s%s%s'%(cfghead, cfgreqs, cfgbody, cfgalts, cfgtail)
 	_, tmpfile = mkstemp(prefix='openssl-conf.')
 	config = config.format(**cfgvals)
-	print(config)
+	#print(config)
 	with open(tmpfile, 'w+') as tmpcfg:
 		tmpcfg.write(config)
 	c.call('openssl req -batch -config %s -newkey rsa:4096 -sha512 -out %s'%(
