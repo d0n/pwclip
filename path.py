@@ -12,7 +12,6 @@ def absrelpath(path, base=None):
 		path = os.readlink(path)
 	if '..' in path or not path.startswith('/'):
 		pwd = os.getcwd()
-		base = os.getcwd() if base is None else base
 		os.chdir(base)
 		path = os.path.abspath(path)
 		os.chdir(pwd)
