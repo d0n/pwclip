@@ -32,7 +32,7 @@ class GPGTool(object):
 	main code more easy to understand by wrapping multiple gnupg functions to
 	one - also i can prepare some program related stuff in here
 	"""
-	_dbg = True
+	_dbg = None
 	_homedir = _expanduser('~/.gnupg')
 	_binary = '/usr/bin/gpg2'
 	_keyring = '%s/pubring.kbx'%_homedir
@@ -63,7 +63,7 @@ class GPGTool(object):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = True if val else False
+		self._dbg = bool(val)
 
 	@property                # homedir <str>
 	def homedir(self):
@@ -107,8 +107,9 @@ class GPGTool(object):
 	def _gpg_(self):
 		"""object"""
 		return _GPG(
-            homedir=self.homedir, binary=self.binary, use_agent=True,
-            verbose=self.dbg, keyring=self.keyring, secring=self.secring)
+            homedir=self.homedir, binary=self.binary,
+            use_agent=True, verbose=1 if self.dbg else 0,
+            keyring=self.keyring, secring=self.secring)
 
 	@staticmethod
 	def __passwd(rpt=False):
@@ -184,26 +185,28 @@ class GPGTool(object):
 							pubs['%s:%s'%(typs, finger)] = kstr
 		return pubs
 
-	def _encryptwithkey(self, message, keystr):
+	def _encryptwithkey(self, message, keystr, output):
 		for result in self._gpg_.import_keys(keystr).results:
 			finger = result['fingerprint']
 			return str(self._gpg_.encrypt(
-                message, finger, **{'always_trust': True}))
+                message, finger, always_trust=True, output=output))
 
-	def encrypt(self, message, keystr=None):
+	def encrypt(self, message, keystr=None, output=None):
 		"""
 		text encrypting function
 		"""
 		if self.dbg:
 			print(bgre(self.encrypt))
 		if keystr:
-			return self._encryptwithkey(message, keystr)
+			return self._encryptwithkey(message, keystr, output)
 
-	def decrypt(self, message):
+	def decrypt(self, message, output=None):
 		"""
 		text decrypting function
 		"""
+		print(message)
+		message = message if isinstance(message, bytes) else message.encode()
 		if self.dbg:
 			print(bgre('%s\ntrying to decrypt:\n%s'%(self.decrypt, message)))
-		return self._gpg_.decrypt(message.encode(), always_trust=True)
+		return self._gpg_.decrypt(message, always_trust=True, output=output)
 
