@@ -204,9 +204,7 @@ class GPGTool(object):
 		"""
 		text decrypting function
 		"""
-		print(message)
-		message = message if isinstance(message, bytes) else message.encode()
+		#message = message.decode() if isinstance(message, bytes) else message
 		if self.dbg:
 			print(bgre('%s\ntrying to decrypt:\n%s'%(self.decrypt, message)))
-		return self._gpg_.decrypt(message, always_trust=True, output=output)
-
+		return str(self._gpg_.decrypt(message, always_trust=True, output=output))
