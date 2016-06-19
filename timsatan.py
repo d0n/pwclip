@@ -29,7 +29,7 @@ from datetime import \
 from system.user import userfind
 
 # local imports
-from colortext import bgre
+from colortext import bgre, tabd
 
 class LoginFailedError(Exception): pass
 
@@ -166,7 +166,7 @@ class TimeSatan(object):
 
 	def bookeffort(self, **kwargs):
 		if self.dbg:
-			print(bgre(self.bookeffort))
+			print(bgre('%s\n  %s'%(self.bookeffort, tabd(kwargs))))
 		for m in {'duration', 'project','task'}:
 			assert kwargs[m] is not None
 		return self._book_(**kwargs)
