@@ -71,7 +71,7 @@ class TimeSatan(object):
 		home = self.opener.open(self.url)
 		tree = _html.fromstring(home.read())
 		form = tree.find('.//form')
-		_post = self.opener.open(self.url,
+		response = self.opener.open(self.url,
                 _urlencode({"username": self.username,
                     "password": self.__passwd,
                     "lt": form.find('.//input[@name="lt"]').value,
@@ -79,16 +79,17 @@ class TimeSatan(object):
                     "_eventId": form.find('.//input[@name="_eventId"]').value,
                     "submit": form.find('.//input[@name="submit"]').value
                 }).encode())
-		purl, post = _post.geturl(), _post.read()
-		if purl.startswith('https://login.1and1.org/'):
-			invcrd = post.find("Invalid credentials".encode())
-			if post.find("Invalid credentials".encode()) != -1:
+		self.url, res = response.geturl(), response.read()
+		if self.url.startswith('https://login.1and1.org/'):
+			if res.find("Invalid credentials".encode()) != -1:
 				raise LoginFailedError(
-                    'Login failed (invalid credentials) %s'%invcrd)
-			elif post.find("Change password".encode()) != -1:
+                    'Login failed (invalid credentials)')
+			elif res.find("Change password".encode()) != -1:
 				print('password change required')
+				res = self.opener.open(self.url)
+				self.url = res.geturl()
 			else:
-				print(post.decode())
+				print(res.decode())
 				raise LoginFailedError()
 		self.curday = _date.today()
 	@property                # dbg <bool>
@@ -97,40 +98,6 @@ class TimeSatan(object):
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val
-
-	def __login_(self):
-		if 'password' in kwargs.keys():
-			self.__passwd = kwargs['password']
-		elif not self.__passwd:
-			self.__passwd = _getpass('enter password for %s: '%self.username)
-		cj = _CookieJar()
-		cxt = _create_default_context(cafile=self.casslpem)
-		self.opener = _build_opener(
-                _HTTPCookieProcessor(cj),
-                _HTTPSHandler(debuglevel=0,context=cxt))
-		home = self.opener.open(self.url)
-		tree = _html.fromstring(home.read())
-		form = tree.find('.//form')
-		_post = self.opener.open(self.url,
-                _urlencode({"username": self.username,
-                    "password": self.__passwd,
-                    "lt": form.find('.//input[@name="lt"]').value,
-                    "execution": form.find('.//input[@name="execution"]').value,
-                    "_eventId": form.find('.//input[@name="_eventId"]').value,
-                    "submit": form.find('.//input[@name="submit"]').value
-                }).encode())
-		purl, post = _post.geturl(), _post.read()
-		if purl.startswith('https://login.1and1.org/'):
-			invcrd = post.find("Invalid credentials".encode())
-			if post.find("Invalid credentials".encode()) != -1:
-				raise LoginFailedError(
-                    'Login failed (invalid credentials) %s'%invcrd)
-			elif post.find("Change password".encode()) != -1:
-				print('password change required')
-			else:
-				print(post.decode())
-				raise LoginFailedError()
-
 
 	def _book_(self, duration, project, task, day=None, comment=''):
 		#
