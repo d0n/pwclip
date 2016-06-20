@@ -28,11 +28,7 @@ from datetime import \
 
 from system.user import userfind
 
-# local imports
-from colortext import bgre, tabd
-
 class LoginFailedError(Exception): pass
-
 
 class TimeSatan(object):
 	_dbg = False
