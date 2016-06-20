@@ -61,7 +61,11 @@ class TimeSatan(object):
                     ) if not k.startswith('_TimeSatan__')))))
 		if 'password' in kwargs.keys():
 			self.__passwd = kwargs['password']
-		elif not self.__passwd:
+
+	def __login_(self):
+		if self.dbg:
+			print(bgre(self.__login_))
+		if not self.__passwd:
 			self.__passwd = _getpass('enter password for %s: '%self.username)
 		cj = _CookieJar()
 		cxt = _create_default_context(cafile=self.casslpem)
@@ -86,12 +90,12 @@ class TimeSatan(object):
                     'Login failed (invalid credentials)')
 			elif res.find("Change password".encode()) != -1:
 				print('password change required')
-				res = self.opener.open(self.url)
-				self.url = res.geturl()
+				self.url = self.opener.open(self.url).geturl()
 			else:
 				print(res.decode())
 				raise LoginFailedError()
 		self.curday = _date.today()
+
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
@@ -100,11 +104,6 @@ class TimeSatan(object):
 		self._dbg = val
 
 	def _book_(self, duration, project, task, day=None, comment=''):
-		#
-		# day, duration, project, task, comment=''
-		#
-		# strange: if you book for past days you have to 'post'
-		# the __from for this day to be able to book the first section
 		if self.dbg:
 			print(bgre(self._book_))
 		day = day if day else self.curday
@@ -134,6 +133,7 @@ class TimeSatan(object):
 	def bookeffort(self, **kwargs):
 		if self.dbg:
 			print(bgre('%s\n  %s'%(self.bookeffort, tabd(kwargs))))
+		self.__login_()
 		for m in {'duration', 'project','task'}:
 			assert kwargs[m] is not None
 		return self._book_(**kwargs)
