@@ -188,8 +188,8 @@ class GPGTool(object):
 	def _encryptwithkey(self, message, keystr, output):
 		for result in self._gpg_.import_keys(keystr).results:
 			finger = result['fingerprint']
-			return str(self._gpg_.encrypt(
-                message, finger, always_trust=True, output=output))
+			return self._gpg_.encrypt(
+                message, finger, always_trust=True, output=output)
 
 	def encrypt(self, message, keystr=None, output=None):
 		"""
@@ -197,8 +197,13 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.encrypt))
-		if keystr:
-			return self._encryptwithkey(message, keystr, output)
+		res = self._gpg_.import_keys(keystr).results[0]
+		finger = res['fingerprint']
+		return self._gpg_.encrypt(
+            message, finger, always_trust=True, output=output)
+		#if keystr:
+		#	return self._encryptwithkey(message, keystr, output)
+
 
 	def decrypt(self, message, output=None):
 		"""
