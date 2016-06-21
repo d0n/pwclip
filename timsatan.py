@@ -57,6 +57,12 @@ class TimeSatan(object):
                     ) if not k.startswith('_TimeSatan__')))))
 		if 'password' in kwargs.keys():
 			self.__passwd = kwargs['password']
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = val
 
 	def __login_(self):
 		if self.dbg:
@@ -92,23 +98,14 @@ class TimeSatan(object):
 				raise LoginFailedError()
 		self.curday = _date.today()
 
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val
-
 	def _book_(self, duration, project, task, day=None, comment=''):
 		if self.dbg:
 			print(bgre(self._book_))
 		day = day if day else self.curday
 		__d = (day.day, day.month, day.year)
-		if day and self.curday != day:
-			self.opener.open(
-                self.url,
-                _urlencode({"__from": "%02d.%02d.%d"%__d}))
-			self.curday = day
+		self.opener.open(
+            self.url,
+            _urlencode({"__from": "%02d.%02d.%d"%__d}))
 		code = _urlencode({
             "__from": "%02d.%02d.%d"%__d,
             "__handler": \
