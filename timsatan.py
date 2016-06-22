@@ -72,10 +72,9 @@ class TimeSatan(object):
 		cj = _CookieJar()
 		cxt = _create_default_context(cafile=self.casslpem)
 		self.opener = _build_opener(
-                _HTTPCookieProcessor(cj),
-                _HTTPSHandler(debuglevel=0,context=cxt))
-		home = self.opener.open(self.url)
-		tree = _html.fromstring(home.read())
+            _HTTPCookieProcessor(cj),
+            _HTTPSHandler(debuglevel=0,context=cxt))
+		tree = _html.fromstring(self.opener.open(self.url).readI())
 		form = tree.find('.//form')
 		response = self.opener.open(self.url,
                 _urlencode({"username": self.username,
@@ -96,16 +95,15 @@ class TimeSatan(object):
 			else:
 				print(res.decode())
 				raise LoginFailedError()
-		self.curday = _date.today()
 
 	def _book_(self, duration, project, task, day=None, comment=''):
 		if self.dbg:
 			print(bgre(self._book_))
 		day = day if day else self.curday
-		__d = (day.day, day.month, day.year)
+		__d = tuple(int(i) for i in reversed(str(day).split('-')))
 		self.opener.open(
             self.url,
-            _urlencode({"__from": "%02d.%02d.%d"%__d}))
+            _urlencode({"__from": "%02d.%02d.%d"%__d}).encode())
 		code = _urlencode({
             "__from": "%02d.%02d.%d"%__d,
             "__handler": \
@@ -114,8 +112,8 @@ class TimeSatan(object):
             "duration": duration,
             "project": project,
             "task": task,
-            "comment": comment})
-		_effort = self.opener.open(self.url, code.encode())
+            "comment": comment}).encode()
+		_effort = self.opener.open(self.url, code)
 		response = _effort.read()
 		if response.find('Success'.encode()) == -1:
 			raise Exception(
