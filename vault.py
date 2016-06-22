@@ -18,7 +18,7 @@ def envault(folder, target=None, name=None):
 	key = [v for (k, v) in gpg.export(name).items() if k.startswith('e')][0]
 	target = target if target else '%s.vault'%_basename(folder)
 	with _NamedTemporaryFile() as tmp:
-		with taropen(tmp.name, "w:") as tar:
+		with taropen(tmp.name, "w:gz") as tar:
 			tar.add(folder, arcname=_basename(folder))
 		tmp.seek(0)
 		gpg.encrypt(tmp.read(), key, output=target)
@@ -29,7 +29,7 @@ def unvault(vault, target=None):
 		with open(vault, 'rb') as vlt:
 			gpg.decrypt(vlt.read(), tmp.name)
 		tmp.seek(0)
-		with taropen(tmp.name, "r:") as tar:
+		with taropen(tmp.name, "r:gz") as tar:
 			tar.extractall(target)
 
 if __name__ == '__main__':
