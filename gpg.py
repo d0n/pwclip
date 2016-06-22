@@ -106,10 +106,12 @@ class GPGTool(object):
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
-		return _GPG(
-            homedir=self.homedir, binary=self.binary,
+		__g = _GPG(
+            gnupghome=self.homedir, gpgbinary=self.binary,
             use_agent=True, verbose=1 if self.dbg else 0,
-            keyring=self.keyring, secring=self.secring)
+            keyring=self.keyring, secret_keyring=self.secring)
+		__g.encoding = 'utf-8'
+		return __g
 
 	@staticmethod
 	def __passwd(rpt=False):
@@ -174,7 +176,8 @@ class GPGTool(object):
 				if key == 'subkeys':
 					#print(key)
 					for sub in keys[key]:
-						finger, typs = sub
+						#print(sub)
+						short, typs, finger = sub
 						#print(finger, typs)
 						if typ == 'A' or (typ in typs):
 							si = keys[key].index(sub)
@@ -197,6 +200,7 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.encrypt))
+		print(self._gpg_.encoding)
 		res = self._gpg_.import_keys(keystr).results[0]
 		finger = res['fingerprint']
 		return self._gpg_.encrypt(
