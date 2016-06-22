@@ -74,7 +74,7 @@ class TimeSatan(object):
 		self.opener = _build_opener(
             _HTTPCookieProcessor(cj),
             _HTTPSHandler(debuglevel=0,context=cxt))
-		tree = _html.fromstring(self.opener.open(self.url).readI())
+		tree = _html.fromstring(self.opener.open(self.url).read())
 		form = tree.find('.//form')
 		response = self.opener.open(self.url,
                 _urlencode({"username": self.username,
