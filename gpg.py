@@ -33,6 +33,7 @@ class GPGTool(object):
 	one - also i can prepare some program related stuff in here
 	"""
 	_dbg = None
+	_tru = True
 	_homedir = _expanduser('~/.gnupg')
 	_binary = '/usr/bin/gpg2'
 	_keyring = '%s/pubring.kbx'%_homedir
@@ -64,6 +65,13 @@ class GPGTool(object):
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = bool(val)
+
+	@property                # tru <bool>
+	def tru(self):
+		return self._tru
+	@tru.setter
+	def tru(self, val):
+		self._tru = bool(val)
 
 	@property                # homedir <str>
 	def homedir(self):
@@ -160,54 +168,66 @@ class GPGTool(object):
 			print('key has been generated:\n%s'%str(key))
 		return key
 
-	def export(self, pattern=None, secret=False, typ='A'):
+	def findkey(self, pattern='', **kwargs):
+		typ = 'A' if not 'typ' in kwargs.keys() else kwargs['typ']
+		secret = False if not 'secret' in kwargs.keys() else kwargs['secret']
+		keys = {}
+		for key in self._gpg_.list_keys():
+			if not [v for kv in key.values() for v in kv if pattern in v]:
+				continue
+			for (k, v) in key.items():
+				#print(k, v)
+				if k == 'subkeys':
+					#print(k)
+					for sub in key[k]:
+						#print(sub)
+						short, typs, finger = sub
+						#print(finger, typs)
+						if typ == 'A' or (typ in typs):
+							si = key[k].index(sub)
+							ki = key[k][si].index(finger)
+							kstr = self._gpg_.export_keys(
+                                key[k][si][ki], secret=secret)
+							#print(kstr)
+							keys[finger] = {typs: kstr}
+		return keys
+
+	def export(self, *patterns, **kwargs):
 		"""
 		key-export method
 		"""
 		if self.dbg:
 			print(bgre(self.export))
-		pubs = {}
-		for keys in self._gpg_.list_keys():
-			if pattern:
-				if not [v for kv in keys.values() for v in kv if pattern in v]:
-					continue
-			for (key, val) in keys.items():
-				#print(key, val)
-				if key == 'subkeys':
-					#print(key)
-					for sub in keys[key]:
-						#print(sub)
-						short, typs, finger = sub
-						#print(finger, typs)
-						if typ == 'A' or (typ in typs):
-							si = keys[key].index(sub)
-							ki = keys[key][si].index(finger)
-							kstr = self._gpg_.export_keys(
-                                keys[key][si][ki], secret=secret)
-							#print(kstr)
-							pubs['%s:%s'%(typs, finger)] = kstr
-		return pubs
+		typ = 'A' if not 'typ' in kwargs.keys() else kwargs['typ']
+		secret = False if not 'secret' in kwargs.keys() else kwargs['secret']
+		keys = dict((k, v) for (k, v) in self.findkey(**kwargs).items())
+		if patterns:
+			keys = dict((k, v) for p in list(patterns) \
+                for (k, v) in self.findkey(p, **kwargs).items())
+		return keys
 
-	def _encryptwithkey(self, message, keystr, output):
+	def _encryptwithkeystr(self, message, keystr, output):
 		for result in self._gpg_.import_keys(keystr).results:
 			finger = result['fingerprint']
 			return self._gpg_.encrypt(
                 message, finger, always_trust=True, output=output)
 
-	def encrypt(self, message, keystr=None, output=None):
+	def encrypt(self, message, *args, **kwargs):
 		"""
 		text encrypting function
 		"""
 		if self.dbg:
 			print(bgre(self.encrypt))
-		print(self._gpg_.encoding)
-		res = self._gpg_.import_keys(keystr).results[0]
-		finger = res['fingerprint']
+		fingers = [f for f in self.export(typ='e').keys()]
+		if 'recipients' in kwargs.keys():
+			fingers = [f for f in self.export(
+                *kwargs['recipients'], **{typ: 'e'})]
+		if 'keystr' in kwargs.keys():
+			res = self._gpg_.import_keys(keystr).results[0]
+			fingers = [res['fingerprint']]
+		output = None if not 'output'in kwargs.keys() else kwargs['output']
 		return self._gpg_.encrypt(
-            message, finger, always_trust=True, output=output)
-		#if keystr:
-		#	return self._encryptwithkey(message, keystr, output)
-
+            message, fingers, always_trust=True, output=output)
 
 	def decrypt(self, message, output=None):
 		"""
@@ -215,5 +235,5 @@ class GPGTool(object):
 		"""
 		#message = message.decode() if isinstance(message, bytes) else message
 		if self.dbg:
-			print(bgre('%s\ntrying to decrypt:\n%s'%(self.decrypt, message)))
-		return str(self._gpg_.decrypt(message, always_trust=True, output=output))
+			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
+		return self._gpg_.decrypt(message, always_trust=True, output=output)

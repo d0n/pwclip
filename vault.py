@@ -13,15 +13,14 @@ from .gpg import GPGTool
 
 gpg = GPGTool()
 
-def envault(folder, target=None, name=None):
-	name = name if name else 'd0nkey'
-	key = [v for (k, v) in gpg.export(name).items() if k.startswith('e')][0]
+def envault(folder, *recipients, target=None):
+	fingers = list(gpg.export(*recipients, **{'typ': 'e'}))
 	target = target if target else '%s.vault'%_basename(folder)
 	with _NamedTemporaryFile() as tmp:
 		with taropen(tmp.name, "w:gz") as tar:
 			tar.add(folder, arcname=_basename(folder))
 		tmp.seek(0)
-		gpg.encrypt(tmp.read(), key, output=target)
+		gpg.encrypt(tmp.read(), fingers, output=target)
 
 def unvault(vault, target=None):
 	target = target if target else '%s'%_basename(vault).split('.')[0]
