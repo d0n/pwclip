@@ -168,6 +168,12 @@ class GitRepo(Command):
 			command = '%s add %s'%(self.gitbin, ' '.join(f for f in files))
 		return int(self.call(command))
 
+	def clone(self, remote, target, branch='master'):
+		if self.dbg:
+			print(bgre(self.cloe))
+		command = '%s clone -b %s %s %s'%(self.gitbin, branch, remote, target)
+		return self.call(command)
+
 	def commit(self, message):
 		if self.dbg:
 			print(bgre(self.commit))
