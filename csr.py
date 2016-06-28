@@ -42,7 +42,7 @@ oid_section         = new_oids
 [ new_oids ]
 
 [ req ]
-default_days        = {days}
+default_days        = {expire}
 default_keyfile     = {keyfile}
 distinguished_name  = req_distinguished_name
 encrypt_key         = no
@@ -88,20 +88,21 @@ def csrgen(fqdn, *names, **cfgvals):
         'keyfile' in cfgvals.keys()) else '%s/%s-key.pem'%(outdir, fqdn)
 	csroutfile = '%s/%s'%(outdir, cfgvals['csrfile']) if (
         'csrfile' in cfgvals.keys()) else '%s/csr/%s-csr.pem'%(outdir, fqdn)
-	cfgvals = {
-        'fqdn': fqdn, 'days': cfgvals['expire'],
-        'rnd': _expanduser('~/.rnd'),
-        'country': cfgvals['country'], 'location': cfgvals['location'],
-        'organisation': cfgvals['organisation'],
-        'keyfile': keyoutfile, 'orgunit': cfgvals['unit']}
 	config = '%s%s%s'%(cfghead, cfgbody, cfgtail)
+	cfgvals['fqdn'] = fqdn
+	cfgvals['keyfile'] = keyoutfile
+
+	cfgvals['rnd'] = _expanduser('~/.rnd')
+	print(config)
+	print(cfgvals)
 	#print(names)
 	if names:
 		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(*names)
+		del cfgvals['altnames']
 		config = '%s%s%s%s%s'%(cfghead, cfgreqs, cfgbody, cfgalts, cfgtail)
 	_, tmpfile = mkstemp(prefix='openssl-conf.')
 	config = config.format(**cfgvals)
-	#print(config)
+	print(config)
 	with open(tmpfile, 'w+') as tmpcfg:
 		tmpcfg.write(config)
 	c.call('openssl req -batch -config %s -newkey rsa:4096 -sha512 -out %s'%(
