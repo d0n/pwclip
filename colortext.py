@@ -3,11 +3,9 @@
 text colorisation functions  due to extendet use of the python3 print
 function this is for python3 only
 """
-from sys import \
-    stderr as _stderr, \
-    stdout as _stdout
-__echo = _stdout.write
-__puke = _stderr.write
+from sys import stderr, stdout
+__echo = stdout.write
+__puke = stderr.write
 
 # get color escape sequence from string
 def __colorize(color, text):

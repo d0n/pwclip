@@ -1,10 +1,8 @@
-from sys import \
-    argv as _argv
+import sys
 from os.path import \
-    basename as _basename, \
-    expanduser as _expanduser
+    basename, expanduser
 from yaml import \
-    load as _load
+    load
 import logging
 
 def logger(lvl='INFO'):
@@ -16,12 +14,12 @@ def logger(lvl='INFO'):
 	DEBUG:    10
 	NOTSET:   0
 	"""
-	prog = _basename(_argv[0])
+	prog = basename(sys.argv[0])
 	name = prog.split('.')[0]
 	stamp = '%F.%T'
 	logln = '%(asctime)s,%(msecs)d %(name)s:%(levelname)s:%(funcName)s %(message)s'
 	outln = '%(asctime)s %(name)s: %(message)s'
-	_file = _expanduser('~/log/%s.log'%name)
+	_file = expanduser('~/log/%s.log'%name)
 	if lvl == ('CRITICAL', 50):
 		lvl = logging.CRITICAL
 	elif lvl in ('DEBUG', 10):
