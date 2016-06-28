@@ -3,9 +3,9 @@
 text colorisation functions  due to extendet use of the python3 print
 function this is for python3 only
 """
-from sys import stderr, stdout
-__echo = stdout.write
-__puke = stderr.write
+import sys
+__echo = sys.stdout.write
+__puke = sys.stderr.write
 
 # get color escape sequence from string
 def __colorize(color, text):
@@ -185,9 +185,9 @@ def tabd(dats, ind=0):
 			tabbed = '%s\n%s%s:\n%s%s'%(
                 tabbed, ' '*ind, key, ' '*iind, tabd(val, ind=iind).strip())
 			continue
-		elif isinstance(val, (list, tuple)):
-			iind = ind+2
-			tabbed = '%s\n%s%s'%(tabbed, ' '*ind, tabl(val, ind=iind))
+		#elif isinstance(val, (list, tuple)):
+		#	iind = ind+2
+		#	tabbed = '%s\n%s%s'%(tabbed, ' '*ind, tabl(val, ind=iind))
 		tabbed = '%s\n%s%s%s= %s'%(
             tabbed.rstrip(), ' '*ind, key, ' '*int(lim-len(str(key))), val)
 	return '%s\n'%tabbed.strip('\n')
