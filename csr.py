@@ -17,18 +17,16 @@
 # global & stdlib imports
 #import re
 from os import \
-    remove as _remove, \
-    makedirs as _makedirs
+    remove, makedirs
 
 from os.path import \
-    isdir as _isdir, \
-    expanduser as _expanduser
+    isdir, expanduser
 
 import sys
 from tempfile import mkstemp
 
 # local relative imports
-from executor import command as c
+from executor import command
 
 # global default variables
 __version__ = '0.0'
@@ -93,8 +91,8 @@ def csrgen(fqdn, *names, **cfgvals):
 	cfgvals['keyfile'] = keyoutfile
 
 	cfgvals['rnd'] = _expanduser('~/.rnd')
-	print(config)
-	print(cfgvals)
+	#print(config)
+	#print(cfgvals)
 	#print(names)
 	if names:
 		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(*names)
@@ -102,12 +100,13 @@ def csrgen(fqdn, *names, **cfgvals):
 		config = '%s%s%s%s%s'%(cfghead, cfgreqs, cfgbody, cfgalts, cfgtail)
 	_, tmpfile = mkstemp(prefix='openssl-conf.')
 	config = config.format(**cfgvals)
-	print(config)
+	#print(config)
 	with open(tmpfile, 'w+') as tmpcfg:
 		tmpcfg.write(config)
-	c.call('openssl req -batch -config %s -newkey rsa:4096 -sha512 -out %s'%(
-        tmpfile, csroutfile))
-	_remove(tmpfile)
+	command.call(
+        'openssl req -batch -config %s -newkey rsa:4096 -sha512 -out %s'%(
+            tmpfile, csroutfile))
+	remove(tmpfile)
 
 
 
