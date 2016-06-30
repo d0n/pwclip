@@ -77,11 +77,11 @@ def csrgen(fqdn, *names, **cfgvals):
 	outdir='~/wrk/ssl', keyfile=None, csrfile=None):
 	ugly, dirty, evil csr template generating and openssl forking function
 	"""
-	outdir = _expanduser(cfgvals['outdir'])
-	if not _isdir(outdir):
-		_makedirs(outdir)
-	if not _isdir('%s/csr'%outdir):
-		_makedirs('%s/csr'%outdir)
+	outdir = expanduser(cfgvals['outdir'])
+	if not isdir(outdir):
+		makedirs(outdir)
+	if not isdir('%s/csr'%outdir):
+		makedirs('%s/csr'%outdir)
 	keyoutfile = '%s/%s'%(outdir, cfgvals['keyfile']) if (
         'keyfile' in cfgvals.keys()) else '%s/%s-key.pem'%(outdir, fqdn)
 	csroutfile = '%s/%s'%(outdir, cfgvals['csrfile']) if (
@@ -90,7 +90,7 @@ def csrgen(fqdn, *names, **cfgvals):
 	cfgvals['fqdn'] = fqdn
 	cfgvals['keyfile'] = keyoutfile
 
-	cfgvals['rnd'] = _expanduser('~/.rnd')
+	cfgvals['rnd'] = expanduser('~/.rnd')
 	#print(config)
 	#print(cfgvals)
 	#print(names)
