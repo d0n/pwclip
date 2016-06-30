@@ -34,4 +34,6 @@ def _chalres(chal, slot=None, ykser=None):
 	if not slot:
 		return [_slotchalres(k, chal, s) for k in _yubikeys(ykser=ykser) for s in (2, 1)]
 	res = [_slotchalres(k, chal, slot) for k in _yubikeys(ykser=ykser)]
-	return res if len(res) > 1 else res[0]
+	if len(res) == 1:
+		res = res[0]
+	return res
