@@ -89,7 +89,6 @@ def csrgen(fqdn, *names, **cfgvals):
 	config = '%s%s%s'%(cfghead, cfgbody, cfgtail)
 	cfgvals['fqdn'] = fqdn
 	cfgvals['keyfile'] = keyoutfile
-
 	cfgvals['rnd'] = expanduser('~/.rnd')
 	#print(config)
 	#print(cfgvals)
