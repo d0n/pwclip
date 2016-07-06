@@ -67,7 +67,6 @@ def cpchalres(chal=None, slot=2, ykser=None):
 class PasswordDialog(Gtk.MessageDialog):
 	pwd = ''
 	def __init__(self, parent):
-		# If user does not input text it returns None, NOT AN EMPTY STRING.
 		Gtk.Dialog.__init__(self, "password", parent, 0)
 		self.set_border_width(50)
 		box = self.get_content_area()
@@ -78,21 +77,35 @@ class PasswordDialog(Gtk.MessageDialog):
 		box.add(entry) #, False, False, 0)
 		self.show_all()
 
+	@staticmethod
+	def clipswitch():
+		p = Popen(['xsel', '-x'])
+		p.communicate()
+
+	@staticmethod
+	def setpric(text):
+		p = Popen(['xsel', '-i', '-p'], stdin=PIPE)
+		p.communicate(input=text.encode('utf-'))
+
+	@staticmethod
+	def setclip(text):
+		cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+		cb.set_text(text, -1)
+		cb.store()
+
 	def okonenter(self, widget, ev, data=None):
 		if ev.keyval == Gdk.KEY_Return:
 			try:
-				cp = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY)
-				cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-				cp.set_text(widget.get_text(), -1)
-				cb.set_text(widget.get_text(), -1)
-				cp.store()
-				cb.store()
+				__hash = chalres(widget.get_text())
+				self.clipswitch()
+				self.setpric(__hash)
 			finally:
 				self.destroy()
 
 class PassWin(Gtk.Window):
+	checkpacks()
 	def __init__(self):
-		Gtk.Window.__init__(self, title="password")
+		Gtk.Window.__init__(self, title="clipper")
 		self.hide()
 
 	def askpass(self): #, widget, ev, data=None):
