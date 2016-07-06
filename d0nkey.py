@@ -3,7 +3,14 @@
 d0nkey - yubikey module
 """
 import sys
+
 from os import environ
+
+import gi
+
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk
+
 from yubico import \
     find_yubikey, yubikey, \
     yubico_exception
@@ -15,8 +22,6 @@ from yubico.yubikey_neo_usb_hid import YubiKeyNEO_USBHID
 from yubico.yubikey_4_usb_hid import YubiKey4_USBHID
 
 from binascii import hexlify
-
-from pyperclip import copy as copyclip
 
 def _yubikeys(ykser=None, dbg=None):
 	"""
@@ -58,3 +63,41 @@ def cpchalres(chal=None, slot=2, ykser=None):
 		chal = input('enter challenge: ')
 	__res = chalres(chal, slot, ykser)
 	copyclip(__res)
+
+class PasswordDialog(Gtk.MessageDialog):
+	pwd = ''
+	def __init__(self, parent):
+		# If user does not input text it returns None, NOT AN EMPTY STRING.
+		Gtk.Dialog.__init__(self, "password", parent, 0)
+		self.set_border_width(50)
+		box = self.get_content_area()
+		entry = Gtk.Entry()
+		entry.set_visibility(False)
+		entry.set_invisible_char("*")
+		entry.connect("key-press-event", self.okonenter)
+		box.add(entry) #, False, False, 0)
+		self.show_all()
+
+	def okonenter(self, widget, ev, data=None):
+		if ev.keyval == Gdk.KEY_Return:
+			try:
+				cp = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY)
+				cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+				cp.set_text(widget.get_text(), -1)
+				cb.set_text(widget.get_text(), -1)
+				cp.store()
+				cb.store()
+			finally:
+				self.destroy()
+
+class PassWin(Gtk.Window):
+	def __init__(self):
+		Gtk.Window.__init__(self, title="password")
+		self.hide()
+
+	def askpass(self): #, widget, ev, data=None):
+		dialog = PasswordDialog(self)
+		res = dialog.run()
+		self.destroy()
+
+
