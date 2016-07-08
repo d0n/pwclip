@@ -36,19 +36,18 @@ class LoginFailedError(Exception): pass
 class TimeSatan(object):
 	_dbg = False
 	browser = None
-	url = 'https://login.1and1.org/ims-sso/login?service=' \
+	_sesurl = 'https://login.1and1.org/ims-sso/login?service=' \
         'http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
 	username = userfind()
 	__passwd = None
 	casslpem = _expanduser('~/.config/catrust/ssl.pem')
-	_sesurl = ''
 	cache = _expanduser('~/.cache/timsatan')
 	def __init__(self, *args, **kwargs):
 		self._dbg = True if 'dbg' in args else self._dbg
 		self.username = self.username if (
             'username' not in kwargs.keys()) else kwargs['username']
 		self.casslpem = self.casslpem if (
-		    'casslpem' not in kwargs.keys()) else kwargs['casslpem']
+            'casslpem' not in kwargs.keys()) else kwargs['casslpem']
 		self._mkcache_()
 		if self.dbg:
 			lim = int(max(len(k) for k in TimeSatan.__dict__.keys()))+4
@@ -72,18 +71,15 @@ class TimeSatan(object):
 
 	@property                # sesurl <str>
 	def sesurl(self):
-		return self._sesurl
-	@sesurl.setter
-	def sesurl(self, val):
-		if val:
-			self._sesurl = val
-			with open('%s/timsatan.ses'%self.cache, 'w+') as tsh:
-				tsh.write(self._sesurl)
 		try:
 			with open('%s/timsatan.ses'%self.cache, 'r') as tsh:
-				self._sesurl = tsh.read()
+				return tsh.read()
 		except FileNotFoundError:
-			pass
+			return self._sesurl
+	@sesurl.setter
+	def sesurl(self, val):
+		with open('%s/timsatan.ses'%self.cache, 'w+') as tsh:
+			tsh.write(self._sesurl)
 
 	@staticmethod
 	def _mkcache_():
