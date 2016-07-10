@@ -9,7 +9,7 @@ import sys
 # local relative imports
 from executor import Command
 from system import absrelpath, which
-from colortext import blu, yel, bgre, error
+from colortext import blu, yel, tabd, bgre, error
 
 # default vars
 __version__ = '0.1'
@@ -38,8 +38,7 @@ class GitRepo(Command):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(GitRepo.__mro__))
-			for (key, val) in self.__dict__.items():
-				print(bgre(key, '=', val))
+			print(bgre(tabd(self.__dict__, 2)))
 		if not self.gitbin:
 			raise RuntimeError('could not find git binary in $PATH')
 	@property               # dbg <bool>
