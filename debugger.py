@@ -1,50 +1,35 @@
 import sys
+from os import getuid
 from os.path import \
-    basename, expanduser
+    basename, expanduser, isdir
+
 from yaml import \
     load
-import logging
 
-def logger(lvl='INFO'):
-	"""
-	CRITICAL: 50
-	ERROR:    40
-	WARNING:  30
-	INFO:     20
-	DEBUG:    10
-	NOTSET:   0
-	"""
-	prog = basename(sys.argv[0])
-	name = prog.split('.')[0]
-	stamp = '%F.%T'
-	logln = '%(asctime)s,%(msecs)d %(name)s:%(levelname)s:%(funcName)s %(message)s'
-	outln = '%(asctime)s %(name)s: %(message)s'
-	_file = expanduser('~/log/%s.log'%name)
-	if lvl == ('CRITICAL', 50):
-		lvl = logging.CRITICAL
-	elif lvl in ('DEBUG', 10):
-		lvl = logging.DEBUG
-	elif lvl == ('ERROR', 40):
-		lvl = logging.ERROR
-	elif lvl in ('INFO', 20):
-		lvl = logging.INFO
-	elif lvl in ('NOTSET', None, 0):
-		lvl = logging.NOTSET
-	elif lvl in ('WARNING', 30):
-		lvl = logging.WARNING
-	log = logging.getLogger(name)
-	log.setLevel(lvl)
-	ch = logging.StreamHandler()
-	ch.setLevel(lvl)
-	ch.setFormatter(logging.Formatter(outln, datefmt=stamp))
-	fh = logging.FileHandler(_file)
-	fh.setLevel(lvl)
-	fh.setFormatter(logging.Formatter(logln, datefmt=stamp))
-	log.addHandler(ch)
-	log.addHandler(fh)
-	return log
+from logging import \
+    basicConfig, getLogger, INFO
 
+def logger(name):
+	logdir = '/var/log/%s'%name
+	if getuid() != 0:
+		logdir = expanduser('~/log/%s'%name)
+	logfile = '%s/%s.log'%(logdir, name)
+	if not isdir(logdir):
+		makedirs(logdir)
+	basicConfig(
+        format='%(asctime)s,%(msecs)03d ' \
+            '%(levelname)s %(funcName)s - %(message)s',
+        level=INFO, filename=logfile, datefmt='%F.%T')
+	return getLogger(logfile)
 
-def debug():
-	log = logger()
-	return log.debug
+def debug(msg, *args, **kwargs):
+    """
+    Log a message with severity 'DEBUG' on the root logger. If the logger has
+    no handlers, call basicConfig() to add a console handler with a pre-defined
+    format.
+    """
+    if len(root.handlers) == 0:
+        basicConfig()
+    msg = '\033[01;30m%s\033[0m'%msg
+    root.debug(msg, *args, **kwargs)
+
