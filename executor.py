@@ -118,19 +118,20 @@ class Command(object):
 			sucmds = self.__sucmd(sudo, commands)
 		return sucmds
 
-	def __cmdprep(self, commands):
+	def __cmdprep(self, commands, func):
 		commands = self._list(commands)
 		if self.su_:
 			commands = self._sudo(commands)
 		if self.sh_:
 			commands = self._str(commands)
 		if self.dbg:
-			_echo_('\033[01;30m`%s`\t{sh: %s, su: %s}\033[0m\n'%(commands, self.sh_, self.su_))
+			_echo_('\033[01;30m%s\n  `%s`\t{sh: %s, su: %s}\033[0m\n'%(
+                func, commands, self.sh_, self.su_))
 		return commands
 
 	def run(self, *commands):
 		"""just run the command and return the processes PID"""
-		commands = self.__cmdprep(commands)
+		commands = self.__cmdprep(commands, self.run)
 		return _Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
@@ -139,12 +140,12 @@ class Command(object):
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
 		"""
-		commands = self.__cmdprep(commands)
+		commands = self.__cmdprep(commands, self.call)
 		return int(_call(commands, shell=self.sh_))
 
 	def stdx(self, *commands):
 		"""command execution which returns STDERR and/or STDOUT"""
-		commands = self.__cmdprep(commands)
+		commands = self.__cmdprep(commands, self.stdx)
 		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
 		out, err = prc.communicate(timeout=self._tout_)
 		if out:
@@ -154,7 +155,7 @@ class Command(object):
 
 	def stdo(self, *commands):
 		"""command execution which returns STDOUT only"""
-		commands = self.__cmdprep(commands)
+		commands = self.__cmdprep(commands, self.stdo)
 		prc = _Popen(commands, stdout=_PIPE, stderr=DEVNULL, shell=self.sh_)
 		out, _ = prc.communicate(timeout=self._tout_)
 		if out:
@@ -162,7 +163,7 @@ class Command(object):
 
 	def stde(self, *commands):
 		"""command execution which returns STDERR only"""
-		commands = self.__cmdprep(commands)
+		commands = self.__cmdprep(commands, self.stde)
 		prc = _Popen(commands, stdout=_PIPE, stderr=_PIPE, shell=self.sh_)
 		_, err = prc.communicate(timeout=self._tout_)
 		if err:
@@ -170,14 +171,14 @@ class Command(object):
 
 	def erno(self, *commands):
 		"""command execution which returns the exitcode only"""
-		commands = self.__cmdprep(commands)
+		commands = self.__cmdprep(commands, self.erno)
 		prc = _Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
 		prc.communicate(timeout=self._tout_)
 		return int(prc.returncode)
 
 	def oerc(self, *commands):
 		"""command execution which returns STDERR only"""
-		commands = self.__cmdprep(commands)
+		commands = self.__cmdprep(commands, self.oerc)
 		prc = _Popen(
             commands, stdout=_PIPE, stderr=_PIPE, stdin=_PIPE, shell=self.sh_)
 		out, err = prc.communicate(timeout=self._tout_)
