@@ -178,7 +178,7 @@ def tabd(dats, ind=0):
 		return ''
 	lim = max(len(str(k)) for k in dats if k)+int(ind)
 	tabbed = '' #'%s'%' '*ind
-	for (key, val) in sorted(dats.items()):
+	for (key, val) in dats.items():
 		iind = ind
 		if isinstance(val, dict):
 			iind = ind+2
