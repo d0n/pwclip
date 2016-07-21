@@ -370,4 +370,5 @@ class TimeSatan(Cmd, Satan):
 
 
 if __name__ == '__main__':
-	exit(1)
+	satan = TimeSatan()
+	satan.mainloop()
