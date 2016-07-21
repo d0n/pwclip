@@ -4,7 +4,7 @@ from os.path import expanduser
 
 from cmd import Cmd
 
-from datetime import date
+from datetime import date as datetime
 
 from ssl import create_default_context
 
@@ -32,16 +32,20 @@ class Satan(object):
         'http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
 	username = userfind()
 	__passwd = None
+	_date = str(datetime.today())
+	_dates = _date.split('-')
+	_year = _dates[0]
+	_month = _dates[1]
+	_day = _dates[2]
 	cookie = expanduser('~/.cache/timesatan.cookie')
 	casslpem = expanduser('~/.config/catrust/ssl.pem')
-	day = date.today()
 	def __init__(self, *args, **kwargs):
 		self._dbg = True if 'dbg' in args else self._dbg
 		self.username = self.username if (
             'username' not in kwargs.keys()) else kwargs['username']
 		self.casslpem = self.casslpem if (
             'casslpem' not in kwargs.keys()) else kwargs['casslpem']
-		self.day = self.day if 'day' not in kwargs.keys() else kwargs['day']
+		self.day = self.day if 'day' not in kwargs.keys() else self.day
 		if self.dbg:
 			lim = int(max(len(k) for k in TimeSatan.__dict__.keys()))+4
 			print(bgre('%s\n%s\n\n%s\n%s\n'%(
@@ -66,6 +70,49 @@ class Satan(object):
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = val
+
+	@property                # year <int>
+	def year(self):
+		return int(self._year)
+	@year.setter
+	def year(self, val):
+		self._year = val if isinstance(val, int) and val > 2000 else self._year
+
+	@property                # month <int>
+	def month(self):
+		return int(self._month)
+	@month.setter
+	def month(self, val):
+		self._month = val if isinstance(val, int) and val < 13 else self._month
+
+	@property                # day <str>
+	def day(self):
+		return int(self._day)
+	@day.setter
+	def day(self, val):
+		self._day = val if isinstance(val, int) and val < 32 else self._day
+
+	@property                # date <str>
+	def date(self):
+		return str(self._date)
+	@date.setter
+	def date(self, val):
+		try:
+			self._date = val
+			self.dates = val
+			self.year = val.split('-')[0]
+			self.month = val.split('-')[1]
+			self.day = val.split('-')[2]
+		except AttributeError as err:
+			print(err)
+			#pass
+
+	@property                # dates <tuple>
+	def dates(self):
+		return self._dates
+	@dates.setter
+	def dates(self, val):
+		self._dates = tuple(int(i) for i in reversed(self.date.split('-')))
 
 	def _login(self):
 		if self.dbg:
@@ -96,19 +143,20 @@ class Satan(object):
 				print(res.decode())
 				raise LoginFailedError()
 
-	def _today_(self, day):
-		__d = tuple(int(i) for i in reversed(str(day).split('-')))
+	def _todate_(self, url, date):
+		setattr(self, 'date', date)
+		print(url)
+		print(self.dates)
 		self.browser.open(
-            self.url,
-            urlencode({"__from": "%02d.%02d.%d"%__d}).encode())
-		return day
+            url,
+            urlencode({"__from": "%02d.%02d.%d"%self.dates}).encode())
 
-	def _book_(self, duration, project, task, comment='', day=None):
+	def _book_(self, duration, project, task, comment='', date=None):
+		date = date if date else self.date
 		if self.dbg:
 			print(bgre('%s\nd=%s, p=%s, t=%s, c=%s, %s'%(
-			    self._book_, duration, project, task, comment, day)))
-		day = day if day else self.day
-		today = self._today_(day)
+			    self._book_, duration, project, task, comment, date)))
+		self._todate_(self.url, '-'.join(date))
 		code = urlencode({
             "__from": "%02d.%02d.%d"%today,
             "__handler": \
@@ -126,21 +174,36 @@ class Satan(object):
                 'string "Success" not found.\nPOSTed: %s'%code)
 		return True
 
-	def weekefforts(self, day=None):
+	def weekefforts(self, date=None):
 		if self.dbg:
 			print(bgre(self.weekefforts))
-		day = day if day else self.day
-		today = self._today_(day)
-		code = urlencode({
-            "__from": "%02d.%02d.%d"%today}).encode()
+		date = date if date else self.date
 		url = '%s/personal/view/week'%self.url.split('/enter/effort')[0]
-		res = self.browser.open(url, code).read()
-		tree = html.fromstring(res)
-		form = tree.find('.//form')
+		today = self._todate_(url, date)
+		code = urlencode({
+            "__from": "%02d.%02d.%d"%self.dates}).encode()
+		tree = html.fromstring(self.browser.open(url, code).read())
+		trgs = {}
+		effs = []
+		for bdy in tree.xpath('//body/div[@style="margin: 4px"]/table[contains(@cellpadding, "3")]/tr'):
+			for cont in bdy.iter():
+				if cont.text:
+					txt = str(cont.text).strip()
+					if txt.endswith(')'):
+						prc = txt.split('(')[1].split(')')[0]
+						txt = txt.strip('(%s)'%prc).strip()
+						effs.append(txt)
+						effs.append(prc)
+						continue
+					if not txt.endswith(':'):
+						effs.append(txt)
+						continue
+					trgs[txt] = effs
+					effs = []
+		for trg, effs in trgs.items():
+			print(trg, effs)
 
-		for uppest in tree.xpath('//td[class="component_head"]'):
-			print(uppest.tag)
-			#print(uppest.attrib)
+
 	def bookeffort(self, **kwargs):
 		if self.dbg:
 			print(bgre('%s\n  %s'%(self.bookeffort, tabd(kwargs))))
@@ -153,8 +216,7 @@ class Satan(object):
 class TimeSatan(Cmd, Satan):
 	intro = 'TimeSatan - book efforts to fuck-up-tool timsato\n' \
         '  empty line ends booking efforts'
-	day = date.today()
-	prompt = '%s>> '%day
+	prompt = '%s>> '%str(datetime.today())
 	def __init__(self, *args, **kwargs):
 		Cmd.__init__(self)
 		Satan.__init__(self, *args, **kwargs)
@@ -166,6 +228,12 @@ class TimeSatan(Cmd, Satan):
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = (val is True)
+
+	@staticmethod
+	def __exit(eof=False, msg='satan appreciates'):
+		msg = msg if not eof else '\n%s'%msg
+		print(msg)
+		return True
 
 	@staticmethod
 	def _test_duration(dur):
@@ -185,6 +253,18 @@ class TimeSatan(Cmd, Satan):
 			return ((h <= 23) and (m <= 59 ))
 		except TypeError:
 			return False
+
+	@staticmethod
+	def _test_date(date):
+		try:
+			y, m, d = date.split('-')
+			len(y) == 4
+			len(m) in (1, 2)
+			len(d) in (1, 2)
+		except ValueError:
+			print(date)
+		return True
+
 
 	def complete(self, text, state):
 		"""Return the next possible completion for 'text'.
@@ -216,18 +296,12 @@ class TimeSatan(Cmd, Satan):
 		except IndexError:
 			return None
 
-	@staticmethod
-	def __exit(eof=False, msg='satan appreciates'):
-		msg = msg if not eof else '\n%s'%msg
-		print(msg)
-		return True
-
 	def completedefault(self, text, line, begidx, endidx):
 		return [text]
 
 	def default(self, line, margs={}):
 		if self.dbg:
-			print(self.default)
+			print(bgre('%s\n  line = %s'%(self.default, line)))
 		__e = {
             'duration': 1,
             'comment': '',
@@ -235,7 +309,7 @@ class TimeSatan(Cmd, Satan):
             'project': 'p.nod.mw'}
 		__e.update(**margs)
 		frags = line.split()
-		if len(frags) >= 1:
+		if len(frags) > 1:
 			__d = frags[0]
 			if not self._test_duration(__d):
 				if __d == 'EOF':
@@ -245,26 +319,29 @@ class TimeSatan(Cmd, Satan):
 			__e['duration'] = __d
 			if len(frags) > 1 and not __e['comment']:
 				__e['comment'] = ' '.join(frags[1:])
-			elif not __e['comment']:
+		elif len(frags) == 1:
+			if self._test_duration(frags[0]) and not __e['comment']:
 				__e['comment'] = 'DailyWork'
-		elif not line:
-			return error('duration missing')
-		else:
+			elif self._test_date(frags[0]):
+				return self.do_today(frags[0])
 			return error('unknown input', line)
+		elif not line:
+			return error('missing input')
 		self._book_(**__e)
 
 	def do_today(self, line):
-		day = self._today_(line)
-		self.prompt = '%s>> '%day
+		self._todate_(self.url, line)
+		self.prompt = '%s>> '%line
 
 	def do_list(self, line):
 		frags = line.split()
-		day = date.today()
 		if len(frags) > 1:
-			return error('list does only accept the "day" argument, got', frags[-1])
+			return error('list does only accept the "day" argument, got',
+                frags)
 		elif len(frags) == 1:
-			day = frags[-1]
-		self.weekefforts(day)
+			self.do_today(frags[0])
+			return self.weekefforts()
+		self.weekefforts()
 	def do_l(self, line):
 		self.do_list(line)
 
