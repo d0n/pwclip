@@ -168,6 +168,17 @@ class TimeSatan(Cmd, Satan):
 		self._dbg = (val is True)
 
 	@staticmethod
+	def _test_date(date):
+		try:
+			y, m, d = date.split('-')
+			len(y) == 4
+			len(m) == 2 and int(m) > 0 and int(m) < 13
+			len(d) == 2 and int(d) > 0 and int(d) < 33
+		except ValueError:
+			return False
+		return True
+
+	@staticmethod
 	def _test_duration(dur):
 		try:
 			h = int(dur)
@@ -235,20 +246,23 @@ class TimeSatan(Cmd, Satan):
             'project': 'p.nod.mw'}
 		__e.update(**margs)
 		frags = line.split()
-		if len(frags) >= 1:
+		if not line:
+			return error('duration or date missing')
+		if len(frags) == 1:
 			__d = frags[0]
-			if not self._test_duration(__d):
+			if not self._test_duration(__d) and not self._test_date(__d):
 				if __d == 'EOF':
 					return self.__exit(True)
 				return error(
-                    'need duration', __d, 'is not')
-			__e['duration'] = __d
-			if len(frags) > 1 and not __e['comment']:
-				__e['comment'] = ' '.join(frags[1:])
-			elif not __e['comment']:
-				__e['comment'] = 'DailyWork'
-		elif not line:
-			return error('duration missing')
+                    'need date or duration', __d, 'is neither')
+			elif self._test_duration(__d):
+				__e['duration'] = __d
+			elif self._test_date(__d):
+				return self.do_today(__d)
+		if len(frags) > 1 and not __e['comment']:
+			__e['comment'] = ' '.join(frags[1:])
+		elif not __e['comment']:
+			__e['comment'] = 'DailyWork'
 		else:
 			return error('unknown input', line)
 		self._book_(**__e)
