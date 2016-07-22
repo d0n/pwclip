@@ -27,7 +27,7 @@ from colortext import bgre, error
 class LoginFailedError(Exception): pass
 
 class Satan(object):
-	_dbg = True
+	_dbg = None
 	url = 'https://login.1and1.org/ims-sso/login?service=' \
         'http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
 	username = userfind()
@@ -145,22 +145,19 @@ class Satan(object):
 
 	def _todate_(self, url, date):
 		setattr(self, 'date', date)
-		print(url)
-		print(self.dates)
 		self.browser.open(
             url,
             urlencode({"__from": "%02d.%02d.%d"%self.dates}).encode())
 
 	def _book_(self, duration, project, task, comment='', date=None):
-		date = date if date else self.date
 		if self.dbg:
 			print(bgre('%s\nd=%s, p=%s, t=%s, c=%s, %s'%(
 			    self._book_, duration, project, task, comment, date)))
-		self._todate_(self.url, '-'.join(date))
+		self._todate_(self.url, self.date)
 		code = urlencode({
-            "__from": "%02d.%02d.%d"%today,
+            "__from": "%02d.%02d.%d"%self.dates,
             "__handler": \
-                "handler.enter/effort.effortenterhandler#%02d%02d%d"%today,
+                "handler.enter/effort.effortenterhandler#%02d%02d%d"%self.dates,
             "usage": "",
             "duration": duration,
             "project": project,
@@ -203,7 +200,6 @@ class Satan(object):
 		for trg, effs in trgs.items():
 			print(trg, effs)
 
-
 	def bookeffort(self, **kwargs):
 		if self.dbg:
 			print(bgre('%s\n  %s'%(self.bookeffort, tabd(kwargs))))
@@ -214,8 +210,8 @@ class Satan(object):
 
 
 class TimeSatan(Cmd, Satan):
-	intro = 'TimeSatan - book efforts to fuck-up-tool timsato\n' \
-        '  empty line ends booking efforts'
+	print('TimeSatan - book efforts to fuck-up-tool timsato\n' \
+        '  empty line ends booking efforts')
 	prompt = '%s>> '%str(datetime.today())
 	def __init__(self, *args, **kwargs):
 		Cmd.__init__(self)
@@ -322,9 +318,11 @@ class TimeSatan(Cmd, Satan):
 		elif len(frags) == 1:
 			if self._test_duration(frags[0]) and not __e['comment']:
 				__e['comment'] = 'DailyWork'
+				__e['duration'] = line
 			elif self._test_date(frags[0]):
 				return self.do_today(frags[0])
-			return error('unknown input', line)
+			else:
+				return error('unknown input', line)
 		elif not line:
 			return error('missing input')
 		self._book_(**__e)
@@ -368,7 +366,6 @@ class TimeSatan(Cmd, Satan):
 		__e = {'task': 'sa.srm'}
 		frags = line.split()
 		if len(frags) >= 2:
-			print(frags)
 			if not self._test_duration(frags[0]):
 				__p = frags[0]
 				line = ' '.join(frags[1:])
