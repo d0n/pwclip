@@ -36,19 +36,18 @@ def realpaths(pathlist, base=None):
 				paths.append(absrelpath(path, base))
 	return paths
 
-def confpaths(paths, conf, base=os.getcwd()):
-	#print('%s\n%s\n%s'%(paths, conf, base))
+def confpaths(paths, conf, base=''):
 	return list(set(['%s/%s/%s' %(os.path.expanduser('~'), path[2:], conf) \
-    for path in paths if path.startswith('~/') and \
-    os.path.isfile('%s/%s/%s'%(os.path.expanduser('~'), path[2:], conf))] + \
-    ['%s/%s/%s' %(base, path[2:], conf) for path in \
-    paths if path.startswith('./') and \
-    os.path.isfile('%s/%s/%s'%(base, path[2:], conf))] + \
-    ['%s/%s/%s' %(base, path, conf) for path in paths if not \
-    path.startswith('/') and not path.startswith('.') and \
-    os.path.isfile('%s/%s/%s' %(base, path, conf))] + \
-    ['%s/%s' %(path, conf) for path in paths if path.startswith('/') and \
-    os.path.isfile('%s/%s' %(path, conf))]))
+		for path in paths if path.startswith('~/') and \
+		os.path.isfile('%s/%s/%s'%(os.path.expanduser('~'), path[2:], conf))] + \
+		['%s/%s/%s' %(base, path[2:], conf) for path in \
+		paths if path.startswith('./') and \
+		os.path.isfile('%s/%s/%s'%(base, path[2:], conf))] + \
+		['%s/%s/%s' %(base, path, conf) for path in paths if not \
+		path.startswith('/') and not path.startswith('.') and \
+		os.path.isfile('%s/%s/%s' %(base, path, conf))] + \
+		['%s/%s' %(path, conf) for path in paths if path.startswith('/') and \
+		os.path.isfile('%s/%s' %(path, conf))]))
 
 def confdats(*confs):
 	from configparser import ConfigParser as _ConfPars
