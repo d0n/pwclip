@@ -31,7 +31,7 @@ class Satan(object):
 	url = 'https://login.1and1.org/ims-sso/login?service=' \
         'http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
 	username = userfind()
-	__passwd = None
+	password = None
 	_date = str(datetime.today())
 	_dates = _date.split('-')
 	_year = _dates[0]
@@ -43,6 +43,8 @@ class Satan(object):
 		self._dbg = True if 'dbg' in args else self._dbg
 		self.username = self.username if (
             'username' not in kwargs.keys()) else kwargs['username']
+		self.password = self.password if (
+            'password' not in kwargs.keys()) else kwargs['password']
 		self.casslpem = self.casslpem if (
             'casslpem' not in kwargs.keys()) else kwargs['casslpem']
 		self.day = self.day if 'day' not in kwargs.keys() else self.day
@@ -57,8 +59,6 @@ class Satan(object):
                 '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()
                     ) if not k.startswith('_TimeSatan__')))))
-		if 'password' in kwargs.keys():
-			self.__passwd = kwargs['password']
 		self.cj = MozillaCookieJar(self.cookie)
 		self.cxt = create_default_context(cafile=self.casslpem)
 		self.browser = build_opener(
@@ -103,27 +103,36 @@ class Satan(object):
 			self.year = val.split('-')[0]
 			self.month = val.split('-')[1]
 			self.day = val.split('-')[2]
-		except AttributeError as err:
-			print(err)
-			#pass
+		except (IndexError, AttributeError):
+			self._date = str(datetime.today())
+			self.dates = self._date
+			self.year = self._date.split('-')[0]
+			self.month = self._date.split('-')[1]
+			self.day = self._date.split('-')[2]
+			
 
 	@property                # dates <tuple>
 	def dates(self):
 		return self._dates
 	@dates.setter
 	def dates(self, val):
-		self._dates = tuple(int(i) for i in reversed(self.date.split('-')))
+		try:
+			self._dates = tuple(int(i) for i in reversed(self.date.split('-')))
+		except ValueError:
+			self.date = str(datetime.today())
+			self._dates = tuple(int(i) for i in reversed(str(datetime.today()).split('-')))
 
 	def _login(self):
 		if self.dbg:
 			print(bgre(self._login))
-		if not self.__passwd:
-			self.__passwd =getpass('enter password for %s: '%self.username)
+		__passwd = self.password
+		if not __passwd:
+			__passwd = getpass('enter password for %s: '%self.username)
 		tree = html.fromstring(self.browser.open(self.url).read())
 		form = tree.find('.//form')
 		response = self.browser.open(self.url,
                 urlencode({"username": self.username,
-                    "password": self.__passwd,
+                    "password": __passwd,
                     "lt": form.find('.//input[@name="lt"]').value,
                     "execution": form.find('.//input[@name="execution"]').value,
                     "_eventId": form.find('.//input[@name="_eventId"]').value,
@@ -210,10 +219,10 @@ class Satan(object):
 
 
 class TimeSatan(Cmd, Satan):
-	print('TimeSatan - book efforts to fuck-up-tool timsato\n' \
-        '  empty line ends booking efforts')
 	prompt = '%s>> '%str(datetime.today())
 	def __init__(self, *args, **kwargs):
+		print('TimeSatan - book efforts to fuck-up-tool timsato\n' \
+            '  empty line ends booking efforts')
 		Cmd.__init__(self)
 		Satan.__init__(self, *args, **kwargs)
 		self._login()
@@ -258,9 +267,8 @@ class TimeSatan(Cmd, Satan):
 			len(m) in (1, 2)
 			len(d) in (1, 2)
 		except ValueError:
-			print(date)
+			return False
 		return True
-
 
 	def complete(self, text, state):
 		"""Return the next possible completion for 'text'.
@@ -292,21 +300,21 @@ class TimeSatan(Cmd, Satan):
 		except IndexError:
 			return None
 
-	def completedefault(self, text, line, begidx, endidx):
-		return [text]
+	#def completedefault(self, text, line, begidx, endidx):
+	#	return [text]
 
 	def default(self, line, margs={}):
-		if self.dbg:
-			print(bgre('%s\n  line = %s'%(self.default, line)))
 		__e = {
             'duration': 1,
             'comment': '',
             'task': 'sa.srm',
             'project': 'p.nod.mw'}
 		__e.update(**margs)
+		if self.dbg:
+			print(bgre('%s\n  line = %s\n  %s'%(self.default, line, __e)))
 		frags = line.split()
 		if len(frags) > 1:
-			__d = frags[0]
+			__d = frags[-1]
 			if not self._test_duration(__d):
 				if __d == 'EOF':
 					return self.__exit(True)
@@ -314,16 +322,18 @@ class TimeSatan(Cmd, Satan):
                     'need duration', __d, 'is not')
 			__e['duration'] = __d
 			if len(frags) > 1 and not __e['comment']:
-				__e['comment'] = ' '.join(frags[1:])
+				__e['comment'] = ' '.join(frags[:-1])
 		elif len(frags) == 1:
-			if self._test_duration(frags[0]) and not __e['comment']:
+			if self._test_duration(line) and not __e['comment']:
 				__e['comment'] = 'DailyWork'
 				__e['duration'] = line
-			elif self._test_date(frags[0]):
-				return self.do_today(frags[0])
+			elif self._test_date(line):
+				return self.do_today(line)
 			else:
-				return error('unknown input', line)
+				__e['comment'] = line
 		elif not line:
+			if [v for v in __e.values() if not v]:
+				print(v)
 			return error('missing input')
 		self._book_(**__e)
 
@@ -368,20 +378,12 @@ class TimeSatan(Cmd, Satan):
 		if len(frags) >= 2:
 			if not self._test_duration(frags[0]):
 				__p = frags[0]
-				line = ' '.join(frags[1:])
 				if __p.isdigit():
 					__e['project'] = 'ACC.%s'%__p
 				elif __p and __p.lower().startswith('acc.'):
 					__e['project'] = __p.upper()
-				if __e['project']:
-					line.replace(__e['project'], '')
-				if frags[-1].isdigit():
-					line = '%s %s'%(' '.join(line.split()[:-1]), 'ACCMO-%s'%frags[-1])
-				elif line.split()[-1].lower().startswith('accmo-'):
-					line = '%s %s'%(' '.join(line.split()[:-1]), frags[-1].upper())
-		if not len(line.split()) > 2:
-			line = '1 %s'%line
-		return self.default(line, __e)
+
+		return self.default(' '.join(frags[1:]), __e)
 	def do_p(self, line):
 		self.do_project(line)
 
@@ -394,7 +396,7 @@ class TimeSatan(Cmd, Satan):
 	def do_jourfixe(self, line):
 		__e = {'task': 'jf', 'project': 'p.nod2'}
 		if len(line.split()) < 1:
-			line = '%s 0:30 JourFixe'%line
+			line = 'JourFixe 0:30'
 		self.default(line, __e)
 	def do_jf(self, line):
 		self.do_jourfixe(line)
