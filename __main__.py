@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-
 import sys
 import pwclip
-wait = 3
-if len(sys.argv) > 1:
-	wait = int(sys.argv[1])
-pwclip.pwclipper(wait)
+pwclip.pwclipper(3 if not len(sys.argv) == 2 else sys.argv[1])

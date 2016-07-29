@@ -21,7 +21,7 @@ from yubico import \
     find_yubikey, yubikey, \
     yubico_exception
 
-def _yubikeys(ykser=None, dbg=None):
+def yubikeys(ykser=None, dbg=None):
 	"""
 	return a list of yubikeys objects
 	"""
@@ -36,17 +36,25 @@ def _yubikeys(ykser=None, dbg=None):
 		keys[key.serial()] = key
 	return keys
 
-def _slotchalres(yk, chal, slot):
+def slotchalres(yk, chal, slot):
+	"""
+	challenge-response function using with given
+	challenge (chal) for slot on yubikey found by yubikeys()
+	"""
 	try:
 		return hexlify(yk.challenge_response(
             chal.ljust(64, '\0').encode(), slot=slot)).decode()
 	except yubico_exception.YubicoError:
 		pass
 
-def _chalres(chal, slot=2, ykser=None):
-	keys = _yubikeys(ykser)
+def chalres(chal, slot=2, ykser=None):
+	"""
+	challenge-response function using specified slot
+	or default (2) as wrapping function for yubikeys() and slotchalres()
+	"""
+	keys = yubikeys(ykser)
 	for (_, key) in keys.items():
-		return _slotchalres(key, chal, slot)
+		return slotchalres(key, chal, slot)
 
 def clips():
 	"""return `copy`, `paste` as system independent functions"""
@@ -186,14 +194,13 @@ def clips():
 	elif osname == 'mac' or system() == 'Darwin':
 		return osxclips()
 	return linclips()
-copy, paste = clips()
-
 
 
 def guipassclipper(wait=3):
+	"""gui representing function"""
+	copy, paste = clips()
 	wait = int(wait)
 	oclp = paste()
-	"""gui representing function"""
 	class PassClip(Frame):
 		"""password clipping class for tkinter.Frame"""
 		pwd = ''
@@ -206,7 +213,8 @@ def guipassclipper(wait=3):
 			self.passwindow()
 		def _enterexit(self, _=None):
 			"""exit by saving challenge-response for input"""
-			copy(_chalres(self.pwd.get(), ykser=self.ykser))
+			__r = chalres(self.pwd.get(), ykser=self.ykser)
+			copy(__r if __r else self.pwd.get())
 			self.quit()
 		def _exit(self, _=None):
 			"""just exit (for ESC mainly)"""
