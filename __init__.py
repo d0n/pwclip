@@ -1,3 +1,3 @@
+from pwclip.clip import guipassclipper
 def pwclipper(wait=3):
-	from .pwclip import guipassclipper
-	guipassclipper(wait)
+	guipassclipper(int(wait))
