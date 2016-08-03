@@ -12,12 +12,32 @@ from tempfile import \
 
 from .gpg import GPGTool
 
-
-
 class WeakVaulter(GPGTool):
+	dbg = False
 	source = '~/.weaknez'
 	crypt = '~/.vault'
 	target = '~/'
+	def __init__(self, *args, **kwargs):
+		for arg in args:
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+			elif hasattr(self, '_%s'%arg):
+				setattr(self, '_%s'%arg, True)
+		for (key, val) in kwargs.items():
+			if hasattr(self, key):
+				setattr(self, key, val)
+			elif hasattr(self, '_%s'%key):
+				setattr(self, '_%s'%key, val)
+		if self.dbg:
+			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
+			print('%s\n%s\n\n%s\n%s\n'%(
+                WeakVaulter.__mro__,
+                '\n'.join('  %s%s=    %s'%(
+                    k, ' '*int(lim-len(k)), v
+                ) for (k, v) in sorted(WeakVaulter.__dict__.items())),
+                WeakVaulter.__init__,
+                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
+                    ) for (k, v) in sorted(self.__dict__.items()))))
 	def envault(self, source, *recipients, target=None):
 		"""
 		envaulting function takes source to envault and additionally
