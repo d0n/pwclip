@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
-from os.path import \
-    isdir as _isdir, \
-    basename as _basename, \
-    expanduser as _expanduser
 
-from tarfile import \
-    open as taropen
+from os import path, uname
 
-from tempfile import \
-    NamedTemporaryFile as _NamedTemporaryFile
+from tarfile import open as taropen
+
+from tempfile import NamedTemporaryFile
 
 from .gpg import GPGTool
 
@@ -38,6 +34,7 @@ class WeakVaulter(GPGTool):
                 WeakVaulter.__init__,
                 '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()))))
+
 	def envault(self, source, *recipients, target=None):
 		"""
 		envaulting function takes source to envault and additionally
@@ -46,9 +43,9 @@ class WeakVaulter(GPGTool):
 		"""
 		fingers = list(self.export(*recipients, **{'typ': 'e'}))
 		target = target if target else self.target
-		with _NamedTemporaryFile() as tmp:
+		with NamedTemporaryFile() as tmp:
 			with taropen(tmp.name, "w:gz") as tar:
-				tar.add(source, arcname=_basename(source))
+				tar.add(source, arcname=path.basename(source))
 			tmp.seek(0)
 			self.encrypt(tmp.read(), fingers, output=target)
 
@@ -58,7 +55,7 @@ class WeakVaulter(GPGTool):
 		using all known recipients in the keyring optionally takes a target
 		folder as output for decrypted data
 		"""
-		with _NamedTemporaryFile() as tmp:
+		with NamedTemporaryFile() as tmp:
 			with open(vault, 'rb') as vlt:
 				self.decrypt(vlt.read(), tmp.name)
 			tmp.seek(0)
@@ -69,8 +66,11 @@ class WeakVaulter(GPGTool):
 					tar.extractall()
 
 	def weakvault(self, mode=None):
+		"""
+		the weakvaulter method abstracts the other implied de/envualt methods
+		"""
 		if not mode:
-			if _isdir(self.weaks):
+			if path.isdir(self.weaks):
 				mode = envault
 				weakvault = self.source
 			else:
@@ -83,6 +83,12 @@ class WeakVaulter(GPGTool):
 			mode = unvault
 			weakvault = self.crypt
 		mode(weakvault)
+
+	def __makedict(self):
+		return {uname()[1]: {userfind(): {}}}
+
+
+
 
 if __name__ == '__main__':
 	exit(1)
