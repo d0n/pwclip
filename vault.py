@@ -4,6 +4,8 @@ from os import path, uname
 
 from tarfile import open as taropen
 
+from yaml import load, dump
+
 from tempfile import NamedTemporaryFile
 
 from colortext import error, fatal
@@ -14,10 +16,11 @@ from .gpg import GPGTool
 
 class WeakVaulter(GPGTool):
 	_dbg = False
-	target = path.expanduser('~/.weaknez')
-	vault = path.expanduser('~/.vault')
 	host = uname()[1]
 	user = userfind()
+	targets = path.expanduser('~/.weaknez')
+	vltfile = path.expanduser('~/.vltfile')
+	vault = path.expanduser('~/.pwds')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -40,57 +43,93 @@ class WeakVaulter(GPGTool):
                 '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()))))
 
-	def envault(self, source, *recipients, target=None):
+	def envltfile(self, source, *recipients, targets=None):
 		"""
-		envaulting function takes source to envault and additionally
+		envltfileing function takes source to envltfile and additionally
 		may search for any given pattern as recipients for encryption
 		otherwise uses all found in keyring 
 		"""
 		fingers = list(self.export(recipients, typ='e'))
-		target = target if target else self.target
+		targets = targets if targets else self.targets
 		with NamedTemporaryFile() as tmp:
 			with taropen(tmp.name, "w:gz") as tar:
 				tar.add(source, arcname=path.basename(source))
 			tmp.seek(0)
-			self.encrypt(tmp.read(), fingers, output=target)
+			self.encrypt(tmp.read(), fingers, output=targets)
 
-	def unvault(self, vault, target=None):
+	def unvltfile(self, vltfile, targets=None):
 		"""
-		unvaulting function takes a vault as input and tries to decrypt it
-		using all known recipients in the keyring optionally takes a target
+		unvltfileing function takes a vltfile as input and tries to decrypt it
+		using all known recipients in the keyring optionally takes a targets
 		folder as output for decrypted data
 		"""
 		with NamedTemporaryFile() as tmp:
-			with open(vault, 'rb') as vlt:
+			with open(vltfile, 'rb') as vlt:
 				self.decrypt(vlt.read(), tmp.name)
 			tmp.seek(0)
 			with taropen(tmp.name, "r:gz") as tar:
-				if target:
-					tar.extractall(target)
+				if targets:
+					tar.extractall(targets)
 				else:
 					tar.extractall()
 
-	def weakvault(self, mode=None):
+	def weakvltfile(self, mode=None):
 		"""
-		the weakvaulter method abstracts the other implied de/envualt methods
+		the weakvltfileer method abstracts the other implied de/envualt methods
 		"""
 		if not mode:
 			if path.isdir(self.weaks):
-				mode = envault
-				weakvault = self.source
+				mode = envltfile
+				weakvltfile = self.source
 			else:
-				mode = unvault
-				weakvault = self.crypt
-		elif mode == 'envault':
-			mode = envault
-			weakvault = self.source
-		elif mode == 'unvault':
-			mode = unvault
-			weakvault = self.crypt
-		mode(weakvault)
+				mode = unvltfile
+				weakvltfile = self.crypt
+		elif mode == 'envltfile':
+			mode = envltfile
+			weakvltfile = self.source
+		elif mode == 'unvltfile':
+			mode = unvltfile
+			weakvltfile = self.crypt
+		mode(weakvltfile)
 
-	def vaulter(self, vault=None):
+	def _readvault(self, vault):
+		if self.dbg:
+			print('%s\n  vault = %s'%(self._readvault, vault))
+		try:
+			with open(vault, 'r') as vlt:
+				return load(str(self.decrypt(vlt.read())))
+		except FileNotFoundError:
+			self._mkvault(vault)
+			return self._readvault(vault)
+
+	def _writevault(self, weaknez, vault):
+		if self.dbg:
+			print('%s\n  weaknez = %s'%(self._mkvault, weaknez))
+		with open(vault, 'w+') as vlt:
+			vlt.write(str(self.encrypt(dump(weaknez))))
+
+	def _mkvault(self, vault):
+		if self.dbg:
+			print('%s\n  vault = %s'%(self._mkvault, vault))
+		self.encrypt('{%s: {%s: {}}}'%(self.host, self.user), output=vault)
+
+	def addpass(self, adduser, addpass, vault=None):
 		vault = vault if vault else self.vault
+		if self.dbg:
+			print('%s\n  user = %s\n  host = %s\n  adduser = %s addpass = %s'%(
+                self.addpass, self.host, self.user, adduser, addpass))
+		__weak = self._readvault(vault)
+		__weak[self.host][self.user][adduser] = addpass
+		self._writevault(__weak, vault)
+
+	def getpass(self, getuser, vault=None):
+		vault = vault if vault else self.vault
+		if self.dbg:
+			print('%s\n  user = %s\n  host = %s\n  getuser = %s'%(
+                self.getpass, self.host, self.user, getuser))
+		__weak = self._readvault(vault)
+		if getuser in __weak[self.host][self.user].keys():
+			return __weak[self.host][self.user][getuser]
 
 
 

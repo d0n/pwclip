@@ -117,6 +117,7 @@ class GPGTool(object):
 		__g = _GPG(
             gnupghome=self.homedir, gpgbinary=self.binary,
             use_agent=True, verbose=1 if self.dbg else 0,
+            options=['--batch', '--pinentry-mode=loopback'],
             keyring=self.keyring, secret_keyring=self.secring)
 		__g.encoding = 'utf-8'
 		return __g
