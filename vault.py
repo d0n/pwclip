@@ -6,13 +6,18 @@ from tarfile import open as taropen
 
 from tempfile import NamedTemporaryFile
 
+from colortext import error, fatal
+
+from system import userfind
+
 from .gpg import GPGTool
 
 class WeakVaulter(GPGTool):
-	dbg = False
-	source = '~/.weaknez'
-	crypt = '~/.vault'
-	target = '~/'
+	_dbg = False
+	target = path.expanduser('~/.weaknez')
+	vault = path.expanduser('~/.vault')
+	host = uname()[1]
+	user = userfind()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -41,7 +46,7 @@ class WeakVaulter(GPGTool):
 		may search for any given pattern as recipients for encryption
 		otherwise uses all found in keyring 
 		"""
-		fingers = list(self.export(*recipients, **{'typ': 'e'}))
+		fingers = list(self.export(recipients, typ='e'))
 		target = target if target else self.target
 		with NamedTemporaryFile() as tmp:
 			with taropen(tmp.name, "w:gz") as tar:
@@ -84,9 +89,8 @@ class WeakVaulter(GPGTool):
 			weakvault = self.crypt
 		mode(weakvault)
 
-	def __makedict(self):
-		return {uname()[1]: {userfind(): {}}}
-
+	def vaulter(self, vault=None):
+		vault = vault if vault else self.vault
 
 
 
