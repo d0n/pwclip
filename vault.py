@@ -43,7 +43,7 @@ class WeakVaulter(GPGTool):
                 '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()))))
 
-	def envltfile(self, source, *recipients, targets=None):
+	def envault(self, source, *recipients, targets=None):
 		"""
 		envltfileing function takes source to envltfile and additionally
 		may search for any given pattern as recipients for encryption
@@ -57,7 +57,7 @@ class WeakVaulter(GPGTool):
 			tmp.seek(0)
 			self.encrypt(tmp.read(), fingers, output=targets)
 
-	def unvltfile(self, vltfile, targets=None):
+	def unvault(self, vltfile, targets=None):
 		"""
 		unvltfileing function takes a vltfile as input and tries to decrypt it
 		using all known recipients in the keyring optionally takes a targets
@@ -73,7 +73,7 @@ class WeakVaulter(GPGTool):
 				else:
 					tar.extractall()
 
-	def weakvltfile(self, mode=None):
+	def weakvault(self, mode=None):
 		"""
 		the weakvltfileer method abstracts the other implied de/envualt methods
 		"""
