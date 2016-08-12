@@ -13,7 +13,7 @@ def __colorize(color, text):
 	string = '\033['
 	if len(color) == 4:
 		color = color[1:]
-		string = '%s01;'%(string)
+		string = '%s;01;'%(string)
 	if color == 'gre':
 		string = '%s30m'%(string)
 	if color == 'red':
