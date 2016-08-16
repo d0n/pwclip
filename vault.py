@@ -92,6 +92,17 @@ class WeakVaulter(GPGTool):
 			weakvltfile = self.crypt
 		mode(weakvltfile)
 
+	def _dumpvault(self, vault):
+		if self.dbg:
+			print('%s\n  vault = %s'%(self._dumpvault, vault))
+		try:
+			with open(vault, 'r') as vlt:
+				return load(str(self.decrypt(vlt.read())))
+		except FileNotFoundError:
+			self._mkvault(vault)
+			return self._readvault(vault)
+		
+
 	def _readvault(self, vault):
 		if self.dbg:
 			print('%s\n  vault = %s'%(self._readvault, vault))
@@ -105,13 +116,18 @@ class WeakVaulter(GPGTool):
 	def _writevault(self, weaknez, vault):
 		if self.dbg:
 			print('%s\n  weaknez = %s'%(self._mkvault, weaknez))
-		with open(vault, 'w+') as vlt:
-			vlt.write(str(self.encrypt(dump(weaknez))))
+		try:
+			with open(vault, 'w+') as vlt:
+				vlt.write(str(self.encrypt(dump(weaknez))))
+		else:
+			return True
 
 	def _mkvault(self, vault):
+		__newvault = '{%s: {%s: {}}}'%(self.host, self.user)
 		if self.dbg:
-			print('%s\n  vault = %s'%(self._mkvault, vault))
-		self.encrypt('{%s: {%s: {}}}'%(self.host, self.user), output=vault)
+			print('%s\n  vault = %s\n  weaknez = %s'%(
+                self._mkvault, vault, __newvault))
+		return self._writevault(__newvault, output=vault)
 
 	def addpass(self, adduser, addpass, vault=None):
 		vault = vault if vault else self.vault
