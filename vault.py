@@ -18,9 +18,9 @@ class WeakVaulter(GPGTool):
 	_dbg = False
 	host = uname()[1]
 	user = userfind()
-	targets = path.expanduser('~/.weaknez')
-	vltfile = path.expanduser('~/.vltfile')
-	vault = path.expanduser('~/.pwds')
+	weaks = path.expanduser('~/.weaknez')
+	vault = path.expanduser('~/.vltfile')
+	crypt = '%s/common/pwd.lst'%weaks
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -136,7 +136,10 @@ class WeakVaulter(GPGTool):
                 self.addpass, self.host, self.user, adduser, addpass))
 		__weak = self._readvault(vault)
 		__weak[self.host][self.user][adduser] = addpass
-		self._writevault(__weak, vault)
+		try:
+			self._writevault(__weak, vault)
+		finally:
+			return vault
 
 	def getpass(self, getuser, vault=None):
 		vault = vault if vault else self.vault
@@ -144,8 +147,7 @@ class WeakVaulter(GPGTool):
 			print('%s\n  user = %s\n  host = %s\n  getuser = %s'%(
                 self.getpass, self.host, self.user, getuser))
 		__weak = self._readvault(vault)
-		if getuser in __weak[self.host][self.user].keys():
-			return __weak[self.host][self.user][getuser]
+		return __weak[self.host][self.user][getuser]
 
 
 
