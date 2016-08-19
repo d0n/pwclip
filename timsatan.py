@@ -413,10 +413,9 @@ class TimeSatan(Cmd, Satan):
 			line = '1 %s'%line
 		self.default(line, margs=__e)
 	def do_teammeeting(self, line):
-		if len(line.split()) == 0:
-			line = '%s 1'%line
-		line = '%s Teammeeting'%line
-		self.do_meet(line)
+		if len(line) == 0:
+			line = '1'
+		self.do_meet('Teammeeting %s'%line)
 	def do_t(self, line):
 		self.do_teammeeting(line)
 	def do_m(self, line):
