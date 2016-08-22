@@ -15,23 +15,19 @@ from system import userfind
 from .gpg import GPGTool
 
 class WeakVaulter(GPGTool):
-	_dbg = False
+	dbg = False
 	host = uname()[1]
 	user = userfind()
 	weaks = path.expanduser('~/.weaknez')
-	vault = path.expanduser('~/.vltfile')
-	crypt = '%s/common/pwd.lst'%weaks
+	vault = path.expanduser('~/.vault')
+	crypt = '%s/common/pwd.vlt'%weaks
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, '_%s'%arg):
-				setattr(self, '_%s'%arg, True)
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-			elif hasattr(self, '_%s'%key):
-				setattr(self, '_%s'%key, val)
 		if self.dbg:
 			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -92,62 +88,79 @@ class WeakVaulter(GPGTool):
 			weakvltfile = self.crypt
 		mode(weakvltfile)
 
-	def _dumpvault(self, vault):
+	def _dumpcrypt(self, crypt=None):
+		crypt = crypt if crypt else self.crypt
 		if self.dbg:
-			print('%s\n  vault = %s'%(self._dumpvault, vault))
+			print('%s\n  crypt = %s'%(self._dumpcrypt, crypt))
 		try:
-			with open(vault, 'r') as vlt:
+			with open(crypt, 'r') as vlt:
 				return load(str(self.decrypt(vlt.read())))
 		except FileNotFoundError:
-			self._mkvault(vault)
-			return self._readvault(vault)
-		
+			self._mkcrypt(crypt)
+			return self._readcrypt(crypt)
 
-	def _readvault(self, vault):
+	def _readcrypt(self, crypt=None):
+		crypt = crypt if crypt else self.crypt
 		if self.dbg:
-			print('%s\n  vault = %s'%(self._readvault, vault))
+			print('%s\n  crypt = %s'%(self._readcrypt, crypt))
 		try:
-			with open(vault, 'r') as vlt:
+			with open(crypt, 'r') as vlt:
 				return load(str(self.decrypt(vlt.read())))
 		except FileNotFoundError:
-			self._mkvault(vault)
-			return self._readvault(vault)
+			self._mkcrypt(crypt)
+			return self._readcrypt(crypt)
 
-	def _writevault(self, weaknez, vault):
+	def _writecrypt(self, weaknez, crypt=None):
+		crypt = crypt if crypt else self.crypt
 		if self.dbg:
-			print('%s\n  weaknez = %s'%(self._mkvault, weaknez))
+			print('%s\n  weaknez = %s'%(self._writecrypt, weaknez))
+		with open(crypt, 'w+') as vlt:
+			vlt.write(str(self.encrypt(dump(weaknez))))
+		return True
+
+	def _mkcrypt(self, crypt=None):
+		crypt = crypt if crypt else self.crypt
+		__newcrypt = '{%s: {}}'%self.user
+		if self.dbg:
+			print('%s\n  crypt = %s\n  weaknez = %s'%(
+                self._mkcrypt, crypt, __newcrypt))
+		return self._writecrypt(__newcrypt, crypt)
+
+	def addpass(self, adduser, addpass, crypt=None):
+		crypt = crypt if crypt else self.crypt
+		if self.dbg:
+			print('%s\n adduser = %s addpass = %s'%(
+                self.addpass, adduser, addpass))
 		try:
-			with open(vault, 'w+') as vlt:
-				vlt.write(str(self.encrypt(dump(weaknez))))
-		else:
-			return True
+			__weak = load(self._readcrypt(crypt))
+		except (TypeError, AttributeError):
+			__weak = self._readcrypt(crypt)
+		print(__weak)
+		__weak[self.user][adduser] = addpass
+		return self._writecrypt(__weak, crypt)
 
-	def _mkvault(self, vault):
-		__newvault = '{%s: {%s: {}}}'%(self.host, self.user)
+	def delpass(self, deluser, crypt=None):
+		crypt = crypt if crypt else self.crypt
 		if self.dbg:
-			print('%s\n  vault = %s\n  weaknez = %s'%(
-                self._mkvault, vault, __newvault))
-		return self._writevault(__newvault, output=vault)
-
-	def addpass(self, adduser, addpass, vault=None):
-		vault = vault if vault else self.vault
-		if self.dbg:
-			print('%s\n  user = %s\n  host = %s\n  adduser = %s addpass = %s'%(
-                self.addpass, self.host, self.user, adduser, addpass))
-		__weak = self._readvault(vault)
-		__weak[self.host][self.user][adduser] = addpass
+			print('%s\n  user = %s\n  deluser = %s'%(
+                self.delpass, self.user, deluser))
 		try:
-			self._writevault(__weak, vault)
-		finally:
-			return vault
+			__weak = load(self._readcrypt(crypt))
+		except (TypeError, AttributeError):
+			__weak = self._readcrypt(crypt)
+		print(__weak)
+		del __weak[self.user][deluser]
+		return self._writecrypt(__weak)
 
-	def getpass(self, getuser, vault=None):
-		vault = vault if vault else self.vault
+	def getpass(self, getuser, crypt=None):
+		crypt = crypt if crypt else self.crypt
 		if self.dbg:
 			print('%s\n  user = %s\n  host = %s\n  getuser = %s'%(
-                self.getpass, self.host, self.user, getuser))
-		__weak = self._readvault(vault)
-		return __weak[self.host][self.user][getuser]
+                self.getpass, self.user, getuser))
+		__weak = self._readcrypt(crypt)
+		print(__weak)
+		__weak = __weak[self.user]
+		return __weak[getuser]
 
 
 
