@@ -356,16 +356,9 @@ class TimeSatan(Cmd, Satan):
 	def do_administration(self, line):
 		__e = {'task': 'sa.srm',
             'project': 'p.nod.mw'}
-		if len(line.split()) >= 2:
-			__c = line.split()[-1]
-			if __c.isdigit():
-				line = '%s ACCMO-%s'%(' '.join(line.split()[:-1]), __c)
-			elif __c and __c.lower().startswith('accmo-'):
-				line = '%s %s'%(' '.join(line.split()[:-1]), __c.upper())
-			else:
-				return error('need either a number or string beginning with INC-')
-			return self.default(line, __e)
-		return error('comment or number missing')
+		if len(line.split()) == 1:
+			line = '%s 1'%line
+		print(line)
 		self.default(line)
 	def do_admin(self, line):
 		self.do_administration(line)
