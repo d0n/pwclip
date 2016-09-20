@@ -37,7 +37,6 @@ class Satan(object):
 	_year = _dates[0]
 	_month = _dates[1]
 	_day = _dates[2]
-	cookie = expanduser('~/.cache/timesatan.cookie')
 	casslpem = expanduser('~/.config/catrust/ssl.pem')
 	def __init__(self, *args, **kwargs):
 		self._dbg = True if 'dbg' in args else self._dbg
@@ -59,7 +58,7 @@ class Satan(object):
                 '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()
                     ) if not k.startswith('_TimeSatan__')))))
-		self.cj = MozillaCookieJar(self.cookie)
+		self.cj = CookieJar()
 		self.cxt = create_default_context(cafile=self.casslpem)
 		self.browser = build_opener(
             HTTPCookieProcessor(self.cj),
@@ -139,8 +138,6 @@ class Satan(object):
                     "submit": form.find('.//input[@name="submit"]').value
                 }).encode())
 		self.url, res = response.geturl(), response.read()
-		self.cj.make_cookies(response, self.browser)
-		self.cj.save()
 		if self.url.startswith('https://login.1and1.org/'):
 			if res.find("Invalid credentials".encode()) != -1:
 				raise LoginFailedError(
@@ -177,8 +174,10 @@ class Satan(object):
 		if response.find('Success'.encode()) == -1:
 			raise Exception(
                 'Enter effort failed - ' \
-                'string "Success" not found.\nPOSTed: %s'%code)
-		return True
+                'string "Success" not found.\nPOSTed:\n' \
+                '---%s---\n\nResponse:\n---%s---\n\n'%(
+                code.decode(), response.decode()))
+			return True
 
 	def weekefforts(self, date=None):
 		if self.dbg:
@@ -358,7 +357,6 @@ class TimeSatan(Cmd, Satan):
             'project': 'p.nod.mw'}
 		if len(line.split()) == 1:
 			line = '%s 1'%line
-		print(line)
 		self.default(line)
 	def do_admin(self, line):
 		self.do_administration(line)
@@ -416,16 +414,11 @@ class TimeSatan(Cmd, Satan):
 
 	def do_incident(self, line):
 		__e = {'project': 'p.nod.mw', 'task': 'sa.ossinc'}
-		if len(line.split()) >= 2:
-			__c = line.split()[-1]
-			if __c.isdigit():
-				line = '%s INC-%s'%(' '.join(line.split()[:-1]), __c)
-			elif __c and __c.lower().startswith('inc-'):
-				line = '%s %s'%(' '.join(line.split()[:-1]), __c.upper())
-			else:
-				return error('need either a number or string beginning with INC-')
-			return self.default(line, __e)
-		return error('incident id (inc-#) or number missing')
+		if len(line.split()) == 1:
+			line = '%s 1'%line
+		if not line.lower().startswith('inc'):
+			line = 'INC-%s'%line
+		return self.default(line, __e)
 	def do_inc(self, line):
 		self.do_incident(line)
 	def do_i(self, line):
