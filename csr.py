@@ -94,8 +94,7 @@ def csrgen(fqdn, *names, **cfgvals):
 	#print(cfgvals)
 	#print(names)
 	if names:
-		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(*names)
-		del cfgvals['altnames']
+		cfgvals['altnames'] = 'DNS:%s'%', DNS:'.join(n for n in names)
 		config = '%s%s%s%s%s'%(cfghead, cfgreqs, cfgbody, cfgalts, cfgtail)
 	_, tmpfile = mkstemp(prefix='openssl-conf.')
 	config = config.format(**cfgvals)
