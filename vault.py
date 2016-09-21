@@ -157,10 +157,11 @@ class WeakVaulter(GPGTool):
 		if self.dbg:
 			print('%s\n  user = %s\n  host = %s\n  getuser = %s'%(
                 self.getpass, self.user, getuser))
-		__weak = self._readcrypt(crypt)
-		print(__weak)
-		__weak = __weak[self.user]
-		return __weak[getuser]
+		__weaks = self._readcrypt(crypt)[self.user]
+		for entry in __weaks:
+			for (usr, pwd) in entry.items():
+				if getuser == usr:
+					return {usr: pwd}
 
 
 
