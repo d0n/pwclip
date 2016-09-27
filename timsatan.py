@@ -301,7 +301,6 @@ class TimeSatan(Cmd, Satan):
 
 	#def completedefault(self, text, line, begidx, endidx):
 	#	return [text]
-
 	def default(self, line, margs={}):
 		__e = {
             'duration': 1,
