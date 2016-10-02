@@ -62,7 +62,7 @@ class RepoSync(GitSync):
 				self._fetch_(True)
 				for gitstats in self.itergits([repo], syncall):
 					print(gitstats)
-					stats[repo] = gitstats
+					stats[repo].update(gitstats)
 			repostats.update(stats)
 		if 'svn' in repotypes.keys():
 			stats = {}
