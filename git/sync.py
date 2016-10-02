@@ -73,7 +73,8 @@ class GitSync(GitRepo):
 			self.commit(status)
 		_, ahead, _ = self.gitstatus()
 		if ahead: self.push(branch)
-		return {branch: status}
+		if status:
+			return {branch: status}
 
 	def giter(self, repos, syncall=None):
 		if self.dbg:

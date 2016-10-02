@@ -68,7 +68,7 @@ class RepoSync(GitSync):
 				stats[repo] = out
 			repostats.update(stats)
 		if repostats != {}:
-			yield repostats
+			return repostats
 
 
 
