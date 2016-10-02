@@ -96,8 +96,8 @@ class GitSync(GitRepo):
 					continue
 				branchstats.update(stats)
 			if branchstats:
-				print({_basename(repo): branchstats})
-				yield {_basename(repo): branchstats}
+				print({rpo: branchstats})
+				yield {rpo: branchstats}
 
 
 
