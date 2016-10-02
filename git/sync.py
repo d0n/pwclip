@@ -95,7 +95,7 @@ class GitSync(GitRepo):
 				stats = self.gitsync(branch)
 				if not stats:
 					continue
-				branchstats['%s'%basename(repo)].update(stats)
+				branchstats[basename(repo)].update(stats)
 			if branchstats != {}:
 				repostats[rpo] = branchstats
 
