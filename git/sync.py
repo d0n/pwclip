@@ -79,7 +79,6 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
                 self.itergits, repos, syncall)))
-		syncstats = {}
 		for repo in self._gitsubmods(repos):
 			if not _exists(repo):
 				error('path', repo, 'does not exist and has been omitted')
@@ -93,7 +92,7 @@ class GitSync(GitRepo):
 				stats = self.gitsync(branch)
 				if not stats:
 					continue
-				branchstats[branch] = stats
+				branchstats.update(stats)
 			if branchstats:
 				print({_basename(repo): branchstats})
 				yield {_basename(repo): branchstats}
