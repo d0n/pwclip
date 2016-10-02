@@ -80,12 +80,14 @@ class GitSync(GitRepo):
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
                 self.itergits, repos, syncall)))
 		for repo in self._gitsubmods(repos):
-			if not _exists(repo):
+			try:
+				_chdir(repo)
+			except FileNotFoundError:
 				error('path', repo, 'does not exist and has been omitted')
 				continue
-			else:
-				_chdir(repo)
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
+			rpo = _basename(repo)
+			print(rpo)
 			branchs = self._heads() if syncall else [self._head()]
 			branchstats = {}
 			for branch in branchs:
