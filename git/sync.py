@@ -96,8 +96,7 @@ class GitSync(GitRepo):
 				if not stats:
 					continue
 				branchstats.update(stats)
-			if branchstats != {}:
-				repostats[rpo] = branchstats
+			repostats[rpo] = branchstats
 		if repostats != {}:
 			if self.dbg:
 				print(bgre('  %s'%repostats))
