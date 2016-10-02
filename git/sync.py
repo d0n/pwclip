@@ -4,7 +4,7 @@
 import re
 import sys
 from os import chdir as _chdir
-from os.path import isfile as _isfile, exists as _exists, basename as _basename
+from os.path import basename, dirname, isfile
 
 # local relative imports
 from executor import Command
@@ -51,7 +51,7 @@ class GitSync(GitRepo):
 			return [l.split('=')[1].strip() for l in modlines if 'path =' in l]
 		def __modpaths(gitdir):
 			modfile = '%s/.gitmodules'%gitdir
-			if _isfile(modfile):
+			if isfile(modfile):
 				return ['%s/%s'%(gitdir, m) for m in __gitmods(modfile)]
 		for repo in repos:
 			mods = __modpaths(repo)
@@ -88,7 +88,7 @@ class GitSync(GitRepo):
 				error('path', repo, 'does not exist and has been omitted')
 				continue
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			rpo = _basename(repo)
+			rpo = basename(repo)
 			branchs = self._heads() if syncall else [self._head()]
 			branchstats = {}
 			for branch in branchs:
@@ -98,6 +98,7 @@ class GitSync(GitRepo):
 				branchstats.update(stats)
 			if branchstats != {}:
 				repostats[rpo] = branchstats
+
 		if repostats != {}:
 			if self.dbg:
 				print(bgre('  %s'%repostats))
