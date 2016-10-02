@@ -79,6 +79,7 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
                 self.itergits, repos, syncall)))
+		syncstats = {}
 		for repo in self._gitsubmods(repos):
 			print(repo)
 			if not _exists(repo):
@@ -88,14 +89,14 @@ class GitSync(GitRepo):
 				_chdir(repo)
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			branchs = self._heads() if syncall else [self._head()]
-			syncstats = {}
+			branchstats = {}
 			for branch in branchs:
 				stats = self.gitsync(branch)
 				if not stats:
 					continue
-				syncstats[branch] = stats
-			if syncstats:
-				yield {_basename(repo): syncstats}
+				branchstats[branch] = stats
+			if branchstats:
+				yield {_basename(repo): branchstats}
 
 
 
