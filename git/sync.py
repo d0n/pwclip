@@ -88,7 +88,7 @@ class GitSync(GitRepo):
 				error('path', repo, 'does not exist and has been omitted')
 				continue
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			rpo = basename(repo)
+			rpo = dirname(repo)
 			branchs = self._heads() if syncall else [self._head()]
 			branchstats = {}
 			for branch in branchs:
