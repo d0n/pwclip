@@ -75,10 +75,10 @@ class GitSync(GitRepo):
 		if ahead: self.push(branch)
 		return {branch: status}
 
-	def itergits(self, repos, syncall=None):
+	def giter(self, repos, syncall=None):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
-                self.itergits, repos, syncall)))
+                self.giter, repos, syncall)))
 		repostats = {}
 		for repo in self._gitsubmods(repos):
 			try:
@@ -95,9 +95,12 @@ class GitSync(GitRepo):
 				if not stats:
 					continue
 				branchstats.update(stats)
-			if branchstats:
+			if branchstats != {}:
 				repostats[rpo] = branchstats
-		return repostats
+		if repostats != {}:
+			if self.dbg:
+				print(bgre('  %s'%repostats))
+			return repostats
 
 
 

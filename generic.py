@@ -56,7 +56,7 @@ class RepoSync(GitSync):
 		syncall = syncall if syncall else self._aal
 		repostats = {}
 		if 'git' in repotypes.keys():
-			gitstats = self.itergits(repotypes['git'], syncall)
+			gitstats = self.giter(repotypes['git'], syncall)
 			repostats.update(gitstats)
 		if 'svn' in repotypes.keys():
 			stats = {}
