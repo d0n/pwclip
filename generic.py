@@ -56,15 +56,8 @@ class RepoSync(GitSync):
 		syncall = syncall if syncall else self._aal
 		repostats = {}
 		if 'git' in repotypes.keys():
-			stats = {}
-			for repo in sorted(repotypes['git']):
-				_chdir(repo)
-				self._fetch_(True)
-				stats[repo] = {}
-				for gitstats in self.itergits([repo], syncall):
-					print(gitstats)
-					stats[repo].update(gitstats)
-			repostats.update(stats)
+			gitstats = self.itergits(repotypes['git'], syncall)
+			repostats.update(gitstats)
 		if 'svn' in repotypes.keys():
 			stats = {}
 			for repo in sorted(repotypes['svn']):
