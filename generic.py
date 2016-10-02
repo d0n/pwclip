@@ -19,7 +19,6 @@ class RepoSync(GitSync):
 	_aal = False
 	_dbg = False
 	_mode = 'sync'
-
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -57,20 +56,22 @@ class RepoSync(GitSync):
 		syncall = syncall if syncall else self._aal
 		repostats = {}
 		if 'git' in repotypes.keys():
+			stats = {}
 			for repo in sorted(repotypes['git']):
-				repostats = {}
 				_chdir(repo)
 				self._fetch_(True)
 				for gitstats in self.itergits([repo], syncall):
-					repostats.update(gitstats)
+					stats[repo] = gitstats
+			repostats.update(stats)
 		if 'svn' in repotypes.keys():
+			stats = {}
 			for repo in sorted(repotypes['svn']):
-				repostats = {}
 				_chdir(repo)
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				out = self.stdx('%s update'%which('svn'))
 				print(out.strip())
-				repostats[repo] = out
+				stats[repo] = out
+			repostats.update(stats)
 		if repostats != {}:
 			yield repostats
 
