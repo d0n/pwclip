@@ -94,7 +94,7 @@ class GitSync(GitRepo):
 				if not stats:
 					continue
 				branchstats.update(stats)
-			if self.dbg:
+			if self.dbg and branchstats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
 			if branchstats:
 				yield {repo: branchstats}
