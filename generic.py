@@ -7,7 +7,7 @@ from os.path import exists as _exists, isdir as _isdir
 # local relative imports
 from colortext import blu, yel, bgre
 #from .subversion import SubVersion
-
+from system import which
 from repo.git import GitSync
 
 # default vars
