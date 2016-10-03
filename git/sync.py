@@ -7,11 +7,8 @@ from os import chdir as _chdir
 from os.path import basename, dirname, isfile
 
 # local relative imports
-from executor import Command
-from system import absrelpath, which
 from colortext import blu, yel, bgre, error
-
-from .repo import GitRepo
+from repo.git import GitRepo
 
 class GitSync(GitRepo):
 	# external
@@ -80,7 +77,6 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
                 self.giter, repos, syncall)))
-		repostats = []
 		for repo in self._gitsubmods(repos):
 			try:
 				_chdir(repo)
@@ -96,12 +92,10 @@ class GitSync(GitRepo):
 				if not stats:
 					continue
 				branchstats.update(stats)
-			if branchstats:
-				repostats.append({repo: branchstats})
-		if repostats:
 			if self.dbg:
-				print(bgre('  %s'%repostats))
-			return repostats
+				print(bgre('{%s: %s}'%(repo, branchstats)))
+			if branchstats:
+				yield {repo: branchstats}
 
 
 

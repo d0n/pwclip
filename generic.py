@@ -6,10 +6,9 @@ from os.path import exists as _exists, isdir as _isdir
 
 # local relative imports
 from colortext import blu, yel, bgre
-from system import which
 #from .subversion import SubVersion
 
-from .git import GitSync
+from repo.git import GitSync
 
 # default vars
 __version__ = '0.1'
@@ -56,8 +55,8 @@ class RepoSync(GitSync):
 		syncall = syncall if syncall else self._aal
 		repostats = {}
 		if 'git' in repotypes.keys():
-			gitstats = self.giter(repotypes['git'], syncall)
-			repostats.update(gitstats)
+			for (rpo, stats) in self.giter(repotypes['git'], syncall):
+				repostats.update({rpo: gitstats})
 		if 'svn' in repotypes.keys():
 			stats = {}
 			for repo in sorted(repotypes['svn']):
