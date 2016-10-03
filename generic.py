@@ -67,8 +67,8 @@ class RepoSync(GitSync):
 				out, err, eno = self.oerc(
                     '%s%s update'%(which('svn'), svnopts))
 				if eno == 0 and (
-                      'Transmitting' in out or 'Committing' in out \
-                      or 'Receiving' in out or 'Updated' in out):
+                      'Transmitted' in out or 'Committed' in out \
+                      or 'Received' in out or 'Updated' in out):
 					out.translate(('\\n', '>'))
 					repostats.append({repo: out})
 		if repostats:
