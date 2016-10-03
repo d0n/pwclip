@@ -83,7 +83,7 @@ class GitSync(GitRepo):
 			except FileNotFoundError:
 				error('path', repo, 'does not exist and has been omitted')
 				continue
-			#print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
+			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			branchstats = {}
 			head = self._head()
 			branchs = [head] + \
