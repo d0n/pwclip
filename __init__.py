@@ -1,27 +1,27 @@
-__version__ = '0.1'
+__version__ = '0system.1'
 
-from .cron import stamp, fileage
+from system.cron import stamp, fileage
 
-from .path import absrelpath, realpaths, confpaths, confdats, jconfdats
+from system.path import absrelpath, realpaths, confpaths, confdats, jconfdats
 
-from .blockdevice import BlockDevice
+from system.blockdevice import BlockDevice
 
-from .sysfs import SysFs
+from system.sysfs import SysFs
 
-from .bestlim import bestlim
+from system.bestlim import bestlim
 
-from .lineno import lineno
+from system.lineno import lineno
 
-from .which import which
+from system.which import which
 
-from .random import random
+from system.random import random
 
-from .string2bool import string2bool
+from system.string2bool import string2bool
 
-from .hostname import hostname
+from system.hostname import hostname
 
-from .gpgagent import agentinfo
+from system.gpgagent import agentinfo
 
-from .user.whoami import whoami
+from system.user.whoami import whoami
 
-from .user.find import userfind
+from system.user.find import userfind
