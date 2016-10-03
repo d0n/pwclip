@@ -65,7 +65,7 @@ class RepoSync(GitSync):
 				_chdir(repo)
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				out = self.stdx('%s%s update'%(which('svn'), svnopts))
-				if out:
+				if out != {}:
 					repostats.append({repo: stats})
 		if repostats:
 			return repostats
