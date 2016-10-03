@@ -53,10 +53,10 @@ class RepoSync(GitSync):
                 self.rposync, repotypes, mode)))
 		mode = mode if mode else self.mode
 		syncall = syncall if syncall else self._aal
-		repostats = {}
+		repostats = []
 		if 'git' in repotypes.keys():
-			for (rpo, stats) in self.giter(repotypes['git'], syncall):
-				repostats.update({rpo: gitstats})
+			for rbstat in self.giter(repotypes['git'], syncall):
+				repostats.append(rbstat)
 		if 'svn' in repotypes.keys():
 			stats = {}
 			for repo in sorted(repotypes['svn']):
@@ -65,8 +65,8 @@ class RepoSync(GitSync):
 				out = self.stdx('%s update'%which('svn'))
 				print(out.strip())
 				stats[repo] = out
-			repostats.update(stats)
-		if repostats != {}:
+			repostats.append(stats)
+		if repostats:
 			return repostats
 
 
