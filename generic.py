@@ -18,6 +18,7 @@ class RepoSync(GitSync):
 	_aal = False
 	_dbg = False
 	_mode = 'sync'
+	_svnuser = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -58,11 +59,12 @@ class RepoSync(GitSync):
 			for rbstat in self.giter(repotypes['git'], syncall):
 				repostats.append(rbstat)
 		if 'svn' in repotypes.keys():
+			svnopts = ' --username=%s'%self._svnuser if self._svnuser else ''
 			stats = {}
 			for repo in sorted(repotypes['svn']):
 				_chdir(repo)
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-				out = self.stdx('%s update'%which('svn'))
+				out = self.stdx('%s%s update'%(which('svn'), svnopts))
 				print(out.strip())
 				stats[repo] = out
 			repostats.append(stats)
