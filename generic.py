@@ -64,11 +64,10 @@ class RepoSync(GitSync):
 			for repo in sorted(repotypes['svn']):
 				_chdir(repo)
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-				out, err, eno = self.oerc('%s%s update'%(which('svn'), svnopts))
-				print(out)
-				print(err)
-				print(eno)
-				repostats.append({repo: out})
+				out, err, eno = self.oerc(
+                    '%s%s update'%(which('svn'), svnopts))
+				if eno == 0:
+					repostats.append({repo: out})
 		if repostats:
 			return repostats
 
