@@ -1,5 +1,5 @@
 import sys
-from os import getuid
+from os import getuid, makedirs
 from os.path import \
     basename, expanduser, isdir
 
