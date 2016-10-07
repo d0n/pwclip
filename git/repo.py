@@ -143,12 +143,16 @@ class GitRepo(executor.Command):
 			command = '%s checkout %s'%(self.gitbin, branch)
 		return self.erno(command)
 
-	def pull(self, branch=None, origin='origin'):
+	def pull(self, branch=None, origin='origin', verbose=False):
 		if self.dbg:
 			print(bgre(self.pull))
 		branch = branch if branch else self._head()
 		o, e, n = self.oerc('%s pull %s %s'%(self.gitbin, origin, branch))
-		print(o.strip())
+		o, e = o.strip(), e.strip()
+		if o != 'Already up-to-date.':
+			print(o)
+		elif verbose and e:
+			print(e)
 		return n
 
 	def push(self, remote=None, origin='origin', setup=None):
