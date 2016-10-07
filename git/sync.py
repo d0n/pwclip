@@ -86,9 +86,10 @@ class GitSync(GitRepo):
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			branchstats = {}
 			head = self._head()
-			branchs = [head] + \
-                [h for h in self._heads() if h not in ('master', head)] + \
-                ['master']
+			branchs = [head]
+			if syncall:
+				branchs = [
+                    b for b in self._heads() if not b in ('master', head)]
 			for branch in branchs:
 				stats = self.gitsync(branch)
 				if not stats:
