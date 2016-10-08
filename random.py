@@ -9,7 +9,7 @@ def random(limit=10, regex='[\w -~]'):
 			out = _urandom(1).decode()
 		except UnicodeDecodeError:
 			continue
-		if out and _search(regex, out):
+		if _search(regex, out).group(0):
 			retstr = '%s%s'%(retstr, out.strip())
 		if len(retstr) >= int(limit):
 			break
