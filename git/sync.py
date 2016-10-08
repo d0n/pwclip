@@ -61,7 +61,7 @@ class GitSync(GitRepo):
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
 		if branch != self._head(): self.checkout(branch)
-		self.pull(branch)
+		self.pull()
 		status, ahead, behind = self.gitstatus()
 		if not status and not ahead and not behind: return
 		if ahead: self.push(branch)
