@@ -152,7 +152,7 @@ class GitRepo(executor.Command):
 		if o != 'Already up-to-date.':
 			print(o)
 		elif verbose and e:
-			print(e)
+			print('%s\n%s'%(o, e))
 		return n
 
 	def push(self, remote=None, origin='origin', setup=None):
