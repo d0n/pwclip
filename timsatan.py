@@ -148,6 +148,7 @@ class Satan(object):
 			else:
 				print(res.decode())
 				raise LoginFailedError()
+		#self.weekefforts()
 
 	def _todate_(self, url, date):
 		setattr(self, 'date', date)
@@ -179,34 +180,15 @@ class Satan(object):
                 code.decode(), response.decode()))
 			return True
 
-	def weekefforts(self, date=None):
+	def weekefforts(self, week=0):
 		if self.dbg:
 			print(bgre(self.weekefforts))
-		date = date if date else self.date
 		url = '%s/personal/view/week'%self.url.split('/enter/effort')[0]
-		today = self._todate_(url, date)
-		code = urlencode({
-            "__from": "%02d.%02d.%d"%self.dates}).encode()
+		print(url)
+		code = urlencode({"week": "%d"%week}).encode()
 		tree = html.fromstring(self.browser.open(url, code).read())
-		trgs = {}
-		effs = []
-		for bdy in tree.xpath('//body/div[@style="margin: 4px"]/table[contains(@cellpadding, "3")]/tr'):
-			for cont in bdy.iter():
-				if cont.text:
-					txt = str(cont.text).strip()
-					if txt.endswith(')'):
-						prc = txt.split('(')[1].split(')')[0]
-						txt = txt.strip('(%s)'%prc).strip()
-						effs.append(txt)
-						effs.append(prc)
-						continue
-					if not txt.endswith(':'):
-						effs.append(txt)
-						continue
-					trgs[txt] = effs
-					effs = []
-		for trg, effs in trgs.items():
-			print(trg, effs)
+		for tr in tree.xpath('tbody'):
+			print(tr)
 
 	def bookeffort(self, **kwargs):
 		if self.dbg:
