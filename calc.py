@@ -6,10 +6,10 @@ from math import sqrt
 from system.random import biggerrand, lowerrand
 
 def maxprime(stop, start=3):
-    start = start if start%2 != 0 else start+1
-    for i in reversed(range(start, stop, 2)):
-        if all(int(i%j) for j in range(3, int(sqrt(i))+1, 2) if j):
-            return i
+	start = start if start%2 != 0 else start+1
+	for i in reversed(range(start, stop, 2)):
+		if all(int(i%j) for j in range(3, int(sqrt(i))+1, 2) if j):
+			return i
 
 def dhnums(sec):
 	while True:
