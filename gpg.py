@@ -33,12 +33,14 @@ class GPGTool(object):
 	one - also i can prepare some program related stuff in here
 	"""
 	_dbg = None
-	_tru = True
+	_agt = True
 	_homedir = _expanduser('~/.gnupg')
 	_binary = '/usr/bin/gpg2'
-	_keyring = '%s/pubring.kbx'%_homedir
 	if not _isfile(_binary):
 		_binary = '/usr/bin/gpg'
+	if not _isfile(_binary) or not _access(_binary, _XOK):
+		raise RuntimeError('%s needs to be executable'%_binary)
+	agentinfo = '%s/S.gpg-agent'%_homedir
 	kginput = {}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -66,22 +68,23 @@ class GPGTool(object):
 	def dbg(self, val):
 		self._dbg = bool(val)
 
-	@property                # tru <bool>
-	def tru(self):
-		return self._tru
-	@tru.setter
-	def tru(self, val):
-		self._tru = bool(val)
+	@property                # agt <bool>
+	def agt(self):
+		_environ['GPG_AGENT_INFO'] = self.agent.info
+		return self._agt
+	@agt.setter
+	def agt(self, val):
+		self._agt = True if val else False
 
 	@property                # homedir <str>
 	def homedir(self):
 		return self._homedir
 	@homedir.setter
 	def homedir(self, val):
-		self._homedir = val if not val.startswith('~') else _expanduser(val)
-		if not self._homedir.startswith('/'):
-			self._homedir = '%s/%s'%(_getcwd(), val)
-		_environ['GPG_AGENT_INFO'] = '%s/S.gpg-agent'%self._homedir
+		val = val if not val.startswith('~') else _expanduser(val)
+		if not val.startswith('/'):
+			val = '%s/%s'%(_getcwd(), val)
+		self._homedir = val
 
 	@property                # gpgbin <str>
 	def binary(self):
@@ -91,17 +94,11 @@ class GPGTool(object):
 	def binary(self, val):
 		if _isfile(val) and _access(val, _XOK):
 			self._binary = val
-		if not _isfile(self._binary) or not _access(self._binary, _XOK):
-			raise RuntimeError('%s needs to be executable'%self._binary)
 
 	@property                # keyring <str>
 	def keyring(self):
-		return self._keyring
-	@keyring.setter
-	def keyring(self, val):
-		if not _isfile(val) and not val.startswith('/'):
-			val = '%s/%s'%(self.homedir, val)
-		self._keyring = val
+		return '%s/pubring.kbx' \
+            if self.binary.endswith('2') else '%s/pubring.kbx'
 
 	@property                # secring <str>
 	def secring(self):
@@ -116,7 +113,7 @@ class GPGTool(object):
 		"""object"""
 		__g = _GPG(
             gnupghome=self.homedir, gpgbinary=self.binary,
-            use_agent=True, verbose=1 if self.dbg else 0,
+            use_agent=self.agt, verbose=1 if self.dbg else 0,
             options=['--batch', '--pinentry-mode=loopback'],
             keyring=self.keyring, secret_keyring=self.secring)
 		__g.encoding = 'utf-8'
