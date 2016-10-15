@@ -30,3 +30,4 @@ long_desc = """\
   and time-based access to that password-hash via System copy/paste buffers
   """
 scripts = [join('bin', 'pwclip')]
+entry_points={'console_scripts': ['pwclip = pwclip.__main__:main']}
