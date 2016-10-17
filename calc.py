@@ -28,7 +28,7 @@ def dhcompile(sec, rnd, pri):
 def dhprep(sec):
 	while True:
 		rnd, pri = dhnums(sec)
-		gen = dhcompile(sec, rnd, pri)
+		gen = pow(rnd, sec, pri)
 		if gen > 1:
 			break
 	return rnd, pri, gen
