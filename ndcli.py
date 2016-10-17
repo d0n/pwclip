@@ -22,7 +22,7 @@ from system import which
 from colortext import error, fatal, blu
 from executor import command as c
 from network import askdns
-from dpkg import DePyKG
+from deb import DePyKG
 
 # global default variables
 __version__ = '0.1'
