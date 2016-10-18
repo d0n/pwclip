@@ -1,4 +1,5 @@
 """cypher library init"""
-from .hmacsha import enhmacsha, dehmacsha
-from .gpg import GPGTool
-from .vault import WeakVaulter
+from cypher.hmacsha import enhmacsha, dehmacsha
+from cypher.gpg import GPGTool
+from cypher.vault import WeakVaulter
+from cypher.passcrypt import PassCrypt
