@@ -183,16 +183,15 @@ def tabd(dats, ind=0, space=2):
 		spc = ' '*int(lim-len(str(key)))
 		if isinstance(val, dict):
 			iind = ind+2
-			tabbed = '%s\n%s%s:\n%s%s'%(
-                tabbed, spc*ind, key, spc*iind, tabd(val, ind=iind).strip())
+			tabbed = '%s\n%s\n%s:\n%s%s'%(
+                tabbed, spc*ind, key, ' '*space, tabd(val, ind=iind, space=space).strip())
 			continue
 		#elif isinstance(val, (list, tuple)):
 		#	iind = ind+2
 		#	tabbed = '%s\n%s%s'%(tabbed, ' '*ind, tabl(val, ind=iind))
 		tabbed = '%s\n%s%s%s=%s%s'%(
             tabbed.rstrip(), ' '*ind, key, spc, ' '*space, val)
-	return '%s\n'%tabbed.strip('\n')
-
+	return tabbed.lstrip()
 
 
 if __name__ == "__main__":
