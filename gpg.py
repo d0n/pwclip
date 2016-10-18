@@ -70,7 +70,7 @@ class GPGTool(object):
 
 	@property                # agt <bool>
 	def agt(self):
-		_environ['GPG_AGENT_INFO'] = self.agent.info
+		_environ['GPG_AGENT_INFO'] = self.agentinfo
 		return self._agt
 	@agt.setter
 	def agt(self, val):
@@ -97,8 +97,8 @@ class GPGTool(object):
 
 	@property                # keyring <str>
 	def keyring(self):
-		return '%s/pubring.kbx' \
-            if self.binary.endswith('2') else '%s/pubring.kbx'
+		return '%s/pubring.kbx'%self.homedir \
+            if self.binary.endswith('2') else '%s/pubring.kbx'%self.homedir
 
 	@property                # secring <str>
 	def secring(self):

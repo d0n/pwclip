@@ -20,6 +20,7 @@ class WeakVaulter(GPGTool):
 	user = userfind()
 	weaks = path.expanduser('~/.weaknez')
 	vault = path.expanduser('~/.vault')
+	plain = '%s/common/pwd.yaml'%weaks
 	crypt = '%s/common/pwd.vlt'%weaks
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -121,47 +122,65 @@ class WeakVaulter(GPGTool):
 	def _mkcrypt(self, crypt=None):
 		crypt = crypt if crypt else self.crypt
 		__newcrypt = '{%s: {}}'%self.user
+		if path.exists(self.plain):
+			with open(self.plain, 'r') as pfh:
+				__newcrypt = load(pfh)
 		if self.dbg:
 			print('%s\n  crypt = %s\n  weaknez = %s'%(
                 self._mkcrypt, crypt, __newcrypt))
 		return self._writecrypt(__newcrypt, crypt)
 
-	def addpass(self, adduser, addpass, crypt=None):
+	def adpw(self, usr, pwd, crypt=None):
 		crypt = crypt if crypt else self.crypt
 		if self.dbg:
 			print('%s\n adduser = %s addpass = %s'%(
-                self.addpass, adduser, addpass))
+                self.adpw, user, pwd))
 		try:
 			__weak = load(self._readcrypt(crypt))
 		except (TypeError, AttributeError):
 			__weak = self._readcrypt(crypt)
-		print(__weak)
-		__weak[self.user][adduser] = addpass
+		__weak[self.user][usr] = pwd
 		return self._writecrypt(__weak, crypt)
 
-	def delpass(self, deluser, crypt=None):
+	def chpw(self, usr, pwd, crypt=None):
+		crypt = crypt if crypt else self.crypt
+		if self.dbg:
+			print('%s\n adduser = %s addpass = %s'%(
+                self.chpw, usr, pwd))
+		try:
+			__weak = load(self._readcrypt(crypt))
+		except (TypeError, AttributeError):
+			__weak = self._readcrypt(crypt)
+		__weak[self.user][usr] = pwd
+		return self._writecrypt(__weak, crypt)
+
+	def rmpw(self, usr, crypt=None):
 		crypt = crypt if crypt else self.crypt
 		if self.dbg:
 			print('%s\n  user = %s\n  deluser = %s'%(
-                self.delpass, self.user, deluser))
+                self.rmpw, self.user, usr))
 		try:
 			__weak = load(self._readcrypt(crypt))
 		except (TypeError, AttributeError):
 			__weak = self._readcrypt(crypt)
-		print(__weak)
-		del __weak[self.user][deluser]
+		del __weak[self.user][usr]
 		return self._writecrypt(__weak)
 
-	def getpass(self, getuser, crypt=None):
+	def lspw(self, usr=None, crypt=None):
 		crypt = crypt if crypt else self.crypt
 		if self.dbg:
 			print('%s\n  user = %s\n  host = %s\n  getuser = %s'%(
-                self.getpass, self.user, getuser))
+                self.lspw, self.user, self.host, usr))
 		__weaks = self._readcrypt(crypt)[self.user]
-		for entry in __weaks:
-			for (usr, pwd) in entry.items():
-				if getuser == usr:
-					return {usr: pwd}
+		if not usr:
+			return __weaks
+		for (u, p) in __weaks.items():
+			if usr == u:
+				return p
+
+
+
+
 
 
 
