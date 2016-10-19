@@ -79,8 +79,9 @@ class PassCrypt(GPGTool):
                 self._mkcrypt, crypt, __newcrypt))
 		return self._writecrypt(__newcrypt, crypt)
 
-	def adpw(self, usr, pwd, crypt=None):
+	def adpw(self, usr, pwd=None, crypt=None):
 		crypt = crypt if crypt else self.crypt
+		pwd = pwd if pwd else self._passwd()
 		if self.dbg:
 			print('%s\n adduser = %s addpass = %s'%(
                 self.adpw, user, pwd))
@@ -91,8 +92,9 @@ class PassCrypt(GPGTool):
 		__weak[self.user][usr] = pwd
 		return self._writecrypt(__weak, crypt)
 
-	def chpw(self, usr, pwd, crypt=None):
+	def chpw(self, usr, pwd=None, crypt=None):
 		crypt = crypt if crypt else self.crypt
+		pwd = pwd if pwd else self._passwd()
 		if self.dbg:
 			print('%s\n adduser = %s addpass = %s'%(
                 self.chpw, usr, pwd))

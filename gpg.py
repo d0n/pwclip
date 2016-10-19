@@ -120,12 +120,12 @@ class GPGTool(object):
 		return __g
 
 	@staticmethod
-	def __passwd(rpt=False):
+	def _passwd(rpt=False):
 		"""
 		password questioning function
 		"""
-		msg = 'enter the passphrase for your gpg-key:'
-		tru = 'repeat that passphrase:'
+		msg = 'enter new passphrase: '
+		tru = 'repeat that passphrase: '
 		while True:
 			try:
 				if not rpt:
