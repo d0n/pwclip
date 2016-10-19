@@ -175,7 +175,7 @@ def tabd(dats, ind=0, space=2):
 	^^indent "bar" and "b" as much as needed ("add" is added to each length)
 	"""
 	if dats == {} or not isinstance(dats, (dict, list, )):
-		return ''
+		return dats
 	lim = int(max(len(str(k)) for k in dats if k)+int(ind))+space
 	tabbed = '' #'%s'%' '*ind
 	for (key, val) in sorted(dats.items()):
