@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-from os import path, uname
+from os import path, uname, remove
 
 from tarfile import open as taropen
 
 from yaml import load, dump
+
+from time import sleep
 
 from tempfile import NamedTemporaryFile
 
@@ -18,8 +20,9 @@ class PassCrypt(GPGTool):
 	dbg = False
 	user = userfind()
 	home = userfind(user, 'home')
-	plain = '%s/.pwd.yml'%home
-	crypt = '%s/.pwd.vlt'%home
+	plain = '%s/.pwd.yaml'%home
+	crypt = '%s/.pwdcrypt'%home
+	pwtmpl = {user:[{}]}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -27,6 +30,7 @@ class PassCrypt(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
+		self._mkcrypt_()
 		if self.dbg:
 			lim = int(max(len(k) for k in PassCrypt.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -38,91 +42,80 @@ class PassCrypt(GPGTool):
                 '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()))))
 
-	def _dumpcrypt(self, crypt=None):
-		crypt = crypt if crypt else self.crypt
-		if self.dbg:
-			print('%s\n  crypt = %s'%(self._dumpcrypt, crypt))
-		try:
-			with open(crypt, 'r') as vlt:
-				return load(str(self.decrypt(vlt.read())))
-		except FileNotFoundError:
-			self._mkcrypt(crypt)
-			return self._readcrypt(crypt)
-
-	def _readcrypt(self, crypt=None):
-		crypt = crypt if crypt else self.crypt
-		if self.dbg:
-			print('%s\n  crypt = %s'%(self._readcrypt, crypt))
-		try:
-			with open(crypt, 'r') as vlt:
-				return load(str(self.decrypt(vlt.read())))
-		except FileNotFoundError:
-			self._mkcrypt(crypt)
-			return self._readcrypt(crypt)
-
-	def _writecrypt(self, weaknez, crypt=None):
-		crypt = crypt if crypt else self.crypt
-		if self.dbg:
-			print('%s\n  weaknez = %s'%(self._writecrypt, weaknez))
-		with open(crypt, 'w+') as vlt:
-			vlt.write(str(self.encrypt(dump(weaknez))))
-		return True
-
-	def _mkcrypt(self, crypt=None):
-		crypt = crypt if crypt else self.crypt
-		__newcrypt = '{%s: {}}'%self.user
+	def _mkcrypt_(self):
+		__newpws = {}
 		if path.exists(self.plain):
 			with open(self.plain, 'r') as pfh:
-				__newcrypt = load(pfh)
-		if self.dbg:
-			print('%s\n  crypt = %s\n  weaknez = %s'%(
-                self._mkcrypt, crypt, __newcrypt))
-		return self._writecrypt(__newcrypt, crypt)
+				__newpws = load(pfh)
+			remove(self.plain)
+		__pws = self.pwtmpl
+		if path.exists(self.crypt):
+			__pws = self._readcrypt()
+		for (k, v) in __newpws.items():
+			__pws[k] = v
+		self._writecrypt(__pws)
+		return self._readcrypt()
 
-	def adpw(self, usr, pwd=None, crypt=None):
-		crypt = crypt if crypt else self.crypt
+	def _readcrypt(self):
+		if self.dbg:
+			print('%s\n  crypt = %s'%(self._readcrypt, self.crypt))
+		try:
+			with open(self.crypt, 'r') as vlt:
+				__pwds = load(str(self.decrypt(vlt.read())))
+		except FileNotFoundError:
+			return self._mkcrypt_()
+		return __pwds
+
+	def _writecrypt(self, weaknez):
+		if self.dbg:
+			print('%s\n  weaknez = %s'%(self._writecrypt, weaknez))
+		crypt = str(self.encrypt(dump(weaknez)))
+		if load(str(self.decrypt(crypt))):
+			with open(self.crypt, 'w+') as vlt:
+				vlt.write(crypt)
+		return True
+
+	def adpw(self, usr, pwd=None):
 		pwd = pwd if pwd else self._passwd()
+		com = input('enter a comment: ')
 		if self.dbg:
 			print('%s\n adduser = %s addpass = %s'%(
                 self.adpw, user, pwd))
 		try:
-			__weak = load(self._readcrypt(crypt))
+			__weak = load(self._readcrypt())
 		except (TypeError, AttributeError):
-			__weak = self._readcrypt(crypt)
-		__weak[self.user][usr] = pwd
-		return self._writecrypt(__weak, crypt)
+			__weak = self._readcrypt()
+		__weak[self.user][usr] = [pwd, com]
+		return self._writecrypt(__weak)
 
-	def chpw(self, usr, pwd=None, crypt=None):
-		crypt = crypt if crypt else self.crypt
+	def chpw(self, usr, pwd=None):
 		pwd = pwd if pwd else self._passwd()
 		if self.dbg:
 			print('%s\n adduser = %s addpass = %s'%(
                 self.chpw, usr, pwd))
 		try:
-			__weak = load(self._readcrypt(crypt))
+			__weak = load(self._readcrypt())
 		except (TypeError, AttributeError):
-			__weak = self._readcrypt(crypt)
+			__weak = self._readcrypt()
 		__weak[self.user][usr] = pwd
-		return self._writecrypt(__weak, crypt)
+		return self._writecrypt(__weak)
 
-	def rmpw(self, usr, crypt=None):
-		crypt = crypt if crypt else self.crypt
+	def rmpw(self, usr):
 		if self.dbg:
 			print('%s\n  user = %s\n  deluser = %s'%(
                 self.rmpw, self.user, usr))
-		try:
-			__weak = load(self._readcrypt(crypt))
-		except (TypeError, AttributeError):
-			__weak = self._readcrypt(crypt)
-		del __weak[self.user][usr]
+		__weak = self._readcrypt()
+		if __weak and usr in __weak.keys():
+			del __weak[self.user][usr]
 		return self._writecrypt(__weak)
 
 	def lspw(self, usr=None, crypt=None):
-		crypt = crypt if crypt else self.crypt
 		if self.dbg:
 			print('%s\n  user = %s\n  getuser = %s'%(
                 self.lspw, self.user, usr))
-		__weaks = self._readcrypt(crypt)[self.user]
+		__weaks = self._readcrypt()
+		if __weaks and self.user in __weaks.keys():
+			__weaks = __weaks[self.user]
 		if not usr:
 			return __weaks
 		for (u, p) in __weaks.items():

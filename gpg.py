@@ -235,3 +235,4 @@ class GPGTool(object):
 		if self.dbg:
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
 		return self._gpg_.decrypt(message, always_trust=True, output=output)
+		#return __plain
