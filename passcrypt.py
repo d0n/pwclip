@@ -49,7 +49,7 @@ class PassCrypt(GPGTool):
 			try:
 				with open(self.plain, 'r') as pfh:
 					__newpws = load(pfh.read())
-				remove(self.plain)
+				#remove(self.plain)
 			except FileNotFoundError:
 				__newpws = {}
 			for (k, v) in __newpws.items():
@@ -62,7 +62,7 @@ class PassCrypt(GPGTool):
 		if path.exists(self.crypt):
 			with open(self.crypt, 'r') as vlt:
 				crypt = vlt.read()
-				return load(str(self.decrypt(crypt)))
+			return load(str(self.decrypt(crypt)))
 
 	def _writecrypt_(self, plain):
 		if self.dbg:
@@ -70,7 +70,7 @@ class PassCrypt(GPGTool):
 		kwargs = {'output': self.crypt}
 		if 'GPGKEYS' in environ.keys():
 			kwargs['recipients'] = environ['GPGKEYS'].split(' ')
-		self.encrypt(dump(plain), **kwargs)
+		self.encrypt(message=dump(plain), **kwargs)
 
 	def adpw(self, usr, pwd=None):
 		pwdcom = [pwd if pwd else self._passwd()]
