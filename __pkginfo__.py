@@ -6,11 +6,11 @@ from os.path import join, dirname
 modname = distname = 'pwclip'
 numversion = (0, 2, 4)
 version = '.'.join([str(num) for num in numversion])
-install_requires = ['pyusb', 'yubico', 'tkinter']
+install_requires = ['pyusb', 'yubico', 'tkinter', 'gnupg']
 if sys.version_info[:2] > (2, 7):
-	install_requires = ['pyusb', 'yubico']
+	install_requires = ['pyusb', 'yubico', 'gnupg']
 license = 'GPL'
-description = "gui to save time-based yubikey challenge-response to paste-buffer"
+description = "gui to temporarily save passwords to clipboard (paste-buffer)"
 web = 'http://janeiskla.de'
 mailinglist = ""
 author = 'Leon Pelzer'
