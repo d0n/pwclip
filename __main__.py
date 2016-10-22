@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 
 import sys
-import pwclip
-wait = 3
-if len(sys.argv) > 1:
-	wait = int(sys.argv[1])
-pwclip.pwclipper(wait)
+from os import getcwd
+
+try:
+	import pwclip
+except ImportError:
+	sys.path.append(getcwd())
+	import pwclip
+
+try:
+	pwclip.pwclipper()
+except KeyboardInterrupt:
+	print('\naborted by keystroke')
+	exit(0)
