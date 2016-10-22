@@ -10,11 +10,16 @@ from time import sleep
 
 from tempfile import NamedTemporaryFile
 
-from colortext import error, fatal
+from gi import require_version
+require_version('Notify', '0.7')
 
-from system import userfind
+from gi.repository import Notify as note
 
-from .gpg import GPGTool
+from lib.colortext import error, fatal
+
+from lib.system import userfind
+
+from lib.cypher import GPGTool
 
 class PassCrypt(GPGTool):
 	dbg = False
@@ -22,7 +27,6 @@ class PassCrypt(GPGTool):
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
 	crypt = '%s/.pwdcrypt'%home
-	pwtmpl = {user:[{}]}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -30,7 +34,7 @@ class PassCrypt(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		self._mkcrypt_()
+		self._mergeplain_()
 		if self.dbg:
 			lim = int(max(len(k) for k in PassCrypt.__dict__.keys()))+4
 			print('%s\n%s\n\n%s\n%s\n'%(
@@ -42,38 +46,35 @@ class PassCrypt(GPGTool):
                 '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
                     ) for (k, v) in sorted(self.__dict__.items()))))
 
-	def _mkcrypt_(self):
-		__newpws = {}
+	def _mergeplain_(self):
+		__pws = self._readcrypt()
+		if not __pws:
+			__pws = {self.user:[{}]}
 		if path.exists(self.plain):
-			with open(self.plain, 'r') as pfh:
-				__newpws = load(pfh)
-			remove(self.plain)
-		__pws = self.pwtmpl
-		if path.exists(self.crypt):
-			__pws = self._readcrypt()
-		for (k, v) in __newpws.items():
-			__pws[k] = v
-		self._writecrypt(__pws)
-		return self._readcrypt()
+			try:
+				with open(self.plain, 'r') as pfh:
+					__newpws = load(pfh.read())
+				remove(self.plain)
+			except FileNotFoundError:
+				__newpws = {}
+			for (k, v) in __newpws.items():
+				__pws[k] = v
+			self._writecrypt_(__pws)
 
 	def _readcrypt(self):
 		if self.dbg:
 			print('%s\n  crypt = %s'%(self._readcrypt, self.crypt))
-		try:
+		if path.exists(self.crypt):
 			with open(self.crypt, 'r') as vlt:
-				__pwds = load(str(self.decrypt(vlt.read())))
-		except FileNotFoundError:
-			return self._mkcrypt_()
-		return __pwds
+				crypt = vlt.read()
+				return load(str(self.decrypt(crypt)))
 
-	def _writecrypt(self, weaknez):
+	def _writecrypt_(self, plain):
 		if self.dbg:
 			print('%s\n  weaknez = %s'%(self._writecrypt, weaknez))
-		crypt = str(self.encrypt(dump(weaknez)))
-		if load(str(self.decrypt(crypt))):
-			with open(self.crypt, 'w+') as vlt:
-				vlt.write(crypt)
-		return True
+		__crypt = str(self.encrypt(dump(plain)))
+		with open(self.crypt, 'w+') as vlt:
+			vlt.write(__crypt)
 
 	def adpw(self, usr, pwd=None):
 		pwd = pwd if pwd else self._passwd()
@@ -114,14 +115,23 @@ class PassCrypt(GPGTool):
 			print('%s\n  user = %s\n  getuser = %s'%(
                 self.lspw, self.user, usr))
 		__weaks = self._readcrypt()
-		if __weaks and self.user in __weaks.keys():
-			__weaks = __weaks[self.user]
-		if not usr:
-			return __weaks
-		for (u, p) in __weaks.items():
-			if usr == u:
-				return p
+		if __weaks:
+			if self.user in __weaks.keys():
+				__weaks = __weaks[self.user]
+			if not usr:
+				return __weaks
+			for (u, p) in __weaks.items():
+				if usr == u:
+					return p
 
+def passcrypt(usr):
+	if usr:
+		__entry = PassCrypt().lspw(usr)
+		if __entry:
+			note.init(usr)
+			if len(__entry) > 1:
+				note.Notification.new(__entry[1]).show()
+			return __entry[0]
 
 if __name__ == '__main__':
     exit(1)
