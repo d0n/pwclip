@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from os import path, uname, remove
+from os import path, uname, remove, environ
 
 from tarfile import open as taropen
 
@@ -10,23 +10,18 @@ from time import sleep
 
 from tempfile import NamedTemporaryFile
 
-from gi import require_version
-require_version('Notify', '0.7')
-
-from gi.repository import Notify as note
-
-from colortext import error, fatal
+from colortext import tabd, error, fatal
 
 from system import userfind
 
-from cypher import GPGTool
+from cypher.gpg import GPGTool
 
 class PassCrypt(GPGTool):
 	dbg = False
 	user = userfind()
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
-	crypt = '%s/.pwdcrypt'%home
+	crypt = '%s/.passcrypt'%home
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -71,44 +66,48 @@ class PassCrypt(GPGTool):
 
 	def _writecrypt_(self, plain):
 		if self.dbg:
-			print('%s\n  weaknez = %s'%(self._writecrypt, weaknez))
-		__crypt = str(self.encrypt(dump(plain)))
-		with open(self.crypt, 'w+') as vlt:
-			vlt.write(__crypt)
+			print('%s\n  weaknez = %s'%(self._writecrypt, plain))
+		kwargs = {'output': self.crypt}
+		if 'GPGKEYS' in environ.keys():
+			kwargs['recipients'] = environ['GPGKEYS'].split(' ')
+		self.encrypt(dump(plain), **kwargs)
 
 	def adpw(self, usr, pwd=None):
-		pwd = pwd if pwd else self._passwd()
+		pwdcom = [pwd if pwd else self._passwd()]
 		com = input('enter a comment: ')
+		if com:
+			pwdcom.append(com)
 		if self.dbg:
 			print('%s\n adduser = %s addpass = %s'%(
-                self.adpw, user, pwd))
-		try:
-			__weak = load(self._readcrypt())
-		except (TypeError, AttributeError):
-			__weak = self._readcrypt()
-		__weak[self.user][usr] = [pwd, com]
-		return self._writecrypt(__weak)
+                self.adpw, usr, pwd))
+		__weak = self._readcrypt()
+		if __weak and self.user in __weak.keys():
+			__weak[self.user][usr] = pwdcom
+			self._writecrypt_(__weak)
+			return True
 
 	def chpw(self, usr, pwd=None):
 		pwd = pwd if pwd else self._passwd()
 		if self.dbg:
 			print('%s\n adduser = %s addpass = %s'%(
                 self.chpw, usr, pwd))
-		try:
-			__weak = load(self._readcrypt())
-		except (TypeError, AttributeError):
-			__weak = self._readcrypt()
-		__weak[self.user][usr] = pwd
-		return self._writecrypt(__weak)
+		__weak = self._readcrypt()
+		if __weak and self.user in __weak.keys() and \
+              usr in __weak[self.user].keys():
+			__weak[self.user][usr] = pwd
+			self._writecrypt_(__weak)
+			return True
 
 	def rmpw(self, usr):
 		if self.dbg:
 			print('%s\n  user = %s\n  deluser = %s'%(
                 self.rmpw, self.user, usr))
 		__weak = self._readcrypt()
-		if __weak and usr in __weak.keys():
+		if __weak and self.user in __weak.keys() and \
+              usr in __weak[self.user].keys():
 			del __weak[self.user][usr]
-		return self._writecrypt(__weak)
+			self._writecrypt_(__weak)
+			return True
 
 	def lspw(self, usr=None, crypt=None):
 		if self.dbg:
@@ -128,9 +127,6 @@ def passcrypt(usr):
 	if usr:
 		__entry = PassCrypt().lspw(usr)
 		if __entry:
-			note.init(usr)
-			if len(__entry) > 1:
-				note.Notification.new(__entry[1]).show()
 			return __entry[0]
 
 if __name__ == '__main__':

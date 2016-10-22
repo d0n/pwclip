@@ -22,7 +22,7 @@ from gnupg import \
     GPG as _GPG
 
 # local imports
-from colortext import blu, red, yel, bgre, abort, error
+from colortext import blu, red, yel, bgre, tabd, abort, error
 
 class GPGTool(object):
 	"""
@@ -166,12 +166,24 @@ class GPGTool(object):
 			print('key has been generated:\n%s'%str(key))
 		return key
 
+	@staticmethod
+	def __find(pattern, *vals):
+		for val in vals:
+			if isinstance(val, (list, tuple)) and \
+			      [v for v in val if pattern in v]:
+				#print(val, pattern)
+				return True
+			elif pattern in val:
+				#print(val, pattern)
+				return True
+
 	def findkey(self, pattern='', **kwargs):
 		typ = 'A' if not 'typ' in kwargs.keys() else kwargs['typ']
 		secret = False if not 'secret' in kwargs.keys() else kwargs['secret']
 		keys = {}
+		pattern = pattern if not pattern.startswith('0x') else pattern[2:]
 		for key in self._gpg_.list_keys():
-			if not [v for kv in key.values() for v in kv if pattern in v]:
+			if pattern and not self.__find(pattern, *key.values()):
 				continue
 			for (k, v) in key.items():
 				#print(k, v)
@@ -205,10 +217,10 @@ class GPGTool(object):
 		return keys
 
 	def _encryptwithkeystr(self, message, keystr, output):
-		for result in self._gpg_.import_keys(keystr).results:
-			finger = result['fingerprint']
-			return self._gpg_.encrypt(
-                message, finger, always_trust=True, output=output)
+		fingers = [
+            r['fingerprint'] for r in self._gpg_.import_keys(keystr).results]
+		return self._gpg_.encrypt(
+            message, fingers, always_trust=True, output=output)
 
 	def encrypt(self, message, *args, **kwargs):
 		"""
@@ -216,14 +228,13 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.encrypt))
-		fingers = [f for f in self.export(typ='e').keys()]
+		fingers = list(self.export(**{'typ': 'e'}))
 		if 'recipients' in kwargs.keys():
-			fingers = [f for f in self.export(
-                *kwargs['recipients'], **{typ: 'e'})]
+			fingers = list(self.export(*kwargs['recipients'], **{'typ': 'e'}))
 		if 'keystr' in kwargs.keys():
 			res = self._gpg_.import_keys(keystr).results[0]
 			fingers = [res['fingerprint']]
-		output = None if not 'output'in kwargs.keys() else kwargs['output']
+		output = None if not 'output' in kwargs.keys() else kwargs['output']
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=output)
 
