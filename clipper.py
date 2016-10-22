@@ -17,7 +17,9 @@
 """
 pwclip - password to clipboard (mouse coupy/paste buffer) manager
 """
-from os import environ
+from sys import argv
+
+from os import environ, fork
 
 from time import sleep
 
@@ -26,10 +28,8 @@ try:
 except ImportError:
 	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
-from lib.colortext import abort
-from pwclip.clips import clips
-from pwclip.ykchalres import ykchalres
-from pwclip.passcrypt import passcrypt
+from system.clips import clips
+from cypher import ykchalres, passcrypt
 
 def clipgui(mode='yk', wait=3):
 	"""gui representing function"""
@@ -84,7 +84,5 @@ def clipgui(mode='yk', wait=3):
 	if oclp != paste():
 		try:
 			sleep(wait)
-		except KeyboardInterrupt:
-			abort()
 		finally:
 			copy(oclp)

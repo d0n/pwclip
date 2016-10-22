@@ -4,13 +4,13 @@ from os import getcwd
 from os.path import join, dirname
 
 modname = distname = 'pwclip'
-numversion = (0, 2, 3)
+numversion = (0, 2, 4)
 version = '.'.join([str(num) for num in numversion])
 install_requires = ['pyusb', 'yubico', 'tkinter']
 if sys.version_info[:2] > (2, 7):
 	install_requires = ['pyusb', 'yubico']
 license = 'GPL'
-description = "gui to temporarily save passwords to clipboard (paste-buffer)"
+description = "gui to save time-based yubikey challenge-response to paste-buffer"
 web = 'http://janeiskla.de'
 mailinglist = ""
 author = 'Leon Pelzer'
