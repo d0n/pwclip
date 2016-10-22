@@ -15,11 +15,11 @@ require_version('Notify', '0.7')
 
 from gi.repository import Notify as note
 
-from lib.colortext import error, fatal
+from colortext import error, fatal
 
-from lib.system import userfind
+from system import userfind
 
-from lib.cypher import GPGTool
+from cypher import GPGTool
 
 class PassCrypt(GPGTool):
 	dbg = False
