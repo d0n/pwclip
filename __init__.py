@@ -23,3 +23,7 @@ from system.gpgagent import agentinfo
 from system.user.whoami import whoami
 
 from system.user.find import userfind
+
+from system.clips import clips
+
+from system.inputgui import inputgui

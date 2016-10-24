@@ -17,16 +17,15 @@
 """
 clips - clipboard for various systems
 """
-from os import name as osname
+import sys
+
+from os import name as osname, environ
 
 from platform import system
 
-from subprocess import Popen, PIPE
+from time import sleep
 
-try:
-    from tkinter import StringVar, Button, Entry, Frame, Label, Tk
-except ImportError:
-    from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
+from subprocess import Popen, PIPE
 
 def clips():
 	"""return `copy`, `paste` as system independent functions"""
