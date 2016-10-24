@@ -4,7 +4,7 @@ from os.path import abspath, dirname
 
 sys.path.append('%s/lib'%abspath(dirname(__file__)))
 
-from pwclip.clipper import clipgui
+from pwclip.clipper import clipper
 
 def pwclipper():
     mode = 'yk'
