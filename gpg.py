@@ -18,11 +18,66 @@ from os.path import \
 from getpass import \
     getpass as _getpass
 
+from time import sleep
+
+try:
+	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
+except ImportError:
+	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
+
 from gnupg import \
     GPG as _GPG
 
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error
+
+try:
+	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
+except ImportError:
+	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
+
+def inputgui():
+	"""gui representing function"""
+	class PassClip(Frame):
+		"""password clipping class for tkinter.Frame"""
+		_pwd = ''
+		def __init__(self, master):
+			Frame.__init__(self, master)
+			self.pack()
+			self.passwindow()
+		def _enterexit(self, _=None):
+			"""exit by saving challenge-response for input"""
+			self._pwd = self.pwd.get()
+			self.quit()
+		def _exit(self, _=None):
+			"""just exit (for ESC mainly)"""
+			self.quit()
+		def passwindow(self):
+			"""password input window creator"""
+			self.lbl = Label(self, text="input will not be displayed")
+			self.lbl.pack()
+			self.entry = Entry(self, show="*")
+			self.entry.bind("<Return>", self._enterexit)
+			self.entry.bind("<Escape>", self._exit)
+			self.entry.pack()
+			self.entry.focus_set()
+			self.pwd = StringVar()
+			self.entry["textvariable"] = self.pwd
+			self.ok = Button(self)
+			self.ok["text"] = "ok"
+			self.ok["command"] = self._enterexit
+			self.ok.pack(side="left")
+			self.cl = Button(self)
+			self.cl["text"] = "cancel"
+			self.cl["command"] = self.quit
+			self.cl.pack(side="right")
+	# instanciate Tk and create window
+	root = Tk()
+	pwc = PassClip(root)
+	pwc.lift()
+	pwc.mainloop()
+	root.destroy()
+	return pwc._pwd
 
 class GPGTool(object):
 	"""
@@ -42,6 +97,7 @@ class GPGTool(object):
 		raise RuntimeError('%s needs to be executable'%_binary)
 	agentinfo = '%s/S.gpg-agent'%_homedir
 	kginput = {}
+	pin = None
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%arg
@@ -111,11 +167,12 @@ class GPGTool(object):
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
+		opts = ['--batch', '--always-trust', '--pinentry-mode=loopback']
+		if self.pin: opts = opts + ['--passphrase=%s'%self.pin]
 		__g = _GPG(
             gnupghome=self.homedir, gpgbinary=self.binary,
             use_agent=self.agt, verbose=1 if self.dbg else 0,
-            options=['--batch', '--pinentry-mode=loopback'],
-            keyring=self.keyring, secret_keyring=self.secring)
+            options=opts, keyring=self.keyring, secret_keyring=self.secring)
 		__g.encoding = 'utf-8'
 		return __g
 
@@ -124,7 +181,7 @@ class GPGTool(object):
 		"""
 		password questioning function
 		"""
-		msg = 'enter new passphrase: '
+		msg = 'enter passphrase: '
 		tru = 'repeat that passphrase: '
 		while True:
 			try:
@@ -234,6 +291,7 @@ class GPGTool(object):
 		if 'keystr' in kwargs.keys():
 			res = self._gpg_.import_keys(keystr).results[0]
 			fingers = [res['fingerprint']]
+		#print(fingers)
 		output = None if not 'output' in kwargs.keys() else kwargs['output']
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=output)
@@ -244,4 +302,9 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
-		return self._gpg_.decrypt(message, always_trust=True, output=output)
+		__plain = self._gpg_.decrypt(message, always_trust=True, output=output)
+		if not __plain:
+			self.pin = self.pin if self.pin else inputgui()
+			__plain = self._gpg_.decrypt(
+                message, always_trust=True, output=output)
+		return __plain

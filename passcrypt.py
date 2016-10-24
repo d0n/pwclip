@@ -14,7 +14,7 @@ from colortext import tabd, error, fatal
 
 from system import userfind
 
-from cypher.gpg import GPGTool
+from cypher import GPGTool, ykchalres
 
 class PassCrypt(GPGTool):
 	dbg = False
@@ -49,7 +49,7 @@ class PassCrypt(GPGTool):
 			try:
 				with open(self.plain, 'r') as pfh:
 					__newpws = load(pfh.read())
-				#remove(self.plain)
+				remove(self.plain)
 			except FileNotFoundError:
 				__newpws = {}
 			for (k, v) in __newpws.items():
@@ -114,6 +114,8 @@ class PassCrypt(GPGTool):
 			print('%s\n  user = %s\n  getuser = %s'%(
                 self.lspw, self.user, usr))
 		__weaks = self._readcrypt()
+		if path.exists(self.crypt) and not __weaks:
+			__weaks = self._readcrypt()
 		if __weaks:
 			if self.user in __weaks.keys():
 				__weaks = __weaks[self.user]

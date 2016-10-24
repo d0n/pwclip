@@ -55,6 +55,8 @@ def ykchalres(chal, slot=2, ykser=None):
 	challenge-response function using specified slot
 	or default (2) as wrapping function for yubikeys() and slotchalres()
 	"""
+	if 'YKSERIAL' in environ.keys():
+		ykser = ykser if ykser else environ['YKSERIAL']
 	keys = yubikeys(ykser)
 	for (_, key) in keys.items():
 		return ykslotchalres(key, chal, slot)
