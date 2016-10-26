@@ -18,7 +18,7 @@ from cypher import GPGTool, ykchalres
 
 class PassCrypt(GPGTool):
 	dbg = False
-	aal = True
+	aal = False
 	user = userfind()
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
@@ -31,17 +31,21 @@ class PassCrypt(GPGTool):
 			if hasattr(self, key):
 				setattr(self, key, val)
 		__weaks = self._readcrypt()
-		if path.exists(self.plain):
-			try:
-				with open(self.plain, 'r') as pfh:
-					__newpws = load(pfh.read())
-				remove(self.plain)
-			except FileNotFoundError:
-				__newpws = {}
+		self.__weaks = __weaks if __weaks else {}
+		try:
+			with open(self.plain, 'r') as pfh:
+				__newpws = load(pfh.read())
+		except FileNotFoundError:
+			__newpws = {}
+		else:
+			remove(self.plain)
+		if self.__weaks and __newpws:
 			for (k, v) in __newpws.items():
-				__weaks[k] = v
-			self._writecrypt_(__weaks)
-		self.__weaks = __weaks
+				self.__weaks[k] = v
+		elif not self.__weaks:
+			self.__weaks = __newpws
+		if self.__weaks != __weaks:
+			self._writecrypt_(self.__weaks)
 
 	def _findentry(self, pattern, weaks=None):
 		__weaks = weaks if weaks else self.__weaks
@@ -117,13 +121,11 @@ class PassCrypt(GPGTool):
 				__ents = self.__weaks[self.user]
 				if usr:
 					__ents = self._findentry(usr, __ents)
-		return __ents
+			return __ents
 
 def passcrypt(usr):
 	if usr:
-		__entry = PassCrypt().lspw(usr)
-		if __entry:
-			return __entry[0]
+		return PassCrypt().lspw(usr)
 
 if __name__ == '__main__':
     exit(1)
