@@ -46,7 +46,7 @@ class PassCrypt(GPGTool):
 	def _findentry(self, pattern, weaks=None):
 		__weaks = weaks if weaks else self.__weaks
 		for (u, p) in __weaks.items():
-			if (len(p) > 1 and pattern in p[1]) or pattern == u:
+			if pattern == u or (len(p) == 2 and pattern in p[1]):
 				return p
 
 	def _readcrypt(self):
@@ -108,16 +108,15 @@ class PassCrypt(GPGTool):
                 self.lspw, self.user, usr))
 		aal = True if aal else self.aal
 		if self.__weaks:
-			self.__weaks = dict(self.__weaks)
-			if aal and usr:
-				for user in self.__weaks:
-					__ents = self._findentry(usr, self.__weaks[user])
-			elif aal:
+			if aal:
 				__ents = self.__weaks
+				if usr:
+					for user in __ents:
+						__ents = self._findentry(usr, __ents[user])
 			elif self.user in self.__weaks.keys():
-				__ents = dict(self.__weaks[self.user])
-			elif usr:
-				 __ents = self._findentry(usr, self.__weaks)
+				__ents = self.__weaks[self.user]
+				if usr:
+					__ents = self._findentry(usr, __ents)
 		return __ents
 
 def passcrypt(usr):
