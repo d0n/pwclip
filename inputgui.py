@@ -19,33 +19,33 @@ try:
 except ImportError:
 	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
-def inputgui():
+def inputgui(message="input will not be displayed"):
 	"""gui representing function"""
 	class PassClip(Frame):
 		"""password clipping class for tkinter.Frame"""
-		_pwd = ''
+		inp = None
 		def __init__(self, master):
 			Frame.__init__(self, master)
 			self.pack()
-			self.passwindow()
+			self.inputwindow()
 		def _enterexit(self, _=None):
 			"""exit by saving challenge-response for input"""
-			self._pwd = self.pwd.get()
+			self.inp = self.input.get()
 			self.quit()
 		def _exit(self, _=None):
 			"""just exit (for ESC mainly)"""
 			self.quit()
-		def passwindow(self):
+		def inputwindow(self):
 			"""password input window creator"""
-			self.lbl = Label(self, text="input will not be displayed")
+			self.lbl = Label(self, text=message)
 			self.lbl.pack()
 			self.entry = Entry(self, show="*")
 			self.entry.bind("<Return>", self._enterexit)
 			self.entry.bind("<Escape>", self._exit)
 			self.entry.pack()
 			self.entry.focus_set()
-			self.pwd = StringVar()
-			self.entry["textvariable"] = self.pwd
+			self.input = StringVar()
+			self.entry["textvariable"] = self.input
 			self.ok = Button(self)
 			self.ok["text"] = "ok"
 			self.ok["command"] = self._enterexit
@@ -60,4 +60,4 @@ def inputgui():
 	pwc.lift()
 	pwc.mainloop()
 	root.destroy()
-	return pwc._pwd
+	return pwc.inp
