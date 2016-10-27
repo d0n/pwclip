@@ -23,18 +23,13 @@ from os import environ, fork
 
 from time import sleep
 
-try:
-	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
-except ImportError:
-	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
-
+# local imports
 from system import clips, inputgui, xnotify
 from cypher import ykchalres, passcrypt
 
 def clipgui(mode='yk', wait=3):
 	"""gui representing function"""
 	copy, paste = clips()
-	wait = int(wait)
 	oclp = paste()
 	__input = inputgui()
 	if mode == 'yk':
@@ -46,8 +41,8 @@ def clipgui(mode='yk', wait=3):
 				xnotify(__res[1])
 			__res = __res[0]
 	copy(__res if __res else __input)
-	if oclp != paste():
+	if oclp != paste() and fork() == 0:
 		try:
-			sleep(wait)
+			sleep(int(wait))
 		finally:
 			copy(oclp)

@@ -8,6 +8,9 @@ if not __lib in sys.path:
 from pwclip.clipper import clipgui
 
 def pwclipper():
+    if [a for a in sys.argv if a == '-x']:
+        del sys.argv[sys.argv.index('-x')]
+        xmode = True
     mode = 'yk'
     if [a for a in sys.argv if a == '-c']:
         del sys.argv[sys.argv.index('-c')]
