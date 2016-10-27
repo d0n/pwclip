@@ -1,0 +1,6 @@
+pwclip
+pwclip/lib
+pwclip/lib/colortext
+pwclip/lib/cypher
+pwclip/lib/system
+pwclip/lib/system/user

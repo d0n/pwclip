@@ -1,0 +1,3 @@
+pyusb
+python-yubico
+python-gnupg
