@@ -4,17 +4,16 @@ from os import getcwd
 from os.path import join, dirname
 
 modname = distname = 'pwclip'
-numversion = (0, 2, 4)
+numversion = (0, 4, 0)
 version = '.'.join([str(num) for num in numversion])
-install_requires = ['pyusb', 'yubico', 'tkinter', 'gnupg']
-if sys.version_info[:2] > (2, 7):
-	install_requires = ['pyusb', 'yubico', 'gnupg']
+install_requires = ['pyusb', 'python-yubico', 'python-gnupg']
 license = 'GPL'
 description = "gui to temporarily save passwords to clipboard (paste-buffer)"
 web = 'http://janeiskla.de'
 mailinglist = ""
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
+download_url = 'https://pypi.python.org/pypi/pwclip/%s#downloads'%version
 classifiers = ['Development Status :: 4 - Beta',
                'Environment :: Console',
                'Environment :: MacOS X',

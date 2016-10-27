@@ -1,10 +1,11 @@
 import sys
 from os import environ
 from os.path import abspath, dirname
+__lib = '%s/lib'%abspath(dirname(__file__))
+if not __lib in sys.path:
+	sys.path.append(__lib)
 
-sys.path.append('%s/lib'%abspath(dirname(__file__)))
-
-from pwclip.clipper import clipper
+from pwclip.clipper import clipgui
 
 def pwclipper():
     mode = 'yk'

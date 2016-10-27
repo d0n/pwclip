@@ -28,20 +28,26 @@ try:
 except ImportError:
 	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
-from system import clips, inputgui
-
+from system import clips, inputgui, xnotify
 from cypher import ykchalres, passcrypt
 
-def clipper(wait=3, mode='yk'):
+def clipgui(mode='yk', wait=3):
 	"""gui representing function"""
 	copy, paste = clips()
+	wait = int(wait)
 	oclp = paste()
+	__input = inputgui()
 	if mode == 'yk':
-		copy(ykchalres(inputgui()))
+		__res = ykchalres(__input)
 	elif mode == 'pc':
-		copy(passcrypt(inputgui()))
+		__res = passcrypt(__input)
+		if __res:
+			if len(__res) == 2:
+				xnotify(__res[1])
+			__res = __res[0]
+	copy(__res if __res else __input)
 	if oclp != paste():
 		try:
-			sleep(int(wait))
+			sleep(wait)
 		finally:
 			copy(oclp)
