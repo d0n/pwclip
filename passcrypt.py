@@ -14,11 +14,14 @@ from colortext import tabd, error, fatal
 
 from system import userfind
 
-from cypher import GPGTool, ykchalres
+from cypher.gpg import GPGTool
+
+from cypher.yubi import ykchalres
 
 class PassCrypt(GPGTool):
 	dbg = False
 	aal = False
+	sho = False
 	user = userfind()
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
@@ -48,7 +51,8 @@ class PassCrypt(GPGTool):
 	def _findentry(self, pattern, weaks=None):
 		__weaks = weaks if weaks else self.__weaks
 		for (u, p) in __weaks.items():
-			if pattern == u or (len(p) == 2 and pattern in p[1]):
+			if pattern == u or (
+                  len(p) == 2 and len(pattern) > 1 and pattern in p[1]):
 				return p
 
 	def _readcrypt(self):
@@ -110,21 +114,25 @@ class PassCrypt(GPGTool):
 			self._writecrypt_(__weak)
 			return True
 
-	def lspw(self, usr=None, aal=None):
+	def lspw(self, usr=None, aal=None, display=None):
 		if self.dbg:
 			print('%s\n  user = %s\n  getuser = %s'%(
                 self.lspw, self.user, usr))
 		aal = True if aal else self.aal
+		sho = True if display else self.sho
 		if self.__weaks:
 			if aal:
 				__ents = self.__weaks
 				if usr:
-					for user in __ents:
-						__ents = self._findentry(usr, __ents[user])
+					for (user, entrys) in self.__weaks.items():
+						__match = self._findentry(usr, self.__weaks[user])
+						if __match:
+							__ents = {usr: __match}
+							break
 			elif self.user in self.__weaks.keys():
 				__ents = self.__weaks[self.user]
 				if usr:
-					__ents = self._findentry(usr, __ents)
+					__ents = {usr: self._findentry(usr, __ents)}
 			return __ents
 
 def passcrypt(usr):
