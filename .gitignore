@@ -1,5 +1,10 @@
 # ignore python compiled files #
 ##############
 __pycache__
+build
+dist
+deb_dist
+*.egg-info
 *.pyc
 *.swp
+*.tar.gz
