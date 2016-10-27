@@ -35,17 +35,15 @@ class PassCrypt(GPGTool):
 		try:
 			with open(self.plain, 'r') as pfh:
 				__newpws = load(pfh.read())
+			remove(self.plain)
 		except FileNotFoundError:
 			__newpws = {}
-		else:
-			remove(self.plain)
-		if self.__weaks and __newpws:
+		if __weaks and __newpws:
 			for (k, v) in __newpws.items():
-				self.__weaks[k] = v
-		elif not self.__weaks:
-			self.__weaks = __newpws
-		if self.__weaks != __weaks:
-			self._writecrypt_(self.__weaks)
+				__weaks[k] = v
+		if __weaks != self.__weaks:
+			self.__weaks = __weaks
+			self._writecrypt_(__weaks)
 
 	def _findentry(self, pattern, weaks=None):
 		__weaks = weaks if weaks else self.__weaks
@@ -67,7 +65,10 @@ class PassCrypt(GPGTool):
 		kwargs = {'output': self.crypt}
 		if 'GPGKEYS' in environ.keys():
 			kwargs['recipients'] = environ['GPGKEYS'].split(' ')
-		self.encrypt(message=dump(plain), **kwargs)
+		elif 'GPGKEY' in environ.keys():
+			kwargs['recipients'] = [environ['GPGKEY']]
+		self.__weaks = plain
+		self.encrypt(dump(self.__weaks), **kwargs)
 
 	def adpw(self, usr, pwd=None):
 		pwdcom = [pwd if pwd else self._passwd()]
@@ -84,14 +85,17 @@ class PassCrypt(GPGTool):
 			return True
 
 	def chpw(self, usr, pwd=None):
-		pwd = pwd if pwd else self._passwd()
+		pwdcom = [pwd if pwd else self._passwd()]
+		com = input('enter a comment: ')
+		if com:
+			pwdcom.append(com)
 		if self.dbg:
-			print('%s\n adduser = %s addpass = %s'%(
-                self.chpw, usr, pwd))
+			print('%s\n adduser = %s addpass, comment = %s'%(
+                self.chpw, usr, pwdcom))
 		__weak = self._readcrypt()
 		if __weak and self.user in __weak.keys() and \
               usr in __weak[self.user].keys():
-			__weak[self.user][usr] = pwd
+			__weak[self.user][usr] = pwdcom
 			self._writecrypt_(__weak)
 			return True
 

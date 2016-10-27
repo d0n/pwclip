@@ -61,5 +61,7 @@ def ykchalres(chal, slot=2, ykser=None):
 		ykser = ykser if ykser else environ['YKSERIAL']
 	keys = yubikeys(ykser)
 	for (_, key) in keys.items():
-		return ykslotchalres(key, chal, slot)
+		res = ykslotchalres(key, chal, slot)
+		if res:
+			return res
 
