@@ -18,20 +18,31 @@
 # global & stdlib imports
 import sys
 
-from os import path
+from os import environ, path, fork
 
 from yaml import load
 
 from argparse import ArgumentParser
 
+from time import sleep
+
 # local relative imports
-from colortext import tabd
+from colortext import tabd, fatal
 
-from system import clips
+from system import inputgui, copy, paste, xnotify
 
-from cypher import PassCrypt
+from cypher import PassCrypt, ykchalres
 
-from pwclip import clipgui
+from pwclip.__pkginfo__ import version
+
+def forkwaitclip(text, oclp, wait=3):
+	if text != oclp and fork() == 0:
+		try:
+			copy(text)
+			sleep(3)
+		finally:
+			copy(oclp)
+		exit(0)
 
 # global default variables
 def cli():
@@ -45,12 +56,15 @@ def cli():
 	pars = ArgumentParser() #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
+        '--version',
+        action='version', version='%(prog)s-v'+version)
+	pars.add_argument(
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
-        '--all',
+        '-A', '--all',
         dest='aal', action='store_true',
-        help='can be combined with the -l option to list all users entrys')
+        help='switch to all users entrys (instead of current user only)')
 	pars.add_argument(
         '-a', '--add',
         dest='add', metavar='ENTRY',
@@ -62,55 +76,68 @@ def cli():
 	pars.add_argument(
         '-d', '--delete',
         dest='rms', metavar='ENTRY', nargs='+',
-        help='delete one or more ENTRRY(s)')
+        help='delete ENTRY(s) from the passcrypt list')
 	pars.add_argument(
         '-l', '--list',
-        dest='lst', nargs='?', default=False,
-        metavar='PATTERN', help='list all or entrys matching PATTERN if given')
+        nargs='?', default=False,
+        dest='lst', metavar='PATTERN',
+        help='search entry matching PATTERN if given otherwise list all')
+	pars.add_argument(
+        '-p', '--passcrypt',
+        dest='pcr', metavar='CRYPTFILE',
+        help='set location of CRYPTFILE to use for gpg features')
+	pars.add_argument(
+        '-r', '--recipients',
+        dest='rcp', metavar='RECIPIENT',
+        help='gpg recipients (identifier) for GPG-Keys to use')
 	pars.add_argument(
         '-u', '--user',
         dest='usr', metavar='USER',
-        help='query entrys of USER')
-
+        help='query entrys of USER (defaults to current user)')
+	pars.add_argument(
+        '-y', '--ykserial',
+        nargs='?', default=False,
+        dest='yks', metavar='SERIAL',
+        help='switch to yubikey mode and optionally set SERIAL of yubikey')
 	args = pars.parse_args()
 	pargs = [a for a in ['dbg' if args.dbg else None] if a]
 	pkwargs = {'aal': True if args.aal else None}
 	if args.usr:
 		pkwargs['user'] = args.usr
-	pcm = PassCrypt(*pargs, **pkwargs)
-	copy, paste = clips()
 	oclp = paste()
-	if args.lst is not False:
-		entrys = pcm.lspw(args.lst)
-		if not entrys:
+	if args.yks is not False:
+		if 'YKSERIAL' in environ.keys():
+			ykser = environ['YKSERIAL']
+		ykser = args.yks if args.yks else None
+		forkwaitclip(ykchalres(inputgui(), ykser=ykser), oclp)
+		exit(0)
+	pcm = PassCrypt(*pargs, **pkwargs)
+	if args.lst:
+		__pc = pcm.lspw(args.lst)
+		if not __pc:
 			fatal('could not decrypt')
-		if args.lst:
-			if len(entrys) == 2:
-				xnotify('%s: %s'%(args.lst, entrys[1]))
-			if fork() == 0:
-				if not [e for e in entrys if e]:
-					fatal('no entry matching', args.lst)
-				try:
-					copy(entrys[0])
-					sleep(3)
-				finally:
-					copy(oclp)
-			exit(0)
-		print(tabd(entrys))
+		if len(__pc) == 2:
+			xnotify('%s: %s'%(args.lst, __pc[1]))
+		if not [e for e in __pc if e]:
+			fatal('no entry matching', args.lst)
+		print(tabd(__pc))
+		forkwaitclip(__pc[0], oclp)
 	elif args.add:
 		if not pcm.adpw(args.add):
 			error('could not add entry', args.add)
+		print(args.add, '=', pcm.lspw(args.add))
 	elif args.chg:
 		if not pcm.chpw(args.chg):
 			error('could not change entry', args.chg)
+		print(args.chg, '=', pcm.lspw(args.chg))
 	elif args.rms:
 		for r in args.rms:
 			if not pcm.rmpw(r):
 				error('could not delete entry', r)
-
-
-
-
-
-if __name__ == '__main__':
-	cli()
+		print(tabd(pcm.lspw()))
+	else:
+		__in = inputgui()
+		__pc = pcm.lspw(__in)
+		if __pc and len(__pc) == 2:
+			xnotify('%s: %s'%(__in, __pc[1]))
+		forkwaitclip(__pc[0], oclp)
