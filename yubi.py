@@ -18,6 +18,8 @@
 yubikey challenge-response lib
 """
 
+from os import environ
+
 from binascii import hexlify
 
 from yubico import \

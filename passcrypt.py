@@ -18,6 +18,7 @@ from cypher import GPGTool, ykchalres
 
 class PassCrypt(GPGTool):
 	dbg = False
+	aal = False
 	user = userfind()
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
@@ -29,32 +30,28 @@ class PassCrypt(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		self._mergeplain_()
-		if self.dbg:
-			lim = int(max(len(k) for k in PassCrypt.__dict__.keys()))+4
-			print('%s\n%s\n\n%s\n%s\n'%(
-                PassCrypt.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(PassCrypt.__dict__.items())),
-                PassCrypt.__init__,
-                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
-                    ) for (k, v) in sorted(self.__dict__.items()))))
-
-	def _mergeplain_(self):
-		__pws = self._readcrypt()
-		if not __pws:
-			__pws = {self.user:[{}]}
-		if path.exists(self.plain):
-			try:
-				with open(self.plain, 'r') as pfh:
-					__newpws = load(pfh.read())
-				remove(self.plain)
-			except FileNotFoundError:
-				__newpws = {}
+		__weaks = self._readcrypt()
+		self.__weaks = __weaks if __weaks else {}
+		try:
+			with open(self.plain, 'r') as pfh:
+				__newpws = load(pfh.read())
+		except FileNotFoundError:
+			__newpws = {}
+		else:
+			remove(self.plain)
+		if self.__weaks and __newpws:
 			for (k, v) in __newpws.items():
-				__pws[k] = v
-			self._writecrypt_(__pws)
+				self.__weaks[k] = v
+		elif not self.__weaks:
+			self.__weaks = __newpws
+		if self.__weaks != __weaks:
+			self._writecrypt_(self.__weaks)
+
+	def _findentry(self, pattern, weaks=None):
+		__weaks = weaks if weaks else self.__weaks
+		for (u, p) in __weaks.items():
+			if pattern == u or (len(p) == 2 and pattern in p[1]):
+				return p
 
 	def _readcrypt(self):
 		if self.dbg:
@@ -109,27 +106,26 @@ class PassCrypt(GPGTool):
 			self._writecrypt_(__weak)
 			return True
 
-	def lspw(self, usr=None, crypt=None):
+	def lspw(self, usr=None, aal=None):
 		if self.dbg:
 			print('%s\n  user = %s\n  getuser = %s'%(
                 self.lspw, self.user, usr))
-		__weaks = self._readcrypt()
-		if path.exists(self.crypt) and not __weaks:
-			__weaks = self._readcrypt()
-		if __weaks:
-			if self.user in __weaks.keys():
-				__weaks = __weaks[self.user]
-			if not usr:
-				return __weaks
-			for (u, p) in __weaks.items():
-				if usr == u:
-					return p
+		aal = True if aal else self.aal
+		if self.__weaks:
+			if aal:
+				__ents = self.__weaks
+				if usr:
+					for user in __ents:
+						__ents = self._findentry(usr, __ents[user])
+			elif self.user in self.__weaks.keys():
+				__ents = self.__weaks[self.user]
+				if usr:
+					__ents = self._findentry(usr, __ents)
+			return __ents
 
 def passcrypt(usr):
 	if usr:
-		__entry = PassCrypt().lspw(usr)
-		if __entry:
-			return __entry[0]
+		return PassCrypt().lspw(usr)
 
 if __name__ == '__main__':
     exit(1)
