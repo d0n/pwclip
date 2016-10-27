@@ -169,3 +169,5 @@ def clips():
 	elif osname == 'mac' or system() == 'Darwin':
 		return osxclips()
 	return linclips()
+
+copy, paste = clips()

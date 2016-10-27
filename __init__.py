@@ -24,7 +24,7 @@ from system.user.whoami import whoami
 
 from system.user.find import userfind
 
-from system.clips import clips
+from system.clips import clips, copy, paste
 
 from system.inputgui import inputgui
 
