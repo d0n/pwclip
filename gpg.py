@@ -31,11 +31,6 @@ from gnupg import \
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error
 
-try:
-	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
-except ImportError:
-	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
-
 def inputgui():
 	"""gui representing function"""
 	class PassClip(Frame):
