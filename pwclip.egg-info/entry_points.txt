@@ -1,3 +1,0 @@
-[console_scripts]
-pwclip = pwclip.__init__:pwclipper
-
