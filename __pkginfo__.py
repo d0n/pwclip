@@ -4,9 +4,11 @@ from os import getcwd
 from os.path import join, dirname
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 0)
+numversion = (0, 4, 4)
 version = '.'.join([str(num) for num in numversion])
-install_requires = ['pyusb', 'python-gnupg', 'python-yubico', 'python-yaml']
+provides = ['pwclip']
+install_requires = [
+    'pyusb', 'PyYAML', 'argcomplete', 'python-gnupg']
 license = 'GPL'
 description = "gui to temporarily save passwords to clipboard (paste-buffer)"
 web = 'http://janeiskla.de'
@@ -31,8 +33,9 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: Utilities',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
+
 try:
-	with open(join(dirname(__file__), 'README'), 'r') as rfh:
+	with open(join(getcwd(), 'README'), 'r') as rfh:
 		readme = rfh.read()
 except FileNotFoundError:
 	readme = ''
