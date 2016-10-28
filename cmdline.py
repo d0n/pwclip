@@ -207,3 +207,4 @@ def cli():
 	if not args.sho:
 		__ent = __dictreplace(__ent)
 	print(tabd(__ent))
+exit(0)
