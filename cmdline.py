@@ -35,7 +35,7 @@ from system import inputgui, copy, paste, xnotify
 
 from cypher import PassCrypt, ykchalres
 
-from pwclip.__pkginfo__ import version, distname
+from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, oclp, wait=3):
 	if text != oclp and fork() == 0:
@@ -66,13 +66,14 @@ def __dictreplace(pwdict):
 
 # global default variables
 def cli():
-	cfg = path.expanduser('~/.config/%s.yaml'%distname)
+	_me = path.basename(__file__)
+	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
 		with open(cfg, 'r') as cfh:
 			cfgs = load(cfh.rad())
 	except FileNotFoundError:
 		cfgs = {}
-	pars = ArgumentParser(prog=distname) #add_help=False)
+	pars = ArgumentParser() #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -207,4 +208,3 @@ def cli():
 	if not args.sho:
 		__ent = __dictreplace(__ent)
 	print(tabd(__ent))
-exit(0)
