@@ -21,6 +21,9 @@ import gi
 gi.require_version('Notify', '0.7')
 from gi.repository import Notify as xnote
 
-def xnotify(msg, name=stack()[1][3]):
-	xnote.init(name)
-	xnote.Notification.new(msg).show()
+def xnotify(msg, name=stack()[1][3], wait=3):
+	xnote.init(str(name))
+	note = xnote.Notification.new(msg)
+	wait = int(wait)*600
+	note.set_timeout(wait)
+	note.show()
