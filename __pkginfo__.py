@@ -8,7 +8,7 @@ numversion = (0, 4, 4)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
-    'pyusb', 'PyYAML', 'argcomplete', 'python-gnupg']
+    'pyusb', 'PyYAML', 'argcomplete', 'python-gnupg', 'python-yubico']
 license = 'GPL'
 description = "gui to temporarily save passwords to clipboard (paste-buffer)"
 web = 'http://janeiskla.de'
