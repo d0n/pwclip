@@ -26,6 +26,11 @@ class PassCrypt(GPGTool):
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
 	crypt = '%s/.passcrypt'%home
+	recvs = None
+	if 'GPGKEYS' in environ.keys():
+		recvs = environ['GPGKEYS'].split(' ')
+	elif 'GPGKEY' in environ.keys():
+		recvs = [environ['GPGKEY']]
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -34,19 +39,26 @@ class PassCrypt(GPGTool):
 			if hasattr(self, key):
 				setattr(self, key, val)
 		__weaks = self._readcrypt()
-		self.__weaks = __weaks if __weaks else {}
+		if path.exists(self.crypt) and __weaks is None:
+			self._garr()
+			__weaks = self._readcrypt()
 		try:
 			with open(self.plain, 'r') as pfh:
 				__newpws = load(pfh.read())
 			remove(self.plain)
 		except FileNotFoundError:
 			__newpws = {}
-		if __weaks and __newpws:
+		if __newpws:
+			__weaks = __weaks if __weaks else {}
 			for (k, v) in __newpws.items():
 				__weaks[k] = v
-		if __weaks != self.__weaks:
-			self.__weaks = __weaks
+		if __weaks != self._readcrypt():
 			self._writecrypt_(__weaks)
+		self.__weaks = __weaks
+
+	def _chkcrypt(self):
+		if self._readcrypt() == self.__weaks:
+			return True
 
 	def _findentry(self, pattern, weaks=None):
 		__weaks = weaks if weaks else self.__weaks
@@ -58,21 +70,24 @@ class PassCrypt(GPGTool):
 	def _readcrypt(self):
 		if self.dbg:
 			print('%s\n  crypt = %s'%(self._readcrypt, self.crypt))
-		if path.exists(self.crypt):
+		try:
 			with open(self.crypt, 'r') as vlt:
 				crypt = vlt.read()
-			return load(str(self.decrypt(crypt)))
+		except FileNotFoundError:
+			return None
+		return load(str(self.decrypt(crypt)))
 
 	def _writecrypt_(self, plain):
 		if self.dbg:
 			print('%s\n  weaknez = %s'%(self._writecrypt, plain))
 		kwargs = {'output': self.crypt}
-		if 'GPGKEYS' in environ.keys():
-			kwargs['recipients'] = environ['GPGKEYS'].split(' ')
-		elif 'GPGKEY' in environ.keys():
-			kwargs['recipients'] = [environ['GPGKEY']]
+		if self.recvs:
+			kwargs['recipients'] = self.recvs
 		self.__weaks = plain
-		self.encrypt(dump(self.__weaks), **kwargs)
+		while True:
+			self.encrypt(message=dump(self.__weaks), **kwargs)
+			if self._chkcrypt():
+				break
 
 	def adpw(self, usr, pwd=None):
 		pwdcom = [pwd if pwd else self._passwd()]

@@ -1,27 +1,19 @@
 #!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
 """
 gpgtool module
 """
-# -*- encoding: utf-8 -*-
 
 # (std)lib imports
-from os import \
-    X_OK as _XOK, \
-    access as _access, \
-    getcwd as _getcwd, \
-    environ as _environ
+from os import X_OK, access, getcwd, environ
 
-from os.path import \
-    isfile as _isfile, \
-    expanduser as _expanduser
+from os.path import isfile, expanduser
 
-from getpass import \
-    getpass as _getpass
+from getpass import getpass
 
-from time import sleep
+from psutil import process_iter as piter
 
-from gnupg import \
-    GPG as _GPG
+from gnupg import GPG
 
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error
@@ -38,13 +30,13 @@ class GPGTool(object):
 	"""
 	_dbg = None
 	_agt = True
-	_homedir = _expanduser('~/.gnupg')
+	_homedir = expanduser('~/.gnupg')
 	_binary = '/usr/bin/gpg2'
-	if not _isfile(_binary):
+	if not isfile(_binary):
 		_binary = '/usr/bin/gpg'
-	if not _isfile(_binary) or not _access(_binary, _XOK):
+	if not isfile(_binary) or not access(_binary, X_OK):
 		raise RuntimeError('%s needs to be executable'%_binary)
-	agentinfo = '%s/S.gpg-agent'%_homedir
+	agentinfo = '%s/S.gpg-agent:0:1'%_homedir
 	kginput = {}
 	__pin = None
 	def __init__(self, *args, **kwargs):
@@ -75,7 +67,7 @@ class GPGTool(object):
 
 	@property                # agt <bool>
 	def agt(self):
-		_environ['GPG_AGENT_INFO'] = self.agentinfo
+		environ['GPG_AGENT_INFO'] = self.agentinfo
 		return self._agt
 	@agt.setter
 	def agt(self, val):
@@ -86,9 +78,9 @@ class GPGTool(object):
 		return self._homedir
 	@homedir.setter
 	def homedir(self, val):
-		val = val if not val.startswith('~') else _expanduser(val)
+		val = val if not val.startswith('~') else expanduser(val)
 		if not val.startswith('/'):
-			val = '%s/%s'%(_getcwd(), val)
+			val = '%s/%s'%(getcwd(), val)
 		self._homedir = val
 
 	@property                # gpgbin <str>
@@ -97,7 +89,7 @@ class GPGTool(object):
 		return self._binary
 	@binary.setter
 	def binary(self, val):
-		if _isfile(val) and _access(val, _XOK):
+		if isfile(val) and access(val, X_OK):
 			self._binary = val
 
 	@property                # keyring <str>
@@ -118,12 +110,24 @@ class GPGTool(object):
 		"""object"""
 		opts = ['--batch', '--always-trust', '--pinentry-mode=loopback']
 		if self.__pin: opts = opts + ['--passphrase=%s'%self.__pin]
-		__g = _GPG(
+		__g = GPG(
             gnupghome=self.homedir, gpgbinary=self.binary,
             use_agent=self.agt, verbose=1 if self.dbg else 0,
             options=opts, keyring=self.keyring, secret_keyring=self.secring)
 		__g.encoding = 'utf-8'
 		return __g
+
+	@staticmethod
+	def _garr():
+		for proc in piter():
+			if proc.name() in ('gpg-agent', 'scdaemon', 'dirmngr'):
+				try:
+					proc.kill()
+				except PermissionError:
+					error(
+                        'cannot kill process',
+                        proc.name, 'with PID', proc.pid())
+		environ['GPG_AGENT_INFO'] = expanduser('~/.gnupg/S.gpg-agent:0:1')
 
 	@staticmethod
 	def _passwd(rpt=False):
@@ -135,9 +139,9 @@ class GPGTool(object):
 		while True:
 			try:
 				if not rpt:
-					return _getpass(msg)
-				__pwd = _getpass(msg)
-				if __pwd == _getpass(tru):
+					return getpass(msg)
+				__pwd = getpass(msg)
+				if __pwd == getpass(tru):
 					return __pwd
 				error('passwords did not match')
 			except KeyboardInterrupt:
@@ -240,8 +244,8 @@ class GPGTool(object):
 		if 'keystr' in kwargs.keys():
 			res = self._gpg_.import_keys(keystr).results[0]
 			fingers = [res['fingerprint']]
-		#print(fingers)
 		output = None if not 'output' in kwargs.keys() else kwargs['output']
+		#print(fingers)
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=output)
 
