@@ -34,8 +34,6 @@ class GPGTool(object):
 	_binary = '/usr/bin/gpg2'
 	if not isfile(_binary):
 		_binary = '/usr/bin/gpg'
-	if not isfile(_binary) or not access(_binary, X_OK):
-		raise RuntimeError('%s needs to be executable'%_binary)
 	agentinfo = '%s/S.gpg-agent:0:1'%_homedir
 	kginput = {}
 	__pin = None
@@ -108,7 +106,9 @@ class GPGTool(object):
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
-		opts = ['--batch', '--always-trust', '--pinentry-mode=loopback']
+		opts = [
+            '--batch', '--always-trust',
+            '--pinentry-mode=loopback', '--no-default-recipient']
 		if self.__pin: opts = opts + ['--passphrase=%s'%self.__pin]
 		__g = GPG(
             gnupghome=self.homedir, gpgbinary=self.binary,
@@ -137,15 +137,12 @@ class GPGTool(object):
 		msg = 'enter passphrase: '
 		tru = 'repeat that passphrase: '
 		while True:
-			try:
-				if not rpt:
-					return getpass(msg)
-				__pwd = getpass(msg)
-				if __pwd == getpass(tru):
-					return __pwd
-				error('passwords did not match')
-			except KeyboardInterrupt:
-				abort()
+			if not rpt:
+				return getpass(msg)
+			__pwd = getpass(msg)
+			if __pwd == getpass(tru):
+				return __pwd
+			error('passwords do not match')
 
 	def genkeys(self, **kginput):
 		"""
