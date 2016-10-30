@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-from os import path, uname, remove, environ
+from os import path, remove, uname, environ
+
+from shutil import move
 
 from tarfile import open as taropen
 
@@ -71,8 +73,8 @@ class PassCrypt(GPGTool):
 		if self.dbg:
 			print('%s\n  crypt = %s'%(self._readcrypt, self.crypt))
 		try:
-			with open(self.crypt, 'r') as vlt:
-				crypt = vlt.read()
+			with open(self.crypt, 'r') as cfh:
+				crypt = cfh.read()
 		except FileNotFoundError:
 			return None
 		return load(str(self.decrypt(crypt)))
@@ -84,6 +86,7 @@ class PassCrypt(GPGTool):
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
 		self.__weaks = plain
+		move(self.crypt, '%s.1'%self.crypt)
 		while True:
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
