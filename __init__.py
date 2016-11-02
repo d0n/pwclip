@@ -29,3 +29,5 @@ from system.clips import clips, copy, paste
 from system.inputgui import inputgui
 
 from system.xnotify import xnotify
+
+from system.xyesno import xyesno
