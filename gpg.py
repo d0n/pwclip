@@ -166,7 +166,7 @@ class GPGTool(object):
 				del kginput['passphrase']
 			elif kginput['passphrase'] == 'stdin':
 				kginput['passphrase'] = self.__passwd(rpt=True)
-		print(red('generating %s-bit keys - this WILL take some time'%(
+		print(red('generating %s-bit keys - this may take some time'%(
             kginput['key_length'])))
 		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 		if self.dbg:
@@ -219,6 +219,7 @@ class GPGTool(object):
 		secret = False if not 'secret' in kwargs.keys() else kwargs['secret']
 		keys = dict((k, v) for (k, v) in self.findkey(**kwargs).items())
 		if patterns:
+			print(patterns)
 			keys = dict((k, v) for p in list(patterns) \
                 for (k, v) in self.findkey(p, **kwargs).items())
 		return keys

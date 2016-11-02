@@ -14,7 +14,7 @@ from tempfile import NamedTemporaryFile
 
 from colortext import tabd, error, fatal
 
-from system import userfind
+from system import userfind, inputgui
 
 from cypher.gpg import GPGTool
 
@@ -28,7 +28,7 @@ class PassCrypt(GPGTool):
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
 	crypt = '%s/.passcrypt'%home
-	recvs = None
+	recvs = [user]
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
@@ -40,6 +40,7 @@ class PassCrypt(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
+		self.__chkkeys__()
 		__weaks = self._readcrypt()
 		if path.exists(self.crypt) and __weaks is None:
 			self._garr()
@@ -57,6 +58,20 @@ class PassCrypt(GPGTool):
 		if __weaks != self._readcrypt():
 			self._writecrypt_(__weaks)
 		self.__weaks = __weaks
+
+	def __chkkeys__(self):
+		key = self.export(*self.recvs, **{'typ': 'e'})
+		if not key:
+			while True:
+				__pwd = inputgui('enter new encryption passphrase')
+				if __pwd == inputgui('repeat that passphrase'):
+					break
+			key = self.genkeys({
+                'key_length': 4096, 'key_type': 'RSA',
+                'real_name': recvs, 'name_comment': 'passcrypt key',
+                'passphrase': __pwd})
+			key = [k['e'] for k in key][0]
+		return key
 
 	def _chkcrypt(self):
 		if self._readcrypt() == self.__weaks:
