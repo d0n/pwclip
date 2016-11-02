@@ -54,13 +54,14 @@ def __passreplace(pwlist):
 
 def __dictreplace(pwdict):
 	__pwdict = {}
-	for (usr, ent) in pwdict.items():
-		if isinstance(ent, dict):
-			__pwdict[usr] = {}
-			for (u, e) in ent.items():
-				__pwdict[usr][u] = __passreplace(e)
-		elif ent:
-			__pwdict[usr] = __passreplace(ent)
+	if pwdict:
+		for (usr, ent) in pwdict.items():
+			if isinstance(ent, dict):
+				__pwdict[usr] = {}
+				for (u, e) in ent.items():
+					__pwdict[usr][u] = __passreplace(e)
+			elif ent:
+				__pwdict[usr] = __passreplace(ent)
 	return __pwdict
 
 
