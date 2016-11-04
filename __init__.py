@@ -31,3 +31,5 @@ from system.inputgui import inputgui
 from system.xnotify import xnotify
 
 from system.xyesno import xyesno
+
+from system.xmsgok import xmsgok
