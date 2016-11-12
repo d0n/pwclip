@@ -219,7 +219,6 @@ class GPGTool(object):
 		secret = False if not 'secret' in kwargs.keys() else kwargs['secret']
 		keys = dict((k, v) for (k, v) in self.findkey(**kwargs).items())
 		if patterns:
-			print(patterns)
 			keys = dict((k, v) for p in list(patterns) \
                 for (k, v) in self.findkey(p, **kwargs).items())
 		return keys
