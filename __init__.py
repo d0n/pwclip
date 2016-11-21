@@ -26,7 +26,7 @@ from system.user.find import userfind
 
 from system.clips import clips, copy, paste
 
-from system.inputgui import inputgui
+from system.xinput import xinput
 
 from system.xnotify import xnotify
 

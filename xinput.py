@@ -19,7 +19,7 @@ try:
 except ImportError:
 	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
-def inputgui(message="input will not be displayed"):
+def xinput(message="input will not be displayed"):
 	"""gui representing function"""
 	class PassClip(Frame):
 		"""password clipping class for tkinter.Frame"""
