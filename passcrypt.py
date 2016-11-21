@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-from os import path, remove, uname, environ
-
-from shutil import move
+from os import path, uname, remove, environ
 
 from tarfile import open as taropen
 
@@ -10,11 +8,13 @@ from yaml import load, dump
 
 from time import sleep
 
+from shutil import move
+
 from tempfile import NamedTemporaryFile
 
 from colortext import tabd, error, fatal
 
-from system import userfind, inputgui
+from system import userfind
 
 from cypher.gpg import GPGTool
 
@@ -28,7 +28,7 @@ class PassCrypt(GPGTool):
 	home = userfind(user, 'home')
 	plain = '%s/.pwd.yaml'%home
 	crypt = '%s/.passcrypt'%home
-	recvs = [user]
+	recvs = None
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
@@ -40,7 +40,6 @@ class PassCrypt(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		self.__chkkeys__()
 		__weaks = self._readcrypt()
 		if path.exists(self.crypt) and __weaks is None:
 			self._garr()
@@ -59,20 +58,6 @@ class PassCrypt(GPGTool):
 			self._writecrypt_(__weaks)
 		self.__weaks = __weaks
 
-	def __chkkeys__(self):
-		key = self.export(*self.recvs, **{'typ': 'e'})
-		if not key:
-			while True:
-				__pwd = inputgui('enter new encryption passphrase')
-				if __pwd == inputgui('repeat that passphrase'):
-					break
-			key = self.genkeys({
-                'key_length': 4096, 'key_type': 'RSA',
-                'real_name': recvs, 'name_comment': 'passcrypt key',
-                'passphrase': __pwd})
-			key = [k['e'] for k in key][0]
-		return key
-
 	def _chkcrypt(self):
 		if self._readcrypt() == self.__weaks:
 			return True
@@ -88,8 +73,8 @@ class PassCrypt(GPGTool):
 		if self.dbg:
 			print('%s\n  crypt = %s'%(self._readcrypt, self.crypt))
 		try:
-			with open(self.crypt, 'r') as cfh:
-				crypt = cfh.read()
+			with open(self.crypt, 'r') as vlt:
+				crypt = vlt.read()
 		except FileNotFoundError:
 			return None
 		return load(str(self.decrypt(crypt)))
@@ -101,11 +86,15 @@ class PassCrypt(GPGTool):
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
 		self.__weaks = plain
-		move(self.crypt, '%s.1'%self.crypt)
+		try:
+			move(self.crypt, '%s.1'%self.crypt)
+		except FileNotFoundError:
+			pass
 		while True:
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
 				break
+	
 
 	def adpw(self, usr, pwd=None):
 		pwdcom = [pwd if pwd else self._passwd()]

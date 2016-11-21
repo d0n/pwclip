@@ -48,8 +48,8 @@ def ykslotchalres(yk, chal, slot):
 	"""
 	try:
 		return hexlify(yk.challenge_response(
-			chal.ljust(64, '\0').encode(), slot=slot)).decode()
-	except yubico_exception.YubicoError:
+			str(chal).ljust(64, '\0').encode(), slot=slot)).decode()
+	except (AttributeError, yubico_exception.YubicoError):
 		pass
 
 def ykchalres(chal, slot=2, ykser=None):

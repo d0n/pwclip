@@ -16,9 +16,9 @@ from psutil import process_iter as piter
 from gnupg import GPG
 
 # local imports
-from colortext import blu, red, yel, bgre, tabd, abort, error
+from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
-from system import inputgui
+from system import xinput
 
 class GPGTool(object):
 	"""
@@ -34,6 +34,8 @@ class GPGTool(object):
 	_binary = '/usr/bin/gpg2'
 	if not isfile(_binary):
 		_binary = '/usr/bin/gpg'
+	if not isfile(_binary) or not access(_binary, X_OK):
+		raise RuntimeError('%s needs to be executable'%_binary)
 	agentinfo = '%s/S.gpg-agent:0:1'%_homedir
 	kginput = {}
 	__pin = None
@@ -106,9 +108,7 @@ class GPGTool(object):
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
-		opts = [
-            '--batch', '--always-trust',
-            '--pinentry-mode=loopback', '--no-default-recipient']
+		opts = ['--batch', '--always-trust', '--pinentry-mode=loopback']
 		if self.__pin: opts = opts + ['--passphrase=%s'%self.__pin]
 		__g = GPG(
             gnupghome=self.homedir, gpgbinary=self.binary,
@@ -137,12 +137,15 @@ class GPGTool(object):
 		msg = 'enter passphrase: '
 		tru = 'repeat that passphrase: '
 		while True:
-			if not rpt:
-				return getpass(msg)
-			__pwd = getpass(msg)
-			if __pwd == getpass(tru):
-				return __pwd
-			error('passwords do not match')
+			try:
+				if not rpt:
+					return getpass(msg)
+				__pwd = getpass(msg)
+				if __pwd == getpass(tru):
+					return __pwd
+				error('passwords did not match')
+			except KeyboardInterrupt:
+				abort()
 
 	def genkeys(self, **kginput):
 		"""
@@ -166,7 +169,7 @@ class GPGTool(object):
 				del kginput['passphrase']
 			elif kginput['passphrase'] == 'stdin':
 				kginput['passphrase'] = self.__passwd(rpt=True)
-		print(red('generating %s-bit keys - this may take some time'%(
+		print(red('generating %s-bit keys - this WILL take some time'%(
             kginput['key_length'])))
 		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 		if self.dbg:
@@ -254,7 +257,9 @@ class GPGTool(object):
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
 		__plain = self._gpg_.decrypt(message, always_trust=True, output=output)
 		if not __plain:
-			self.__pin = inputgui('enter gpg-passphrase')
+			self.__pin = xinput('enter gpg-passphrase')
+			if not self.__pin:
+				fatal('cannot continue without gpg passphrase')
 			__plain = self._gpg_.decrypt(
                 message, always_trust=True, output=output)
 		return __plain
