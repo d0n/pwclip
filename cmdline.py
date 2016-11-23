@@ -157,7 +157,7 @@ def cli():
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
 		ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		forkwaitclip(ykchalres(inputgui(), ykser=ykser), oclp, args.time)
+		forkwaitclip(ykchalres(xinput(), ykser=ykser), oclp, args.time)
 		exit(0)
 	if args.lst and args.lst.isdigit() and int(args.lst) <= 3600:
 		args.time = int(args.lst)
@@ -192,7 +192,7 @@ def cli():
 				fatal('could not delete entry', r)
 		__ent = pcm.lspw()
 	else:
-		__in = inputgui()
+		__in = xinput()
 		if not __in:
 			exit(1)
 		__ent = pcm.lspw(__in)
