@@ -31,7 +31,7 @@ from time import sleep
 # local relative imports
 from colortext import tabd, fatal
 
-from system import inputgui, copy, paste, xnotify
+from system import xinput, copy, paste, xnotify
 
 from cypher import PassCrypt, ykchalres
 
