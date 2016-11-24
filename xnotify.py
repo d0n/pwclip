@@ -16,10 +16,12 @@
 #
 """linux x-notification library"""
 from inspect import stack
-
-import gi
-gi.require_version('Notify', '0.7')
-from gi.repository import Notify as xnote
+try:
+	import gi
+	gi.require_version('Notify', '0.7')
+	from gi.repository import Notify as xnote
+except AttributeError:
+	def xnotify(*args): return 
 
 def xnotify(msg, name=stack()[1][3], wait=3):
 	xnote.init(str(name))
