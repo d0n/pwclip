@@ -18,7 +18,12 @@
 # global & stdlib imports
 import sys
 
-from os import environ, path, fork
+from os import environ, path
+
+try:
+    import fork
+except ImportError:
+	def fork(): return 0
 
 from os.path import isfile
 
@@ -31,7 +36,7 @@ from time import sleep
 # local relative imports
 from colortext import tabd, fatal
 
-from system import xinput, copy, paste, xnotify
+from system import copy, paste, xinput, xnotify
 
 from cypher import PassCrypt, ykchalres
 
@@ -54,14 +59,13 @@ def __passreplace(pwlist):
 
 def __dictreplace(pwdict):
 	__pwdict = {}
-	if pwdict:
-		for (usr, ent) in pwdict.items():
-			if isinstance(ent, dict):
-				__pwdict[usr] = {}
-				for (u, e) in ent.items():
-					__pwdict[usr][u] = __passreplace(e)
-			elif ent:
-				__pwdict[usr] = __passreplace(ent)
+	for (usr, ent) in pwdict.items():
+		if isinstance(ent, dict):
+			__pwdict[usr] = {}
+			for (u, e) in ent.items():
+				__pwdict[usr][u] = __passreplace(e)
+		elif ent:
+			__pwdict[usr] = __passreplace(ent)
 	return __pwdict
 
 
@@ -135,6 +139,7 @@ def cli():
         nargs='?', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
 	args = pars.parse_args()
+
 	pargs = [a for a in [
         'dbg' if args.dbg else None,
         'aal' if args.aal else None,
@@ -165,6 +170,7 @@ def cli():
 	for a in (args.lst, args.add, args.chg):
 		if a and len(a) < 2:
 			fatal('input', a, 'is too short')
+
 	pcm = PassCrypt(*pargs, **pkwargs)
 	if args.lst is not False:
 		__ent = pcm.lspw(args.lst)

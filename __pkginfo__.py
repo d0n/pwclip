@@ -4,11 +4,12 @@ from os import getcwd
 from os.path import join, dirname
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 4)
+numversion = (0, 4, 5)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
-    'pyusb', 'PyYAML', 'argcomplete', 'python-gnupg']
+    'pyusb', 'PyYAML', 'argcomplete',
+    'python-gnupg', 'python-yubico']
 license = 'GPL'
 description = "gui to temporarily save passwords to clipboard (paste-buffer)"
 web = 'http://janeiskla.de'
@@ -27,7 +28,6 @@ classifiers = ['Development Status :: 4 - Beta',
                'Intended Audience :: Information Technology',
                'License :: OSI Approved :: GNU General Public License (GPL)',
                'Operating System :: OS Independent',
-               'Programming Language :: Python',
                'Programming Language :: Python :: 3',
                'Topic :: Security',
                'Topic :: Utilities',
