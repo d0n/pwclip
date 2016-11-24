@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
-from os import path, uname, remove, environ
+from os import path, remove, environ
 
+try:
+	from os import uname
+except ImportError:
+	def uname(): return [_, environ['COMPUTERNAME']]
+	
 from tarfile import open as taropen
 
 from yaml import load, dump
@@ -24,15 +29,19 @@ class PassCrypt(GPGTool):
 	dbg = False
 	aal = False
 	sho = False
-	user = userfind()
-	home = userfind(user, 'home')
+	try:
+		user = userfind()
+		home = userfind(user, 'home')
+	except FileNotFoundError:
+		user = environ['USERNAME']
+		home = path.join(environ['HOMEDRIVE'], environ['HOMEPATH'])
 	plain = '%s/.pwd.yaml'%home
 	crypt = '%s/.passcrypt'%home
-	recvs = None
+	recvs = []
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
-		recvs = [environ['GPGKEY']]
+		recvs = recvs + [environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):

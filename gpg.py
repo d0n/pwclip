@@ -5,9 +5,7 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import X_OK, access, getcwd, environ
-
-from os.path import isfile, expanduser
+from os import X_OK, access, getcwd, environ, path, name as osname
 
 from getpass import getpass
 
@@ -30,11 +28,14 @@ class GPGTool(object):
 	"""
 	_dbg = None
 	_agt = True
-	_homedir = expanduser('~/.gnupg')
-	_binary = '/usr/bin/gpg2'
-	if not isfile(_binary):
-		_binary = '/usr/bin/gpg'
-	if not isfile(_binary) or not access(_binary, X_OK):
+	_homedir = path.expanduser('~/.gnupg')
+	__bindir = '/usr/bin'
+	__gpgbin = 'gpg2'
+	if osname == 'nt' or system() == 'Windows':
+		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
+		__gpgbin = 'gpg2.exe'
+	_binary = path.join(__bindir, __gpgbin)
+	if not path.isfile(_binary) or not access(_binary, X_OK):
 		raise RuntimeError('%s needs to be executable'%_binary)
 	agentinfo = '%s/S.gpg-agent:0:1'%_homedir
 	kginput = {}
@@ -78,7 +79,7 @@ class GPGTool(object):
 		return self._homedir
 	@homedir.setter
 	def homedir(self, val):
-		val = val if not val.startswith('~') else expanduser(val)
+		val = val if not val.startswith('~') else path.expanduser(val)
 		if not val.startswith('/'):
 			val = '%s/%s'%(getcwd(), val)
 		self._homedir = val
@@ -108,7 +109,9 @@ class GPGTool(object):
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
-		opts = ['--batch', '--always-trust', '--pinentry-mode=loopback']
+		opts = ['--batch', '--always-trust']
+		if osname != 'nt':
+			opts.append('--pinentry-mode=loopback')
 		if self.__pin: opts = opts + ['--passphrase=%s'%self.__pin]
 		__g = GPG(
             gnupghome=self.homedir, gpgbinary=self.binary,
