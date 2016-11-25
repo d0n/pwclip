@@ -16,7 +16,7 @@ from gnupg import GPG
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
-from system import xinput
+from system import xinput, xyesno
 
 class GPGTool(object):
 	"""
@@ -31,7 +31,7 @@ class GPGTool(object):
 	_homedir = path.expanduser('~/.gnupg')
 	__bindir = '/usr/bin'
 	__gpgbin = 'gpg2'
-	if osname == 'nt' or system() == 'Windows':
+	if osname == 'nt':
 		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
 		__gpgbin = 'gpg2.exe'
 	_binary = path.join(__bindir, __gpgbin)
@@ -114,9 +114,10 @@ class GPGTool(object):
 			opts.append('--pinentry-mode=loopback')
 		if self.__pin: opts = opts + ['--passphrase=%s'%self.__pin]
 		__g = GPG(
+            keyring=self.keyring, secret_keyring=self.secring,
             gnupghome=self.homedir, gpgbinary=self.binary,
-            use_agent=self.agt, verbose=1 if self.dbg else 0,
-            options=opts, keyring=self.keyring, secret_keyring=self.secring)
+            use_agent=self.agt, options=opts,
+            verbose=1 if self.dbg else 0)
 		__g.encoding = 'utf-8'
 		return __g
 
@@ -130,7 +131,7 @@ class GPGTool(object):
 					error(
                         'cannot kill process',
                         proc.name, 'with PID', proc.pid())
-		environ['GPG_AGENT_INFO'] = expanduser('~/.gnupg/S.gpg-agent:0:1')
+		environ['GPG_AGENT_INFO'] = path.expanduser('~/.gnupg/S.gpg-agent:0:1')
 
 	@staticmethod
 	def _passwd(rpt=False):
@@ -258,11 +259,18 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
-		__plain = self._gpg_.decrypt(message, always_trust=True, output=output)
-		if not __plain:
-			self.__pin = xinput('enter gpg-passphrase')
-			if not self.__pin:
-				fatal('cannot continue without gpg passphrase')
+		c = 0
+		while True:
+			c+=1
 			__plain = self._gpg_.decrypt(
                 message, always_trust=True, output=output)
-		return __plain
+			if __plain:
+				return __plain
+			elif c > 1 and c < 3:
+				if not xyesno(
+                      'key not available or wrong passphrase - try again?'):
+					raise RuntimeError('could not decrypt')
+			self.__pin = xinput('enter gpg-passphrase')
+			if not self.__pin:
+				xyesno('no PIN was entered')
+				raise RuntimeError('no PIN was entered')
