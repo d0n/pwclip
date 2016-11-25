@@ -45,16 +45,13 @@ def clips():
 		class CheckedCall(object):
 			def __init__(self, f):
 				super(CheckedCall, self).__setattr__("f", f)
-
 			def __call__(self, *args):
 				ret = self.f(*args)
 				if not ret and get_errno():
 					raise PyperclipWindowsException("Error calling " + self.f.__name__)
 				return ret
-
 			def __setattr__(self, key, value):
 				setattr(self.f, key, value)
-					
 		mkwin = CheckedCall(windll.user32.CreateWindowExA)
 		mkwin.argtypes = [
             DWORD, LPCSTR,
@@ -64,43 +61,33 @@ def clips():
             HWND, HMENU,
             HINSTANCE, LPVOID]
 		mkwin.restype = HWND
-		
 		delwin = CheckedCall(windll.user32.DestroyWindow)
 		delwin.argtypes = [HWND]
 		delwin.restype = BOOL
-		
 		clip = windll.user32.OpenClipboard
 		clip.argtypes = [HWND]
 		clip.restype = BOOL
-		
 		clsclip = CheckedCall(windll.user32.CloseClipboard)
 		clsclip.argtypes = []
 		clsclip.restype = BOOL
-		
 		delclip = CheckedCall(windll.user32.EmptyClipboard)
 		delclip.argtypes = []
 		delclip.restype = BOOL
-		
 		getclip = CheckedCall(windll.user32.GetClipboardData)
 		getclip.argtypes = [UINT]
 		getclip.restype = HANDLE
-		
 		setclip = CheckedCall(windll.user32.SetClipboardData)
 		setclip.argtypes = [UINT, HANDLE]
 		setclip.restype = HANDLE
-		
 		allock = CheckedCall(windll.kernel32.GlobalAlloc)
 		allock.argtypes = [UINT, c_size_t]
 		allock.restype = HGLOBAL
-		
 		dolock = CheckedCall(windll.kernel32.GlobalLock)
 		dolock.argtypes = [HGLOBAL]
 		dolock.restype = LPVOID
-		
 		unlock = CheckedCall(windll.kernel32.GlobalUnlock)
 		unlock.argtypes = [HGLOBAL]
 		unlock.restype = BOOL
-		
 		@contextmanager
 		def window():
 			"""
@@ -112,7 +99,6 @@ def clips():
 				yield hwnd
 			finally:
 				delwin(hwnd)
-
 		@contextmanager
 		def clipboard(hwnd):
 			"""
@@ -132,7 +118,6 @@ def clips():
 				yield
 			finally:
 				clsclip()
-
 		def _copy(text):
 			with window() as hwnd:
 				with clipboard(hwnd):
@@ -146,7 +131,6 @@ def clips():
 							c_wchar_p(text), count * sizeof(c_wchar))
 						unlock(handle)
 						setclip(CF_UNICODETEXT, handle)
-
 		def _paste():
 			with clipboard(None):
 				handle = getclip(CF_UNICODETEXT)
@@ -154,6 +138,18 @@ def clips():
 					return ""
 				return c_wchar_p(handle).value
 
+		return _copy, _paste
+
+	def osxclips():
+		def _copy(text):
+			text = text if text else ''
+			p = Popen(['pbcopy', 'w'], stdin=subprocess.PIPE, close_fds=True)
+			p.communicate(input=text.encode('utf-8'))
+		def _paste():
+			p = subprocess.Popen(['pbpaste', 'r'],
+                    stdout=subprocess.PIPE, close_fds=True)
+			out, _ = p.communicate()
+			return out.decode('utf-8')
 		return _copy, _paste
 
 	def linclips():
