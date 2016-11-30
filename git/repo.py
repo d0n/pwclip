@@ -82,8 +82,7 @@ class GitRepo(executor.Command):
 	def __gitdir_(repodir):
 		def __file(git):
 			with open(git, 'r') as gitf:
-				return os.path.abspath('%s/%s'%(
-                    repodir, gitf.read().split('gitdir:')[1].strip()))
+				return os.path.abspath(gitf.read().split('gitdir:')[1].strip())
 		repodir = repodir.rstrip('/')
 		gitdir = '%s/.git'%(repodir)
 		if os.path.isfile(gitdir):
