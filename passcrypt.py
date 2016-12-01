@@ -21,9 +21,9 @@ from colortext import tabd, error, fatal
 
 from system import userfind
 
-from cypher.gpg import GPGTool
+from secrecy.gpg import GPGTool
 
-from cypher.yubi import ykchalres
+from secrecy.yubi import ykchalres
 
 class PassCrypt(GPGTool):
 	dbg = False

@@ -1,6 +1,6 @@
-"""cypher library init"""
-from cypher.hmacsha import enhmacsha, dehmacsha
-from cypher.yubi import ykchalres
-from cypher.gpg import GPGTool
-from cypher.vault import WeakVaulter
-from cypher.passcrypt import PassCrypt, passcrypt
+"""secrecy library init"""
+from secrecy.hmacsha import enhmacsha, dehmacsha
+from secrecy.yubi import ykchalres
+from secrecy.gpg import GPGTool
+from secrecy.vault import WeakVaulter
+from secrecy.passcrypt import PassCrypt, passcrypt
