@@ -1,5 +1,3 @@
-# ignore python compiled/cache files #
-##############
-__pycache__
-*.pyc
-*.swp
+#__pycache__
+#*.pyc
+#*.swp
