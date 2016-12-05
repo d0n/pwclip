@@ -38,7 +38,7 @@ from colortext import tabd, fatal
 
 from system import copy, paste, xinput, xnotify
 
-from cypher import PassCrypt, ykchalres
+from secrecy import PassCrypt, ykchalres
 
 from pwclip.__pkginfo__ import version
 
