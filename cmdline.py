@@ -34,7 +34,7 @@ from argparse import ArgumentParser
 from time import sleep
 
 # local relative imports
-from colortext import tabd, fatal
+from colortext import abort, tabd, fatal
 
 from system import copy, paste, xinput, xnotify
 
@@ -47,6 +47,8 @@ def forkwaitclip(text, oclp, wait=3):
 		try:
 			copy(text)
 			sleep(int(wait))
+		except KeyboardInterrupt:
+			abort()
 		finally:
 			copy(oclp)
 	exit(0)
