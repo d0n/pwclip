@@ -158,10 +158,10 @@ def clips():
 			"""linux copy function"""
 			text = text if text else ''
 			try:
-				with Popen(['xsel', '-p', '-i'], stdin=PIPE) as prc:
+				with Popen(['xsel', '-b' '-p', '-i'], stdin=PIPE) as prc:
 					prc.communicate(input=text.encode('utf-8'))
 			except AttributeError:
-				prc = Popen(['xsel', '-p', '-i'], shell=True, stdin=PIPE)
+				prc = Popen(['xsel', '-b' '-p', '-i'], shell=True, stdin=PIPE)
 				prc.communicate(input=text.encode('utf-8'))
 		def _paste():
 			"""linux paste function"""
