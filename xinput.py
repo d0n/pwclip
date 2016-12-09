@@ -41,6 +41,7 @@ def xinput(message="input will not be displayed"):
 			self.lbl.pack()
 			self.entry = Entry(self, show="*")
 			self.entry.bind("<Return>", self._enterexit)
+			self.entry.bind("<Control-c>", self._exit)
 			self.entry.bind("<Escape>", self._exit)
 			self.entry.pack()
 			self.entry.focus_set()
@@ -56,7 +57,10 @@ def xinput(message="input will not be displayed"):
 			self.cl.pack(side="right")
 	# instanciate Tk and create window
 	root = Tk()
-	pwc = PassClip(root)
+	try:
+		pwc = PassClip(root)
+	except KeyboardInterrupt:
+		root.destroy()
 	pwc.lift()
 	pwc.mainloop()
 	root.destroy()
