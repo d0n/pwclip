@@ -64,6 +64,8 @@ class WeakVaulter(GPGTool):
 
 	@staticmethod
 	def _startagent_():
+		if getuid() == 0:
+			cmd.erno('su -l %s -c "gpg-agent --daemon"'%userfind())
 		cmd.erno('gpg-agent --daemon')
 
 	def _chkvlt(self):
