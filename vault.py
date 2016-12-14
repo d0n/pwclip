@@ -3,7 +3,7 @@
 from os import \
     path, uname, environ, \
     remove, symlink, chdir, \
-    getcwd, readlink
+    getcwd, getuid, readlink
 
 from shutil import copyfile, rmtree, move
 
@@ -79,11 +79,12 @@ class WeakVaulter(GPGTool):
 		self._stopagent_()
 		_home = path.expanduser('~/').rstrip('/')
 		for ln in ('.gnupg', '.ssh', '.vpn'):
-			if ( path.islink('%s/%s'%(_home, ln)) and not \
-                  path.isdir(readlink('%s/%s'%(_home, ln)))):
-				remove(ln)
+			ln = '%s/%s'%(_home, ln)
+			if ( path.islink(ln) and not \
+                  path.isdir(readlink(ln)) ):
 				try:
-					move('%s/%s.1'%(_home, ln), '%s/%s'%(_home, ln))
+					remove(ln)
+					move('%s.1'%ln, ln)
 				except FileNotFoundError:
 					pass
 		self._startagent_()
@@ -95,12 +96,9 @@ class WeakVaulter(GPGTool):
 		pwd = getcwd()
 		chdir(_home)
 		for ln in ('.gnupg', '.ssh', '.vpn'):
-			trg = '%s/%s/%s'%(path.basename(self.weaks), _host, ln)
-			if path.isdir(path.expanduser('~/%s'%trg)):
-				try:
-					move('%s/%s'%(_home, ln), '%s/%s.1'%(_home, ln))
-				except FileNotFoundError:
-					pass
+			trg = '%s/%s/%s'%(self.weaks, _host, ln)
+			if path.isdir('%s/%s'%(_home, ln)):
+				move('%s/%s'%(_home, ln), '%s/%s.1'%(_home, ln))
 			if path.isdir('%s/%s'%(_home, trg)):
 				symlink(trg, ln)
 		chdir(pwd)
