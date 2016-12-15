@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#!/usr/bin/env /usr/bin/python3
 #
 # This file is free software by d0n <d0n@janeiskla.de>
 #
@@ -24,7 +23,6 @@ from socket import getfqdn as fqdn
 from colortext import bgre #, Debugger
 from system import which
 from executor import SSHCommand
-from network import SecureCoPy, netcat as nc
 
 # global default variables
 __me__ = os.path.basename(sys.argv[0]).split('.')[0]
@@ -39,7 +37,6 @@ class Puppet(SSHCommand):
 	_user_ = 'root'
 	_host_ = ''
 	_template = '~/.config/puppet.tmpl'
-	scp = SecureCoPy().put
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
