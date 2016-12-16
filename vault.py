@@ -67,6 +67,8 @@ class WeakVaulter(GPGTool):
 		return frbs
 
 	def _dictpath(self, dic):
+		if not dic:
+			return
 		for (f, b) in dic.items():
 			if not isdir(dirname(f)):
 				makedirs(dirname(f))
