@@ -2,16 +2,15 @@
 """command module of executor"""
 from os import access as _access, environ as _environ, \
     getuid as _getuid, X_OK as _X_OK
+
 from sys import \
     stdout as _stdout, \
     stdout as _stderr
 _echo_ = _stdout.write
 _puke_ = _stderr.write
 
-from socket import getfqdn as _fqdn
 from subprocess import call as _call, Popen as _Popen, PIPE as _PIPE
-
-# for subprocess version compatibility while DEVNULL is new in subprocess
+# for legacy subprocess compatibility while DEVNULL is new in subprocess
 try:
 	from subprocess import DEVNULL
 except ImportError:
