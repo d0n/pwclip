@@ -16,7 +16,7 @@ from gnupg import GPG
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
-from system import xinput, xyesno
+from system import xinput, xyesno, xmsgok
 
 class GPGTool(object):
 	"""
@@ -263,9 +263,12 @@ class GPGTool(object):
 		while True:
 			c+=1
 			__plain = self._gpg_.decrypt(
-                message, always_trust=True, output=output)
+                message.strip(), always_trust=True, output=output)
 			if __plain:
 				return __plain
+			elif c > 3:
+				xmsgok('too many wrong attempts')
+				break
 			elif c > 1 and c < 3:
 				if not xyesno(
                       'decryption failed - try again?'):
@@ -273,4 +276,5 @@ class GPGTool(object):
 			elif c > 1 and not self.__pin:
 				if not xyesno('no passphrase entered, retry?'):
 					break
+			self._garr()
 			self.__pin = xinput('enter gpg-passphrase')

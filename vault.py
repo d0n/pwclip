@@ -20,14 +20,19 @@ from os import symlink, getcwd, listdir, \
 
 from os.path import isdir, islink, isfile, dirname, expanduser, basename
 
+from psutil import process_iter as piter
+
 from shutil import rmtree, move, copyfile
 
 from yaml import load, dump
+
+from executor import command as cmd
 
 from secrecy import GPGTool
 
 class WeakVaulter(GPGTool):
 	home = expanduser('~')
+	host = uname()[1]
 	vault = '%s/.crypt'%home
 	weakz = '%s/.weaknez'%home
 	recvs = []
@@ -35,6 +40,7 @@ class WeakVaulter(GPGTool):
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']]
+
 	def __init__(self):
 		self._clean_()
 
@@ -44,14 +50,38 @@ class WeakVaulter(GPGTool):
 		except FileNotFoundError:
 			pass
 
+	def _movesocks_(self, src, trg):
+		socks = [
+            f for f in listdir(src) if f.startswith('S')]
+		for s in socks:
+			move('%s/%s'%(src, s), '%s/%s'%(trg, s))
+
 	def _clean_(self):
 		self._fixmod_()
-		for ln in listdir(self.home):
-			ln = '%s/%s'%(self.home, ln)
-			if islink(ln) and not isdir(readlink(ln)):
-				remove(ln)
-			if not islink(ln) and isdir('%s.1'%ln):
-				move('%s.1'%ln, ln)
+		if not isdir(self.weakz):
+			for ln in listdir(self.home):
+				if not ln.startswith('.'):
+					continue
+				ln = '%s/%s'%(self.home, ln)
+				if islink(ln) and not isdir(readlink(ln)):
+					remove(ln)
+					if isdir('%s.1'%ln):
+						move('%s.1'%ln, ln)
+				elif isdir(ln) and ln.endswith('.1') and not isdir(ln.rstrip('.1')):
+					move(ln, ln.rstrip('.1'))
+		elif isdir('%s/%s'%(self.weakz, self.host)):
+			pwd = getcwd()
+			chdir(self.home)
+			whh = '%s/%s'%(basename(self.weakz), self.host)
+			for ln in listdir(whh):
+				hl = '%s/%s'%(self.home, ln)
+				if not islink(hl) and isdir('%s/%s/%s'%(self.home, whh, ln)):
+					if isdir(hl) and not isdir('%s.1'%hl):
+						move(hl, '%s.1'%hl)
+					elif isdir('%s.1'%hl):
+						rmtree(hl)
+					symlink('%s/%s'%(whh, ln), ln)
+			chdir(pwd)
 
 	def _pathdict(self, path):
 		frbs = {}
@@ -84,18 +114,12 @@ class WeakVaulter(GPGTool):
 			try:
 				remove(hl)
 			except IsADirectoryError:
-				if not isdir('%s.1'%hl):
-					move(hl)
-				try:
+				if isdir('%s.1'%hl):
 					rmtree(hl)
-				except FileNotFoundError:
-					pass
+			except FileNotFoundError:
+				pass
 			if isdir('%s.1'%hl):
 				move('%s.1'%hl, hl)
-			try:
-				remove(ln)
-			except (IsADirectoryError, FileNotFoundError):
-				pass
 		self._fixmod_()
 
 	def _mklns_(self, weak):
@@ -125,6 +149,8 @@ class WeakVaulter(GPGTool):
 		if not isdir(self.weakz):
 			return
 		copyfile(self.vault, '%s.1'%self.vault)
+		self._movesocks_(
+            '%s/%s/.gnupg'%(self.weakz, self.host), '%s/.gnupg.1'%self.home)
 		self.encrypt(
             str(dump(self._pathdict(self.weakz))),
             output=self.vault, recipients=self.recvs)
@@ -135,7 +161,10 @@ class WeakVaulter(GPGTool):
 		if not isfile(self.vault) or isdir(self.weakz):
 			return
 		with open(self.vault, 'r') as cfh:
-			self._dictpath(load(str(self.decrypt(cfh.read()))))
+			dct = load(str(self.decrypt(cfh.read())))
+			if not dct:
+				return error('could not decrypt')
+		self._dictpath(dct)
 		self._mklns_(self.weakz)
-
-
+		self._movesocks_(
+            '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
