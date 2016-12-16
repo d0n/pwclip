@@ -4,7 +4,7 @@ __puke = _stderr.write
 
 def userfind(pattern='1000', mode='user'):
 	"""
-        >>> 0 = name
+        >>> 0 = user
         >>> 1 = x
         >>> 2 = uid
         >>> 3 = gid
