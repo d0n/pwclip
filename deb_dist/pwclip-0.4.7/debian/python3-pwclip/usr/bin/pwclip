@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+# EASY-INSTALL-ENTRY-SCRIPT: 'pwclip==0.4.7','console_scripts','pwclip'
+__requires__ = 'pwclip==0.4.7'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('pwclip==0.4.7', 'console_scripts', 'pwclip')()
+    )

@@ -1,0 +1,26 @@
+Metadata-Version: 1.1
+Name: pwclip
+Version: 0.4.7
+Summary: gui to temporarily save passwords to clipboard (paste-buffer)
+Home-page: http://janeiskla.de
+Author: Leon Pelzer
+Author-email: mail@leonpelzer.de
+License: GPL
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Environment :: MacOS X
+Classifier: Environment :: Win32 (MS Windows)
+Classifier: Environment :: X11 Applications
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Intended Audience :: System Administrators
+Classifier: Intended Audience :: Information Technology
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Security
+Classifier: Topic :: Utilities
+Classifier: Topic :: Desktop Environment
+Classifier: Topic :: System :: Systems Administration

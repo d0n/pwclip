@@ -1,0 +1,5 @@
+pyusb
+PyYAML
+argcomplete
+python-gnupg
+python-yubico
