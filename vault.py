@@ -104,6 +104,7 @@ class WeakVaulter(GPGTool):
 		whh = '%s/%s'%(basename(weak), uname()[1])
 		for ln in ('.gnupg', '.ssh', '.vpn'):
 			hl = '%s/%s'%(self.home, ln)
+			whl = '%s/%s'%(whh, ln)
 			try:
 				isdir(readlink(readlink(hl)))
 				continue
@@ -114,7 +115,8 @@ class WeakVaulter(GPGTool):
 			elif not islink(hl) and isdir(hl) and isdir('%s.1'%hl):
 				rmtree(hl)
 			try:
-				symlink('%s/%s'%(whh, ln), ln)
+				if isdir(whl):
+					symlink(whl, ln)
 			except FileExistsError:
 				pass
 		chdir(pwd)
