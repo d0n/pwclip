@@ -268,9 +268,9 @@ class GPGTool(object):
 				return __plain
 			elif c > 1 and c < 3:
 				if not xyesno(
-                      'key not available or wrong passphrase - try again?'):
-					raise RuntimeError('could not decrypt')
+                      'decryption failed - try again?'):
+					break
+			elif c > 1 and not self.__pin:
+				if not xyesno('no passphrase entered, retry?'):
+					break
 			self.__pin = xinput('enter gpg-passphrase')
-			if not self.__pin:
-				xyesno('no PIN was entered')
-				raise RuntimeError('no PIN was entered')
