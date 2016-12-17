@@ -21,7 +21,7 @@ import sys
 from socket import getfqdn as fqdn
 
 from colortext import blu, yel, error
-from network import askdns, netcat as nc
+from net import askdns, netcat as nc
 from executor import SSHCommand
 
 # global default variables

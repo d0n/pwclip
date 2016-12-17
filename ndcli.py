@@ -21,7 +21,7 @@ import sys
 from system import which
 from colortext import error, fatal, blu
 from executor import command as c
-from network import askdns
+from net import askdns
 from deb import DePyKG
 
 # global default variables
