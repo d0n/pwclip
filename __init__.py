@@ -1,2 +1,2 @@
-from .dpkg import DePyKG
-from .apt import Apytude
+from deb.dpkg import DePyKG
+from deb.apt import Apytude
