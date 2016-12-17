@@ -33,3 +33,13 @@ from system.xnotify import xnotify
 from system.xyesno import xyesno
 
 from system.xmsgok import xmsgok
+
+from system.power import SystemPower
+
+from system.uefi import UEFITool
+
+from system.users import Users
+
+from system.blkid import BlockDevices
+
+from system.mounter import DeviceMounter
