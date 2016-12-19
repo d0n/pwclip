@@ -33,7 +33,7 @@ from secrecy import GPGTool
 class WeakVaulter(GPGTool):
 	home = expanduser('~')
 	host = uname()[1]
-	vault = '%s/.crypt'%home
+	vault = '%s/.vault'%home
 	weakz = '%s/.weaknez'%home
 	recvs = []
 	if 'GPGKEYS' in environ.keys():
@@ -145,8 +145,19 @@ class WeakVaulter(GPGTool):
 				pass
 		chdir(pwd)
 
+	def _checkdiff(self):
+		with open(self.vault, 'r') as cvh:
+			vlt = cvh.read()
+		nvlt = str(self.encrypt(
+            str(dump(self._pathdict(self.weakz))), recipients=self.recvs))
+		if vlt.strip() != nvlt.strip():
+			return True
+		
+
 	def envault(self):
 		if not isdir(self.weakz):
+			return
+		if not self._checkdiff():
 			return
 		copyfile(self.vault, '%s.1'%self.vault)
 		self._movesocks_(

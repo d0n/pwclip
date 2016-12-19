@@ -27,17 +27,16 @@ class GPGTool(object):
 	one - also i can prepare some program related stuff in here
 	"""
 	_dbg = None
-	_agt = True
-	_homedir = path.expanduser('~/.gnupg')
+	homedir = path.join(path.expanduser('~'), '.gnupg')
 	__bindir = '/usr/bin'
 	__gpgbin = 'gpg2'
 	if osname == 'nt':
 		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
 		__gpgbin = 'gpg2.exe'
-	_binary = path.join(__bindir, __gpgbin)
-	if not path.isfile(_binary) or not access(_binary, X_OK):
-		raise RuntimeError('%s needs to be executable'%_binary)
-	agentinfo = '%s/S.gpg-agent:0:1'%_homedir
+	binary = path.join(__bindir, __gpgbin)
+	if not path.isfile(binary) or not access(binary, X_OK):
+		raise RuntimeError('%s needs to be executable'%binary)
+	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
 	__pin = None
 	def __init__(self, *args, **kwargs):
@@ -66,44 +65,19 @@ class GPGTool(object):
 	def dbg(self, val):
 		self._dbg = bool(val)
 
-	@property                # agt <bool>
-	def agt(self):
-		environ['GPG_AGENT_INFO'] = self.agentinfo
-		return self._agt
-	@agt.setter
-	def agt(self, val):
-		self._agt = True if val else False
-
-	@property                # homedir <str>
-	def homedir(self):
-		return self._homedir
-	@homedir.setter
-	def homedir(self, val):
-		val = val if not val.startswith('~') else path.expanduser(val)
-		if not val.startswith('/'):
-			val = '%s/%s'%(getcwd(), val)
-		self._homedir = val
-
-	@property                # gpgbin <str>
-	def binary(self):
-		"""string"""
-		return self._binary
-	@binary.setter
-	def binary(self, val):
-		if isfile(val) and access(val, X_OK):
-			self._binary = val
-
 	@property                # keyring <str>
 	def keyring(self):
-		return '%s/pubring.kbx'%self.homedir \
-            if self.binary.endswith('2') else '%s/pubring.kbx'%self.homedir
+		__bin = self.binary.rstrip('.exe')
+		return path.join(self.homedir, 'pubring.kbx') \
+            if __bin.endswith('2') else path.join(self.homedir, 'pubring.gpg')
 
 	@property                # secring <str>
 	def secring(self):
-		if self.binary.endswith('2') and self.keyring.endswith('gpg'):
-			return '%s/secring.gpg'%self.homedir
-		elif not self.binary.endswith('2'):
-			return '%s/secring.gpg'%self.homedir
+		__bin = self.binary.rstrip('.exe')
+		if __bin.endswith('2') and self.keyring.endswith('gpg'):
+			return path.join(self.homedir, 'secring.gpg')
+		elif not __bin.endswith('2'):
+			return path.join(self.homedir, 'secring.gpg')
 		return self.keyring
 
 	@property                # _gpg_ <GPG>
@@ -116,7 +90,7 @@ class GPGTool(object):
 		__g = GPG(
             keyring=self.keyring, secret_keyring=self.secring,
             gnupghome=self.homedir, gpgbinary=self.binary,
-            use_agent=self.agt, options=opts,
+            use_agent=True, options=opts,
             verbose=1 if self.dbg else 0)
 		__g.encoding = 'utf-8'
 		return __g
@@ -131,7 +105,16 @@ class GPGTool(object):
 					error(
                         'cannot kill process',
                         proc.name, 'with PID', proc.pid())
-		environ['GPG_AGENT_INFO'] = path.expanduser('~/.gnupg/S.gpg-agent:0:1')
+		gacfg = path.join(self.homedir, '.gnupg', 'gpg-agent.conf')
+		try:
+			with open(gacfg, 'r') as afh:
+				for l in afh.readlines():
+					if 'enable-ssh-support' in l and not '#' in l:
+						environ['GPG_AGENT_INFO'] = \
+                            path.join(self.homedir, 'S.gpg-agent.ssh')
+		except FileNotFoundError as err:
+			error(err)
+		environ['GPG_AGENT_INFO'] = path.join(self.homedir, 'S.gpg-agent')
 
 	@staticmethod
 	def _passwd(rpt=False):
@@ -261,11 +244,12 @@ class GPGTool(object):
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
 		c = 0
 		while True:
-			c+=1
 			__plain = self._gpg_.decrypt(
                 message.strip(), always_trust=True, output=output)
 			if __plain:
 				return __plain
+			elif __plain and c == 0:
+				self._garr()
 			elif c > 3:
 				xmsgok('too many wrong attempts')
 				break
@@ -276,5 +260,5 @@ class GPGTool(object):
 			elif c > 1 and not self.__pin:
 				if not xyesno('no passphrase entered, retry?'):
 					break
-			self._garr()
+			c+=1
 			self.__pin = xinput('enter gpg-passphrase')
