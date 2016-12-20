@@ -50,6 +50,8 @@ class WeakVaulter(GPGTool):
 		for p in ('~/.gnupg', '~/.weaknez'):
 			for (d, _, fs) in walk(expanduser(p)):
 				for f in fs:
+					if f.startswith('S.'):
+						continue
 					f = '%s/%s'%(d, f)
 					#print(f)
 					chmod(f, 0o600)
