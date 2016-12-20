@@ -28,6 +28,8 @@ from yaml import load, dump
 
 from executor import command as cmd
 
+from net import SecureSHell as SSH
+
 from secrecy import GPGTool
 
 class WeakVaulter(GPGTool):
@@ -40,19 +42,24 @@ class WeakVaulter(GPGTool):
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']]
-
+	scp = SSH().scp
 	def __init__(self):
 		self._clean_()
 
 	def _fixmod_(self):
-		try:
-			chmod('%s/.gnupg'%self.home, 0o700)
-		except FileNotFoundError:
-			pass
+		for p in ('~/.gnupg', '~/.weaknez'):
+			for (d, _, fs) in walk(expanduser(p)):
+				for f in fs:
+					f = '%s/%s'%(d, f)
+					#print(f)
+					chmod(f, 0o600)
+				#print(d)
+				chmod(d, 0o700)
 
 	def _movesocks_(self, src, trg):
 		socks = [
             f for f in listdir(src) if f.startswith('S')]
+		socks.append('random_seed')
 		for s in socks:
 			move('%s/%s'%(src, s), '%s/%s'%(trg, s))
 
@@ -87,6 +94,8 @@ class WeakVaulter(GPGTool):
 		frbs = {}
 		for (d, _, fs) in walk(path):
 			for f in fs:
+				if f == 'random_seed':
+					continue
 				f = '%s/%s'%(d, f)
 				try:
 					with open(f, 'rb') as rbf:
@@ -102,11 +111,9 @@ class WeakVaulter(GPGTool):
 		for (f, b) in dic.items():
 			if not isdir(dirname(f)):
 				makedirs(dirname(f))
-				chmod(f, 0o700)
 			try:
 				with open(f, 'wb+') as fwh:
 					fwh.write(b)
-				chmod(f, 0o600)
 			except PermissionError:
 				pass
 
@@ -151,22 +158,26 @@ class WeakVaulter(GPGTool):
             str(dump(self._pathdict(self.weakz))), recipients=self.recvs))
 		if vlt.strip() != nvlt.strip():
 			return True
-		
 
 	def envault(self):
 		if not isdir(self.weakz):
 			return
 		if not self._checkdiff():
 			return
+		with open(self.vault, 'r') as cfh:
+			ocr = load(str(self.decrypt(cfh.read())))
+		ncr = self._pathdict(self.weakz)
 		__pwd = getcwd()
-		chdir(expanduser('~'))
-		copyfile(self.vault, '%s.1'%self.vault)
-		chmod('%s.1'%self.vault, 0o600)
-		self._movesocks_(
-            '%s/%s/.gnupg'%(self.weakz, self.host), '%s/.gnupg.1'%self.home)
-		self.encrypt(
-            str(dump(self._pathdict(self.weakz))),
-            output=self.vault, recipients=self.recvs)
+		if ncr.keys() != ocr.keys() or \
+              ncr.values() != ocr.values():
+			chdir(expanduser('~'))
+			copyfile(self.vault, '%s.1'%self.vault)
+			chmod('%s.1'%self.vault, 0o600)
+			self._movesocks_(
+				'%s/%s/.gnupg'%(self.weakz, self.host), '%s/.gnupg.1'%self.home)
+			self.encrypt(
+				str(dump(self._pathdict(self.weakz))),
+				output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
 		chmod(self.vault, 0o600)
@@ -184,3 +195,4 @@ class WeakVaulter(GPGTool):
 		self._mklns_(self.weakz)
 		self._movesocks_(
             '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
+		self._fixmod_()
