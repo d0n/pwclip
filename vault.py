@@ -123,8 +123,6 @@ class WeakVaulter(GPGTool):
 		self._fixmod_()
 
 	def _mklns_(self, weak):
-		pwd = getcwd()
-		chdir(self.home)
 		whh = '%s/%s'%(basename(weak), uname()[1])
 		for ln in ('.gnupg', '.ssh', '.vpn'):
 			hl = '%s/%s'%(self.home, ln)
@@ -143,7 +141,6 @@ class WeakVaulter(GPGTool):
 					symlink(whl, ln)
 			except FileExistsError:
 				pass
-		chdir(pwd)
 
 	def _checkdiff(self):
 		with open(self.vault, 'r') as cvh:
@@ -159,6 +156,8 @@ class WeakVaulter(GPGTool):
 			return
 		if not self._checkdiff():
 			return
+		__pwd = getcwd()
+		chdir(expanduser('~'))
 		copyfile(self.vault, '%s.1'%self.vault)
 		self._movesocks_(
             '%s/%s/.gnupg'%(self.weakz, self.host), '%s/.gnupg.1'%self.home)
@@ -167,6 +166,7 @@ class WeakVaulter(GPGTool):
             output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
+		chdir(__pwd)
 
 	def unvault(self):
 		if not isfile(self.vault) or isdir(self.weakz):
