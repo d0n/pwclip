@@ -11,22 +11,18 @@ from getpass import getpass
 
 from psutil import process_iter as piter
 
-from gnupg import GPG
-
 from tkinter import TclError
+
+from getpass import getpass
+
+from gnupg import GPG
 
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
-try:
-	from system import xinput, xyesno, xmsgok
-except TclError:
-	from getpass import getpass
-	xinput = getpass('enter gpg-passphrase: ')
-	xyesno = True if input(
-        'no passphrase or no secret key, retry? [Y/n]'
-        ).lower() in ('y', '') else False
-	xmsgok = input('too many wrong attempts')
+from system import xinput, xyesno, xmsgok
+
+
 
 class GPGTool(object):
 	"""
@@ -261,14 +257,24 @@ class GPGTool(object):
 			elif __plain and c == 0:
 				self._garr()
 			elif c > 3:
-				xmsgok('too many wrong attempts')
+				try:
+					xmsgok('too many wrong attempts')
+				except TclError:
+					input('too many wrong attempts')
 				break
 			elif c > 1 and c < 3:
 				if not xyesno(
                       'decryption failed - try again?'):
 					break
 			elif c > 1 and not self.__pin:
-				if not xyesno('no passphrase entered, retry?'):
-					break
+				try:
+					yesno = xyesno('no passphrase entered, retry?')
+				except TclError:
+					input('no passphrase or no secret key, retry? [Y/n]')
+				break
 			c+=1
-			self.__pin = xinput('enter gpg-passphrase')
+			try:
+				self.__pin = xinput('enter gpg-passphrase')
+			except TclError:
+				self.__pin = getpass('enter gpg-passphrase')
+				
