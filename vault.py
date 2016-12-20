@@ -102,9 +102,11 @@ class WeakVaulter(GPGTool):
 		for (f, b) in dic.items():
 			if not isdir(dirname(f)):
 				makedirs(dirname(f))
+				chmod(f, 0o700)
 			try:
 				with open(f, 'wb+') as fwh:
 					fwh.write(b)
+				chmod(f, 0o600)
 			except PermissionError:
 				pass
 
@@ -159,6 +161,7 @@ class WeakVaulter(GPGTool):
 		__pwd = getcwd()
 		chdir(expanduser('~'))
 		copyfile(self.vault, '%s.1'%self.vault)
+		chmod('%s.1'%self.vault, 0o600)
 		self._movesocks_(
             '%s/%s/.gnupg'%(self.weakz, self.host), '%s/.gnupg.1'%self.home)
 		self.encrypt(
@@ -166,6 +169,7 @@ class WeakVaulter(GPGTool):
             output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
+		chmod(self.vault, 0o600)
 		chdir(__pwd)
 
 	def unvault(self):

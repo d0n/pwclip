@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from os import path, remove, environ
+from os import path, remove, environ, chmod
 
 try:
 	from os import uname
@@ -13,7 +13,7 @@ from yaml import load, dump
 
 from time import sleep
 
-from shutil import move
+from shutil import copyfile
 
 from tempfile import NamedTemporaryFile
 
@@ -96,14 +96,15 @@ class PassCrypt(GPGTool):
 			kwargs['recipients'] = self.recvs
 		self.__weaks = plain
 		try:
-			move(self.crypt, '%s.1'%self.crypt)
+			copyfile(self.crypt, '%s.1'%self.crypt)
+			chmod('%s.1'%self.crypt, 0o600)
 		except FileNotFoundError:
 			pass
 		while True:
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
+				chmod(self.crypt, 0o600)
 				break
-	
 
 	def adpw(self, usr, pwd=None):
 		pwdcom = [pwd if pwd else self._passwd()]
