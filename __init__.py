@@ -43,3 +43,5 @@ from system.users import Users
 from system.blkid import BlockDevices
 
 from system.mounter import DeviceMounter
+
+from system.chroot import ChangeRoot
