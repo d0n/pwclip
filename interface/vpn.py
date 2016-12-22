@@ -11,7 +11,7 @@ from time import sleep
 # local relative imports
 from executor import Command, sucommand as sudo
 from system import which, absrelpath
-from net.network import ifaces, ifaddrs
+from net.iface import ifaces, ifaddrs
 from colortext import bgre, abort, error
 
 # default vars
@@ -25,9 +25,8 @@ class VPNConfig(Command):
 	_pidfile = '/run/openconnect.pid'
 	dbg = False
 	vpncfgs = {
-	    'ifname': 'tun0',
-	    'keystore': '~/.vpn'
-	    }
+        'ifname': 'tun0',
+        'keystore': '~/.vpn'}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):

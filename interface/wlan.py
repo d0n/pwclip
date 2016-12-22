@@ -6,13 +6,13 @@ import os
 import sys
 
 # local relative imports
-from net.network import isup, ifaces, isconfd, anyifconfd
+from net.iface import isup, ifaces, isconfd, anyifconfd
 from system import fileage, which
 from executor import sucommand
 from colortext import bgre
 from pars import NetworkInterfacesParser
 
-from .ifdrougs import ifup, ifdown, ifconfup, ifconfdown
+from net.util.ifdrougs import ifup, ifdown, ifconfup, ifconfdown
 
 # default vars
 __version__ = '0.2'

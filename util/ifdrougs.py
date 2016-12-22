@@ -1,6 +1,7 @@
 from system import which
 from executor import command as c, sucommand as s
-from net.network import isup
+from net.iface import isup
+from net.util.ping import ping
 
 def dhclient(iface, verbose=True):
 	dhclient = which('dhclient')
@@ -50,10 +51,3 @@ def ifconfdown(iface):
 	else:
 		err = 'ifconfig down %s %s' %(iface, err)
 		raise RuntimeError(err)
-
-def ping(domain='www.google.de', count=1, wait=1):
-	if int(c.erno(
-		  '%s -c%s -W%s %s'%(which('ping'), count, wait, domain))) == 0:
-		return True
-
-

@@ -20,11 +20,11 @@ import os
 import sys
 
 # local relative imports
-from net.ifdrougs import ifup, ifdown
 from system import which
-from net.network import ifaces
 from colortext import bgre
-from pars import NetworkInterfacesParser
+from pars.network import NetworkInterfacesParser
+from net.iface import ifaces
+from net.util.ifdrougs import ifup, ifdown
 
 # default vars
 __version__ = '0.1'

@@ -1,20 +1,34 @@
 # to only import all necessarry modules/libs define the calling executable
-from net.rfkill import rfklocks, rfklist
-from net.ping import ping
-from net.eth import ETHConfig
-from net.ldap import LDAPSearch
-from net.vpn import VPNConfig
-from net.wlan import WLANConfig
-from net.wwan import WWANConfig
 
-from net.network import addrmask, netips, ifaces, mac, macs, ifaddrs, isip, \
-    anyifconfd, isconfd, haslink, isup, gateway, askdns, vpninfo, iftype, \
-    netcat, raflookup, iternet, currentnets
+from net.addr import \
+    addrmask, netips, \
+    iternet, gateway, isip
 
-from net.wakeonlan import wol
+from net.dns import \
+    fqdn, askdns, raflookup
 
-from net.telnet import telnet
+from net.iface import \
+    haslink, isup, \
+    ifaces, ifaddrs, \
+    anyifconfd, isconfd, \
+    iftype, currentnets
 
-from net.dhcp import DHCPDiscover
+from net.mac import mac, macs
 
-from net.ssh import SecureSHell
+# interface
+from net.interface.eth import ETHConfig
+from net.interface.vpn import VPNConfig
+from net.interface.wlan import WLANConfig
+from net.interface.wwan import WWANConfig
+
+# util
+from net.util.dhcp import DHCPDiscover
+from net.util.ifdrougs import \
+    dhclient, ifup, ifdown, ifconfup, ifconfdown, ping
+from net.util.ldap import LDAPSearch
+from net.util.mailing import sendmail
+from net.util.netcat import netcat
+from net.util.ping import ping
+from net.util.rfkill import rfklocks, rfklist
+from net.util.ssh import SecureSHell
+from net.util.wakeonlan import wol

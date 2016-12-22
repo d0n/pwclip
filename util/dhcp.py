@@ -21,7 +21,7 @@ import struct
 from random import randint
 
 # local relative imports
-from .network import mac
+from net.mac import mac
 
 # global default variables
 __version__ = '0.0'
