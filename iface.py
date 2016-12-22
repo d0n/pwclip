@@ -6,7 +6,7 @@ from os import listdir
 
 from os.path import isfile
 
-from netifaces import ifaddresses, AF_INET
+from netifaces import ifaddresses, AF_INET, AF_INET6
 
 from net.addr import addrmask
 

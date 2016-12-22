@@ -12,12 +12,13 @@ from time import sleep
 from executor import Command, sucommand as sudo
 from system import which, absrelpath
 from net.iface import ifaces, ifaddrs
+from pars.network import ResolvConfParser
 from colortext import bgre, abort, error
 
 # default vars
 __version__ = '0.1'
 
-class VPNConfig(Command):
+class VPNConfig(ResolvConfParser):
 	_sh_ = True
 	_su_ = True
 	_pid = None
@@ -83,6 +84,14 @@ class VPNConfig(Command):
                 self._vpnpath(self.vpncfgs['key'], vpndir),
                 self._vpnpath(self.vpncfgs['office'], vpndir),
                 self.vpncfgs['user'],  self.vpncfgs['gate'])
+		if 'dns' in self.vpncfgs.keys() or 'search' in self.vpncfgs.keys():
+			rccfg = {}
+			if 'dns' in self.vpncfgs.keys():
+				rccfg['nameserver'] = self.vpncfgs['dns']
+			if 'search' in self.vpncfgs.keys():
+				rccfg['search'] = self.vpncfgs['search']
+			self.merge(rccfg)
+			self.write()
 		try:
 			return (self.call(occmd) == 0)
 		except KeyboardInterrupt:
