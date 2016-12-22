@@ -190,6 +190,8 @@ class WeakVaulter(GPGTool):
 	def unvault(self):
 		if not isfile(self.vault) or isdir(self.weakz):
 			return
+		__pwd = getcwd()
+		chdir(expanduser('~'))
 		with open(self.vault, 'r') as cfh:
 			dct = load(str(self.decrypt(cfh.read())))
 			if not dct:
@@ -202,3 +204,4 @@ class WeakVaulter(GPGTool):
 		self._movesocks_(
             '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
 		self._fixmod_()
+		chdir(__pwd)
