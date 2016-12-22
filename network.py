@@ -20,7 +20,7 @@ __at__ = os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))
     ) else os.readlink(os.path.dirname(os.path.abspath(__file__)))
 
-class ResolvConfParser(object):
+class ResolvConfParser(Command):
 	dbg = False
 	resolvconf = {}
 	conf = '/etc/resolv.conf'
@@ -47,12 +47,24 @@ class ResolvConfParser(object):
 			print(bgre(ResolvConfParser.__mro__))
 			print(bgre(tabd(self.__dict__.items())))
 
-	def _dump(self):
+	@property                # resolvconf <dict>
+	def resolvconf(self):
+		return self._resolvconf
+	@resolvconf.setter
+	def resolvconf(self, val):
+		self._resolvconf = val
+
+	def _dump(self, kwargs={}):
+		rccfg = kwargs if kwargs else self.resolvconf
 		rcstr = ''
 		for typ in ('nameserver', 'search'):
-			if typ in self.resolvconf.keys():
-				rcstr = '%s%s %s\n'%(rcstr, typ, str(
-                    ' '.join(self.resolvconf[typ])).rstrip())
+			if typ in rccfg.keys():
+				if typ == 'nameserver':
+					rcstr = '%snameserver %s\n'%(
+                        rcstr, '\nnameserver '.join(rccfg[typ]))
+				elif typ == 'search':
+					rcstr = '%s%s %s\n'%(rcstr, typ, str(
+                        ' '.join(rccfg[typ])).rstrip())
 		return rcstr
 
 	def _add(self, val):
@@ -61,10 +73,34 @@ class ResolvConfParser(object):
 			rccfg['nameserver'].append(val)
 		else:
 			rccfg['search'].append(val)
+		self.resolvconf = rccfg
 
-	def _merge(self, **kwargs):
-		for (key, val) in kwargs:
-			print(key, val)
+	def _del(self, val):
+		rccfg = self.resolvconf
+		if isip(val):
+			rccfg['nameserver'] = [n for n in rccfg['nameserver'] if n != val]
+		else:
+			rccfg['search'] = [n for n in rccfg['search'] if n != val]
+		self.resolvconf = rccfg
+
+	def merge(self, kwargs):
+		rccfg = self.resolvconf
+		for typ in ('nameserver', 'search'):
+			if typ in rccfg.keys():
+				rccfg[typ] = kwargs[typ] + rccfg[typ]
+			elif typ in kwargs.keys():
+				rccfg[typ] = kwargs[typ]
+		self.resolvconf = rccfg
+
+	def write(self):
+		try:
+			with open(self.conf, 'w+') as cfh:
+				cfh.write(self._dump())
+		except PermissionError:
+			with open('/tmp/resolv.conf', 'w+') as cfh:
+				cfh.write(self._dump())
+			setattr(self, 'su_', True)
+			self.call('cp /tmp/resolv.conf /etc/resolv.conf')
 
 
 class NetworkInterfacesParser(object):
