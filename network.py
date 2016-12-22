@@ -101,6 +101,7 @@ class ResolvConfParser(Command):
 				cfh.write(self._dump())
 			setattr(self, 'su_', True)
 			self.call('cp /tmp/resolv.conf /etc/resolv.conf')
+			self.call('rm /tmp/resolv.conf')
 
 
 class NetworkInterfacesParser(object):
