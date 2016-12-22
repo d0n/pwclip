@@ -101,8 +101,7 @@ class GPGTool(object):
 		__g.encoding = 'utf-8'
 		return __g
 
-	@staticmethod
-	def _garr():
+	def _garr(self):
 		for proc in piter():
 			if proc.name() in ('gpg-agent', 'scdaemon', 'dirmngr'):
 				try:
@@ -111,7 +110,7 @@ class GPGTool(object):
 					error(
                         'cannot kill process',
                         proc.name, 'with PID', proc.pid())
-		gacfg = path.join(self.homedir, '.gnupg', 'gpg-agent.conf')
+		gacfg = path.join(self.homedir, 'gpg-agent.conf')
 		try:
 			with open(gacfg, 'r') as afh:
 				for l in afh.readlines():
@@ -254,27 +253,34 @@ class GPGTool(object):
                 message.strip(), always_trust=True, output=output)
 			if __plain:
 				return __plain
-			elif __plain and c == 0:
+			if not __plain and c == 0:
 				self._garr()
-			elif c > 3:
+			if c > 3:
 				try:
 					xmsgok('too many wrong attempts')
 				except TclError:
 					input('too many wrong attempts')
 				break
 			elif c > 1 and c < 3:
-				if not xyesno(
-                      'decryption failed - try again?'):
+				try:
+					yesno = xyesno(
+                      'decryption failed - try again?')
+				except TclError:
+					yesno = input(
+                        'no passphrase or no secret key, retry? [Y/n] ')
+				if yesno is False or yesno.lower() == 'n':
 					break
 			elif c > 1 and not self.__pin:
 				try:
 					yesno = xyesno('no passphrase entered, retry?')
 				except TclError:
-					input('no passphrase or no secret key, retry? [Y/n]')
-				break
+					yesno = input(
+                        'no passphrase entered, retry? [Y/n] ')
+				if yesno is False or yesno.lower() == 'n':
+					break
 			c+=1
 			try:
 				self.__pin = xinput('enter gpg-passphrase')
 			except TclError:
-				self.__pin = getpass('enter gpg-passphrase')
+				self.__pin = getpass('enter gpg-passphrase: ')
 				

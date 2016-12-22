@@ -192,7 +192,9 @@ class WeakVaulter(GPGTool):
 			dct = load(str(self.decrypt(cfh.read())))
 			if not dct:
 				return error('could not decrypt')
-			if dct:
+			if dct == 'None':
+				return
+			elif dct:
 				self._dictpath(dct)
 		self._mklns_(self.weakz)
 		self._movesocks_(
