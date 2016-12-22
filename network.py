@@ -22,7 +22,7 @@ __at__ = os.path.dirname(
 
 class ResolvConfParser(Command):
 	dbg = False
-	resolvconf = {}
+	_resolvconf = {}
 	conf = '/etc/resolv.conf'
 	def __init__(self, *args, **kwargs):
 		for arg in args:
