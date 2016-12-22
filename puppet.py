@@ -22,6 +22,7 @@ from socket import getfqdn as fqdn
 # local relative imports
 from colortext import bgre #, Debugger
 from system import which
+from net import netcat as nc, SecureSHell
 from executor import SSHCommand
 
 # global default variables
@@ -37,6 +38,7 @@ class Puppet(SSHCommand):
 	_user_ = 'root'
 	_host_ = ''
 	_template = '~/.config/puppet.tmpl'
+	scp = SecureSHell().scp
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
