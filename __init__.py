@@ -1,2 +1,3 @@
-from .network import NetworkInterfacesParser
-from .fstab import FstabParser
+from pars.network import \
+    DhclientParser, NetworkInterfacesParser, ResolvConfParser
+from pars.fstab import FstabParser

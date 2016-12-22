@@ -7,8 +7,9 @@ import sys
 import xml.etree.ElementTree as etree
 
 # local relative imports
-from colortext import bgre
+from colortext import bgre, tabd
 from system import which
+from net.addr import isip
 from executor import Command
 
 # default vars
@@ -18,6 +19,53 @@ __at__ = os.path.dirname(
     ) if not os.path.islink(
         os.path.dirname(os.path.abspath(__file__))
     ) else os.readlink(os.path.dirname(os.path.abspath(__file__)))
+
+class ResolvConfParser(object):
+	dbg = False
+	resolvconf = {}
+	conf = '/etc/resolv.conf'
+	def __init__(self, *args, **kwargs):
+		for arg in args:
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			if hasattr(self, key):
+				setattr(self, key, val)
+		dnss = []
+		srcs = []
+		with open(self.conf, 'r') as rfh:
+			rcls = [r.strip() for r in rfh.readlines()]
+		for rl in rcls:
+			if rl.startswith('nameserver'):
+				if len(rl.split(' ')) > 1:
+					dnss.append(rl.split(' ')[1])
+			elif rl.startswith('search'):
+				if len(rl.split(' ')) > 1:
+					srcs = srcs + rl.split(' ')[1:]
+		self.resolvconf = {'nameserver': dnss, 'search': srcs}
+		if self.dbg:
+			print(bgre(ResolvConfParser.__mro__))
+			print(bgre(tabd(self.__dict__.items())))
+
+	def _dump(self):
+		rcstr = ''
+		for typ in ('nameserver', 'search'):
+			if typ in self.resolvconf.keys():
+				rcstr = '%s%s %s\n'%(rcstr, typ, str(
+                    ' '.join(self.resolvconf[typ])).rstrip())
+		return rcstr
+
+	def _add(self, val):
+		rccfg = self.resolvconf
+		if isip(val):
+			rccfg['nameserver'].append(val)
+		else:
+			rccfg['search'].append(val)
+
+	def _merge(self, **kwargs):
+		for (key, val) in kwargs:
+			print(key, val)
+
 
 class NetworkInterfacesParser(object):
 	_dbg = None
@@ -36,8 +84,7 @@ class NetworkInterfacesParser(object):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(NetworkInterfaces.__mro__))
-			for (key, val) in self.__dict__.items():
-				print(bgre(key, '=', val))
+			print(bgre(tabd(self.__dict__.items())))
 	# rw properties
 	@property               # dbg <bool>
 	def dbg(self):
