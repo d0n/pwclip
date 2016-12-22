@@ -180,7 +180,7 @@ class WeakVaulter(GPGTool):
                 '%s/%s/.gnupg'%(self.weakz, self.host),
                 '%s/.gnupg.1'%self.home)
 			self.encrypt(
-                str(dump(self._pathdict(self.weakz))),
+                str(dump(self._pathdict(basename(self.weakz)))),
                 output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
