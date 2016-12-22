@@ -84,14 +84,6 @@ class VPNConfig(ResolvConfParser):
                 self._vpnpath(self.vpncfgs['key'], vpndir),
                 self._vpnpath(self.vpncfgs['office'], vpndir),
                 self.vpncfgs['user'],  self.vpncfgs['gate'])
-		if 'dns' in self.vpncfgs.keys() or 'search' in self.vpncfgs.keys():
-			rccfg = {}
-			if 'dns' in self.vpncfgs.keys():
-				rccfg['nameserver'] = self.vpncfgs['dns']
-			if 'search' in self.vpncfgs.keys():
-				rccfg['search'] = self.vpncfgs['search']
-			self.merge(rccfg)
-			self.write()
 		try:
 			return (self.call(occmd) == 0)
 		except KeyboardInterrupt:
@@ -101,6 +93,15 @@ class VPNConfig(ResolvConfParser):
 				error(err)
 		except PermissionError:
 			abort()
+		finally:
+			if 'dns' in self.vpncfgs.keys() or 'search' in self.vpncfgs.keys():
+				rccfg = {}
+				if 'dns' in self.vpncfgs.keys():
+					rccfg['nameserver'] = self.vpncfgs['dns']
+				if 'search' in self.vpncfgs.keys():
+					rccfg['search'] = self.vpncfgs['search']
+				self.merge(rccfg)
+				self.write()
 
 	def reconnect(self):
 		"""SIGUSR2"""
@@ -115,13 +116,12 @@ class VPNConfig(ResolvConfParser):
 				ocpid = str(f.read()).strip()
 		if not ocpid:
 			ocpid = self.stdx('pidof '+self.ocbin).strip()
-		if ocpid:
-			try:
-				return (self.erno('kill -SIGINT %s'%ocpid) == 0)
-			except KeyboardInterrupt:
-				abort()
-			except PermissionError as err:
-				error(err)
+		try:
+			return (self.erno('kill -SIGINT %s'%ocpid) == 0)
+		except KeyboardInterrupt:
+			abort()
+		except PermissionError as err:
+			error(err)
 
 	def switch(self):
 		if self.dbg:
