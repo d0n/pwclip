@@ -76,7 +76,8 @@ class WeakVaulter(GPGTool):
 					remove(ln)
 					if isdir('%s.1'%ln):
 						move('%s.1'%ln, ln)
-				elif isdir(ln) and ln.endswith('.1') and not isdir(ln.rstrip('.1')):
+				elif isdir(ln) and ln.endswith('.1') and \
+                      not isdir(ln.rstrip('.1')):
 					move(ln, ln.rstrip('.1'))
 		elif isdir('%s/%s'%(self.weakz, self.host)):
 			pwd = getcwd()
@@ -176,10 +177,11 @@ class WeakVaulter(GPGTool):
 			copyfile(self.vault, '%s.1'%self.vault)
 			chmod('%s.1'%self.vault, 0o600)
 			self._movesocks_(
-				'%s/%s/.gnupg'%(self.weakz, self.host), '%s/.gnupg.1'%self.home)
+                '%s/%s/.gnupg'%(self.weakz, self.host),
+                '%s/.gnupg.1'%self.home)
 			self.encrypt(
-				str(dump(self._pathdict(self.weakz))),
-				output=self.vault, recipients=self.recvs)
+                str(dump(self._pathdict(self.weakz))),
+                output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
 		chmod(self.vault, 0o600)
