@@ -18,12 +18,16 @@ from smtplib import SMTP as _smtp
 from email.mime.text import MIMEText as _mimetext
 from getpass import getpass as _getpass
 
+from colortext import error
+
 # default constant definitions
 __version__ = '0.1'
 
 def sendmail(message, sender, sendto, subject='',
       server='smtp.1und1.de', smtpuser=None, smtppass=None):
 	"""sndmail to provide function"""
+	if not sender or not sendto:
+		return error('cannot sent mail if sender and recipient is not set')
 	msg = _mimetext(message)
 	if subject:
 		msg['Subject'] = subject
