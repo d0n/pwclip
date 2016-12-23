@@ -172,16 +172,16 @@ class WeakVaulter(GPGTool):
 		ncr = self._pathdict(self.weakz)
 		__pwd = getcwd()
 		if ncr.keys() != ocr.keys() or \
-              ncr.values() != ocr.values():
-			chdir(expanduser('~'))
-			copyfile(self.vault, '%s.1'%self.vault)
-			chmod('%s.1'%self.vault, 0o600)
-			self._movesocks_(
-                '%s/%s/.gnupg'%(self.weakz, self.host),
-                '%s/.gnupg.1'%self.home)
-			self.encrypt(
-                str(dump(self._pathdict(basename(self.weakz)))),
-                output=self.vault, recipients=self.recvs)
+                  ncr.values() != ocr.values():
+				chdir(expanduser('~'))
+				copyfile(self.vault, '%s.1'%self.vault)
+				chmod('%s.1'%self.vault, 0o600)
+				self._movesocks_(
+					'%s/%s/.gnupg'%(self.weakz, self.host),
+					'%s/.gnupg.1'%self.home)
+				self.encrypt(
+					str(dump(self._pathdict(basename(self.weakz)))),
+					output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
 		chmod(self.vault, 0o600)
