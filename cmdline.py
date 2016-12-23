@@ -205,7 +205,7 @@ def cli():
 			exit(1)
 		__ent = pcm.lspw(__in)
 		if __ent:
-			if not __ent[__in]:
+			if not __in in __ent.keys() or not __ent[__in]:
 				fatal(
                     'could not find entry for',
                     __in, 'in', pkwargs['crypt'])
