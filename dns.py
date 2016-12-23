@@ -2,7 +2,9 @@
 
 from os import uname
 
-from socket import getfqdn
+from socket import getfqdn, gethostbyaddr, gaierror, herror
+
+from net.addr import isip
 
 def fqdn(name):
 	fqdn = getfqdn(name) if name else uname()[1]
@@ -12,8 +14,8 @@ def fqdn(name):
 
 def askdns(host):
 	try:
-		dnsinfo = socket.gethostbyaddr(host)
-	except (socket.gaierror, socket.herror, TypeError) as e:
+		dnsinfo = gethostbyaddr(host)
+	except (gaierror, herror, TypeError) as e:
 		return
 	if isip(host):
 		return dnsinfo[0]
