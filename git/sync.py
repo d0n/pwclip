@@ -3,7 +3,7 @@
 # global imports
 import re
 import sys
-from os import chdir as _chdir
+from os import chdir
 from os.path import basename, dirname, isfile
 
 # local relative imports
@@ -79,7 +79,7 @@ class GitSync(GitRepo):
                 self.giter, repos, syncall)))
 		for repo in self._gitsubmods(repos):
 			try:
-				_chdir(repo)
+				chdir(repo)
 			except FileNotFoundError:
 				error('path', repo, 'does not exist and has been omitted')
 				continue
