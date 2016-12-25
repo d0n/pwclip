@@ -15,7 +15,7 @@ from time import sleep
 
 from shutil import copyfile
 
-from tempfile import NamedTemporaryFile
+from paramiko.ssh_exception import SSHException
 
 from colortext import tabd, error, fatal
 
@@ -75,8 +75,13 @@ class PassCrypt(GPGTool):
 	def _copynews_(self):
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
-			src, trg = ssh.compstats(self.crypt, path.basename(self.crypt))
-			ssh.scpcompstats(self.crypt, path.basename(self.crypt))
+			try:
+				srctrg = ssh.compstats(
+                    self.crypt, path.basename(self.crypt))
+			except SSHException:
+				return
+			if srctrg:
+				ssh.scpcompstats(self.crypt, path.basename(self.crypt))
 
 	def _chkcrypt(self):
 		if self._readcrypt() == self.__weaks:

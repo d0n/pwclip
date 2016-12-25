@@ -24,6 +24,8 @@ from psutil import process_iter as piter
 
 from shutil import rmtree, move, copyfile
 
+from paramiko.ssh_exception import SSHException
+
 from yaml import load, dump
 
 from executor import command as cmd
@@ -99,8 +101,12 @@ class WeakVaulter(GPGTool):
 	def _copynews_(self):
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
-			srctrg = ssh.compstats(self.vault, basename(self.vault))
+			try:
+				srctrg = ssh.compstats(self.vault, basename(self.vault))
+			except SSHException:
+				return
 			if srctrg:
+				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
                     blu('syncing more recent file:'),
                     yel(src), blu('=>'), yel(trg)))
@@ -196,36 +202,28 @@ class WeakVaulter(GPGTool):
 				pass
 
 	def _checkdiff(self):
-		with open(self.vault, 'r') as cvh:
-			vlt = cvh.read()
-		nvlt = str(self.encrypt(
-            str(dump(self._pathdict(self.weakz))), recipients=self.recvs))
-		if vlt.strip() != nvlt.strip():
+		nvlt = self._pathdict(basename(self.weakz))
+		with open(self.vault, 'r') as cfh:
+			ovlt = load(str(self.decrypt(cfh.read())))
+		if ovlt != nvlt:
 			return True
 
 	def envault(self):
 		if not isdir(self.weakz):
 			return
-		if not self._checkdiff():
-			return
-		with open(self.vault, 'r') as cfh:
-			ocr = load(str(self.decrypt(cfh.read())))
-		ncr = self._pathdict(self.weakz)
 		__pwd = getcwd()
-		if ncr.keys() != ocr.keys() or \
-                  ncr.values() != ocr.values():
-				chdir(expanduser('~'))
-				copyfile(self.vault, '%s.1'%self.vault)
-				chmod('%s.1'%self.vault, 0o600)
-				self._movesocks_(
-					'%s/%s/.gnupg'%(self.weakz, self.host),
-					'%s/.gnupg.1'%self.home)
-				self.encrypt(
-					str(dump(self._pathdict(basename(self.weakz)))),
-					output=self.vault, recipients=self.recvs)
+		chdir(expanduser('~'))
+		if self._checkdiff():
+			copyfile(self.vault, '%s.1'%self.vault)
+			chmod('%s.1'%self.vault, 0o600)
+			self._movesocks_(
+                '%s/%s/.gnupg'%(self.weakz, self.host),
+                '%s/.gnupg.1'%self.home)
+			self.encrypt(
+                str(dump(self._pathdict(basename(self.weakz)))),
+                output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
-		self._copynews_()
 		chmod(self.vault, 0o600)
 		chdir(__pwd)
 
