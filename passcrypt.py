@@ -6,7 +6,7 @@ try:
 	from os import uname
 except ImportError:
 	def uname(): return [_, environ['COMPUTERNAME']]
-	
+
 from tarfile import open as taropen
 
 from yaml import load, dump
@@ -20,6 +20,8 @@ from tempfile import NamedTemporaryFile
 from colortext import tabd, error, fatal
 
 from system import userfind
+
+from net.util import SecureSHell as SSH
 
 from secrecy.gpg import GPGTool
 
@@ -38,10 +40,13 @@ class PassCrypt(GPGTool):
 	plain = '%s/.pwd.yaml'%home
 	crypt = '%s/.passcrypt'%home
 	recvs = []
+	remote = ''
+	reuser = user
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
-		recvs = recvs + [environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
+		recvs = recvs + [
+            environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -66,6 +71,12 @@ class PassCrypt(GPGTool):
 		if __weaks != self._readcrypt():
 			self._writecrypt_(__weaks)
 		self.__weaks = __weaks
+
+	def _copynews_(self):
+		if self.remote:
+			ssh = SSH(host=self.remote, user=self.reuser)
+			src, trg = ssh.compstats(self.crypt, path.basename(self.crypt))
+			ssh.scpcompstats(self.crypt, path.basename(self.crypt))
 
 	def _chkcrypt(self):
 		if self._readcrypt() == self.__weaks:
@@ -104,6 +115,7 @@ class PassCrypt(GPGTool):
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
 				chmod(self.crypt, 0o600)
+				self._copynews_()
 				break
 
 	def adpw(self, usr, pwd=None):

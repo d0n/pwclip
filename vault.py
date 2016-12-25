@@ -30,21 +30,52 @@ from executor import command as cmd
 
 from net import SecureSHell as SSH
 
+from colortext import bgre, blu, yel
+
 from secrecy import GPGTool
 
 class WeakVaulter(GPGTool):
+	_dbg = None
 	home = expanduser('~')
+	user = environ['USER']
 	host = uname()[1]
 	vault = '%s/.vault'%home
 	weakz = '%s/.weaknez'%home
 	recvs = []
+	remote = ''
+	reuser = user
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']]
-	scp = SSH().scp
-	def __init__(self):
+	def __init__(self, *args, **kwargs):
+		for arg in args:
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+			elif hasattr(self, '_%s'%(arg)):
+				setattr(self, '_%s'%(arg), True)
+		for (key, val) in kwargs.items():
+			if hasattr(self, key):
+				setattr(self, key, val)
+			elif hasattr(self, '_%s'%(key)):
+				setattr(self, '_%s'%(key), val)
 		self._clean_()
+		if self.dbg:
+			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
+			print(bgre('%s\n%s\n\n%s\n%s\n'%(
+                WeakVaulter.__mro__,
+                '\n'.join('  %s%s=    %s'%(
+                    k, ' '*int(lim-len(k)), v
+                ) for (k, v) in sorted(WeakVaulter.__dict__.items())),
+                WeakVaulter.__init__,
+                '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
+                    ) for (k, v) in sorted(self.__dict__.items())))))
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = True if val else False
 
 	def _fixmod_(self):
 		for p in ('~/.gnupg', '~/.weaknez'):
@@ -64,6 +95,16 @@ class WeakVaulter(GPGTool):
 		socks.append('random_seed')
 		for s in socks:
 			move('%s/%s'%(src, s), '%s/%s'%(trg, s))
+
+	def _copynews_(self):
+		if self.remote:
+			ssh = SSH(host=self.remote, user=self.reuser)
+			srctrg = ssh.compstats(self.vault, basename(self.vault))
+			if srctrg:
+				print('%s\n  %s %s %s'%(
+                    blu('syncing more recent file:'),
+                    yel(src), blu('=>'), yel(trg)))
+				ssh.scpcompstats(self.vault, basename(self.vault))
 
 	def _clean_(self):
 		self._fixmod_()
@@ -184,12 +225,14 @@ class WeakVaulter(GPGTool):
 					output=self.vault, recipients=self.recvs)
 		rmtree(self.weakz)
 		self._rmlns_()
+		self._copynews_()
 		chmod(self.vault, 0o600)
 		chdir(__pwd)
 
 	def unvault(self):
 		if not isfile(self.vault) or isdir(self.weakz):
 			return
+		self._copynews_()
 		__pwd = getcwd()
 		chdir(expanduser('~'))
 		with open(self.vault, 'r') as cfh:
