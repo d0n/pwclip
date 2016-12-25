@@ -119,8 +119,8 @@ class PassCrypt(GPGTool):
 		while True:
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
-				chmod(self.crypt, 0o600)
 				self._copynews_()
+				chmod(self.crypt, 0o600)
 				break
 
 	def adpw(self, usr, pwd=None):
