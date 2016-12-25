@@ -18,14 +18,14 @@
 # global & stdlib imports
 import sys
 
-from os import environ, path
-
 try:
-    import fork
+    from os import fork
 except ImportError:
 	def fork(): return 0
 
-from os.path import isfile
+from os import environ, path
+
+from os.path import isfile, basename, dirname, expanduser
 
 from yaml import load
 
@@ -34,7 +34,7 @@ from argparse import ArgumentParser
 from time import sleep
 
 # local relative imports
-from colortext import abort, tabd, fatal
+from colortext import bgre, abort, tabd, fatal
 
 from system import copy, paste, xinput, xnotify
 
@@ -73,11 +73,11 @@ def __dictreplace(pwdict):
 
 # global default variables
 def cli():
-	_me = path.basename(__file__)
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	_me = basename(dirname(__file__))
+	cfg = expanduser('~/.config/%s.yaml'%_me)
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = load(cfh.rad())
+			cfgs = load(cfh.read())
 	except FileNotFoundError:
 		cfgs = {}
 	pars = ArgumentParser() #add_help=False)
@@ -153,6 +153,14 @@ def cli():
 		pkwargs['user'] = args.usr
 	if args.yml:
 		pkwargs['plain'] = args.yml
+	if args.remote:
+		pkwargs['remote'] = args.remote
+	if args.reuser:
+		pkwargs['reuser'] = args.reuser
+	if args.dbg:
+		print(bgre(pars))
+		print(bgre(tabd(args.__dict__, 2)))
+		print(bgre(pkwargs))
 	if not isfile(pkwargs['plain']) and \
           not isfile(pkwargs['crypt']) and args.yks is False:
 		fatal(
