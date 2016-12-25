@@ -14,16 +14,16 @@ __version__ = '0.1'
 
 class SecureSHell(object):
 	_dbg = False
-	_user = 'root'
-	_host = ''
+	user = 'root'
+	host = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+			elif hasattr(self, '_%s'%(arg)):
+				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
-			if hasattr(self, key) and not type(val) in (None, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
 		if self.dbg:
 			print('\033[01;30m%s\033[0m'%SecureSHell.__mro__)
@@ -34,63 +34,54 @@ class SecureSHell(object):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
-	@property               # host <str>
-	def host(self):
-		return self._host
-	@host.setter
-	def host(self, val):
-		self._host = val if type(val) is str else self._host
-	@property               # user <str>
-	def user(self):
-		return self._user
-	@user.setter
-	def user(self, val):
-		self._user = val if type(val) is str else self._user
+		self._dbg = val if val else False
 
-	def __auth(self, host=None):
-		if not host:
-			if not self.host:
-				raise RuntimeError('cannot create transport without target host')
-			host = self.host
-		transport = paramiko.Transport((host, 22))
-		transport.start_client()
-		if transport and transport.is_authenticated():
-			return True
-		agent = paramiko.agent.Agent()
-		keys = agent.get_keys()
-		for key in keys:
-			print(transport.auth_publickey(self.user, key))
-		return transport
-
-	def rstdo(self, cmd, host=None):
-		if self.dbg:
-			print('\033[01;30m%s\033[0m'%self.command)
-		if not host:
-			host = self.host
-		host = fqdn(host)
-		if not self.__auth(host):
-			raise RuntimeError('could not authenticate')
-		client = paramiko.SSHClient()
-		client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		client.connect(host, username=self.user)
-		stdin, stdout, stderr = client.exec_command(cmd)
-		return stdout.readlines() #, stderr.readlines()
-
-	def scp(self, source, target, host=None, user=None):
-		if not host:
-			host = self.host
-		if host:
-			host = fqdn(host)
-		if not user:
-			user = self.user
+	@staticmethod
+	def _ssh_(host, user, port=22):
 		ssh = paramiko.SSHClient()
-		#ssh.load_system_host_keys()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		ssh.connect(host, 22, user)
-		scp = ssh.open_sftp()
-		return scp.put(source, target)
+		ssh.connect(host, int(port), username=user)
+		return ssh
 
+	def rstdo(self, cmd, host=None, user=None):
+		host = host if host else self.host
+		user = user if user else self.user
+		ssh = self._ssh_(host, user)
+		_, out, _ = ssh.exec_command(cmd)
+		return ''.join(out.readlines())
+
+	def scp(self, src, trg, host=None, user=None):
+		user = user if user else self.user
+		host = host if host else self.host
+		host = fqdn(host)
+		ssh = self._ssh_(host, user)
+		scp = ssh.open_sftp()
+		return scp.put(src, trg)
+
+	def compstats(self, src, trg, host=None, user=None):
+		host = host if host else self.host
+		user = user if user else self.user
+		smt = int(str(int(os.stat(src).st_mtime))[:6])
+		rmt = int(str(int(
+            self.rstdo('stat -c %%Y %s'%src, host=host, user=user)))[:6])
+		if rmt == smt:
+			return
+		srctrg = src, '%s@%s:%s'%(user, host, trg)
+		if rmt > smt:
+			srctrg = '%s@%s:%s'%(user, host, trg), src
+		return srctrg
+
+	def scpcompstats(self, src, trg, host=None, user=None):
+		user = user if user else self.user
+		host = host if host else self.host
+		smt = int(str(int(os.stat(src).st_mtime))[:6])
+		rmt = int(str(int(
+            self.rstdo('stat -c %%Y %s'%src, host=host, user=user)))[:6])
+		if rmt == smt:
+			return
+		elif rmt > smt:
+			return self.scp(trg, src, host=host, user=user)
+		return self.scp(src, trg, host=host, user=user)
 
 
 
