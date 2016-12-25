@@ -1,2 +1,2 @@
-from .repo import GitRepo
-from .sync import GitSync
+from repo.git.repo import GitRepo
+from repo.git.sync import GitSync

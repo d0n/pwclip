@@ -1,3 +1,3 @@
-from .git import GitRepo, GitSync
-from .subversion import SubVersion
-from .generic import RepoSync
+from repo.git import GitRepo, GitSync
+from repo.subversion import SubVersion
+from repo.generic import RepoSync
