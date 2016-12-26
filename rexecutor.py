@@ -1,4 +1,5 @@
-from system import which, whoami
+from system import which
+from system.user import whoami
 from executor.executor import Command
 
 class SSHCommand(Command):
