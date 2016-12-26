@@ -1,6 +1,5 @@
-from system import which, whoami, hostname
-from .executor import Command
-
+from system import which, whoami
+from executor.executor import Command
 
 class SSHCommand(Command):
 	_dbg = False
