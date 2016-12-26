@@ -12,51 +12,17 @@ HASH = SHA256
 PREFIX = b'sc'
 HEADER = (PREFIX + b'\x00\x00', PREFIX + b'\x00\x01', PREFIX + b'\x00\x02')
 LATEST = 2   # index into SALT_LEN, EXPANSION_COUNT, HEADER
-
 # lengths here are in bits, but pcrypto uses block size in bytes
 HALF_BLOCK = AES.block_size*8//2
+HEADER_LEN = 4
+
 for salt_len in SALT_LEN:
 	assert HALF_BLOCK <= salt_len  # we use a subset of the salt as nonce
-
-HEADER_LEN = 4
 for header in HEADER:
 	assert len(header) == HEADER_LEN
 
-
-def enhmacsha(password, data):
-	"""encryption function"""
-	data = _str_to_bytes(data)
-	_assert_encrypt_length(data)
-	salt = bytes(_random_bytes(SALT_LEN[LATEST]//8))
-	hmac_key, cipher_key = _expand_keys(password, salt, EXPANSION_COUNT[LATEST])
-	counter = Counter.new(HALF_BLOCK, prefix=salt[:HALF_BLOCK//8])
-	cipher = AES.new(cipher_key, AES.MODE_CTR, counter=counter)
-	encrypted = cipher.encrypt(data)
-	hmac = _hmac(hmac_key, HEADER[LATEST] + salt + encrypted)
-	return HEADER[LATEST] + salt + encrypted + hmac
-
-
-def dehmacsha(password, data):
-	"""decryption function"""
-	_assert_not_unicode(data)
-	_assert_header_prefix(data)
-	version = _assert_header_version(data)
-	_assert_decrypt_length(data, version)
-	raw = data[HEADER_LEN:]
-	salt = raw[:SALT_LEN[version]//8]
-	hmac_key, cipher_key = _expand_keys(password, salt, EXPANSION_COUNT[version])
-	hmac = raw[-HASH.digest_size:]
-	hmac2 = _hmac(hmac_key, data[:-HASH.digest_size])
-	if _assert_hmac(hmac_key, hmac, hmac2):
-		return
-	counter = Counter.new(HALF_BLOCK, prefix=salt[:HALF_BLOCK//8])
-	cipher = AES.new(cipher_key, AES.MODE_CTR, counter=counter)
-	plain = cipher.decrypt(raw[SALT_LEN[version]//8:-HASH.digest_size])
-	return plain #.decode()
-
-
-
 class DecryptionException(Exception): """decrypt exception body"""
+
 class EncryptionException(Exception): """encrypt exception body"""
 
 def _assert_not_unicode(data):
@@ -133,3 +99,32 @@ def _str_to_bytes(data):
 	if isinstance(data, u_type):
 		return data.encode('utf-8')
 	return data
+
+def enhmacsha(password, data):
+	"""encryption function"""
+	data = _str_to_bytes(data)
+	_assert_encrypt_length(data)
+	salt = bytes(_random_bytes(SALT_LEN[LATEST]//8))
+	hmac_key, cipher_key = _expand_keys(password, salt, EXPANSION_COUNT[LATEST])
+	counter = Counter.new(HALF_BLOCK, prefix=salt[:HALF_BLOCK//8])
+	cipher = AES.new(cipher_key, AES.MODE_CTR, counter=counter)
+	encrypted = cipher.encrypt(data)
+	hmac = _hmac(hmac_key, HEADER[LATEST] + salt + encrypted)
+	return HEADER[LATEST] + salt + encrypted + hmac
+
+def dehmacsha(password, data):
+	"""decryption function"""
+	_assert_not_unicode(data)
+	_assert_header_prefix(data)
+	version = _assert_header_version(data)
+	_assert_decrypt_length(data, version)
+	raw = data[HEADER_LEN:]
+	salt = raw[:SALT_LEN[version]//8]
+	hmac_key, cipher_key = _expand_keys(password, salt, EXPANSION_COUNT[version])
+	hmac = raw[-HASH.digest_size:]
+	hmac2 = _hmac(hmac_key, data[:-HASH.digest_size])
+	if _assert_hmac(hmac_key, hmac, hmac2): return
+	counter = Counter.new(HALF_BLOCK, prefix=salt[:HALF_BLOCK//8])
+	cipher = AES.new(cipher_key, AES.MODE_CTR, counter=counter)
+	plain = cipher.decrypt(raw[SALT_LEN[version]//8:-HASH.digest_size])
+	return plain #.decode()
