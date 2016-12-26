@@ -24,10 +24,6 @@ from system.string2bool import string2bool
 
 from system.gpgagent import agentinfo
 
-from system.user.whoami import whoami
-
-from system.user.find import userfind
-
 from system.clips import clips, copy, paste
 
 from system.power import SystemPower
@@ -36,4 +32,8 @@ from system.uefi import UEFITool
 
 from system.blkid import BlockDevices
 
+from system.user import userfind, whoami
+
 from system.xlib import xinput, xnotify, xyesno, xmsgok
+
+from system.doom import Daemon
