@@ -1,4 +1,10 @@
-from system.cron import stamp, fileage
+from socket import getfqdn
+
+hostname = getfqdn()
+
+from system.stamp import stamp
+
+from system.fileage import fileage
 
 from system.path import absrelpath, realpaths, confpaths, confdats, jconfdats
 
