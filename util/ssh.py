@@ -40,7 +40,10 @@ class SecureSHell(object):
 	def _ssh_(host, user, port=22):
 		ssh = paramiko.SSHClient()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		ssh.connect(host, int(port), username=user)
+		try:
+			ssh.connect(host, int(port), username=user)
+		except paramiko.ssh_exception.SSHException as err:
+			print(err)
 		return ssh
 
 	def rstdo(self, cmd, host=None, user=None):
