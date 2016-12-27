@@ -268,7 +268,7 @@ class GPGTool(object):
 				except TclError:
 					yesno = input(
                         'no passphrase or no secret key, retry? [Y/n] ')
-				if yesno is False or yesno and yesno.lower() == 'n':
+				if not yesno or yesno and yesno.lower() == 'n':
 					break
 			elif c > 1 and not self.__pin:
 				try:
