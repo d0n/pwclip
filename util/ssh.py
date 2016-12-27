@@ -62,12 +62,14 @@ class SecureSHell(object):
 		host = host if host else self.host
 		user = user if user else self.user
 		smt = int(str(int(os.stat(src).st_mtime))[:6])
-		rmt = int(str(int(
-            self.rstdo('stat -c %%Y %s'%src, host=host, user=user)))[:6])
+		rmt = self.rstdo(
+            'stat -c %%Y %s'%os.path.basename(src), host=host, user=user)
+		if rmt:
+			rmt = int(str(rmt)[:6])
 		if rmt == smt:
 			return
 		srctrg = src, '%s@%s:%s'%(user, host, trg)
-		if rmt > smt:
+		if int(rmt) > int(smt):
 			srctrg = '%s@%s:%s'%(user, host, trg), src
 		return srctrg
 
@@ -75,11 +77,13 @@ class SecureSHell(object):
 		user = user if user else self.user
 		host = host if host else self.host
 		smt = int(str(int(os.stat(src).st_mtime))[:6])
-		rmt = int(str(int(
-            self.rstdo('stat -c %%Y %s'%src, host=host, user=user)))[:6])
+		rmt = self.rstdo(
+            'stat -c %%Y %s'%os.path.basename(src), host=host, user=user)
+		if rmt:
+			rmt = int(str(rmt)[:6])
 		if rmt == smt:
 			return
-		elif rmt > smt:
+		elif int(rmt) > int(smt):
 			return self.scp(trg, src, host=host, user=user)
 		return self.scp(src, trg, host=host, user=user)
 
