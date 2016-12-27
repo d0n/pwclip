@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from re import search
 
+from socket import getfqdn
+
 from netaddr import IPNetwork, IPAddress
 
 def addrmask(address, netmask):
@@ -16,7 +18,7 @@ def netips(network):
 
 def iternet(netaddr, mode=None, verbose=None):
 	for ip in netips(netaddr):
-		host = socket.getfqdn(ip)
+		host = getfqdn(ip)
 		if mode == 'both':
 			ipdns = ip, None
 			if host != ip:
