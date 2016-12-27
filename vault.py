@@ -101,16 +101,13 @@ class WeakVaulter(GPGTool):
 	def _copynews_(self):
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
-			try:
-				srctrg = ssh.compstats(self.vault, basename(self.vault))
-			except SSHException:
-				return
+			srctrg = ssh.compstats(basename(self.vault), basename(self.vault))
 			if srctrg:
 				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
                     blu('syncing more recent file:'),
                     yel(src), blu('=>'), yel(trg)))
-				ssh.scpcompstats(self.vault, basename(self.vault))
+				ssh.scpcompstats(basename(self.vault), basename(self.vault))
 
 	def _clean_(self):
 		self._fixmod_()
@@ -228,7 +225,9 @@ class WeakVaulter(GPGTool):
 		chdir(__pwd)
 
 	def unvault(self):
-		if not isfile(self.vault) or isdir(self.weakz):
+		if not isfile(self.vault):
+			error('vault', self.vault, 'does not exist or is inaccessable')
+		elif isdir(self.weakz):
 			return
 		self._copynews_()
 		__pwd = getcwd()
@@ -246,3 +245,4 @@ class WeakVaulter(GPGTool):
             '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
 		self._fixmod_()
 		chdir(__pwd)
+
