@@ -112,7 +112,7 @@ class WeakVaulter(GPGTool):
 				print('%s\n  %s %s %s'%(
                     blu('syncing more recent file:'),
                     yel(src), blu('=>'), yel(trg)))
-				ssh.scpcompstats(basename(self.vault), basename(self.vault))
+				ssh.scpcompstats(basename(self.vault), self.vault)
 
 	def _clean_(self):
 		self._fixmod_()
