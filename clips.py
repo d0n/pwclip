@@ -154,25 +154,38 @@ def clips():
 
 	def linclips():
 		"""linux clipboards"""
-		def _copy(text):
+		def _copy(text, mode='p'): # mode in ('p', 'b', 'pb')
 			"""linux copy function"""
 			text = text if text else ''
-			try:
+			if 'p' in mode:
 				with Popen([
-                      'xsel', '-l', '/dev/null', '-p', '-i'
-                      ], stdin=PIPE) as prc:
+                      'xsel', '-l', '/dev/null', '-p', ], stdin=PIPE) as prc:
 					prc.communicate(input=text.encode('utf-8'))
-			except AttributeError:
-				prc = Popen([
-                    'xsel', '-l', '/dev/null', '-p', '-i'
-                    ], shell=True, stdin=PIPE)
-				prc.communicate(input=text.encode('utf-8'))
-		def _paste():
+			if 'b' in mode:
+				with Popen([
+                      'xsel', '-l', '/dev/null', '-b', ], stdin=PIPE) as prc:
+					prc.communicate(input=text.encode('utf-8'))
+
+		def _paste(mode='p'):
 			"""linux paste function"""
-			out, _ = Popen([
-                'xsel', '-l', '/dev/null', '-p', '-o'
-                ], stdout=PIPE).communicate()
-			return out.decode()
+			if mode == 'p':
+				out, _ = Popen([
+                    'xsel', '-l', '/dev/null', '-p', '-o'
+                    ], stdout=PIPE).communicate()
+				return out.decode()
+			elif mode == 'b':
+				out, _ = Popen([
+                    'xsel', '-l', '/dev/null', '-b', '-o'
+                    ], stdout=PIPE).communicate()
+				return out.decode()
+			elif mode in ('pb', 'bp'):
+				pout, _ = Popen([
+                    'xsel', '-l', '/dev/null', '-p', '-o'
+                    ], stdout=PIPE).communicate()
+				bout, _ = Popen([
+                    'xsel', '-l', '/dev/null', '-b', '-o'
+                    ], stdout=PIPE).communicate()
+				return pout.decode(), bout.decode()
 		return _copy, _paste
 	# decide which copy, paste functions to return [windows|mac|linux] mainly
 	if osname == 'nt' or system() == 'Windows':
