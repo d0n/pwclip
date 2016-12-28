@@ -251,35 +251,36 @@ class GPGTool(object):
 		try:
 			while True:
 				__plain = self._gpg_.decrypt(
-					message.strip(), always_trust=True, output=output)
+                    message.strip(), always_trust=True, output=output)
 				if __plain:
 					return __plain
 				if not __plain and c == 0:
 					self._garr()
-				yesno = None
+				yesno = True
 				if c > 3:
+					yesno = False
 					try:
 						xmsgok('too many wrong attempts')
 					except TclError:
 						print('too many wrong attempts')
-					break
-				elif c > 1 and c < 3:
+				elif c >= 1 and c < 3:
+					yesno = False
 					try:
-						yesno = xyesno(
-						  'decryption failed - try again?')
+						yesno = xyesno('decryption failed - try again?')
 					except TclError:
 						yesno = True if str(input(
                             'no passphrase entered, retry? [Y/n]'
                             )).lower() in ('y', '') else False
 				elif c > 1 and not self.__pin:
+					yesno = False
 					try:
 						yesno = xyesno('no passphrase entered, retry?')
 					except TclError:
 						yesno = True if str(input(
                             'no passphrase entered, retry? [Y/n]'
                             )).lower() in ('y', '') else False
-				if yesno:
-					break
+				if not yesno:
+					raise RuntimeError('cannot decrypt')
 				c+=1
 				try:
 					self.__pin = xinput('enter gpg-passphrase')
