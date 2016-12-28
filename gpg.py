@@ -269,7 +269,7 @@ class GPGTool(object):
 						yesno = xyesno('decryption failed - try again?')
 					except TclError:
 						yesno = True if str(input(
-                            'no passphrase entered, retry? [Y/n]'
+                            'decryption failed - retry? [Y/n]'
                             )).lower() in ('y', '') else False
 				elif c > 1 and not self.__pin:
 					yesno = False
