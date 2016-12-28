@@ -256,26 +256,29 @@ class GPGTool(object):
 					return __plain
 				if not __plain and c == 0:
 					self._garr()
+				yesno = None
 				if c > 3:
 					try:
 						xmsgok('too many wrong attempts')
 					except TclError:
-						input('too many wrong attempts')
+						print('too many wrong attempts')
 					break
 				elif c > 1 and c < 3:
 					try:
 						yesno = xyesno(
 						  'decryption failed - try again?')
 					except TclError:
-						yesno = input(
-							'no passphrase or no secret key, retry? [Y/n] ')
+						yesno = True if str(input(
+                            'no passphrase entered, retry? [Y/n]'
+                            )).lower() in ('y', '') else False
 				elif c > 1 and not self.__pin:
 					try:
 						yesno = xyesno('no passphrase entered, retry?')
 					except TclError:
-						yesno = input(
-							'no passphrase entered, retry? [Y/n] ')
-				if not yesno or yesno is not True and yesno.lower() == 'n':
+						yesno = True if str(input(
+                            'no passphrase entered, retry? [Y/n]'
+                            )).lower() in ('y', '') else False
+				if yesno:
 					break
 				c+=1
 				try:
