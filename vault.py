@@ -220,7 +220,7 @@ class WeakVaulter(GPGTool):
 			chmod('%s.1'%self.vault, 0o600)
 			self._movesocks_(
                 '%s/%s/.gnupg'%(self.weakz, self.host),
-                '%s/.gnupg.1'%self.home)
+                '%s/.gnupg'%self.home)
 			self.encrypt(
                 str(dump(self._pathdict(basename(self.weakz)))),
                 output=self.vault, recipients=self.recvs)
