@@ -25,7 +25,7 @@ from platform import system
 
 from time import sleep, time
 
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, DEVNULL
 
 def clips():
 	"""return `copy`, `paste` as system independent functions"""
@@ -158,27 +158,33 @@ def clips():
 			"""linux copy function"""
 			text = text if text else ''
 			if 'p' in mode:
-				with Popen(['xsel', '-p', '-i'], stdin=PIPE) as prc:
+				with Popen(['xsel', '-p', '-i'], stdin=PIPE, stderr=DEVNULL
+                      ) as prc:
 					prc.communicate(input=text.encode('utf-8'))
 			if 'b' in mode:
-				with Popen(['xsel', '-b', '-i'], stdin=PIPE) as prc:
+				with Popen(['xsel', '-b', '-i'], stdin=PIPE, stderr=DEVNULL
+                      ) as prc:
 					prc.communicate(input=text.encode('utf-8'))
 
 		def _paste(mode='p'):
 			"""linux paste function"""
 			if mode == 'p':
 				out, _ = Popen([
-                    'xsel', '-p', '-o'], stdout=PIPE).communicate()
+                    'xsel', '-p', '-o'], stdout=PIPE, stderr=DEVNULL
+                    ).communicate()
 				return out.decode()
 			elif mode == 'b':
 				out, _ = Popen([
-                    'xsel', '-b', '-o'], stdout=PIPE).communicate()
+                    'xsel', '-b', '-o'], stdout=PIPE, stderr=DEVNULL
+                    ).communicate()
 				return out.decode()
 			elif mode in ('pb', 'bp'):
 				pout, _ = Popen([
-                    'xsel', '-p', '-o'], stdout=PIPE).communicate()
+                    'xsel', '-p', '-o'], stdout=PIPE, stderr=DEVNULL
+                    ).communicate()
 				bout, _ = Popen([
-                    'xsel', '-b', '-o'], stdout=PIPE).communicate()
+                    'xsel', '-b', '-o'], stdout=PIPE, stderr=DEVNULL
+                    ).communicate()
 				return pout.decode(), bout.decode()
 		return _copy, _paste
 	# decide which copy, paste functions to return [windows|mac|linux] mainly
