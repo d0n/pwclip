@@ -104,7 +104,8 @@ class WeakVaulter(GPGTool):
 	def _copynews_(self):
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
-			srctrg = ssh.compstats(basename(self.vault), basename(self.vault))
+			srctrg = ssh.compstats(
+                self.vault, '~/%s'%basename(self.vault))
 			if srctrg:
 				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
