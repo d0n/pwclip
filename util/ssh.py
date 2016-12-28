@@ -9,6 +9,8 @@ import paramiko
 # local relative imports
 from socket import getfqdn as fqdn
 
+from colortext import abort
+
 # default vars
 __version__ = '0.1'
 
@@ -50,7 +52,10 @@ class SecureSHell(object):
 		host = host if host else self.host
 		user = user if user else self.user
 		ssh = self._ssh_(host, user)
-		_, out, _ = ssh.exec_command(cmd)
+		try:
+			_, out, _ = ssh.exec_command(cmd)
+		except KeyboardInterrupt:
+			abort()
 		return ''.join(out.readlines())
 
 	def scp(self, src, trg, host=None, user=None):
