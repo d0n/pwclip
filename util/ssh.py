@@ -64,9 +64,9 @@ class SecureSHell(object):
 	def compstats(self, src, trg, host=None, user=None):
 		host = host if host else self.host
 		user = user if user else self.user
-		smt = int(str(int(os.stat(os.path.abspath(src)).st_mtime))[:6])
+		smt = int(str(int(os.stat(src).st_mtime))[:6])
 		rmt = self.rstdo(
-            'stat -c %%Y %s'%os.path.basename(src), host=host, user=user)
+            'stat -c %%Y %s'%src, host=host, user=user)
 		if rmt:
 			rmt = int(str(rmt)[:6])
 		if rmt == smt:
