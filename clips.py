@@ -159,11 +159,13 @@ def clips():
 			text = text if text else ''
 			if 'p' in mode:
 				with Popen([
-                      'xsel', '-l', '/dev/null', '-p', ], stdin=PIPE) as prc:
+                      'xsel', '-l', '/dev/null', '-p', '-i'
+                      ], stdin=PIPE) as prc:
 					prc.communicate(input=text.encode('utf-8'))
 			if 'b' in mode:
 				with Popen([
-                      'xsel', '-l', '/dev/null', '-b', ], stdin=PIPE) as prc:
+                      'xsel', '-l', '/dev/null', '-b', '-i'
+                      ], stdin=PIPE) as prc:
 					prc.communicate(input=text.encode('utf-8'))
 
 		def _paste(mode='p'):
