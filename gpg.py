@@ -287,4 +287,4 @@ class GPGTool(object):
 				except TclError:
 					self.__pin = getpass('enter gpg-passphrase: ')
 		except KeyboardInterrupt:
-			pass
+			abort()
