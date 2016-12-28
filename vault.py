@@ -232,9 +232,9 @@ class WeakVaulter(GPGTool):
 			error('vault', self.vault, 'does not exist or is inaccessable')
 		elif isdir(self.weakz):
 			return
-		self._copynews_()
 		__pwd = getcwd()
 		chdir(expanduser('~'))
+		self._copynews_()
 		with open(self.vault, 'r') as cfh:
 			dct = load(str(self.decrypt(cfh.read())))
 			if not dct:
