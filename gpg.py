@@ -39,8 +39,8 @@ class GPGTool(object):
 	if osname == 'nt':
 		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
 		__gpgbin = 'gpg2.exe'
-	binary = path.join(__bindir, __gpgbin)
-	if not path.isfile(binary) or not access(binary, X_OK):
+	_binary = path.join(__bindir, __gpgbin)
+	if not path.isfile(_binary) or not access(_binary, X_OK):
 		raise RuntimeError('%s needs to be executable'%binary)
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
@@ -86,11 +86,19 @@ class GPGTool(object):
 			return path.join(self.homedir, 'secring.gpg')
 		return self.keyring
 
+	@property                # binary <str>
+	def binary(self):
+		return self._binary
+	@binary.setter
+	def binary(self, val):
+		self._binary = path.join(self.__bindir, val)
+
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
 		"""object"""
 		opts = ['--batch', '--always-trust']
-		if osname != 'nt':
+		#print(self.binary.rstrip('.exe').endswith('2'))
+		if osname != 'nt' and self.binary.rstrip('.exe').endswith('2'):
 			opts.append('--pinentry-mode=loopback')
 		if self.__pin: opts = opts + ['--passphrase=%s'%self.__pin]
 		__g = GPG(
@@ -151,8 +159,7 @@ class GPGTool(object):
 			return
 		print(
             blu('generating new keys using:\n '),
-            '\n  '.join('%s%s=  %s'%(
-                blu(k),
+            '\n  '.join('%s%s=  %s'%(blu(k),
                 ' '*int(max(len(s) for s in kginput.keys())-len(k)+2),
                 yel(v)
             ) for (k, v) in kginput.items()))
