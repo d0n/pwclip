@@ -90,6 +90,10 @@ def cli():
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
+        '-1',
+        dest='gpgv', action='store_true',
+        help='force usage og gpg in version 1.x')
+	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
         help='switch to all users entrys (instead of current user only)')
@@ -181,6 +185,8 @@ def cli():
 	for a in (args.lst, args.add, args.chg):
 		if a and len(a) < 2:
 			fatal('input', a, 'is too short')
+	if args.gpgv:
+		pkwargs['binary'] = 'gpg'
 
 	pcm = PassCrypt(*pargs, **pkwargs)
 	if args.lst is not False:
