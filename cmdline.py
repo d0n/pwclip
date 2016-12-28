@@ -42,15 +42,16 @@ from secrecy import PassCrypt, ykchalres
 
 from pwclip.__pkginfo__ import version
 
-def forkwaitclip(text, oclp, wait=3):
-	if text != oclp and fork() == 0:
+def forkwaitclip(text, poclp, boclp, wait=3):
+	if fork() == 0:
 		try:
-			copy(text)
+			copy(text, mode='pb')
 			sleep(int(wait))
 		except KeyboardInterrupt:
 			abort()
 		finally:
-			copy(oclp)
+			copy(poclp, mode='p')
+			copy(boclp, mode='b')
 	exit(0)
 
 def __passreplace(pwlist):
@@ -166,13 +167,13 @@ def cli():
 		fatal(
             'if not in yubi mode either yaml input file', pkwargs['plain'],
             'or already written passcrypt', pkwargs['crypt'], 'must exsist')
-	oclp = paste()
+	poclp, boclp = paste('pb')
 	if args.yks is not False:
 		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
 		ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		forkwaitclip(ykchalres(xinput(), ykser=ykser), oclp, args.time)
+		forkwaitclip(ykchalres(xinput(), ykser=ykser), poclp, boclp, args.time)
 		exit(0)
 	if args.lst and args.lst.isdigit() and int(args.lst) <= 3600:
 		args.time = int(args.lst)
@@ -193,7 +194,7 @@ def cli():
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(args.lst, __pc[1]), wait=args.time)
-				forkwaitclip(__pc[0], oclp, args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time)
 	elif args.add:
 		if not pcm.adpw(args.add):
 			fatal('could not add entry', args.add)
@@ -221,7 +222,7 @@ def cli():
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, __pc[1]), args.time)
-				forkwaitclip(__pc[0], oclp, args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time)
 	if not args.sho:
 		__ent = __dictreplace(__ent)
 	print(tabd(__ent))
