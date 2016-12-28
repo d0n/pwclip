@@ -43,6 +43,7 @@ class WeakVaulter(GPGTool):
 	host = uname()[1]
 	vault = '%s/.vault'%home
 	weakz = '%s/.weaknez'%home
+	stamp = '%s.stamp'%vault
 	recvs = []
 	remote = ''
 	reuser = user
