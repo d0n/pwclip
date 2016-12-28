@@ -248,39 +248,41 @@ class GPGTool(object):
 		if self.dbg:
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
 		c = 0
-		while True:
-			__plain = self._gpg_.decrypt(
-                message.strip(), always_trust=True, output=output)
-			if __plain:
-				return __plain
-			if not __plain and c == 0:
-				self._garr()
-			if c > 3:
-				try:
-					xmsgok('too many wrong attempts')
-				except TclError:
-					input('too many wrong attempts')
-				break
-			elif c > 1 and c < 3:
-				try:
-					yesno = xyesno(
-                      'decryption failed - try again?')
-				except TclError:
-					yesno = input(
-                        'no passphrase or no secret key, retry? [Y/n] ')
-				if not yesno or yesno is True or yesno and yesno.lower() == 'n':
+		try:
+			while True:
+				__plain = self._gpg_.decrypt(
+					message.strip(), always_trust=True, output=output)
+				if __plain:
+					return __plain
+				if not __plain and c == 0:
+					self._garr()
+				if c > 3:
+					try:
+						xmsgok('too many wrong attempts')
+					except TclError:
+						input('too many wrong attempts')
 					break
-			elif c > 1 and not self.__pin:
+				elif c > 1 and c < 3:
+					try:
+						yesno = xyesno(
+						  'decryption failed - try again?')
+					except TclError:
+						yesno = input(
+							'no passphrase or no secret key, retry? [Y/n] ')
+					if not yesno or yesno is not True and yesno.lower() == 'n':
+						break
+				elif c > 1 and not self.__pin:
+					try:
+						yesno = xyesno('no passphrase entered, retry?')
+					except TclError:
+						yesno = input(
+							'no passphrase entered, retry? [Y/n] ')
+					if yesno is False or yesno.lower() == 'n':
+						break
+				c+=1
 				try:
-					yesno = xyesno('no passphrase entered, retry?')
+					self.__pin = xinput('enter gpg-passphrase')
 				except TclError:
-					yesno = input(
-                        'no passphrase entered, retry? [Y/n] ')
-				if yesno is False or yesno.lower() == 'n':
-					break
-			c+=1
-			try:
-				self.__pin = xinput('enter gpg-passphrase')
-			except TclError:
-				self.__pin = getpass('enter gpg-passphrase: ')
-				
+					self.__pin = getpass('enter gpg-passphrase: ')
+		except KeyboardInterrupt:
+			pass
