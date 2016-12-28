@@ -96,6 +96,7 @@ class WeakVaulter(GPGTool):
             f for f in listdir(src) if f.startswith('S')]
 		socks.append('random_seed')
 		for s in socks:
+			print('%s/%s'%(src, s), '%s/%s'%(trg, s))
 			try:
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
 			except FileNotFoundError:
