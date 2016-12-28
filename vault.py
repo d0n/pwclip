@@ -96,7 +96,6 @@ class WeakVaulter(GPGTool):
             f for f in listdir(src) if f.startswith('S')]
 		socks.append('random_seed')
 		for s in socks:
-			print('%s/%s'%(src, s), '%s/%s'%(trg, s))
 			try:
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
 			except FileNotFoundError:
@@ -218,12 +217,12 @@ class WeakVaulter(GPGTool):
 		if self._checkdiff():
 			copyfile(self.vault, '%s.1'%self.vault)
 			chmod('%s.1'%self.vault, 0o600)
-			self._movesocks_(
-                '%s/%s/.gnupg'%(self.weakz, self.host),
-                '%s/.gnupg'%self.home)
 			self.encrypt(
                 str(dump(self._pathdict(basename(self.weakz)))),
                 output=self.vault, recipients=self.recvs)
+		self._movesocks_(
+            '%s/%s/.gnupg'%(self.weakz, self.host),
+            '%s/.gnupg.1'%self.home)
 		rmtree(self.weakz)
 		self._rmlns_()
 		chmod(self.vault, 0o600)
