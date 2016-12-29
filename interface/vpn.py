@@ -85,7 +85,7 @@ class VPNConfig(ResolvConfParser):
 					hostname = hfh.read()
 			except FileNotFoundError as err:
 				error(err)
-		self.call('hostname %s'%hostname)
+		sudo.call('hostname %s'%hostname)
 
 	def connect(self):
 		if self.dbg:
@@ -102,28 +102,22 @@ class VPNConfig(ResolvConfParser):
 			if self.call(occmd) == 0:
 				if 'hostname' in self.vpncfgs.keys():
 					self._sethost(self.vpncfgs['hostname'])
+				if 'dns' in self.vpncfgs.keys() or \
+                      'search' in self.vpncfgs.keys():
+					rccfg = {}
+					if 'dns' in self.vpncfgs.keys():
+						rccfg['nameserver'] = self.vpncfgs['dns']
+					if 'search' in self.vpncfgs.keys():
+						rccfg['search'] = self.vpncfgs['search']
+					self.merge(rccfg)
+					self.write()
 		except KeyboardInterrupt:
 			try:
 				abort()
 			except PermissionError as err:
 				error(err)
-		except PermissionError:
-			abort()
-		finally:
-			if 'dns' in self.vpncfgs.keys() or 'search' in self.vpncfgs.keys():
-				rccfg = {}
-				if 'dns' in self.vpncfgs.keys():
-					rccfg['nameserver'] = self.vpncfgs['dns']
-				if 'search' in self.vpncfgs.keys():
-					rccfg['search'] = self.vpncfgs['search']
-				self.merge(rccfg)
-				self.write()
-
-	def reconnect(self):
-		if self.dbg:
-			print(bgre(self.reconnect))
-		self.disconnect()
-		self.connect()
+		except PermissionError as err:
+			error(err)
 
 	def disconnect(self):
 		if self.dbg:
@@ -142,6 +136,12 @@ class VPNConfig(ResolvConfParser):
 			abort()
 		except PermissionError as err:
 			error(err)
+
+	def reconnect(self):
+		if self.dbg:
+			print(bgre(self.reconnect))
+		self.disconnect()
+		self.connect()
 
 	def switch(self):
 		if self.dbg:
