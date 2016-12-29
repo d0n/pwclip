@@ -32,7 +32,7 @@ from executor import command as cmd
 
 from net import SecureSHell as SSH
 
-from colortext import bgre, blu, yel
+from colortext import bgre, blu, yel, error
 
 from secrecy import GPGTool
 
