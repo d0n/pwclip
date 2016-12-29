@@ -92,7 +92,7 @@ def cli():
 	pars.add_argument(
         '-1',
         dest='gpgv', action='store_true',
-        help='force usage og gpg in version 1.x')
+        help='force usage of gpg in version 1.x')
 	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
@@ -120,8 +120,8 @@ def cli():
         help='search entry matching PATTERN if given otherwise list all')
 	pars.add_argument(
         '--yaml',
-		dest='yml', metavar='YAMLFILE',
-		default=path.expanduser('~/.pwd.yaml'),
+        dest='yml', metavar='YAMLFILE',
+        default=path.expanduser('~/.pwd.yaml'),
         help='set location of one-time YAMLFILE to read')
 	pars.add_argument(
         '-p', '--passcrypt',
@@ -166,6 +166,7 @@ def cli():
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
+
 	if not isfile(pkwargs['plain']) and \
           not isfile(pkwargs['crypt']) and args.yks is False:
 		fatal(
