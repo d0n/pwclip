@@ -74,13 +74,22 @@ class VPNConfig(ResolvConfParser):
 			if proc.is_running():
 				return True
 
+	@staticmethod
+	def _sethost(hostname=None):
+		if hostname:
+			with open('/tmp/hostname.local', 'w+') as hfh:
+				hfh.write(uname()[1])
+		else:
+			try:
+				with open('/tmp/hostname.local', 'r') as hfh:
+					hostname = hfh.read()
+			except FileNotFoundError as err:
+				error(err)
+		self.call('hostname %s'%hostname)
+
 	def connect(self):
 		if self.dbg:
 			print(bgre(self.connect))
-		if 'hostname' in self.vpncfgs.keys():
-			with open('/tmp/hostname.local', 'w+') as hfh:
-				hfh.write(uname()[1])
-			self.call('hostname %s'%self.vpncfgs['hostname'])
 		vpndir = self.vpncfgs['keystore']
 		occmd = '%s --no-xmlpost -b -q --pid-file=%s ' \
             '--certificate=%s --sslkey=%s --cafile=%s --user=%s %s'%(
@@ -90,7 +99,9 @@ class VPNConfig(ResolvConfParser):
                 self._vpnpath(self.vpncfgs['office'], vpndir),
                 self.vpncfgs['user'],  self.vpncfgs['gate'])
 		try:
-			return (self.call(occmd) == 0)
+			if self.call(occmd) == 0:
+				if 'hostname' in self.vpncfgs.keys():
+					self._sethost(self.vpncfgs['hostname'])
 		except KeyboardInterrupt:
 			try:
 				abort()
@@ -109,19 +120,16 @@ class VPNConfig(ResolvConfParser):
 				self.write()
 
 	def reconnect(self):
-		"""SIGUSR2"""
-		pass
+		if self.dbg:
+			print(bgre(self.reconnect))
+		self.disconnect()
+		self.connect()
 
 	def disconnect(self):
 		if self.dbg:
 			print(bgre(self.disconnect))
 		if 'hostname' in self.vpncfgs.keys():
-			try:
-				with open('/tmp/hostname.local', 'r') as hfh:
-					self.call('hostname %s'%hfh.read())
-				remove('/tmp/hostname.local')
-			except FileNotFoundError:
-				pass
+			self._sethost()
 		ocpid = None
 		if path.isfile('/var/run/%s'%(self.pidfile)):
 			with open('/var/run/%s'%(self.vpncfgs['pidfile']), 'r') as f:
