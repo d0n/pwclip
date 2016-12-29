@@ -238,7 +238,10 @@ class WeakVaulter(GPGTool):
 		chdir(expanduser('~'))
 		self._copynews_()
 		with open(self.vault, 'r') as cfh:
-			dct = load(str(self.decrypt(cfh.read())))
+			try:
+				dct = load(str(self.decrypt(cfh.read())))
+			except RuntimeError:
+				return error('cannot decrypt')
 			if not dct:
 				return error('could not decrypt')
 			if dct == 'None':
