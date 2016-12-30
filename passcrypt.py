@@ -54,6 +54,7 @@ class PassCrypt(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
+		self._copynews_()
 		__weaks = self._readcrypt()
 		if path.exists(self.crypt) and __weaks is None:
 			self._garr()
@@ -74,14 +75,9 @@ class PassCrypt(GPGTool):
 
 	def _copynews_(self):
 		if self.remote:
-			ssh = SSH(host=self.remote, user=self.reuser)
-			try:
-				srctrg = ssh.compstats(
-                    self.crypt, path.basename(self.crypt))
-			except SSHException:
-				return
-			if srctrg:
-				ssh.scpcompstats(self.crypt, path.basename(self.crypt))
+			SSH().scpcompstats(
+                self.crypt, path.basename(self.crypt),
+                self.remote, self.reuser)
 
 	def _chkcrypt(self):
 		if self._readcrypt() == self.__weaks:
