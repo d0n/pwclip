@@ -65,6 +65,21 @@ class SecureSHell(object):
 		scp = ssh.open_sftp()
 		return scp.put(src, trg)
 
+	def compstats(self, src, trg, host=None, user=None):
+		host = host if host else self.host
+		user = user if user else self.user
+		smt = int(str(int(os.stat(src).st_mtime))[:6])
+		rmt = self.rstdo(
+            'stat -c %%Y %s'%os.path.basename(src), host=host, user=user)
+		if rmt:
+			rmt = int(str(rmt)[:6])
+		if rmt == smt:
+			return
+		srctrg = src, '%s@%s:%s'%(user, host, trg)
+		if int(rmt) > int(smt):
+			srctrg = '%s@%s:%s'%(user, host, trg), src
+		return srctrg
+
 	def _localstamp(self, trg):
 		return int(os.stat(trg).st_atime), int(os.stat(trg).st_mtime)
 	
