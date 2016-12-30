@@ -5,8 +5,7 @@
 import os
 import sys
 import paramiko
-
-# local relative imports
+from shutil import copy2
 from socket import getfqdn as fqdn
 
 from colortext import abort
@@ -45,7 +44,7 @@ class SecureSHell(object):
 		try:
 			ssh.connect(host, int(port), username=user)
 		except paramiko.ssh_exception.SSHException as err:
-			print(err)
+			print(err, file=sys.stderr)
 		return ssh
 
 	def rstdo(self, cmd, host=None, user=None):
@@ -81,19 +80,37 @@ class SecureSHell(object):
 			srctrg = '%s@%s:%s'%(user, host, trg), src
 		return srctrg
 
-	def scpcompstats(self, src, trg, host=None, user=None):
+	def _localstamp(self, trg):
+		return int(os.stat(trg).st_atime), int(os.stat(trg).st_mtime)
+	
+	def _remotestamp(self, trg, host, user):
+		tat = self.rstdo(
+            'stat -c %%X %s'%trg, host, user)
+		tmt = self.rstdo(
+            'stat -c %%Y %s'%trg, host, user)
+		if tat and tmt: return int(tat), int(tmt)
+
+	def _setlstamp(self, trg, atime, mtime):
+		os.utime(trg, (atime, mtime))
+
+	def _setrstamp(self, trg, atime, mtime, host, user):
+		self.rstdo(
+            'touch -a --date=@%s %s'%(atime, trg), host, user)
+		self.rstdo(
+            'touch -m --date=@%s %s'%(mtime, trg), host, user)
+
+	def scpcompstats(self, lfile, rfile, host=None, user=None):
 		user = user if user else self.user
 		host = host if host else self.host
-		smt = int(str(int(os.stat(src).st_mtime))[:6])
-		rmt = self.rstdo(
-            'stat -c %%Y %s'%os.path.basename(src), host=host, user=user)
-		if rmt:
-			rmt = int(str(rmt)[:6])
-		if rmt == smt:
+		lat, lmt = self._localstamp(lfile)
+		rat, rmt = self._remotestamp(rfile, host, user)
+		if rmt == lmt:
 			return
-		elif int(rmt) > int(smt):
-			return self.scp(trg, src, host=host, user=user)
-		return self.scp(src, trg, host=host, user=user)
+		elif rmt > lmt:
+			self.scp(rfile, lfile, host, user)
+			self._setlstamp(lfile, rat, rmt)
+		self.scp(lfile, rfile, host, user)
+		self._setrstamp(rfile, rat, rmt, host, user)
 
 
 
