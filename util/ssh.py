@@ -60,7 +60,6 @@ class SecureSHell(object):
 	def scp(self, src, trg, host=None, user=None):
 		user = user if user else self.user
 		host = host if host else self.host
-		print(src, trg)
 		host = fqdn(host)
 		ssh = self._ssh_(host, user)
 		scp = ssh.open_sftp()
@@ -110,6 +109,7 @@ class SecureSHell(object):
 		elif rmt > lmt:
 			self.scp(rfile, lfile, host, user)
 			self._setlstamp(lfile, rat, rmt)
+			return
 		self.scp(lfile, rfile, host, user)
 		self._setrstamp(rfile, rat, rmt, host, user)
 
