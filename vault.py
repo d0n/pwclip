@@ -108,6 +108,7 @@ class WeakVaulter(GPGTool):
 			srctrg = ssh.compstats(
                 self.vault, basename(self.vault))
 			if srctrg:
+				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
                     blu('syncing more recent file:'),
                     yel(src), blu('=>'), yel(trg)))
