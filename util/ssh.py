@@ -60,6 +60,7 @@ class SecureSHell(object):
 	def scp(self, src, trg, host=None, user=None):
 		user = user if user else self.user
 		host = host if host else self.host
+		print(src, trg)
 		host = fqdn(host)
 		ssh = self._ssh_(host, user)
 		scp = ssh.open_sftp()
