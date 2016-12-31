@@ -75,9 +75,12 @@ class PassCrypt(GPGTool):
 
 	def _copynews_(self):
 		if self.remote:
-			SSH().scpcompstats(
-                self.crypt, path.basename(self.crypt),
-                self.remote, self.reuser)
+			try:
+				SSH().scpcompstats(
+                    self.crypt, path.basename(self.crypt),
+                    self.remote, self.reuser)
+			except FileNotFoundError:
+				return
 
 	def _chkcrypt(self):
 		if self._readcrypt() == self.__weaks:
