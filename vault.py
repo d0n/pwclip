@@ -106,13 +106,12 @@ class WeakVaulter(GPGTool):
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
 			srctrg = ssh.compstats(
-                self.vault, '~/%s'%basename(self.vault))
+                self.vault, basename(self.vault))
 			if srctrg:
-				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
                     blu('syncing more recent file:'),
                     yel(src), blu('=>'), yel(trg)))
-				ssh.scpcompstats(src, trg)
+				ssh.scpcompstats(self.vault, basename(self.vault))
 
 	def _clean_(self):
 		self._fixmod_()
