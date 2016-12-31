@@ -107,6 +107,7 @@ class SecureSHell(object):
 		if rmt == lmt:
 			return
 		elif rmt > lmt:
+			print(rfile, lfile)
 			self.scp(rfile, lfile, host, user)
 			self._setlstamp(lfile, rat, rmt)
 			return
