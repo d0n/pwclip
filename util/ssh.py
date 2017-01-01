@@ -60,10 +60,16 @@ class SecureSHell(object):
 	def scp(self, src, trg, host=None, user=None):
 		user = user if user else self.user
 		host = host if host else self.host
+		if not (os.path.isfile(src) or os.path.isfile(trg)):
+			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
 		host = fqdn(host)
 		ssh = self._ssh_(host, user)
-		scp = ssh.open_sftp()
-		return scp.put(src, trg)
+		sftp = ssh.open_sftp()
+		scp = sftp.put
+		if not os.path.isfile(src):
+			src, trg = trg, src
+			scp = sftp.get
+		return scp(src, trg)
 
 	def compstats(self, src, trg, host=None, user=None):
 		host = host if host else self.host
@@ -107,12 +113,11 @@ class SecureSHell(object):
 		if rmt == lmt:
 			return
 		elif rmt > lmt:
-			print(rfile, lfile)
 			self.scp(rfile, lfile, host, user)
 			self._setlstamp(lfile, rat, rmt)
-			return
-		self.scp(lfile, rfile, host, user)
-		self._setrstamp(rfile, rat, rmt, host, user)
+		else:
+			self.scp(lfile, rfile, host, user)
+			self._setrstamp(rfile, lat, lmt, host, user)
 
 
 
