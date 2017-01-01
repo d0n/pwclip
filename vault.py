@@ -163,6 +163,7 @@ class WeakVaulter(GPGTool):
 	def _pathdict(self, path):
 		if self.dbg:
 			print(bgre(self._pathdict))
+		chdir(self.home)
 		frbs = {}
 		for (d, _, fs) in walk(path):
 			for f in fs:
@@ -181,7 +182,7 @@ class WeakVaulter(GPGTool):
 		if self.dbg:
 			print(bgre(self._dictpath))
 		if not dic:
-			return
+			return error('cannot decrypt')
 		for (f, b) in dic.items():
 			if not isdir(dirname(f)):
 				makedirs(dirname(f))
@@ -256,6 +257,7 @@ class WeakVaulter(GPGTool):
 		self._rmlns_()
 		chmod(self.vault, 0o600)
 		chdir(self._pwd)
+		self._copynews_()
 
 	def unvault(self):
 		if self.dbg:
@@ -268,9 +270,9 @@ class WeakVaulter(GPGTool):
 			try:
 				dct = load(str(self.decrypt(cfh.read())))
 			except RuntimeError:
-				return error('cannot decrypt')
+				return
 			if not dct:
-				return error('could not decrypt')
+				return
 			self._dictpath(dct)
 		self._mklns_(self.weakz)
 		self._movesocks_(
