@@ -45,7 +45,8 @@ class SecureSHell(object):
 		try:
 			ssh.connect(host, int(port), username=user)
 		except paramiko.ssh_exception.SSHException as err:
-			print(err, file=sys.stderr)
+			#print(err, file=sys.stderr)
+			pass
 		return ssh
 
 	def rstdo(self, cmd, host=None, user=None):
