@@ -28,6 +28,8 @@ from paramiko.ssh_exception import SSHException
 
 from yaml import load, dump
 
+from socket import gaierror
+
 from executor import command as cmd
 
 from net import SecureSHell as SSH
@@ -105,8 +107,11 @@ class WeakVaulter(GPGTool):
 	def _copynews_(self):
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
-			srctrg = ssh.compstats(
-                self.vault, basename(self.vault))
+			try:
+				srctrg = ssh.compstats(
+                    self.vault, basename(self.vault))
+			except gaierror:
+				srctrg = None
 			if srctrg:
 				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
