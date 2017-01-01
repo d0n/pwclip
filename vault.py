@@ -113,7 +113,7 @@ class WeakVaulter(GPGTool):
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
 			try:
-				srctrg = ssh.compstats(
+				srctrg = ssh.rcompstats(
                     self.vault, basename(self.vault))
 			except gaierror as err:
 				return print(err, file=sys.stderr)
