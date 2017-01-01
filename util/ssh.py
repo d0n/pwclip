@@ -77,10 +77,11 @@ class SecureSHell(object):
 		scp = ssh.open_sftp()
 		return scp.put(src, trg)
 
-	def compstats(self, src, trg, host=None, user=None):
+	def rcompstats(self, src, trg, host=None, user=None):
 		host = host if host else self.host
 		user = user if user else self.user
 		smt = int(str(int(os.stat(src).st_mtime))[:6])
+		print(trg, host, user)
 		rmt = self.rstdo(
             'stat -c %%Y %s'%trg, host=host, user=user)
 		if rmt:
