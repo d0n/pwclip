@@ -70,7 +70,16 @@ class VPNConfig(ResolvConfParser):
 		if self.dbg:
 			print(bgre(self.vpnstatus))
 		if self.pid:
-			proc = psutil.Process(self.pid)
+			try:
+				proc = psutil.Process(self.pid)
+			except psutil.NoSuchProcess:
+				try:
+					remove('/run/openconnect.pid')
+				except PermissionError:
+					sudo.call('rm /run/openconnect.pid')
+				except FileNotFoundError:
+					pass
+				return False
 			if proc.is_running():
 				return True
 
