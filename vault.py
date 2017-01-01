@@ -15,6 +15,8 @@
 # details.
 #
 
+from sys import stderr
+
 from os import symlink, getcwd, listdir, \
      makedirs, walk, uname, chdir, remove, readlink, environ, chmod
 
@@ -40,6 +42,7 @@ from secrecy import GPGTool
 
 class WeakVaulter(GPGTool):
 	_dbg = None
+	_pwd = getcwd()
 	home = expanduser('~')
 	user = environ['USER']
 	host = uname()[1]
@@ -53,6 +56,7 @@ class WeakVaulter(GPGTool):
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']]
+	chdir(home)
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -64,6 +68,7 @@ class WeakVaulter(GPGTool):
 				setattr(self, key, val)
 			elif hasattr(self, '_%s'%(key)):
 				setattr(self, '_%s'%(key), val)
+		self._copynews_()
 		self._clean_()
 		if self.dbg:
 			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
@@ -110,14 +115,14 @@ class WeakVaulter(GPGTool):
 			try:
 				srctrg = ssh.compstats(
                     self.vault, basename(self.vault))
-			except gaierror:
-				srctrg = None
+			except gaierror as err:
+				return print(err, file=sys.stderr)
 			if srctrg:
 				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
                     blu('syncing more recent file:'),
                     yel(src), blu('=>'), yel(trg)))
-				ssh.scpcompstats(self.vault, basename(self.vault), self.remote, self.reuser)
+				ssh.scpcompstats(self.vault, basename(self.vault))
 
 	def _clean_(self):
 		self._fixmod_()
@@ -218,8 +223,6 @@ class WeakVaulter(GPGTool):
 	def envault(self):
 		if not isdir(self.weakz):
 			return
-		__pwd = getcwd()
-		chdir(expanduser('~'))
 		if self._checkdiff():
 			copyfile(self.vault, '%s.1'%self.vault)
 			chmod('%s.1'%self.vault, 0o600)
@@ -232,16 +235,13 @@ class WeakVaulter(GPGTool):
 		rmtree(self.weakz)
 		self._rmlns_()
 		chmod(self.vault, 0o600)
-		chdir(__pwd)
+		chdir(self._pwd)
 
 	def unvault(self):
 		if not isfile(self.vault):
 			error('vault', self.vault, 'does not exist or is inaccessable')
 		elif isdir(self.weakz):
 			return
-		__pwd = getcwd()
-		chdir(expanduser('~'))
-		self._copynews_()
 		with open(self.vault, 'r') as cfh:
 			try:
 				dct = load(str(self.decrypt(cfh.read())))
@@ -257,5 +257,5 @@ class WeakVaulter(GPGTool):
 		self._movesocks_(
             '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
 		self._fixmod_()
-		chdir(__pwd)
+		chdir(self._pwd)
 
