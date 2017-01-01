@@ -88,6 +88,8 @@ class WeakVaulter(GPGTool):
 		self._dbg = True if val else False
 
 	def _fixmod_(self):
+		if self.dbg:
+			print(bgre(self._fixmod_))
 		for p in ('~/.gnupg', '~/.weaknez'):
 			for (d, _, fs) in walk(expanduser(p)):
 				for f in fs:
@@ -100,6 +102,8 @@ class WeakVaulter(GPGTool):
 				chmod(d, 0o700)
 
 	def _movesocks_(self, src, trg):
+		if self.dbg:
+			print(bgre(self._movesocks_))
 		socks = [
             f for f in listdir(src) if f.startswith('S')]
 		socks.append('random_seed')
@@ -110,13 +114,15 @@ class WeakVaulter(GPGTool):
 				pass
 
 	def _copynews_(self):
+		if self.dbg:
+			print(bgre(self._copynews_))
 		if self.remote:
 			ssh = SSH(host=self.remote, user=self.reuser)
 			try:
 				srctrg = ssh.rcompstats(
                     self.vault, basename(self.vault))
 			except gaierror as err:
-				return print(err, file=sys.stderr)
+				print(err, file=sys.stderr)
 			if srctrg:
 				src, trg = srctrg
 				print('%s\n  %s %s %s'%(
@@ -125,6 +131,8 @@ class WeakVaulter(GPGTool):
 				ssh.scpcompstats(self.vault, basename(self.vault))
 
 	def _clean_(self):
+		if self.dbg:
+			print(bgre(self._clean_))
 		self._fixmod_()
 		if not isdir(self.weakz):
 			for ln in listdir(self.home):
@@ -153,6 +161,8 @@ class WeakVaulter(GPGTool):
 			chdir(pwd)
 
 	def _pathdict(self, path):
+		if self.dbg:
+			print(bgre(self._pathdict))
 		frbs = {}
 		for (d, _, fs) in walk(path):
 			for f in fs:
@@ -168,6 +178,8 @@ class WeakVaulter(GPGTool):
 		return frbs
 
 	def _dictpath(self, dic):
+		if self.dbg:
+			print(bgre(self._dictpath))
 		if not dic:
 			return
 		for (f, b) in dic.items():
@@ -180,6 +192,8 @@ class WeakVaulter(GPGTool):
 				pass
 
 	def _rmlns_(self):
+		if self.dbg:
+			print(bgre(self._rmlns_))
 		for ln in ('.gnupg', '.ssh', '.vpn'):
 			hl = '%s/%s'%(self.home, ln)
 			try:
@@ -194,6 +208,8 @@ class WeakVaulter(GPGTool):
 		self._fixmod_()
 
 	def _mklns_(self, weak):
+		if self.dbg:
+			print(bgre(self._mklns_))
 		whh = '%s/%s'%(basename(weak), uname()[1])
 		for ln in ('.gnupg', '.ssh', '.vpn'):
 			hl = '%s/%s'%(self.home, ln)
@@ -214,6 +230,8 @@ class WeakVaulter(GPGTool):
 				pass
 
 	def _checkdiff(self):
+		if self.dbg:
+			print(bgre(self._checkdiff))
 		nvlt = self._pathdict(basename(self.weakz))
 		with open(self.vault, 'r') as cfh:
 			ovlt = load(str(self.decrypt(cfh.read())))
@@ -221,6 +239,8 @@ class WeakVaulter(GPGTool):
 			return True
 
 	def envault(self):
+		if self.dbg:
+			print(bgre(self.envault))
 		if not isdir(self.weakz):
 			return
 		if self._checkdiff():
@@ -238,6 +258,8 @@ class WeakVaulter(GPGTool):
 		chdir(self._pwd)
 
 	def unvault(self):
+		if self.dbg:
+			print(bgre(self.unvault))
 		if not isfile(self.vault):
 			error('vault', self.vault, 'does not exist or is inaccessable')
 		elif isdir(self.weakz):
@@ -249,10 +271,7 @@ class WeakVaulter(GPGTool):
 				return error('cannot decrypt')
 			if not dct:
 				return error('could not decrypt')
-			if dct == 'None':
-				return
-			elif dct:
-				self._dictpath(dct)
+			self._dictpath(dct)
 		self._mklns_(self.weakz)
 		self._movesocks_(
             '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
