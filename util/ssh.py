@@ -39,6 +39,7 @@ class SecureSHell(object):
 
 	@staticmethod
 	def _ssh_(host, user, port=22):
+		host = fqdn(host)
 		ssh = paramiko.SSHClient()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		try:
@@ -57,19 +58,23 @@ class SecureSHell(object):
 			abort()
 		return ''.join(out.readlines())
 
-	def scp(self, src, trg, host=None, user=None):
+	def get(self, src, trg, host=None, user=None):
 		user = user if user else self.user
 		host = host if host else self.host
 		if not (os.path.isfile(src) or os.path.isfile(trg)):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
-		host = fqdn(host)
 		ssh = self._ssh_(host, user)
-		sftp = ssh.open_sftp()
-		scp = sftp.put
-		if not os.path.isfile(src):
-			src, trg = trg, src
-			scp = sftp.get
-		return scp(src, trg)
+		scp = ssh.open_sftp()
+		return scp.get(src, trg)
+
+	def put(self, src, trg, host=None, user=None):
+		user = user if user else self.user
+		host = host if host else self.host
+		if not (os.path.isfile(src) or os.path.isfile(trg)):
+			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
+		ssh = self._ssh_(host, user)
+		scp = ssh.open_sftp()
+		return scp.put(src, trg)
 
 	def compstats(self, src, trg, host=None, user=None):
 		host = host if host else self.host
@@ -110,13 +115,15 @@ class SecureSHell(object):
 		host = host if host else self.host
 		lat, lmt = self._localstamp(lfile)
 		rat, rmt = self._remotestamp(rfile, host, user)
+		print(lmt)
+		print(rmt)
 		if rmt == lmt:
 			return
 		elif rmt > lmt:
-			self.scp(rfile, lfile, host, user)
+			self.get(rfile, lfile, host, user)
 			self._setlstamp(lfile, rat, rmt)
 		else:
-			self.scp(lfile, rfile, host, user)
+			self.put(lfile, rfile, host, user)
 			self._setrstamp(rfile, lat, lmt, host, user)
 
 
