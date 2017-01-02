@@ -36,7 +36,7 @@ class Command(object):
 				setattr(self, '%s_'%key, val)
 		if self.dbg:
 			lim = int(max(len(k) for k in Command.__dict__.keys()))+4
-			print('%s\n%s\n\n%s\n%s\n'%(
+			print('\033[01;30m%s\n%s\n\n%s\n%s\n\033[0m'%(
                 Command.__mro__,
                 '\n'.join('  %s%s=    %s'%(
                     k, ' '*int(lim-len(k)), v
