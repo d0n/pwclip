@@ -13,8 +13,29 @@ from colortext import bgre
 # default constant definitions
 __version__ = '0.1'
 
+
 class DePyKG(Command):
+	_dbg = False
 	_pkgbin = which('dpkg')
+	def __init__(self, *args, **kwargs):
+		for arg in args:
+			arg = '_%s'%(arg)
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			key = '_%s'%(key)
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
+		if self.dbg:
+			print(bgre(DePyKG.__mro__))
+			print(bgre(tabd(self.__dict__)))
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = True if val else False
+
 	@property # pkgbin <str>
 	def pkgbin(self):
 		return self._pkgbin

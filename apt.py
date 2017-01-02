@@ -8,7 +8,7 @@ import sys
 #local relative imports
 from system import which
 from executor import sucommand as sudo
-from colortext import bgre
+from colortext import bgre, tabd
 
 from deb.dpkg import DePyKG
 
@@ -26,6 +26,7 @@ class Apytude(DePyKG):
 	vrb = False
 	aptbin = which('apt')
 	def __init__(self, *args, **kwargs):
+		#DePyKG.__init__(self, *args, **kwargs)
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
@@ -37,10 +38,7 @@ class Apytude(DePyKG):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(Apytude.__mro__))
-			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
-			print()
-		super().__init__(*args, **kwargs)
+			print(bgre(self.__dict__))
 	# rw properties
 	@property
 	def dbg(self): #dbg <bool>
