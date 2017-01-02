@@ -4,11 +4,11 @@
 #global imports"""
 import os
 import sys
-import paramiko
+from paramiko import ssh_exception, SSHClient, AutoAddPolicy
 from shutil import copy2
 from socket import getfqdn as fqdn
 
-from colortext import bgre, abort, error
+from colortext import bgre, tabd, abort, error
 
 # default vars
 __version__ = '0.1'
@@ -27,9 +27,9 @@ class SecureSHell(object):
 			if hasattr(self, key):
 				setattr(self, key, val)
 		if self.dbg:
-			print('\033[01;30m%s\033[0m'%SecureSHell.__mro__)
-			for (key, val) in self.__dict__.items():
-				print('\033[01;30m%s = %s\033[0m'%(key, val))
+			print(bgre(SecureSHell.__mro__))
+			print(bgre(tabd(self.__dict__)))
+
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
@@ -40,19 +40,20 @@ class SecureSHell(object):
 	@staticmethod
 	def _ssh_(host, user, port=22):
 		host = fqdn(host)
-		ssh = paramiko.SSHClient()
-		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		ssh = SSHClient()
+		ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
 			ssh.connect(host, int(port), username=user)
-		except paramiko.ssh_exception.SSHException as err:
+		except ssh_exception.SSHException as err:
 			error(err)
 		return ssh
 
 	def rstdo(self, cmd, host=None, user=None):
-		if self.dbg:
-			print(bgre(self.rstdo))
 		host = host if host else self.host
 		user = user if user else self.user
+		if self.dbg:
+			print(bgre(self.rstdo))
+			print(bgre('  `%s@%s %s`'%(user, host, cmd)))
 		ssh = self._ssh_(host, user)
 		_, out, _ = ssh.exec_command(cmd)
 		return ''.join(out.readlines())
