@@ -40,7 +40,7 @@ from colortext import bgre, blu, yel, error
 
 from secrecy import GPGTool
 
-class WeakVaulter(GPGTool):
+class WeakVaulter(SSH, GPGTool):
 	_dbg = None
 	_pwd = getcwd()
 	home = expanduser('~')
@@ -58,6 +58,8 @@ class WeakVaulter(GPGTool):
 		recvs = [environ['GPGKEY']]
 	chdir(home)
 	def __init__(self, *args, **kwargs):
+		SSH.__init__(self, *args, **kwargs)
+		GPGTool.__init__(self, *args, **kwargs)
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
@@ -68,7 +70,6 @@ class WeakVaulter(GPGTool):
 				setattr(self, key, val)
 			elif hasattr(self, '_%s'%(key)):
 				setattr(self, '_%s'%(key), val)
-		self._copynews_()
 		self._clean_()
 		if self.dbg:
 			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
@@ -114,21 +115,13 @@ class WeakVaulter(GPGTool):
 				pass
 
 	def _copynews_(self):
-		if self.dbg:
-			print(bgre(self._copynews_))
 		if self.remote:
-			ssh = SSH(host=self.remote, user=self.reuser)
 			try:
-				srctrg = ssh.rcompstats(
-                    self.vault, basename(self.vault))
-			except gaierror as err:
-				print(err, file=sys.stderr)
-			if srctrg:
-				src, trg = srctrg
-				print('%s\n  %s %s %s'%(
-                    blu('syncing more recent file:'),
-                    yel(src), blu('=>'), yel(trg)))
-				ssh.scpcompstats(self.vault, basename(self.vault))
+				self.scpcompstats(
+                    self.vault, basename(self.vault),
+                    self.remote, self.reuser)
+			except FileNotFoundError:
+				pass
 
 	def _clean_(self):
 		if self.dbg:
@@ -266,6 +259,7 @@ class WeakVaulter(GPGTool):
 			error('vault', self.vault, 'does not exist or is inaccessable')
 		elif isdir(self.weakz):
 			return
+		self._copynews_()
 		with open(self.vault, 'r') as cfh:
 			try:
 				dct = load(str(self.decrypt(cfh.read())))

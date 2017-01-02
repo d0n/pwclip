@@ -22,8 +22,6 @@ from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
 from system import xinput, xyesno, xmsgok
 
-
-
 class GPGTool(object):
 	"""
 	gnupg wrapper-wrapper :P
@@ -42,6 +40,8 @@ class GPGTool(object):
 	_binary = path.join(__bindir, __gpgbin)
 	if not path.isfile(_binary) or not access(_binary, X_OK):
 		raise RuntimeError('%s needs to be executable'%binary)
+	_keyserver = ''
+	dmcfg = path.join(homedir, 'dirmngr.conf')
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
 	__pin = None
@@ -54,15 +54,9 @@ class GPGTool(object):
 			if hasattr(self, key) and not isinstance(val, bool):
 				setattr(self, key, val)
 		if self.dbg:
-			lim = int(max(len(k) for k in GPGTool.__dict__.keys()))+4
-			print('%s\n%s\n\n%s\n%s\n'%(
-                GPGTool.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(GPGTool.__dict__.items())),
-                GPGTool.__init__,
-                '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(self.__dict__.items()))))
+			print(bgre(GPGTool.__mro__))
+			print(bgre(self.__dict__))
+
 	@property                # dbg <bool>
 	def dbg(self):
 		"""bool"""
@@ -85,6 +79,18 @@ class GPGTool(object):
 		elif not __bin.endswith('2'):
 			return path.join(self.homedir, 'secring.gpg')
 		return self.keyring
+
+	@property                # dmcfg <str>
+	def dmcfg(self):
+		return self._dmcfg
+	@dmcfg.setter
+	def dmcfg(self, val):
+		if path.exists(val):
+			dmcfg = {}
+			with open(dmcfg, 'r') as dfh:
+				for ln in dfh.readlines():
+					dmcfg[ln.split(' ')[0].strip()] = ln.split(' ')[1].strip()
+		self._dmcfg = dmcfg
 
 	@property                # binary <str>
 	def binary(self):

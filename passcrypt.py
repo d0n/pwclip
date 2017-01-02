@@ -80,7 +80,7 @@ class PassCrypt(GPGTool):
                     self.crypt, path.basename(self.crypt),
                     self.remote, self.reuser)
 			except FileNotFoundError:
-				return
+				pass
 
 	def _chkcrypt(self):
 		if self._readcrypt() == self.__weaks:
