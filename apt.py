@@ -7,10 +7,10 @@ import sys
 
 #local relative imports
 from system import which
-from executor import Command
+from executor import sucommand as sudo
 from colortext import bgre
 
-from .dpkg import DePyKG
+from deb.dpkg import DePyKG
 
 # default constant definitions
 __version__ = '0.1'
@@ -24,7 +24,7 @@ class Apytude(DePyKG):
 	_aptopts = []
 	dry = False
 	vrb = False
-	aptbin = which('apt-get')
+	aptbin = which('apt')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -65,7 +65,7 @@ class Apytude(DePyKG):
 	def update(self):
 		if self.dbg:
 			print(bgre(self.update))
-		if self.call(self.aptbin, 'update') == 0:
+		if sudo.call(self.aptbin, 'update') == 0:
 			return True
 
 	def upgrade(self, mode='upgrade'):
@@ -77,10 +77,10 @@ class Apytude(DePyKG):
 		if mode in ('full', 'dist'):
 			mode = 'dist-upgrade'
 		command = '%s %s %s' %(self.aptbin, opts, mode)
-		if self.call(command) == 0:
+		if sudo.call(command) == 0:
 			return True
 
-	def install(self, *packages, opts=''):
+	def install(self, packages, opts=''):
 		if self.dbg:
 			print(bgre(self.install))
 		if self.dry:
@@ -98,13 +98,13 @@ class Apytude(DePyKG):
 		if not packages and not 'f' in opts:
 			return
 		command = '%s %s install %s' %(self.aptbin, opts, packages)
-		erno = self.call(command)
+		erno = sudo.call(command)
 		if int(erno) == 0:
 			return packages
 		else:
 			return erno
 
-	def purge(self, *packages, opts=''):
+	def purge(self, packages, opts=''):
 		if self.dbg:
 			print(bgre(self.purge))
 		if opts:
@@ -116,14 +116,27 @@ class Apytude(DePyKG):
 		if packages:
 			packages = ' '.join(
                 pkg for pkg in packages if self.isinstalled(pkg))
+		print(packages)
 		if not packages and not 'f' in opts:
 			return
 		command = '%s %s purge %s' %(self.aptbin, opts, packages)
-		erno = self.call(command)
+		erno = sudo.call(command)
 		if int(erno) == 0:
 			return packages
 		else:
 			return erno
+
+	def autoclean(self, opts=''):
+		if self.dbg:
+			print(bgre(self.purge))
+		if opts:
+			opts = '-%s'%(
+                ' -'.join(opt for opt in opts.split(' ')))
+		if self.aptopts:
+			opts = '%s %s'%(
+                opts, ' -'.join(opt for opt in self.aptopts))
+		command = '%s %s autoremove'%(self.aptbin, opts)
+		return int(self.call(command))
 
 
 
