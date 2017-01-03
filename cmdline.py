@@ -166,8 +166,6 @@ def cli():
 		print(bgre(pkwargs))
 
 	if not isfile(args.yml) and not isfile(args.pcr) and args.yks is False:
-		print('fu')
-		exit()
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
