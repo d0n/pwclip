@@ -34,7 +34,7 @@ from argparse import ArgumentParser
 from time import sleep
 
 # local relative imports
-from colortext import bgre, abort, tabd, fatal
+from colortext import bgre, abort, tabd, error, fatal
 
 from system import copy, paste, xinput, xnotify
 
@@ -71,8 +71,6 @@ def __dictreplace(pwdict):
 			__pwdict[usr] = __passreplace(ent)
 	return __pwdict
 
-
-# global default variables
 def cli():
 	_me = basename(dirname(__file__))
 	cfg = expanduser('~/.config/%s.yaml'%_me)
@@ -134,7 +132,7 @@ def cli():
         help='gpg recipients (identifier) for GPG-Keys to use')
 	pars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER',
+        dest='usr', metavar='USER', default=environ['USER'],
         help='query entrys of USER (defaults to current user)')
 	pars.add_argument(
         '-y', '--ykserial',
@@ -169,9 +167,12 @@ def cli():
 
 	if not isfile(pkwargs['plain']) and \
           not isfile(pkwargs['crypt']) and args.yks is False:
-		fatal(
-            'if not in yubi mode either yaml input file', pkwargs['plain'],
-            'or already written passcrypt', pkwargs['crypt'], 'must exsist')
+		with open(args.yml, 'w+') as yfh:
+			yfh.write("""---\n%s:  {}"""%args.usr)
+
+#		fatal(
+#            'if not in yubi mode either yaml input file', pkwargs['plain'],
+#            'or already written passcrypt', pkwargs['crypt'], 'must exsist')
 	poclp, boclp = paste('pb')
 	if args.yks is not False:
 		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
@@ -193,7 +194,9 @@ def cli():
 	if args.lst is not False:
 		__ent = pcm.lspw(args.lst)
 		if not __ent:
-			fatal('could not decrypt')
+			if __ent is None:
+				fatal('could not decrypt')
+			error('the passcrypt file is empyty')
 		elif __ent and args.lst and not __ent[args.lst]:
 			fatal('could not find entry for', args.lst, 'in', pkwargs['crypt'])
 		elif args.lst and __ent:
