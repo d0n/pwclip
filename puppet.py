@@ -38,7 +38,7 @@ class Puppet(SSHCommand):
 	_user_ = 'root'
 	_host_ = ''
 	_template = '~/.config/puppet.tmpl'
-	scp = SecureSHell().scp
+	scp = SecureSHell()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -130,9 +130,9 @@ class Puppet(SSHCommand):
               'apt-get install -y puppet lsb-release'): # %(aptopts)):
 			xec(cmd, host=fqdn(self.host))
 		#print(self._template, '/etc/puppet/puppet.conf')
-		self.scp(
+		self.scp.put(
             os.path.expanduser(self._template),
-            '/etc/puppet/puppet.conf', host=fqdn(self.host))
+            '/etc/puppet/puppet.conf', host=fqdn(self.host), user='root')
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
