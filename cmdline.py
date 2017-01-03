@@ -165,14 +165,11 @@ def cli():
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
 
-	if not isfile(pkwargs['plain']) and \
-          not isfile(pkwargs['crypt']) and args.yks is False:
+	if not isfile(args.yml) and not isfile(args.pcr) and args.yks is False:
+		print('fu')
+		exit()
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
-
-#		fatal(
-#            'if not in yubi mode either yaml input file', pkwargs['plain'],
-#            'or already written passcrypt', pkwargs['crypt'], 'must exsist')
 	poclp, boclp = paste('pb')
 	if args.yks is not False:
 		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
