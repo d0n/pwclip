@@ -6,7 +6,7 @@ import os
 import sys
 import paramiko
 from shutil import copy2
-from socket import getfqdn as fqdn
+from socket import getfqdn as fqdn, gaierror as NameResolveError
 
 from colortext import abort
 
