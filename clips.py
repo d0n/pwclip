@@ -136,55 +136,50 @@ def clips():
 				handle = getclip(CF_UNICODETEXT)
 				if not handle:
 					return ""
+				if mode in ('pb', 'bp'):
+					c_wchar_p(handle).value, c_wchar_p(handle).value
 				return c_wchar_p(handle).value
-
 		return _copy, _paste
 
 	def osxclips():
 		def _copy(text, mode=None):
 			text = text if text else ''
-			p = Popen(['pbcopy', 'w'], stdin=subprocess.PIPE, close_fds=True)
-			p.communicate(input=text.encode('utf-8'))
+			with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
+				prc.communicate(input=text.encode('utf-8'))
 		def _paste(mode=None):
-			p = subprocess.Popen(['pbpaste', 'r'],
-                    stdout=subprocess.PIPE, close_fds=True)
-			out, _ = p.communicate()
-			return out.decode('utf-8')
+			with Popen(['pbpaste'], stdout=PIPE, close_fds=True) as prc:
+				out, _ = p.communicate()
+				return out.decode('utf-8')
 		return _copy, _paste
 
 	def linclips():
 		"""linux clipboards"""
+		xsel = ['xsel', '-l', '/dev/null']
 		def _copy(text, mode='p'): # mode in ('p', 'b', 'pb')
+			_xsel = xsel + ['-i']
 			"""linux copy function"""
 			text = text if text else ''
-			if 'p' in mode:
-				with Popen(['xsel', '-p', '-i'], stdin=PIPE, stderr=DEVNULL
-                      ) as prc:
+			for m in mode:
+				with Popen(
+                      _xsel + ['-%s'%m], stdin=PIPE, stderr=DEVNULL) as prc:
 					prc.communicate(input=text.encode('utf-8'))
-			if 'b' in mode:
-				with Popen(['xsel', '-b', '-i'], stdin=PIPE, stderr=DEVNULL
-                      ) as prc:
-					prc.communicate(input=text.encode('utf-8'))
-
+					prc.kill()
 		def _paste(mode='p'):
 			"""linux paste function"""
+			_xsel = xsel + ['-o']
 			if mode == 'p':
-				out, _ = Popen([
-                    'xsel', '-p', '-o'], stdout=PIPE, stderr=DEVNULL
-                    ).communicate()
+				out, _ = Popen(
+                    _xsel + ['-p'], stdout=PIPE, stderr=DEVNULL).communicate()
 				return out.decode()
 			elif mode == 'b':
-				out, _ = Popen([
-                    'xsel', '-b', '-o'], stdout=PIPE, stderr=DEVNULL
-                    ).communicate()
+				out, _ = Popen(
+                    _xsel + ['-b'], stdout=PIPE, stderr=DEVNULL).communicate()
 				return out.decode()
 			elif mode in ('pb', 'bp'):
-				pout, _ = Popen([
-                    'xsel', '-p', '-o'], stdout=PIPE, stderr=DEVNULL
-                    ).communicate()
-				bout, _ = Popen([
-                    'xsel', '-b', '-o'], stdout=PIPE, stderr=DEVNULL
-                    ).communicate()
+				pout, _ = Popen(
+                    _xsel + ['-p'], stdout=PIPE, stderr=DEVNULL).communicate()
+				bout, _ = Popen(
+                    _xsel + ['-b'], stdout=PIPE, stderr=DEVNULL).communicate()
 				return pout.decode(), bout.decode()
 		return _copy, _paste
 	# decide which copy, paste functions to return [windows|mac|linux] mainly
