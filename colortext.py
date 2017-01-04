@@ -196,5 +196,6 @@ def tabd(dats, ind=0, space=2):
 
 if __name__ == "__main__":
 	# module debugging area
-	#print('\n'.join(m for m in dir()))
-	exit(1)
+	for i in (3, 4, 5):
+		print(', '.join(m for m in dir() if len(m) == i))
+	#exit(1)
