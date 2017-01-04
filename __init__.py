@@ -1,7 +1,3 @@
-from socket import getfqdn
-
-hostname = getfqdn()
-
 from system.stamp import stamp
 
 from system.fileage import fileage
