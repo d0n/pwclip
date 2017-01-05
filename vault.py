@@ -64,6 +64,8 @@ class WeakVaulter(SSH, GPGTool):
 		skwargs = kwargs
 		if 'remote' in kwargs.keys():
 			skwargs['host'] = kwargs['remote']
+			if '@' in kwargs['remote']:
+				skwargs['user'], skwargs['host'] = kwargs['remote'].split('@')
 		if 'reuser' in kwargs.keys():
 			skwargs['user'] = kwargs['reuser']
 		SSH.__init__(self, *args, **skwargs)
