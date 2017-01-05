@@ -270,13 +270,16 @@ class WeakVaulter(SSH, GPGTool):
                 '%s/.gnupg.1'%self.home)
 		except FileNotFoundError:
 			pass
+		finally:
+			self._clean_()
+			self._fixmod_()
 		if self.checkvault(self.vault):	
 			rmtree(self.weakz)
 			self._rmlns_()
 			chmod(self.vault, 0o600)
-		chdir(self._pwd)
 		if self.rem:
 			self._copynews_()
+		chdir(self._pwd)
 
 	def unvault(self):
 		if self.dbg:
