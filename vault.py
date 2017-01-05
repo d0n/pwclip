@@ -32,19 +32,22 @@ from yaml import load, dump
 
 from socket import gaierror
 
+from colortext import bgre, blu, yel, error
+
 from executor import command as cmd
 
-from net import SecureSHell as SSH
+from system.user import whoami
 
-from colortext import bgre, blu, yel, error
+from net import SecureSHell as SSH
 
 from secrecy import GPGTool
 
 class WeakVaulter(SSH, GPGTool):
 	_dbg = None
 	_pwd = getcwd()
+	rem = None
 	home = expanduser('~')
-	user = environ['USER']
+	user = whoami()
 	host = uname()[1]
 	vault = '%s/.vault'%home
 	weakz = '%s/.weaknez'%home
@@ -70,6 +73,8 @@ class WeakVaulter(SSH, GPGTool):
 				setattr(self, key, val)
 			elif hasattr(self, '_%s'%(key)):
 				setattr(self, '_%s'%(key), val)
+		if '@' in self.remote:
+			self.reuser, self.remote = self.remote.split('@')
 		self._clean_()
 		if self.dbg:
 			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
@@ -115,11 +120,10 @@ class WeakVaulter(SSH, GPGTool):
 				pass
 
 	def _copynews_(self):
-		if self.remote:
+		if self.rem and self.remote:
 			try:
 				self.scpcompstats(
-                    self.vault, basename(self.vault),
-                    self.remote, self.reuser)
+                    self.vault, basename(self.vault), self.remote, self.reuser)
 			except FileNotFoundError:
 				pass
 
