@@ -149,7 +149,7 @@ class WeakVaulter(SSH, GPGTool):
 					if isdir(hl) and not isdir('%s.1'%hl):
 						move(hl, '%s.1'%hl)
 					elif isdir('%s.1'%hl):
-						rmtree(hl)
+						remove('%s.1'%hl)
 					symlink('%s/%s'%(whh, ln), ln)
 			chdir(pwd)
 
@@ -277,6 +277,8 @@ class WeakVaulter(SSH, GPGTool):
 			error('vault', self.vault, 'does not exist or is inaccessable')
 		elif isdir(self.weakz):
 			return
+		if self.weakz and isdir(dirname(self.weakz)):
+			chdir(dirname(self.weakz))
 		self._copynews_()
 		with open(self.vault, 'r') as cfh:
 			try:
@@ -287,8 +289,11 @@ class WeakVaulter(SSH, GPGTool):
 				return
 			self._dictpath(dct)
 		self._mklns_(self.weakz)
-		self._movesocks_(
-            '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
+		try:
+			self._movesocks_(
+                '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
+		except (OSError, FileNotFoundError):
+			pass
 		self._fixmod_()
 		chdir(self._pwd)
 
