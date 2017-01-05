@@ -135,6 +135,7 @@ class SecureSHell(object):
 		if rmt == lmt:
 			return
 		elif rmt and rmt > lmt:
+			copy2(lfile, '%s.1'%lfile)
 			self.get(rfile, lfile, host, user)
 			self._setlstamp(lfile, rat, rmt)
 		else:
