@@ -154,7 +154,7 @@ def clips():
 
 	def linclips():
 		"""linux clipboards"""
-		xsel = ['xsel', '-l', '/dev/null']
+		xsel = ['xsel', '-l', '/dev/null', '-t', '10000']
 		def _copy(text, mode='p'): # mode in ('p', 'b', 'pb')
 			_xsel = xsel + ['-i']
 			"""linux copy function"""
@@ -163,7 +163,6 @@ def clips():
 				with Popen(
                       _xsel + ['-%s'%m], stdin=PIPE, stderr=DEVNULL) as prc:
 					prc.communicate(input=text.encode('utf-8'))
-					prc.kill()
 		def _paste(mode='p'):
 			"""linux paste function"""
 			_xsel = xsel + ['-o']
