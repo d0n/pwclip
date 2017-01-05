@@ -44,8 +44,10 @@ class SecureSHell(object):
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
 			ssh.connect(host, int(port), username=user)
-		except (ssh_exception.SSHException, NameResolveError) as err:
+		except ssh_exception.SSHException as err:
 			fatal(err)
+		except NameResolveError as err:
+			pass
 		return ssh
 
 	def rstdo(self, cmd, host=None, user=None):
