@@ -160,11 +160,11 @@ def tabs(dat, ind=0, ll=80):
 	return '\n'.join(
         '%s%s'%(' '*ind, dat[i:int(i+ll)]) for i in range(0, len(dat), ll))
 
-def tabl(dats, ind=0):
+def tabl(dats, ind=0, iind=0):
 	if isinstance(dats, (list, tuple)):
 		return '\n'.join('%s%s'%(' '*ind, i) for i in dats)
 
-def tabd(dats, ind=0, space=2):
+def tabd(dats, ind=0, iind=0):
 	"""
 	this is a function where i try to guess the best indentation for text
 	representation of keyvalue paires with best matching indentation
@@ -176,22 +176,18 @@ def tabd(dats, ind=0, space=2):
 	"""
 	if dats == {} or not isinstance(dats, dict):
 		return dats
-	lim = int(max(len(str(k)) for k in dats if k)+int(ind))+space
+	lim = int(max(len(str(k)) for k in dats if k)+int(ind))
 	tabbed = '' #'%s'%' '*ind
 	for (key, val) in sorted(dats.items()):
-		iind = ind
 		spc = ' '*int(lim-len(str(key)))
 		if isinstance(val, dict):
-			iind = ind+2
-			tabbed = '%s\n%s\n%s:\n%s%s'%(
-                tabbed, spc*ind, key, ' '*space, tabd(val, ind=iind, space=space).strip())
+			iind = ind if not iind else iind
+			tabbed = '%s\n%s%s:\n%s'%(
+                tabbed, ' '*ind, key, tabd(val, ind+iind, iind))
 			continue
-		#elif isinstance(val, (list, tuple)):
-		#	iind = ind+2
-		#	tabbed = '%s\n%s%s'%(tabbed, ' '*ind, tabl(val, ind=iind))
-		tabbed = '%s\n%s%s%s=%s%s'%(
-            tabbed.rstrip(), ' '*ind, key, spc, ' '*space, val)
-	return tabbed.lstrip()
+		tabbed = '%s\n%s%s%s=  %s'%(
+            tabbed, ' '*ind, key, spc, val)
+	return tabbed.lstrip('\n')
 
 
 if __name__ == "__main__":
