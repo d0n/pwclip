@@ -44,6 +44,9 @@ class DePyKG(Command):
 		if self.erno(self.pkgbin, '-s', package) == 0:
 			return True
 
+	def partlyinstalleds(self):
+		return [d for d in self.stdo(
+            self.pkgbin, '-l').split('\n') if d.startswith('rc')]
 
 
 if __name__ == '__main__':

@@ -133,6 +133,7 @@ class Apytude(DePyKG):
 		if self.aptopts:
 			opts = '%s %s'%(
                 opts, ' -'.join(opt for opt in self.aptopts))
+		self.purge(self.partlyinstalleds(), opts='-y')
 		command = '%s %s autoremove'%(self.aptbin, opts)
 		return int(self.call(command))
 
