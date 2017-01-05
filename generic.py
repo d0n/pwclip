@@ -5,8 +5,7 @@ from os import listdir as _listdir, chdir as _chdir
 from os.path import exists as _exists, isdir as _isdir
 
 # local relative imports
-from colortext import blu, yel, bgre
-#from .subversion import SubVersion
+from colortext import blu, yel, bgre, error
 from system import which
 from repo.git import GitSync
 
