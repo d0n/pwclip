@@ -61,15 +61,6 @@ class WeakVaulter(SSH, GPGTool):
 		recvs = [environ['GPGKEY']]
 	chdir(home)
 	def __init__(self, *args, **kwargs):
-		skwargs = kwargs
-		if 'remote' in kwargs.keys():
-			skwargs['host'] = kwargs['remote']
-			if '@' in kwargs['remote']:
-				skwargs['user'], skwargs['host'] = kwargs['remote'].split('@')
-		if 'reuser' in kwargs.keys():
-			skwargs['user'] = kwargs['reuser']
-		SSH.__init__(self, *args, **skwargs)
-		GPGTool.__init__(self, *args, **kwargs)
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
@@ -80,8 +71,8 @@ class WeakVaulter(SSH, GPGTool):
 				setattr(self, key, val)
 			elif hasattr(self, '_%s'%(key)):
 				setattr(self, '_%s'%(key), val)
-		if '@' in self.remote:
-			self.reuser, self.remote = self.remote.split('@')
+		SSH.__init__(self, *args, **kwargs)
+		GPGTool.__init__(self, *args, **kwargs)
 		if self.rem:
 			self._copynews_()
 		self._clean_()
