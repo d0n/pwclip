@@ -308,6 +308,8 @@ class WeakVaulter(SSH, GPGTool):
                 '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, self.host))
 		except (OSError, FileNotFoundError):
 			pass
-		self._fixmod_()
+		finally:
+			self._clean_()
+			self._fixmod_()
 		chdir(self._pwd)
 
