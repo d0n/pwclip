@@ -75,6 +75,8 @@ class WeakVaulter(SSH, GPGTool):
 				setattr(self, '_%s'%(key), val)
 		if '@' in self.remote:
 			self.reuser, self.remote = self.remote.split('@')
+		if self.rem:
+			self._copynews_()
 		self._clean_()
 		if self.dbg:
 			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
@@ -272,7 +274,8 @@ class WeakVaulter(SSH, GPGTool):
 			self._rmlns_()
 			chmod(self.vault, 0o600)
 		chdir(self._pwd)
-		self._copynews_()
+		if self.rem:
+			self._copynews_()
 
 	def unvault(self):
 		if self.dbg:
@@ -283,7 +286,6 @@ class WeakVaulter(SSH, GPGTool):
 			return
 		if self.weakz and isdir(dirname(self.weakz)):
 			chdir(dirname(self.weakz))
-		self._copynews_()
 		with open(self.vault, 'r') as cfh:
 			try:
 				dct = load(str(self.decrypt(cfh.read())))
