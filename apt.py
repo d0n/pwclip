@@ -114,7 +114,6 @@ class Apytude(DePyKG):
 		if packages:
 			packages = ' '.join(
                 pkg for pkg in packages if self.isinstalled(pkg))
-		print(packages)
 		if not packages and not 'f' in opts:
 			return
 		command = '%s %s purge %s' %(self.aptbin, opts, packages)
