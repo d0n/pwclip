@@ -1,4 +1,7 @@
 """hmacsha library"""
+from os import path
+from getpass import getpass
+
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256, HMAC
 from Crypto.Protocol.KDF import PBKDF2
@@ -128,3 +131,38 @@ def dehmacsha(password, data):
 	cipher = AES.new(cipher_key, AES.MODE_CTR, counter=counter)
 	plain = cipher.decrypt(raw[SALT_LEN[version]//8:-HASH.digest_size])
 	return plain #.decode()
+""" init"""
+
+
+def enhsfile(plainf):
+	"""encrypt using hmachsha function"""
+	passwd = getpass('tell me ya secret:')
+	plainf = path.expanduser(plainf)
+	with open(plainf, 'rb') as bpf:
+		stream = bpf.read()
+	crypt = enhmacsha(passwd, stream)
+	with open('%s.vault'%plainf, 'wb+') as vcf:
+		vcf.write(crypt)
+	return crypt
+
+
+def dehsfile(cryptf):
+	"""decrypt using hmachsha function"""
+	passwd = getpass('tell me ya secret:')
+	cryptf = path.expanduser(cryptf)
+	with open(cryptf, 'rb') as vcf:
+		crypt = vcf.read()
+	return dehmacsha(passwd, crypt).decode()
+
+def main():
+	"""main"""
+	tocrypt = input('gimme file to encrypt:').strip()
+	if not path.isfile(tocrypt):
+		print('cannot encrypt non existing file')
+		exit(1)
+	print(enhsfile(tocrypt))
+	print(dehsfile('%s.vault'%tocrypt))
+
+
+if __name__ == '__main__':
+	exit(1)
