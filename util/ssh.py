@@ -132,8 +132,8 @@ class SecureSHell(object):
 		host = host if host else self.host
 		lat, lmt = self._localstamp(lfile)
 		rat, rmt = self._remotestamp(rfile, host, user)
-		#print(lmt)
-		#print(rmt)
+		print(lmt)
+		print(rmt)
 		if rmt == lmt:
 			return
 		elif rmt and rmt > lmt:
