@@ -6,9 +6,6 @@ from os import access as _access, environ as _environ, \
 from sys import \
     stdout as _stdout, \
     stdout as _stderr
-
-from getpass import getpass
-
 _echo_ = _stdout.write
 _puke_ = _stderr.write
 
@@ -193,11 +190,8 @@ sucommand = Command('sh', 'su')
 def sudofork(*args):
 	enr = 0
 	try:
-		print(args)
-		with _Popen(*args, stdin=_PIPE, shell=True) as prc:
-			prc.communicate(input=getpass(
-                '[sudo] password for %s: '%_environ['USER']).encode('utf-8'))
-	#	enr = sucommand.call(args)
+		#print(args)
+		enr = sucommand.call(args)
 	except KeyboardInterrupt:
 		_echo_('\n\033[34maborted by keystroke\033[0m\n')
 
