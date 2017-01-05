@@ -227,9 +227,20 @@ class WeakVaulter(SSH, GPGTool):
 		if self.dbg:
 			print(bgre(self._checkdiff))
 		nvlt = self._pathdict(basename(self.weakz))
-		with open(self.vault, 'r') as cfh:
-			ovlt = load(str(self.decrypt(cfh.read())))
+		try:
+			with open(self.vault, 'r') as cfh:
+				ovlt = load(str(self.decrypt(cfh.read())))
+		except FileNotFoundError:
+			ovlt = False
 		if ovlt != nvlt:
+			return True
+
+	def checkvault(self, vault):
+		with open(vault, 'r') as vfh:
+			vlt = vfh.readlines()
+		if (
+              vlt[0] == '-----BEGIN PGP MESSAGE-----\n' and \
+              vlt[-1] == '-----END PGP MESSAGE-----\n'):
 			return True
 
 	def envault(self):
@@ -238,17 +249,24 @@ class WeakVaulter(SSH, GPGTool):
 		if not isdir(self.weakz):
 			return
 		if self._checkdiff():
-			copyfile(self.vault, '%s.1'%self.vault)
-			chmod('%s.1'%self.vault, 0o600)
+			try:
+				copyfile(self.vault, '%s.1'%self.vault)
+				chmod('%s.1'%self.vault, 0o600)
+			except FileNotFoundError:
+				pass
 			self.encrypt(
                 str(dump(self._pathdict(basename(self.weakz)))),
                 output=self.vault, recipients=self.recvs)
-		self._movesocks_(
-            '%s/%s/.gnupg'%(self.weakz, self.host),
-            '%s/.gnupg.1'%self.home)
-		rmtree(self.weakz)
-		self._rmlns_()
-		chmod(self.vault, 0o600)
+		try:
+			self._movesocks_(
+                '%s/%s/.gnupg'%(self.weakz, self.host),
+                '%s/.gnupg.1'%self.home)
+		except FileNotFoundError:
+			pass
+		if self.checkvault(self.vault):	
+			rmtree(self.weakz)
+			self._rmlns_()
+			chmod(self.vault, 0o600)
 		chdir(self._pwd)
 		self._copynews_()
 
