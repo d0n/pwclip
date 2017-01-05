@@ -45,11 +45,11 @@ class SecureSHell(object):
 		try:
 			ssh.connect(host, int(port), username=user)
 		except ssh_exception.SSHException as err:
-			print(bgre(tabd(self.__dict__)))
+			print(bgre('h: %s, u: %s p: %s'%(host, user, port)))
 			fatal(err)
 		except NameResolveError as err:
-			print(bgre(tabd(self.__dict__)))
-			pass
+			print(bgre('h: %s, u: %s p: %s'%(host, user, port)))
+			fatal(err)
 		return ssh
 
 	def rstdo(self, cmd, host=None, user=None):
