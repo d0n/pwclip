@@ -190,6 +190,7 @@ sucommand = Command('sh', 'su')
 def sudofork(*args):
 	enr = 0
 	try:
+		#print(args)
 		enr = sucommand.call(args)
 	except KeyboardInterrupt:
 		_echo_('\n\033[34maborted by keystroke\033[0m\n')
