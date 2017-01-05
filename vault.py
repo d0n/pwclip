@@ -125,6 +125,9 @@ class WeakVaulter(SSH, GPGTool):
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
 			except FileNotFoundError:
 				pass
+			finally:
+				self._clean_()
+				self._fixmod_()
 
 	def _copynews_(self):
 		if self.rem and self.remote:
