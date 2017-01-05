@@ -8,7 +8,7 @@ from paramiko import ssh_exception, SSHClient, AutoAddPolicy
 from shutil import copy2
 from socket import getfqdn as fqdn, gaierror as NameResolveError
 
-from colortext import bgre, tabd, abort, error
+from colortext import bgre, tabd, abort, error, fatal
 
 # default vars
 __version__ = '0.1'
@@ -45,7 +45,7 @@ class SecureSHell(object):
 		try:
 			ssh.connect(host, int(port), username=user)
 		except (ssh_exception.SSHException, NameResolveError) as err:
-			return error(err)
+			fatal(err)
 		return ssh
 
 	def rstdo(self, cmd, host=None, user=None):
