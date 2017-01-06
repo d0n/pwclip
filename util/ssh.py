@@ -16,7 +16,7 @@ __version__ = '0.1'
 
 class SecureSHell(object):
 	_dbg = False
-	reuser = whoami()
+	reuser = ''
 	remote = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -40,8 +40,10 @@ class SecureSHell(object):
 
 	@staticmethod
 	def _ssh_(remote, user=None, port=22):
+		_user = whoami()
 		if '@' in remote:
-			user, remote = remote.split('@')
+			_user, remote = remote.split('@')
+		user = _user if not user else user
 		ssh = SSHClient()
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
