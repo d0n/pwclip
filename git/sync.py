@@ -30,6 +30,7 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre(GitSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+		GitRepo.__init__(self, *args, **kwargs)
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
@@ -59,15 +60,19 @@ class GitSync(GitRepo):
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
 		if branch != self._head(): self.checkout(branch)
-		self.pull()
+		if self.syncmode in ('sync', 'pull'):
+			self.pull()
 		status, ahead, behind = self.gitstatus()
 		if not status and not ahead and not behind: return
-		if ahead: self.push(branch)
-		if status != {}:
-			self.add()
-			self.commit(status)
+		if self.syncmode in ('sync', 'push'):
+			if ahead: self.push(branch)
+		if self.syncmode in ('sync', 'commit'):
+			if status:
+				self.add()
+				self.commit(status)
 		_, ahead, _ = self.gitstatus()
-		if ahead: self.push(branch)
+		if self.syncmode in ('sync', 'push'):
+			if ahead: self.push(branch)
 		if status:
 			return {branch: status}
 
