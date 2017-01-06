@@ -43,8 +43,7 @@ class RepoSync(GitSync):
 
 	def rposync(self, repotypes, syncmode=None, syncall=None):
 		if self.dbg:
-			print(bgre('%s\n  repotypes = %s\n  syncmode = %s'%(
-                self.rposync, repotypes, syncmode)))
+			print(bgre('%s\n  repotypes = %s\n'%(self.rposync, repotypes)))
 		syncall = syncall if syncall else self.abr
 		repostats = []
 		if 'git' in repotypes.keys():
