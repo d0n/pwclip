@@ -28,7 +28,7 @@ class DePyKG(Command):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(DePyKG.__mro__))
-			print(bgre(tabd(self.__dict__)))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg

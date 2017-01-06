@@ -38,7 +38,7 @@ class Apytude(DePyKG):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(Apytude.__mro__))
-			print(bgre(self.__dict__))
+			print(bgre(tabd(self.__dict__, 2)))
 	# rw properties
 	@property
 	def dbg(self): #dbg <bool>
