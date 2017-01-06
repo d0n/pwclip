@@ -55,7 +55,7 @@ class GPGTool(object):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
-			print(bgre(self.__dict__))
+			print(bgre(tabd(self.__dict__, 2)))
 
 	@property                # dbg <bool>
 	def dbg(self):
