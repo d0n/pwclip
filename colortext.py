@@ -174,7 +174,10 @@ def tabd(dats, ind=0, iind=2):
 	blibablubb  = bla
 	^^indent "bar" and "b" as much as needed ("add" is added to each length)
 	"""
-	lim = int(max(len(str(k)) for k in dats if k)+int(ind))
+	try:
+		lim = int(max(len(str(k)) for k in dats if k)+int(ind))
+	except ValueError:
+		return dats
 	tabbd = ''
 	iind = iind if ind else 2
 	for (key, val) in sorted(dats.items()):
