@@ -29,13 +29,15 @@ class GitRepo(Command):
 	_gitbin = which('git')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+			elif hasattr(self, '_%s'%(arg)):
+				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key):
 				setattr(self, key, val)
+			elif hasattr(self, '_%s'%(key)):
+				setattr(self, '_%s'%(key), val)
 		if self.dbg:
 			print(bgre(GitRepo.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))

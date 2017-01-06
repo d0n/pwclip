@@ -5,7 +5,7 @@ from os import listdir as _listdir, chdir as _chdir
 from os.path import exists as _exists, isdir as _isdir
 
 # local relative imports
-from colortext import blu, yel, bgre, error
+from colortext import blu, yel, bgre, tabd, error
 from system import which
 from repo.git import GitSync
 
@@ -14,22 +14,26 @@ __version__ = '0.1'
 
 class RepoSync(GitSync):
 	_sh_ = True
-	_aal = False
 	_dbg = False
-	_syncmode = 'sync'
-	_svnuser = ''
+	abr = False
+	syncmode = 'sync'
+	svnuser = ''
 	def __init__(self, *args, **kwargs):
+		
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+			elif hasattr(self, '_%s'%(arg)):
+				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
-			if hasattr(self, key) and not type(val) in (None, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
+			elif hasattr(self, '_%s'%(key)):
+				setattr(self, '_%s'%(key), val)
 		if self.dbg:
 			print(bgre(RepoSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+		GitSync.__init__(self, *args, **kwargs)
 
 	@property                # dbg <bool>
 	def dbg(self):
@@ -43,7 +47,7 @@ class RepoSync(GitSync):
 			print(bgre('%s\n  repotypes = %s\n  syncmode = %s'%(
                 self.rposync, repotypes, syncmode)))
 		syncmode = syncmode if syncmode else self.syncmode
-		syncall = syncall if syncall else self._aal
+		syncall = syncall if syncall else self.abr
 		repostats = []
 		if 'git' in repotypes.keys():
 			for rbstat in self.giter(repotypes['git'], syncall):

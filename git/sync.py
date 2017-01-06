@@ -14,16 +14,19 @@ from repo.git import GitRepo
 class GitSync(GitRepo):
 	_sh_ = True
 	_dbg = False
+	abr = False
 	syncmode = 'sync' # commit|push|pull
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+			elif hasattr(self, '_%s'%(arg)):
+				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
-			if hasattr(self, key) and not isinstance(val, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
+			elif hasattr(self, '_%s'%(key)):
+				setattr(self, '_%s'%(key), val)
 		if self.dbg:
 			print(bgre(GitSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
@@ -32,7 +35,7 @@ class GitSync(GitRepo):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
-		self._dbg = True if val else False
+		self._dbg = val
 
 	def _gitsubmods(self, repos):
 		if self.dbg:
@@ -72,6 +75,7 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
                 self.giter, repos, syncall)))
+		syncall = syncall if syncall else self.abr
 		for repo in self._gitsubmods(repos):
 			try:
 				chdir(repo)
@@ -83,13 +87,11 @@ class GitSync(GitRepo):
 			head = self._head()
 			branchs = [head]
 			if syncall:
-				branchs = [
-                    b for b in self._heads() if not b in ('master', head)]
+				branchs = [b for b in self.__heads() if not b == head] + [head]
 			for branch in branchs:
 				stats = self.gitsync(branch)
-				if not stats:
-					continue
-				branchstats.update(stats)
+				if stats:
+					branchstats[branch] = stats
 			if self.dbg and branchstats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
 			if branchstats:
