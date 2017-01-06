@@ -7,7 +7,7 @@ from os import chdir
 from os.path import basename, dirname, isfile
 
 # local relative imports
-from colortext import blu, yel, bgre, error
+from colortext import blu, yel, bgre, tabd, error
 from repo.git import GitRepo
 
 
@@ -25,15 +25,8 @@ class GitSync(GitRepo):
 			if hasattr(self, key) and not isinstance(val, bool):
 				setattr(self, key, val)
 		if self.dbg:
-			lim = int(max(len(k) for k in GitSync.__dict__.keys()))+4
-			print('%s\n%s\n\n%s\n%s\n'%(
-                GitSync.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(GitSync.__dict__.items())),
-                GitSync.__init__,
-                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
-                    ) for (k, v) in sorted(self.__dict__.items()))))
+			print(bgre(GitSync.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg

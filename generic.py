@@ -28,17 +28,8 @@ class RepoSync(GitSync):
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
 		if self.dbg:
-			lim = int(max(len(k) for k in RepoSync.__dict__.keys()))+4
-			print(bgre('%s\n%s\n\n%s\n%s\n'%(
-                RepoSync.__mro__,
-               '\n'.join('  %s%s=\t%s'%(
-                    k, ' '*int(lim-len(k)), v
-                    ) for (k, v) in sorted(RepoSync.__dict__.items())),
-                RepoSync.__init__,
-                '\n'.join('  %s%s=\t%s'%(k[1:], ' '*int(
-                    int(max(len(i) for i in self.__dict__.keys())+4
-                    )-len(k)), v
-                ) for (k, v) in sorted(self.__dict__.items())))))
+			print(bgre(RepoSync.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 
 	@property                # dbg <bool>
 	def dbg(self):
