@@ -87,7 +87,7 @@ class GitSync(GitRepo):
 			head = self._head()
 			branchs = [head]
 			if syncall:
-				branchs = [b for b in self.__heads() if not b == head] + [head]
+				branchs = [b for b in self._heads() if not b == head] + [head]
 			for branch in branchs:
 				stats = self.gitsync(branch)
 				if stats:

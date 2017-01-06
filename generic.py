@@ -19,7 +19,6 @@ class RepoSync(GitSync):
 	syncmode = 'sync'
 	svnuser = ''
 	def __init__(self, *args, **kwargs):
-		
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
