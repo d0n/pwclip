@@ -16,7 +16,7 @@ class RepoSync(GitSync):
 	_sh_ = True
 	_dbg = False
 	abr = False
-	syncmode = 'sync'
+	syncmodes = ['sync']
 	svnuser = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -41,7 +41,7 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = True if val else False
 
-	def rposync(self, repotypes, syncmode=None, syncall=None):
+	def rposync(self, repotypes, syncall=None):
 		if self.dbg:
 			print(bgre('%s\n  repotypes = %s\n'%(self.rposync, repotypes)))
 		syncall = syncall if syncall else self.abr

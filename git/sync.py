@@ -15,7 +15,7 @@ class GitSync(GitRepo):
 	_sh_ = True
 	_dbg = False
 	abr = False
-	syncmode = 'sync' # commit|push|pull
+	syncmodes = ['sync'] # commit|push|pull
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -60,18 +60,18 @@ class GitSync(GitRepo):
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
 		if branch != self._head(): self.checkout(branch)
-		if self.syncmode in ('sync', 'pull'):
+		if [m for m in self.syncmodes if m in ('sync', 'pull')]:
 			self.pull()
 		status, ahead, behind = self.gitstatus()
 		if not status and not ahead and not behind: return
-		if self.syncmode in ('sync', 'push'):
+		if [m for m in self.syncmodes if m in ('sync', 'push')]:
 			if ahead: self.push(branch)
-		if self.syncmode in ('sync', 'commit'):
+		if [m for m in self.syncmodes if m in ('sync', 'commit')]:
 			if status:
 				self.add()
 				self.commit(status)
 		_, ahead, _ = self.gitstatus()
-		if self.syncmode in ('sync', 'push'):
+		if [m for m in self.syncmodes if m in ('sync', 'push')]:
 			if ahead: self.push(branch)
 		if status:
 			return {branch: status}
