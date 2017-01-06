@@ -7,14 +7,14 @@ from os.path import isfile as _isfile
 import sys
 
 # local relative imports
-import executor
+from executor import Command
 from system import absrelpath, which
 from colortext import blu, yel, tabd, bgre, error
 
 # default vars
 __version__ = '0.1'
 
-class GitRepo(executor.Command):
+class GitRepo(Command):
 	"""
 	git repo class derives the Command class to provide wrapping methods using
 	the git binary found on the system

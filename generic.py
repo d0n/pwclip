@@ -16,7 +16,7 @@ class RepoSync(GitSync):
 	_sh_ = True
 	_aal = False
 	_dbg = False
-	_mode = 'sync'
+	_syncmode = 'sync'
 	_svnuser = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -47,11 +47,11 @@ class RepoSync(GitSync):
 	def dbg(self, val):
 		self._dbg = True if val else False
 
-	def rposync(self, repotypes, mode=None, syncall=None):
+	def rposync(self, repotypes, syncmode=None, syncall=None):
 		if self.dbg:
-			print(bgre('%s\n  repotypes = %s\n  mode = %s'%(
-                self.rposync, repotypes, mode)))
-		mode = mode if mode else self.mode
+			print(bgre('%s\n  repotypes = %s\n  syncmode = %s'%(
+                self.rposync, repotypes, syncmode)))
+		syncmode = syncmode if syncmode else self.syncmode
 		syncall = syncall if syncall else self._aal
 		repostats = []
 		if 'git' in repotypes.keys():

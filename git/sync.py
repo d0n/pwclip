@@ -10,34 +10,36 @@ from os.path import basename, dirname, isfile
 from colortext import blu, yel, bgre, error
 from repo.git import GitRepo
 
+
 class GitSync(GitRepo):
-	# external
 	_sh_ = True
-	# internal
-	_aal = False
 	_dbg = False
-	_mode = 'sync'
-
-	@property                # aal <bool>
-	def aal(self):
-		return self._aal
-	@aal.setter
-	def aal(self, val):
-		self._aal = True if val else False
-
+	syncmode = 'sync' # commit|push|pull
+	def __init__(self, *args, **kwargs):
+		for arg in args:
+			arg = '_%s'%(arg)
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			key = '_%s'%(key)
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
+		if self.dbg:
+			lim = int(max(len(k) for k in GitSync.__dict__.keys()))+4
+			print('%s\n%s\n\n%s\n%s\n'%(
+                GitSync.__mro__,
+                '\n'.join('  %s%s=    %s'%(
+                    k, ' '*int(lim-len(k)), v
+                ) for (k, v) in sorted(GitSync.__dict__.items())),
+                GitSync.__init__,
+                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(lim-len(k)), v
+                    ) for (k, v) in sorted(self.__dict__.items()))))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
 	@dbg.setter
 	def dbg(self, val):
 		self._dbg = True if val else False
-
-	@property                # mode <str>
-	def mode(self):
-		return self._mode
-	@mode.setter
-	def mode(self, val):
-		self._mode = val if isinstance(val, str) else self._mode
 
 	def _gitsubmods(self, repos):
 		if self.dbg:
