@@ -183,7 +183,7 @@ class PassCrypt(GPGTool):
 					__ents = {usr: self._findentry(usr, __ents)}
 			return __ents
 
-def passcrypt(usr):
+def lscrypt(usr):
 	if usr:
 		return PassCrypt().lspw(usr)
 
