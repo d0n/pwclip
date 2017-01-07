@@ -70,8 +70,6 @@ class WeakVaulter(SSH, GPGTool):
 				setattr(self, key, val)
 			elif hasattr(self, '_%s'%(key)):
 				setattr(self, '_%s'%(key), val)
-		if self.rem:
-			self._copynews_()
 		self._clean_()
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
@@ -97,7 +95,6 @@ class WeakVaulter(SSH, GPGTool):
 					f = '%s/%s'%(d, f)
 					#print(f)
 					chmod(f, 0o600)
-				#print(d)
 				chmod(d, 0o700)
 
 	def _movesocks_(self, src, trg):
@@ -111,9 +108,6 @@ class WeakVaulter(SSH, GPGTool):
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
 			except FileNotFoundError:
 				pass
-			finally:
-				self._clean_()
-				self._fixmod_()
 
 	def _copynews_(self):
 		if self.rem and self.remote:
@@ -126,7 +120,6 @@ class WeakVaulter(SSH, GPGTool):
 	def _clean_(self):
 		if self.dbg:
 			print(bgre(self._clean_))
-		self._fixmod_()
 		if not isdir(self.weakz):
 			for ln in listdir(self.home):
 				if not ln.startswith('.'):
@@ -142,21 +135,22 @@ class WeakVaulter(SSH, GPGTool):
 		elif isdir('%s/%s'%(self.weakz, self.host)):
 			pwd = getcwd()
 			chdir(self.home)
-			whh = '%s/%s'%(basename(self.weakz), self.host)
-			for ln in listdir(whh):
-				hl = '%s/%s'%(self.home, ln)
-				if not islink(hl) and isdir('%s/%s/%s'%(self.home, whh, ln)):
-					if isdir(hl) and not isdir('%s.1'%hl):
-						move(hl, '%s.1'%hl)
-					elif isdir('%s.1'%hl):
-						remove('%s.1'%hl)
-					symlink('%s/%s'%(whh, ln), ln)
-			chdir(pwd)
+			try:
+				whh = '%s/%s'%(basename(self.weakz), self.host)
+				for ln in listdir(whh):
+					hl = '%s/%s'%(self.home, ln)
+					if not islink(hl) and isdir('%s/%s/%s'%(self.home, whh, ln)):
+						if isdir(hl) and not isdir('%s.1'%hl):
+							move(hl, '%s.1'%hl)
+						elif isdir('%s.1'%hl):
+							remove('%s.1'%hl)
+						symlink('%s/%s'%(whh, ln), ln)
+			finally:
+				chdir(pwd)
 
 	def _pathdict(self, path):
 		if self.dbg:
 			print(bgre(self._pathdict))
-		chdir(self.home)
 		frbs = {}
 		for (d, _, fs) in walk(path):
 			for f in fs:
@@ -199,7 +193,6 @@ class WeakVaulter(SSH, GPGTool):
 				pass
 			if isdir('%s.1'%hl):
 				move('%s.1'%hl, hl)
-		self._fixmod_()
 
 	def _mklns_(self, weak):
 		if self.dbg:
@@ -266,15 +259,13 @@ class WeakVaulter(SSH, GPGTool):
 					'%s/.gnupg.1'%self.home)
 			except FileNotFoundError:
 				pass
-			finally:
-				self._clean_()
-				self._fixmod_()
 			if self.checkvault(self.vault):	
 				rmtree(self.weakz)
 				self._rmlns_()
 				chmod(self.vault, 0o600)
 			if self.rem:
 				self._copynews_()
+			self._fixmod_()
 		finally:
 			chdir(self._pwd)
 
@@ -299,9 +290,9 @@ class WeakVaulter(SSH, GPGTool):
 				self._movesocks_(
                     '%s/.gnupg.1'%self.home,
                     '%s/%s/.gnupg'%(self.weakz, self.host))
-				self._fixmod_()
 			except (OSError, FileNotFoundError):
 				pass
+			self._fixmod_()
 		finally:
 			chdir(self._pwd)
 
