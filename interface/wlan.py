@@ -9,7 +9,7 @@ import sys
 from net.iface import isup, ifaces, isconfd, anyifconfd
 from system import fileage, which
 from executor import sucommand
-from colortext import bgre
+from colortext import bgre, tabd
 from pars import NetworkInterfacesParser
 
 from net.util.ifdrougs import ifup, ifdown, ifconfup, ifconfdown
@@ -35,9 +35,8 @@ class WLANConfig(NetworkInterfacesParser):
 			if hasattr(self, arg) and type(getattr(self, arg)) is bool:
 				setattr(self, arg, True)
 		if self._dbg:
-			print(WLANConfig.__mro__)
-			print('\n'.join(['%s = %s'%((key, val))\
-			  for (key, val) in self.__dict__.items()]))
+			print(bgre(WLANConfig.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
@@ -199,8 +198,8 @@ if __name__ == '__main__':
 	"""debugging area for modules"""
 	#adding ~/bin/modules to sys.path which is usually done by __init__.py
 	mdldir = '%s/modules'%(os.path.abspath(__file__).split('/modules')[0])
-	if not mdldir in sys.path: 
-		sys.path.insert(1, mdldir) 
+	if not mdldir in sys.path:
+		sys.path.insert(1, mdldir)
 	del mdldir
 	"""
 	for func in dir(sys.modules[__name__]):

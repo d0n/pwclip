@@ -64,10 +64,8 @@ class LDAPSearch(object):
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
 		if self.dbg:
-			print(bgre(
-                LDAPSearch.__mro__, '\n',
-                '\n'.join('%s = %s'%(
-                    key, val) for (key, val) in self.__dict__.items())))
+			print(bgre(LDAPSearch.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 
 	@property               # dbg <bool>
 	def dbg(self):

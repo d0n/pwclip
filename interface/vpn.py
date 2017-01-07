@@ -13,7 +13,7 @@ from executor import Command, sucommand as sudo
 from system import which, absrelpath
 from net.iface import ifaces, ifaddrs
 from pars.network import ResolvConfParser
-from colortext import bgre, abort, error
+from colortext import bgre, tabd, abort, error
 
 # default vars
 __version__ = '0.1'
@@ -37,9 +37,8 @@ class VPNConfig(ResolvConfParser):
 			if hasattr(self, key):
 				setattr(self, key, val)
 		if self._dbg:
-			print(VPNConfig.__mro__)
-			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
+			print(bgre(VPNConfig.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 
 	@property               # pidfile <str>
 	def pidfile(self):

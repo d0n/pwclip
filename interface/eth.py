@@ -21,7 +21,7 @@ import sys
 
 # local relative imports
 from system import which
-from colortext import bgre
+from colortext import bgre, tabd
 from pars.network import NetworkInterfacesParser
 from net.iface import ifaces
 from net.util.ifdrougs import ifup, ifdown
@@ -50,12 +50,8 @@ class ETHConfig(NetworkInterfacesParser):
 			if hasattr(self, key) and type(getattr(self, key)) is not bool:
 				setattr(self, key, val)
 		if self.dbg:
-			print(bgre('%s\n%s\n'%(
-			    ETHConfig.__mro__,
-			    '\n'.join('  %s%s=\t%s'%(k[1:], ' '*int(
-			        int(max(len(i) for i in self.__dict__.keys())+4
-			        )-len(k)), v
-			    ) for (k, v) in self.__dict__.items()))))
+			print(bgre(ETHConfig.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 	# rw properties
 	@property               # dbg <bool>
 	def dbg(self):
