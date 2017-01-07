@@ -31,6 +31,7 @@ class GitSync(GitRepo):
 			print(bgre(GitSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 		GitRepo.__init__(self, *args, **kwargs)
+
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg

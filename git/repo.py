@@ -21,7 +21,6 @@ class GitRepo(Command):
 	"""
 	# external attributes
 	_sh_ = True
-	# class attributes
 	_dbg = None
 	_vrb = None
 	_lwd = None
@@ -38,11 +37,12 @@ class GitRepo(Command):
 				setattr(self, key, val)
 			elif hasattr(self, '_%s'%(key)):
 				setattr(self, '_%s'%(key), val)
+		if not self.gitbin:
+			raise RuntimeError('could not find git binary in $PATH')
 		if self.dbg:
 			print(bgre(GitRepo.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-		if not self.gitbin:
-			raise RuntimeError('could not find git binary in $PATH')
+
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
