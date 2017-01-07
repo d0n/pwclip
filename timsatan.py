@@ -22,7 +22,7 @@ from lxml import html
 
 from system import stamp, userfind
 
-from colortext import bgre, error
+from colortext import bgre, tabd, error
 
 class LoginFailedError(Exception): pass
 
@@ -48,16 +48,8 @@ class Satan(object):
             'casslpem' not in kwargs.keys()) else kwargs['casslpem']
 		self.day = self.day if 'day' not in kwargs.keys() else self.day
 		if self.dbg:
-			lim = int(max(len(k) for k in TimeSatan.__dict__.keys()))+4
-			print(bgre('%s\n%s\n\n%s\n%s\n'%(
-                TimeSatan.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(TimeSatan.__dict__.items())),
-                TimeSatan.__init__,
-                '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
-                    ) for (k, v) in sorted(self.__dict__.items()
-                    ) if not k.startswith('_TimeSatan__')))))
+			print(bgre(Satan.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 		self.cj = CookieJar()
 		self.cxt = create_default_context(cafile=self.casslpem)
 		self.browser = build_opener(
@@ -204,10 +196,26 @@ class TimeSatan(Cmd, Satan):
 	def __init__(self, *args, **kwargs):
 		print('TimeSatan - book efforts to fuck-up-tool timsato\n' \
             '  empty line ends booking efforts')
+		for arg in args:
+			arg = '_%s'%(arg)
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			key = '_%s'%(key)
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
+		if self.dbg:
+			print(bgre(TimeSatan.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 		Cmd.__init__(self)
 		Satan.__init__(self, *args, **kwargs)
 		self._login()
-
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = True if val else False
 	@property                # dbg <type>
 	def dbg(self):
 		return self._dbg

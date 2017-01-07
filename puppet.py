@@ -20,7 +20,7 @@ import sys
 from socket import getfqdn as fqdn
 
 # local relative imports
-from colortext import bgre #, Debugger
+from colortext import bgre, tabd
 from system import which
 from net import netcat as nc, SecureSHell
 from executor import SSHCommand
@@ -48,6 +48,9 @@ class Puppet(SSHCommand):
 			key = '_%s'%(key)
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
+		if self.dbg:
+			print(bgre(Puppet.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
