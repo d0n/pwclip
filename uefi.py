@@ -6,7 +6,7 @@ import os
 import sys
 
 # local relative imports
-from colortext import error
+from colortext import bgre, tabd, error
 from system import which
 from executor import Command
 
@@ -21,6 +21,23 @@ class UEFITool(Command):
 	_efimgrbin = which('efibootmgr')
 	__efiout_ = []
 	def __init__(self, *args):
+		for arg in args:
+			arg = '_%s'%(arg)
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			key = '_%s'%(key)
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
+		if self.dbg:
+			print(bgre(UEFITool.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
+	@property                # dbg <bool>
+	def dbg(self):
+		return self._dbg
+	@dbg.setter
+	def dbg(self, val):
+		self._dbg = True if val else False
 		for arg in args:
 			arg = '_%s'%(arg)
 			if arg in self.__dict__.keys() and self.__dict__[arg]:

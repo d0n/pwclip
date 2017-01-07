@@ -7,7 +7,7 @@ import sys
 from time import sleep
 
 # local relative imports
-from colortext import bgre
+from colortext import bgre, tabd
 from executor import Command
 from system import which
 
@@ -28,6 +28,9 @@ class SystemPower(UEFITool):
 			arg = '_%s' %(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
+		if self.dbg:
+			print(bgre(SystemPower.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg

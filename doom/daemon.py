@@ -91,9 +91,8 @@ class Daemon(object):
 			if hasattr(self, key):
 				setattr(self, key, val)
 		if self._dbg:
-			print(Daemon.__mro__)
-			for (key, val) in self.__dict__.items():
-				print(key, '=', val)
+			_echo_('\033[01;30%s\033[0m'%sDaemon.__mro__)
+			_echo_('\033[01;30%s\033[0m'%self.__dict__)
 
 	# rw properties
 	@property #dbg <bool>

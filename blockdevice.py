@@ -23,8 +23,8 @@ from stat import \
     S_ISBLK as _isblk
 
 # local relative imports
-from .sysfs import SysFs
-
+from colortext import bgre, tabd
+from system.sysfs import SysFs
 from system import absrelpath
 
 # global default variables
@@ -42,17 +42,8 @@ class BlockDevice(object):
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
 		if self.dbg:
-			lim = int(max(len(k) for k in BlockDevices.__dict__.keys()))+4
-			print('\033[01;30m%s\n%s\n\n%s\n%s\n'%(
-			    BlockDevices.__mro__,
-			    '\n'.join('  %s%s=\t%s'%(
-			        k, ' '*int(lim-len(k)), v
-			    ) for (k, v) in sorted(BlockDevices.__dict__.items())),
-			    BlockDevices.__init__,
-			    '\n'.join('  %s%s=\t%s'%(k[1:], ' '*int(
-			        int(max(len(i) for i in self.__dict__.keys())+4
-			        )-len(k)), v
-			    ) for (k, v) in sorted(self.__dict__.items()))))
+			print(bgre(BlockDevice.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
