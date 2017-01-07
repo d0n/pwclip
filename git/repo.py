@@ -141,8 +141,6 @@ class GitRepo(Command):
 		elif not branch in heads:
 			command = '%s checkout -b %s'%(self.gitbin, branch)
 		else:
-			if not '/' in branch:
-				branch = 'origin/%s'%branch
 			command = '%s checkout %s'%(self.gitbin, branch)
 		return self.erno(command)
 
