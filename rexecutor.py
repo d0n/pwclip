@@ -27,19 +27,7 @@ class SSHCommand(Command):
 				setattr(self, key, val)
 			elif hasattr(self, '%s_'%key):
 				setattr(self, '%s_'%key, val)
-		if self.dbg:
-			lim = int(max(len(k) for k in SSHCommand.__dict__.keys()))+4
-			print('%s\n%s\n\n%s\n%s\n'%(
-                SSHCommand.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(SSHCommand.__dict__.items())),
-                SSHCommand.__init__,
-                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(
-                    int(max(len(i) for i in self.__dict__.keys())+4
-                    )-len(k)), v
-                ) for (k, v) in sorted(self.__dict__.items()))))
-		super().__init__(*args, **kwargs)
+		Command.__init__(*args, **kwargs)
 
 	@property                # dbg <bool>
 	def dbg(self):

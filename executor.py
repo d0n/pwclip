@@ -34,18 +34,6 @@ class Command(object):
 				setattr(self, key, val)
 			elif hasattr(self, '%s_'%key):
 				setattr(self, '%s_'%key, val)
-		if self.dbg:
-			lim = int(max(len(k) for k in Command.__dict__.keys()))+4
-			print('\033[01;30m%s\n%s\n\n%s\n%s\n\033[0m'%(
-                Command.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(Command.__dict__.items())),
-                Command.__init__,
-                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(
-                    int(max(len(i) for i in self.__dict__.keys())+4
-                    )-len(k)), v
-                ) for (k, v) in sorted(self.__dict__.items()))))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
