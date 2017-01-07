@@ -50,7 +50,7 @@ class RepoSync(GitSync):
 			for rbstat in self.giter(repotypes['git'], syncall):
 				repostats.append(rbstat)
 		if 'svn' in repotypes.keys():
-			svnopts = ' --username=%s'%self._svnuser if self._svnuser else ''
+			svnopts = ' --username=%s'%self.svnuser if self.svnuser else ''
 			stats = {}
 			for repo in sorted(repotypes['svn']):
 				_chdir(repo)
