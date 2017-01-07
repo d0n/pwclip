@@ -30,4 +30,7 @@ def xnotify(msg, name=stack()[1][3], wait=3):
 	note = xnote.Notification.new(msg)
 	wait = int(wait)*600
 	note.set_timeout(wait)
-	note.show()
+	try:
+		note.show()
+	except RuntimeError:
+		pass
