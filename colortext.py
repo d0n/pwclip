@@ -134,7 +134,7 @@ def error(*args, **kwargs):
 			msgs.append(red(arg))
 		else:
 			msgs.append(yel(arg))
-	__puke('%s\n'%' '.join(msg for msg in msgs))
+	__puke('%s\n'%''.join(msg for msg in msgs))
 
 def fatal(*args, **kwargs):
 	'''
@@ -183,24 +183,12 @@ def tabd(dats, ind=0, iind=2):
 	for (key, val) in sorted(dats.items()):
 		spc = ' '*int(lim-len(str(key)))
 		if isinstance(val, dict):
-			return '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(val, ind+iind, iind).lstrip('\n'))
-		tabbd = str('%s\n%s%s%s = %s'%(tabbd, ' '*ind, key, spc, val)).lstrip('\n')
+			tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
+                val, ind+iind, iind).lstrip('\n'))
+			continue
+		tabbd = str('%s\n%s%s%s = %s'%(
+            tabbd, ' '*ind, key, spc, val)).lstrip('\n')
 	return tabbd.rstrip('\n')
-
-"""
-	if dats == {} or not isinstance(dats, dict):
-		return dats
-	lim = int(max(len(str(k)) for k in dats if k)+int(ind))+2
-	tabbed = '' #'%s'%' '*ind
-	for (key, val) in sorted(dats.items()):
-		spc = ' '*int(lim-len(str(key)))
-		if isinstance(val, dict):
-		spc = ' '*int(lim-len(str(key)))
-			__ind = ind+iind
-			tabbed = '%s%s\n%s%s%s=  %s'%(tabbed, tabd(val, ind, iind), ' '*ind, key, spc, val)
-		tabbed = str('%s\n%s%s%s=  %s'%(tabbed, ' '*ind, key, spc, val)).lstrip('\n')
-	return tabbed
-"""
 
 if __name__ == "__main__":
 	# module debugging area
