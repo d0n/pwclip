@@ -17,7 +17,7 @@ from shutil import copyfile
 
 from paramiko.ssh_exception import SSHException
 
-from colortext import tabd, error, fatal
+from colortext import bgre, tabd, error, fatal
 
 from system import userfind
 
@@ -54,6 +54,9 @@ class PassCrypt(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
+		if self.dbg:
+			print(bgre(PassCrypt.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 		self._copynews_()
 		__weaks = self._readcrypt()
 		if path.exists(self.crypt) and __weaks is None:
@@ -72,6 +75,7 @@ class PassCrypt(GPGTool):
 		if __weaks != self._readcrypt():
 			self._writecrypt_(__weaks)
 		self.__weaks = __weaks
+
 
 	def _copynews_(self):
 		if self.remote:

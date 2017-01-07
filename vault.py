@@ -32,7 +32,7 @@ from yaml import load, dump
 
 from socket import gaierror
 
-from colortext import bgre, blu, yel, error
+from colortext import blu, yel, bgre, tabd, error
 
 from executor import command as cmd
 
@@ -60,8 +60,6 @@ class WeakVaulter(SSH, GPGTool):
 	elif 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']]
 	def __init__(self, *args, **kwargs):
-		SSH.__init__(self, *args, **kwargs)
-		GPGTool.__init__(self, *args, **kwargs)
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
@@ -72,21 +70,15 @@ class WeakVaulter(SSH, GPGTool):
 				setattr(self, key, val)
 			elif hasattr(self, '_%s'%(key)):
 				setattr(self, '_%s'%(key), val)
-		SSH.__init__(self, *args, **kwargs)
-		GPGTool.__init__(self, *args, **kwargs)
 		if self.rem:
 			self._copynews_()
 		self._clean_()
 		if self.dbg:
-			lim = int(max(len(k) for k in WeakVaulter.__dict__.keys()))+4
-			print(bgre('%s\n%s\n\n%s\n%s\n'%(
-                WeakVaulter.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(WeakVaulter.__dict__.items())),
-                WeakVaulter.__init__,
-                '\n'.join('  %s%s=    %s'%(k, ' '*int(lim-len(k)), v
-                    ) for (k, v) in sorted(self.__dict__.items())))))
+			print(bgre(WeakVaulter.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
+		SSH.__init__(self, *args, **kwargs)
+		GPGTool.__init__(self, *args, **kwargs)
+
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg
