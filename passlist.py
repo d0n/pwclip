@@ -23,6 +23,7 @@ from os.path import \
     basename as _basename, \
     expanduser as _expanduser
 
+from colortext import bgre, tabd
 
 
 class PasswordListParser(dict):
@@ -31,17 +32,8 @@ class PasswordListParser(dict):
 	def __init__(self, usrpwds):
 		self._usrpwds = 
 		if self.dbg:
-			lim = int(max(len(k) for k in PasswordListParser.__dict__.keys()))+4
-			print('%s\n%s\n\n%s\n%s\n'%(
-                PasswordListParser.__mro__,
-                '\n'.join('  %s%s=    %s'%(
-                    k, ' '*int(lim-len(k)), v
-                ) for (k, v) in sorted(PasswordListParser.__dict__.items())),
-                PasswordListParser.__init__,
-                '\n'.join('  %s%s=    %s'%(k[1:], ' '*int(
-                    int(max(len(i) for i in self.__dict__.keys())+4
-                    )-len(k)), v
-                ) for (k, v) in sorted(self.__dict__.items()))))
+			print(bgre(PasswordListParser.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property                # dbg <bool>
 	def dbg(self):
 		return self._dbg

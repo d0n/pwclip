@@ -45,7 +45,7 @@ class ResolvConfParser(Command):
 		self.resolvconf = {'nameserver': dnss, 'search': srcs}
 		if self.dbg:
 			print(bgre(ResolvConfParser.__mro__))
-			print(bgre(tabd(self.__dict__.items())))
+			print(bgre(tabd(self.__dict__, 2)))
 
 	@property                # resolvconf <dict>
 	def resolvconf(self):
@@ -246,8 +246,7 @@ class WPASupplicantParser(object):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(ETHConfig.__mro__))
-			for (key, val) in self.__dict__.items():
-				print(bgre(key, '=', val))
+			print(bgre(tabd(self.__dict__, 2)))
 	@property               # dbg <bool>
 	def dbg(self):
 		return self._dbg
