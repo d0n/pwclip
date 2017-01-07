@@ -29,7 +29,7 @@ class SecureSHell(object):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(SecureSHell.__mro__))
-			print(bgre(tabd(self.__dict__)))
+			print(bgre(tabd(self.__dict__, 2)))
 
 	@property               # dbg <bool>
 	def dbg(self):
