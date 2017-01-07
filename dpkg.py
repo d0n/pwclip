@@ -8,7 +8,7 @@ import sys
 #local relative imports
 from system import which
 from executor import Command
-from colortext import bgre
+from colortext import bgre, tabd
 
 # default constant definitions
 __version__ = '0.1'
