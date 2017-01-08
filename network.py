@@ -105,42 +105,21 @@ class ResolvConfParser(Command):
 
 
 class NetworkInterfacesParser(object):
-	_dbg = None
-	_prs = None
-	_netconf = '/etc/network/interfaces'
-	__tmpfile = '/tmp/network_interfaces'
+	dbg = None
+	prs = None
+	netconf = '/etc/network/interfaces'
+	_tmpfile = '/tmp/network_interfaces'
 	sudo = Command('su')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(NetworkInterfaces.__mro__))
 			print(bgre(tabd(self.__dict__.items())))
-	# rw properties
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
-	@property               # prs <bool>
-	def prs(self):
-		return self._prs
-	@prs.setter
-	def prs(self, val):
-		self._prs = val if type(val) is bool else self._prs
-	@property               # netconf <str>
-	def netconf(self):
-		return self._netconf
-	@netconf.setter
-	def netconf(self, val):
-		self._netconf = val if type(val) is str else self._netconf
 
 	def __read(self):
 		with open(self.netconf, 'r') as nif:
@@ -230,35 +209,21 @@ class NetworkInterfacesParser(object):
 
 
 class WPASupplicantParser(object):
-	_dbg = None
-	_wpacfg = '/etc/wpa_supplicant/wpa_supplicant.conf'
-	__wpapasbin = which('wpa_passphrase')
+	dbg = None
+	wpacfg = '/etc/wpa_supplicant/wpa_supplicant.conf'
+	_wpapasbin = which('wpa_passphrase')
 	cmdx = Command()
 	sudo = Command('su')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key) and type(getattr(self, key)) is not bool:
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(ETHConfig.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
-	@property               # wpacfg <str>
-	def wpacfg(self):
-		return self._wpacfg
-	@wpacfg.setter
-	def wpacfg(self, val):
-		self._wpacfg = val if val is str else self._wpacfg
 
 	@staticmethod
 	def __password(essid):

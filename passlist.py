@@ -27,19 +27,12 @@ from colortext import bgre, tabd
 
 
 class PasswordListParser(dict):
-	_dbg = False
-	_usrpwds = {}
+	dbg = False
+	usrpwds = {}
 	def __init__(self, usrpwds):
-		self._usrpwds = 
 		if self.dbg:
 			print(bgre(PasswordListParser.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True if val else False
 
 	@property                # usrpwds <dict>
 	def usrpwds(self):
