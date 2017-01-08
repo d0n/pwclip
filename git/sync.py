@@ -12,32 +12,21 @@ from repo.git import GitRepo
 
 
 class GitSync(GitRepo):
-	_sh_ = True
-	_dbg = False
+	sh_ = True
+	dbg = False
 	abr = False
 	syncmodes = ['sync'] # commit|push|pull
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, '_%s'%(arg)):
-				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-			elif hasattr(self, '_%s'%(key)):
-				setattr(self, '_%s'%(key), val)
 		if self.dbg:
 			print(bgre(GitSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 		GitRepo.__init__(self, *args, **kwargs)
-
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val
 
 	def _gitsubmods(self, repos):
 		if self.dbg:

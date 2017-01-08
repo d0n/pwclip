@@ -20,18 +20,16 @@ class GitRepo(Command):
 	the git binary found on the system
 	"""
 	# external attributes
-	_sh_ = True
-	_dbg = None
-	_vrb = None
-	_lwd = None
+	sh_ = True
+	dbg = None
+	vrb = None
+	lwd = None
 	_gitdir = None
 	_gitbin = which('git')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, '_%s'%(arg)):
-				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
@@ -42,27 +40,6 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(GitRepo.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val
-
-	@property                # vrb <bool>
-	def vrb(self):
-		return self._vrb
-	@vrb.setter
-	def vrb(self, val):
-		self._vrb = True if val else False
-
-	@property                # lwd <str>
-	def lwd(self):
-		return self._lwd
-	@lwd.setter
-	def lwd(self, val):
-		self._lwd = os.path.abspath(val)
 
 	@property                # gitdir <str>
 	def gitdir(self):

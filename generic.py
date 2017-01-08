@@ -13,8 +13,8 @@ from repo.git import GitSync
 __version__ = '0.1'
 
 class RepoSync(GitSync):
-	_sh_ = True
-	_dbg = False
+	sh_ = True
+	dbg = False
 	abr = False
 	syncmodes = ['sync']
 	svnuser = ''
@@ -22,24 +22,13 @@ class RepoSync(GitSync):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, '_%s'%(arg)):
-				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-			elif hasattr(self, '_%s'%(key)):
-				setattr(self, '_%s'%(key), val)
 		if self.dbg:
 			print(bgre(RepoSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 		GitSync.__init__(self, *args, **kwargs)
-
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True if val else False
 
 	def rposync(self, repotypes, syncall=None):
 		if self.dbg:
