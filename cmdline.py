@@ -156,9 +156,9 @@ def cli():
 		pkwargs['user'] = args.usr
 	if args.yml:
 		pkwargs['plain'] = args.yml
-	if args.remote:
+	if hasattr(args, 'remote'):
 		pkwargs['remote'] = args.remote
-	if args.reuser:
+	if hasattr(args, 'reuser'):
 		pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
