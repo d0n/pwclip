@@ -14,37 +14,21 @@ from colortext import bgre, tabd
 __version__ = '0.1'
 
 # os.statvfs(tst)
-class BlockDevices(Command):
-	_sh_ = True
-	_sieves=['DEVNO', 'PRI', 'TIME']
+class BLocKIDs(Command):
+	sh_ = True
+	sieves=['DEVNO', 'PRI', 'TIME']
 	_tab = {}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key) and not isinstance(val, bool):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(BlockDevices.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True if val else False
-	# rw properties
-	@property               # severs <list>
-	def sieves(self):
-		return self._sieves
-	@sieves.setter
-	def sieves(self, vals):
-		self._sieves = [
-		    val for val in vals
-		    ] if type(vals) in (list, tuple) else self._sieves
+
 	# ro properties
 	@property               # tab <dict>
 	def tab(self):

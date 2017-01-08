@@ -62,20 +62,18 @@ class Daemon(object):
 	start method what will cause the run method to be executed using the
 	interval property as timer
 	"""
-	_dbg = False
-	_pid = None
-	_uid = int(_getuid())
-	_gid = int(_getgid())
-	__piddir = '/var/run'
-	_interval = 60 # seconds
-	if _getuid() != 0:
-		__piddir = '%s/user/%s'%(__piddir, _getuid())
-	_pidfile = '%s/%s.pid'%(__piddir, __me__)
-	nice = 10
+	dbg = False
+	pid = None
+	uid = int(_getuid())
+	gid = int(_getgid())
+	interval = 60 # seconds
 	umask = 0o022
 	stdin = open(_devnull, 'r')
 	stdout = open(_devnull, 'a+')
 	stderr = open(_devnull, 'a+')
+	_pidfile = '/var/run/%s.pid'%__me__
+	if _getuid() != 0:
+		_pidfile = '/var/run/user/%s/%s.pid'%(_getuid(), __me__)
 	def __init__(self, *args, **kwargs):
 		"""
 		initializing function which takes args and kwargs - init checks for
@@ -83,62 +81,27 @@ class Daemon(object):
 		each argument in args is considered a bool and sets the value to true
 		"""
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key):
 				setattr(self, key, val)
-		if self._dbg:
+		if self.dbg:
 			_echo_('\033[01;30%s\033[0m'%sDaemon.__mro__)
 			_echo_('\033[01;30%s\033[0m'%self.__dict__)
 
-	# rw properties
-	@property #dbg <bool>
-	def dbg(self):
-		"""dbg getter"""
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		"""dbg setter"""
-		self._dbg = val if isinstance(val, bool) else self._dbg
-
-	@property #uid <int>
-	def uid(self):
-		"""uid getter"""
-		return self._uid
-	@uid.setter
-	def uid(self, val):
-		"""uid setter"""
-		self._uid = val if isinstance(val, int) else self._uid
-
-	@property #gid <int>
-	def gid(self):
-		"""gid getter"""
-		return self._gid
-	@gid.setter
-	def gid(self, val):
-		"""gid setter"""
-		self._gid = val if isinstance(val, int) else self._gid
-
-	@property #interval <int>
-	def interval(self):
-		"""interval getter"""
-		return int(self._interval)
-	@interval.setter
-	def interval(self, val):
-		"""interval setter"""
-		self._interval = val if isinstance(val, int) else self._interval
-
-	@property #pidfile <str>
+	@property               # pidfile <str>
 	def pidfile(self):
-		"""pidfile getter"""
 		return self._pidfile
 	@pidfile.setter
 	def pidfile(self, val):
-		"""pidfile setter"""
-		self._pidfile = val if isinstance(val, str) else self._pidfile
+		val = '%s.pid'%val if not val.endswith('pid') else val
+		if not val.startswith('/'):
+			__piddir = '/var/run'
+			if getuid() != 0:
+				__piddir = '%s/user/%s'%(__piddir, getuid())
+			val = '%s/%s'%(__piddir, val)
+		self._pidfile = val
 
 	@property # pid <int>
 	def pid(self):

@@ -17,26 +17,20 @@ from .uefi import UEFITool
 __version__ = '0.2'
 
 class SystemPower(UEFITool):
-	_sh_ = True
-	_su_ = True
-	_dbg = False
-	_vrb = False
+	sh_ = True
+	su_ = True
+	dbg = False
+	vrb = False
 	_efi = ''
 	_power = 'status'
 	def __init__(self, *args):
 		for arg in args:
-			arg = '_%s' %(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		if self.dbg:
 			print(bgre(SystemPower.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val
+
 	@property
 	def power(self):
 		return self._power
@@ -54,6 +48,7 @@ class SystemPower(UEFITool):
 			self.suspend()
 		else:
 			raise AttributeError('unknown command %s'%(command))
+
 	@property               # efi <str>
 	def efi(self):
 		return self._efi

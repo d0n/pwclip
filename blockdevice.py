@@ -19,8 +19,7 @@ import re
 import os
 import sys
 
-from stat import \
-    S_ISBLK as _isblk
+from stat import S_ISBLK as isblk
 
 # local relative imports
 from colortext import bgre, tabd
@@ -31,33 +30,43 @@ from system import absrelpath
 __version__ = '0.0'
 
 class BlockDevice(object):
-	_dbg = False
+	dbg = False
+	d = []
+	s = []
+	f = []
+	devs = [(d, s, f) for (d, s, f) in os.walk('/dev')]
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(BlockDevice.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
 
-	def linkeds(self):
+	def devlinks(self):
 		devlnks = {}
-		for (dirs, subs, files) in os.walk('/dev'):
+		for (dirs, subs, files) in self.devs:
+			for dat in files:
+				device = '%s/%s'%(dirs, dat)
+				if (isblk(os.stat(device).st_mode) and \
+				      os.path.islink(device) and not device.startswith('/dev/block')):
+					__dev = absrelpath(
+                        os.readlink(device), base=os.path.dirname(device))
+					if not __dev in devlnks.keys():
+						devlnks[__dev] = [device]
+					devlnks[__dev] = list(set(devlnks[__dev] + [device]))
+		return devlnks
+
+	def linkdevs(self):
+		devlnks = {}
+		for (dirs, subs, files) in self.devs:
 			for dat in files:
 				device = '%s/%s'%(dirs, dat)
 				try:
-					if (_isblk(os.stat(device).st_mode) and \
+					if (isblk(os.stat(device).st_mode) and \
                           os.path.islink(device)):
 						devlnks[device] = absrelpath(
                             os.readlink(device), base=os.path.dirname(device))
@@ -67,17 +76,18 @@ class BlockDevice(object):
 
 	def devices(self):
 		blkdevs = []
-		for (dirs, subs, files) in os.walk('/dev'):
+		for (dirs, subs, files) in self.devs:
 			for dat in files:
 				device = '%s/%s'%(dirs, dat)
 				try:
-					if (_isblk(os.stat(device).st_mode) and not \
+					if (isblk(os.stat(device).st_mode) and not \
                           os.path.islink(device)):
 						blkdevs.append(device)
 				except FileNotFoundError:
 					pass
 		return sorted(blkdevs)
 
+	
 
 
 """
