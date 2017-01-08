@@ -121,7 +121,7 @@ def error(*args, **kwargs):
 	'''
 	errfile = ''
 	errline = ''
-	buzzword = 'ERROR:'
+	buzzword = 'ERROR: '
 	if 'file' in kwargs.keys():
 		errfile = '%s:'%(kwargs['file'])
 	if 'line' in kwargs.keys():
@@ -161,10 +161,16 @@ def tabs(dat, ind=0, ll=80):
         '%s%s'%(' '*ind, dat[i:int(i+ll)]) for i in range(0, len(dat), ll))
 
 def tabl(dats, ind=0, iind=0):
-	if isinstance(dats, (list, tuple)):
-		return '\n'.join('%s%s'%(' '*ind, i) for i in dats)
+	tabbl = ''
+	for i in dats:
+		if isinstance(i, (tuple, list)):
+			iind = int(max(len(i) for i in dats)+ind)
+			tabbl = '%s\n%s'%(tabbl, tabl(i, iind))
+			continue
+		tabbl = '%s\n%s%s'%(tabbl, ' '*ind, i)
+	return tabbl.lstrip('\n')
 
-def tabd(dats, ind=0, iind=2):
+def tabd(dats, ind=0, iind=0):
 	"""
 	this is a function where i try to guess the best indentation for text
 	representation of keyvalue paires with best matching indentation
@@ -180,15 +186,18 @@ def tabd(dats, ind=0, iind=2):
 		return dats
 	tabbd = ''
 	iind = iind if ind else 2
-	for (key, val) in sorted(dats.items()):
-		spc = ' '*int(lim-len(str(key)))
-		if isinstance(val, dict):
-			tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
-                val, ind+iind, iind).lstrip('\n'))
-			continue
-		tabbd = str('%s\n%s%s%s = %s'%(
-            tabbd, ' '*ind, key, spc, val)).lstrip('\n')
-	return tabbd.rstrip('\n')
+	try:
+		for (key, val) in sorted(dats.items()):
+			spc = ' '*int(lim-len(str(key)))
+			if isinstance(val, dict):
+				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
+					val, ind+iind, iind).lstrip('\n'))
+				continue
+			tabbd = str('%s\n%s%s%s = %s'%(
+				tabbd, ' '*ind, key, spc, val)).lstrip('\n')
+	except AttributeError:
+		return tabl(dats, ind)
+	return tabbd.strip('\n')
 
 if __name__ == "__main__":
 	# module debugging area
