@@ -53,7 +53,7 @@ class Command(object):
 	def __sucmd(sudobin, commands):
 		if 'sudo' in commands[0]:
 			del commands[0]
-		if int(_getuid()) != 0:
+		if int(getuid()) != 0:
 			commands.insert(0, sudobin)
 		return commands
 
