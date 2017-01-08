@@ -33,25 +33,13 @@ __version__ = '0.0'
 class BreitLogger(Cmd):
 	"""breitlogger main class"""
 	intro = 'BreitLogger - write timestamped text to file\n'
-	_logfile = '%s/log/%s-%s.log'%(
+	logfile = '%s/log/%s-%s.log'%(
 	    os.path.expanduser('~'),
 	    __me__.split('.')[0],
 	    stamp().split('.')[0])
 	prompt = '%s %s>> '%(__me__.split('.')[0], stamp().split('.')[1])
 	case_insensitive = False
-	_dbg = True
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
-	@property               # logfile <str>
-	def logfile(self):
-		return self._logfile
-	@logfile.setter
-	def logfile(self, val):
-		self._logfile = val if type(val) is str else self._logfile
+	dbg = True
 
 	def func_named(self, arg):
 		#/usr/lib/python3/dist-packages/cmd2.py

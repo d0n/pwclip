@@ -27,7 +27,7 @@ from colortext import bgre, tabd, error
 class LoginFailedError(Exception): pass
 
 class Satan(object):
-	_dbg = None
+	dbg = None
 	url = 'https://login.1and1.org/ims-sso/login?service=' \
         'http%3A%2F%2Ftimsato.tool.1and1.com%2Fxml%2Fenter%2Feffort'
 	username = userfind()
@@ -39,7 +39,12 @@ class Satan(object):
 	_day = _dates[2]
 	casslpem = expanduser('~/.config/catrust/ssl.pem')
 	def __init__(self, *args, **kwargs):
-		self._dbg = True if 'dbg' in args else self._dbg
+		for arg in args:
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
 		self.username = self.username if (
             'username' not in kwargs.keys()) else kwargs['username']
 		self.password = self.password if (
@@ -47,20 +52,14 @@ class Satan(object):
 		self.casslpem = self.casslpem if (
             'casslpem' not in kwargs.keys()) else kwargs['casslpem']
 		self.day = self.day if 'day' not in kwargs.keys() else self.day
-		if self.dbg:
-			print(bgre(Satan.__mro__))
-			print(bgre(tabd(self.__dict__, 2)))
 		self.cj = CookieJar()
 		self.cxt = create_default_context(cafile=self.casslpem)
 		self.browser = build_opener(
             HTTPCookieProcessor(self.cj),
             HTTPSHandler(debuglevel=0,context=self.cxt))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val
+		if self.dbg:
+			print(bgre(Satan.__mro__))
+			print(bgre(tabd(self.__dict__, 2)))
 
 	@property                # year <int>
 	def year(self):
@@ -210,18 +209,6 @@ class TimeSatan(Cmd, Satan):
 		Cmd.__init__(self)
 		Satan.__init__(self, *args, **kwargs)
 		self._login()
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True if val else False
-	@property                # dbg <type>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = (val is True)
 
 	@staticmethod
 	def __exit(eof=False, msg='satan appreciates'):

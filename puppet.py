@@ -31,12 +31,12 @@ __version__ = '0.2'
 
 class Puppet(SSHCommand):
 	"""puppet wrapper class"""
-	_sh_ = True
-	_dbg = False
-	_vrb = False
-	_bgr = False
-	_user_ = 'root'
-	_host_ = ''
+	sh_ = True
+	dbg = False
+	vrb = False
+	bgr = False
+	user_ = 'root'
+	host_ = ''
 	_template = '~/.config/puppet.tmpl'
 	scp = SecureSHell()
 	def __init__(self, *args, **kwargs):
@@ -51,36 +51,6 @@ class Puppet(SSHCommand):
 		if self.dbg:
 			print(bgre(Puppet.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if val else False
-	@property                # vrb <bool>
-	def vrb(self):
-		return self._vrb
-	@vrb.setter
-	def vrb(self, val):
-		self._vrb = True if val else False
-	@property               # bgr <bool>
-	def bgr(self):
-		return self._bgr
-	@bgr.setter
-	def bgr(self, val):
-		self._bgr = val if type(val) is bool else self._bgr
-	@property               # host <str>
-	def host(self):
-		return self._host_
-	@host.setter
-	def host(self, val):
-		self._host_ = val
-	@property               # user <str>
-	def user_(self):
-		return self._user_
-	@user_.setter
-	def user_(self, val):
-		self._user_ = val
 
 	def pupush(self):
 		"""push current svn revision to puppet master"""
