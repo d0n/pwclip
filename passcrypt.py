@@ -76,7 +76,6 @@ class PassCrypt(GPGTool):
 			self._writecrypt_(__weaks)
 		self.__weaks = __weaks
 
-
 	def _copynews_(self):
 		if self.remote:
 			try:

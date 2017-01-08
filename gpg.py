@@ -30,7 +30,7 @@ class GPGTool(object):
 	main code more easy to understand by wrapping multiple gnupg functions to
 	one - also i can prepare some program related stuff in here
 	"""
-	_dbg = None
+	dbg = None
 	homedir = path.join(path.expanduser('~'), '.gnupg')
 	__bindir = '/usr/bin'
 	__gpgbin = 'gpg2'
@@ -47,7 +47,6 @@ class GPGTool(object):
 	__pin = None
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%arg
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
@@ -56,14 +55,6 @@ class GPGTool(object):
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-
-	@property                # dbg <bool>
-	def dbg(self):
-		"""bool"""
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = bool(val)
 
 	@property                # keyring <str>
 	def keyring(self):

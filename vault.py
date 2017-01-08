@@ -43,9 +43,10 @@ from net import SecureSHell as SSH
 from secrecy import GPGTool
 
 class WeakVaulter(SSH, GPGTool):
-	_dbg = None
+	dbg = None
 	_pwd = getcwd()
 	rem = None
+	nod = None
 	home = expanduser('~')
 	user = whoami()
 	host = uname()[1]
@@ -77,13 +78,6 @@ class WeakVaulter(SSH, GPGTool):
 		SSH.__init__(self, *args, **kwargs)
 		GPGTool.__init__(self, *args, **kwargs)
 
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True if val else False
-
 	def _fixmod_(self):
 		if self.dbg:
 			print(bgre(self._fixmod_))
@@ -110,6 +104,8 @@ class WeakVaulter(SSH, GPGTool):
 				pass
 
 	def _copynews_(self):
+		if self.dbg:
+			print(bgre(self._copynews_))
 		if self.rem and self.remote:
 			try:
 				self.scpcompstats(
@@ -259,10 +255,10 @@ class WeakVaulter(SSH, GPGTool):
 					'%s/.gnupg.1'%self.home)
 			except FileNotFoundError:
 				pass
-			if self.checkvault(self.vault):	
+			if not self.nod and self.checkvault(self.vault):
 				rmtree(self.weakz)
 				self._rmlns_()
-				chmod(self.vault, 0o600)
+			chmod(self.vault, 0o600)
 			if self.rem:
 				self._copynews_()
 			self._fixmod_()
