@@ -3,19 +3,19 @@ from system.user import whoami
 from executor.executor import Command
 
 class SSHCommand(Command):
-	_dbg = False
-	_sh_ = True
-	_su_ = False
-	__sshbin = which('ssh')
-	__sshopts = {
+	dbg = False
+	sh_ = True
+	su_ = False
+	_sshbin = which('ssh')
+	_sshopts = {
         'o': [
             'StrictHostKeyChecking=no',
             'UserKnownHostsFile=/dev/null', 'LogLevel=ERROR'],
         '4': None
         }
-	_host_ = ''
-	_user_ = whoami()
-	_tout_ = 30
+	host_ = ''
+	user_ = whoami()
+	tout_ = 30
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			arg = '_%s'%(arg)
@@ -27,35 +27,7 @@ class SSHCommand(Command):
 				setattr(self, key, val)
 			elif hasattr(self, '%s_'%key):
 				setattr(self, '%s_'%key, val)
-		Command.__init__(*args, **kwargs)
-
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val
-
-	@property                # host_ <str>
-	def host_(self):
-		return self._host_
-	@host_.setter
-	def host_(self, val):
-		self._host_ = val
-
-	@property                # user_ <str>
-	def user_(self):
-		return self._user_
-	@user_.setter
-	def user_(self, val):
-		self._user_ = val
-
-	@property                # tout <int>
-	def tout(self):
-		return self._tout
-	@tout.setter
-	def tout(self, val):
-		self._tout = val if isinstance(val, int) else self._tout
+		Command.__init__(self, *args, **kwargs)
 
 	def _hostcmd(self, *commands, host=None, user=None):
 		"""ssh host prepending function"""
@@ -63,9 +35,9 @@ class SSHCommand(Command):
 			user = self.user_
 		if not host:
 			host = self.host_
-		self.__sshopts['l'] = user
-		ssh = [self.__sshbin]
-		for (key, vals) in self.__sshopts.items():
+		self._sshopts['l'] = user
+		ssh = [self._sshbin]
+		for (key, vals) in self._sshopts.items():
 			key = '-%s'%(key)
 			if isinstance(vals, list):
 				for val in vals:
