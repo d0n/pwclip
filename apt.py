@@ -17,43 +17,25 @@ __version__ = '0.1'
 
 class Apytude(DePyKG):
 	# external properties
-	_su_ = True
-	_sh_ = True
+	su_ = True
+	sh_ = True
 	# common/internal properties
-	_dbg = False
-	_aptopts = []
-	dry = False
-	vrb = False
+	aptopts = []
+	dbg = None
+	dry = None
+	vrb = None
 	aptbin = which('apt')
 	def __init__(self, *args, **kwargs):
 		#DePyKG.__init__(self, *args, **kwargs)
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, '_%s'%arg):
-				setattr(self, '_%s'%arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'
 			if hasattr(self, key):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(Apytude.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	# rw properties
-	@property
-	def dbg(self): #dbg <bool>
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if val is bool else self._dbg
-	@property
-	def aptopts(self):
-		return self._aptopts
-	@aptopts.setter
-	def aptopts(self, vals):
-		self._aptopts = [val for val in vals]\
-		  if type(vals) in (list, tuple)\
-		  else [vals]
 
 	def search(self, pattern=''):
 		if self.dbg:

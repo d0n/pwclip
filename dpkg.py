@@ -15,7 +15,7 @@ __version__ = '0.1'
 
 
 class DePyKG(Command):
-	_dbg = False
+	dbg = None
 	_pkgbin = which('dpkg')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -29,12 +29,6 @@ class DePyKG(Command):
 		if self.dbg:
 			print(bgre(DePyKG.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property                # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = True if val else False
 
 	@property # pkgbin <str>
 	def pkgbin(self):
