@@ -15,7 +15,7 @@ from system.user import whoami
 __version__ = '0.1'
 
 class SecureSHell(object):
-	_dbg = False
+	dbg = False
 	reuser = ''
 	remote = ''
 	def __init__(self, *args, **kwargs):
@@ -31,13 +31,6 @@ class SecureSHell(object):
 			print(bgre(SecureSHell.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if val else False
-
 	@staticmethod
 	def _ssh_(remote, user=None, port=22):
 		_user = whoami()
@@ -48,12 +41,9 @@ class SecureSHell(object):
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
 			ssh.connect(fqdn(remote), int(port), username=user)
-		except ssh_exception.SSHException as err:
-			#print(bgre('h: %s, u: %s p: %s'%(remote, user, port)))
-			fatal(err)
-		except NameResolveError as err:
-			#print(bgre('h: %s, u: %s p: %s'%(remote, user, port)))
-			fatal(err)
+		except (ssh_exception.SSHException, NameResolveError) as err:
+			error(err)
+			raise err
 		return ssh
 
 	def rstdo(self, cmd, remote=None, user=None):
@@ -64,7 +54,11 @@ class SecureSHell(object):
 			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(user, remote, cmd)))
 		ssh = self._ssh_(remote, user)
-		_, out, _ = ssh.exec_command(cmd)
+		try:
+			_, out, _ = ssh.exec_command(cmd)
+		except (AttributeError, ssh_exception.SSHException) as err:
+			error(err)
+			raise err
 		return ''.join(out.readlines())
 
 	def get(self, src, trg, remote=None, user=None):
@@ -110,7 +104,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self._localstamp))
 		return int(os.stat(trg).st_atime), int(os.stat(trg).st_mtime)
-	
+
 	def _remotestamp(self, trg, remote, user):
 		if self.dbg:
 			print(bgre(self._remotestamp))
@@ -139,18 +133,21 @@ class SecureSHell(object):
 			print(bgre(self.scpcompstats))
 		user = user if user else self.reuser
 		remote = remote if remote else self.remote
-		lat, lmt = self._localstamp(lfile)
-		rat, rmt = self._remotestamp(rfile, remote, user)
-		if rmt == lmt:
-			return
-		elif rmt and rmt > lmt:
-			copy2(lfile, '%s.1'%lfile)
-			self.get(rfile, lfile, remote, user)
-			self._setlstamp(lfile, rat, rmt)
-		else:
-			self.put(lfile, rfile, remote, user)
-			self._setrstamp(rfile, lat, lmt, remote, user)
-
+		try:
+			lat, lmt = self._localstamp(lfile)
+			rat, rmt = self._remotestamp(rfile, remote, user)
+			if rmt == lmt:
+				return
+			elif rmt and rmt > lmt:
+				copy2(lfile, '%s.1'%lfile)
+				self.get(rfile, lfile, remote, user)
+				self._setlstamp(lfile, rat, rmt)
+			else:
+				self.put(lfile, rfile, remote, user)
+				self._setrstamp(rfile, lat, lmt, remote, user)
+		except SSHException as err:
+			error(err)
+			return err
 
 
 

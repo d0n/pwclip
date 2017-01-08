@@ -31,76 +31,25 @@ __version__ = '0.1'
 
 class ETHConfig(NetworkInterfacesParser):
 	"""eth base configuration module"""
-	_dbg = False
-	_iv4 = False
-	_iv6 = False
-	_dhc = False
-	_ato = False
-	_cfgs = {}
-	_iface = 'eth0'
-	_nifconf = '/etc/network/interfaces'
-	_dhcconf = '/etc/dhcp/dhclient.conf'
+	dbg = False
+	iv4 = False
+	iv6 = False
+	dhc = False
+	ato = False
+	cfgs = {}
+	iface = 'eth0'
+	nifconf = '/etc/network/interfaces'
+	dhcconf = '/etc/dhcp/dhclient.conf'
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key) and type(getattr(self, key)) is not bool:
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(ETHConfig.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	# rw properties
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
-	@property               # iv4 <bool>
-	def iv4(self):
-		return self._iv4
-	@iv4.setter
-	def iv4(self, val):
-		self._iv4 = val if type(val) is bool else self._iv4
-	@property               # dhc <bool>
-	def dhc(self):
-		return self._dhc
-	@dhc.setter
-	def dhc(self, val):
-		self._dhc = val if type(val) is bool else self._dhc
-	@property               # ato <bool>
-	def ato(self):
-		return self._ato
-	@ato.setter
-	def ato(self, val):
-		self._ato = val if type(val) is bool else self._ato
-	@property               # ifcfgs <dict>
-	def cfgs(self):
-		return self._cfgs
-	@cfgs.setter
-	def cfgs(self, val):
-		self._cfgs = val if type(val) is dict else self._cfgs
-	@property               # iface <str>
-	def iface(self):
-		return self._iface
-	@iface.setter
-	def iface(self, val):
-		self._iface = val if type(val) is str else self._iface
-	@property               # nifconf <str>
-	def nifconf(self):
-		return self._nifconf
-	@nifconf.setter
-	def nifconf(self, val):
-		self._nifconf = val if type(val) is str else self._nifconf
-	@property               # dhcconf <str>
-	def dhcconf(self):
-		return self._dhcconf
-	@dhcconf.setter
-	def dhcconf(self, val):
-		self._dhcconf = val if type(val) is str else self._dhcconf
 
 	def connect(self, iface=None):
 		"""interface up/connect method"""

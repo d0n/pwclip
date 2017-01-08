@@ -50,47 +50,20 @@ objectClass: uidObject
 """
 
 class LDAPSearch(object):
-	_dbg = None
-	_con = None
-	_server = 'ldap.1and1.org'
-	_basedn = 'ou=contacts,o=1und1,c=DE'
+	dbg = None
+	con = None
+	server = 'ldap.1and1.org'
+	basedn = 'ou=contacts,o=1und1,c=DE'
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(LDAPSearch.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
-	@property               # con <bool>
-	def con(self):
-		return self._con
-	@con.setter
-	def con(self, val):
-		self._con = val if type(val) is bool else self._con
-	@property               # basedn <str>
-	def basedn(self):
-		return self._basedn
-	@basedn.setter
-	def basedn(self, val):
-		self._basedn = val if type(val) is str else self._basedn
-	@property               # server <str>
-	def server(self):
-		return self._server
-	@server.setter
-	def server(self, val):
-		self._server = val if type(val) is str else self._server
 
 	def __connect(self):
 		if self.dbg:

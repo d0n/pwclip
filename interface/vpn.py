@@ -3,7 +3,7 @@
 
 # global imports
 import re
-from os import readlink, path, uname, remove
+from os import readlink, path, uname, remove, getuid
 import sys
 import psutil
 from time import sleep
@@ -19,10 +19,10 @@ from colortext import bgre, tabd, abort, error
 __version__ = '0.1'
 
 class VPNConfig(ResolvConfParser):
-	_sh_ = True
-	_su_ = True
-	_pid = None
-	_ocbin = which('openconnect')
+	sh_ = True
+	su_ = True
+	pid = None
+	ocbin = which('openconnect')
 	_pidfile = '/run/openconnect.pid'
 	dbg = False
 	host = uname()[1]
@@ -36,7 +36,7 @@ class VPNConfig(ResolvConfParser):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		if self._dbg:
+		if self.dbg:
 			print(bgre(VPNConfig.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 
@@ -45,9 +45,13 @@ class VPNConfig(ResolvConfParser):
 		return self._pidfile
 	@pidfile.setter
 	def pidfile(self, val):
+		val = '%s.pid'%val if not val.endswith('pid') else val
+		if not val.startswith('/'):
+			__piddir = '/var/run'
+			if getuid() != 0:
+				__piddir = '%s/user/%s'%(__piddir, getuid())
+			val = '%s/%s'%(__piddir, val)
 		self._pidfile = val
-		if val and not val.startswith('/'):
-			self._pidfile = '/run/%s.pid'%val
 
 	@property                # pid <int>
 	def pid(self):

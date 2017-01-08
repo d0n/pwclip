@@ -27,7 +27,7 @@ from net.mac import mac
 __version__ = '0.0'
 
 class DHCPDiscover(object):
-	_dbg = False
+	dbg = False
 	id_ = b''
 	for i in range(4):
 		rnd = randint(0, 255)
@@ -43,12 +43,6 @@ class DHCPDiscover(object):
 			if hasattr(self, key) and not type(val) in (None, bool):
 				setattr(self, key, val)
 
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
 	@property               # iface <str>
 	def iface(self):
 		return self._iface

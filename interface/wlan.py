@@ -18,49 +18,27 @@ from net.util.ifdrougs import ifup, ifdown, ifconfup, ifconfdown
 __version__ = '0.2'
 
 class WLANConfig(NetworkInterfacesParser):
-	_sh_ = True
-	_dbg = False
-	_prs = False
-	_iface = 'wlan0'
-	_wpaconf = '/etc/wpa_supplicant/wpa_supplicant.conf'
-	__iwlistbin = which('iwlist')
-	__ifconfbin = which('ifconfig')
-	__wpapasbin = which('wpa_passphrase')
-	__wpasupbin = which('wpa_supplicant')
+	sh_ = True
+	dbg = False
+	prs = False
+	iface = 'wlan0'
+	wpaconf = '/etc/wpa_supplicant/wpa_supplicant.conf'
+	_iwlistbin = which('iwlist')
+	_ifconfbin = which('ifconfig')
+	_wpapasbin = which('wpa_passphrase')
+	_wpasupbin = which('wpa_supplicant')
 	stdx = sucommand.stdx
 	call = sucommand.call
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg) and type(getattr(self, arg)) is bool:
 				setattr(self, arg, True)
-		if self._dbg:
+		for (key, val) in kwargs.items():
+			if hasattr(self, key) and not isinstance(val, bool):
+				setattr(self, key, val)
+		if self.dbg:
 			print(bgre(WLANConfig.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-	@property               # dbg <bool>
-	def dbg(self):
-		return self._dbg
-	@dbg.setter
-	def dbg(self, val):
-		self._dbg = val if type(val) is bool else self._dbg
-	@property               # prs <bool>
-	def prs(self):
-		return self._prs
-	@prs.setter
-	def prs(self, val):
-		self._prs = val if type(val) is bool else self._prs
-	@property               # iface <str>
-	def iface(self):
-		return self._iface
-	@iface.setter
-	def iface(self, val):
-		self._iface = val if type(val) is str else self._iface
-	@property               # wpaconf <str>
-	def wpaconf(self):
-		return self._wpaconf
-	@wpaconf.setter
-	def wpaconf(self, val):
-		self._wpaconf = val if type(val) is str else self._wpaconf
 
 	def __dump(self, force=None):
 		self.su_ = True
