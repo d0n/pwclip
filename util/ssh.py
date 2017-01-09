@@ -147,7 +147,7 @@ class SecureSHell(object):
 				self._setrstamp(rfile, lat, lmt, remote, user)
 		except SSHException as err:
 			error(err)
-			return err
+		return True
 
 
 
