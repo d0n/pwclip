@@ -99,13 +99,15 @@ class WeakVaulter(SSH, GPGTool):
 			except FileNotFoundError:
 				pass
 
-	def _copynews_(self):
+	def _copynews(self):
 		if self.dbg:
-			print(bgre(self._copynews_))
+			print(bgre(self._copynews))
 		if self.rem and self.remote:
 			try:
-				self.scpcompstats(
-                    self.vault, basename(self.vault), self.remote, self.reuser)
+				if self.scpcompstats(
+                      self.vault, basename(self.vault),
+                      self.remote, self.reuser):
+					return True
 			except FileNotFoundError:
 				pass
 
@@ -139,6 +141,9 @@ class WeakVaulter(SSH, GPGTool):
 						symlink('%s/%s'%(whh, ln), ln)
 			finally:
 				chdir(pwd)
+		if self.rem:
+			if self._copynews():
+				self.unvault(force=True)
 
 	def _pathdict(self, path):
 		if self.dbg:
@@ -170,6 +175,8 @@ class WeakVaulter(SSH, GPGTool):
 					fwh.write(b)
 			except PermissionError:
 				pass
+		if self.rem:
+			self._copynews()
 
 	def _rmlns_(self):
 		if self.dbg:
@@ -198,7 +205,7 @@ class WeakVaulter(SSH, GPGTool):
 				continue
 			except OSError:
 				pass
-			if isdir(hl) and not isdir('%s.1'%hl):
+			if isdir(hl) and not isdir('%s.1'%hl) and not islink(hl):
 				move(hl, '%s.1'%hl)
 			elif not islink(hl) and isdir(hl) and isdir('%s.1'%hl):
 				rmtree(hl)
@@ -223,10 +230,12 @@ class WeakVaulter(SSH, GPGTool):
                     r.split('0x')[1] for r in self.recvs \
                     if r.startswith('0x')]
 				if srecvs != recvs:
-					return False
+					return True
 				ovlt = load(str(plain))
 		except FileNotFoundError:
-			ovlt = False
+			return True
+		print(tabd(ovlt))
+		print(tabd(nvlt))
 		if ovlt != nvlt:
 			return True
 
@@ -265,25 +274,22 @@ class WeakVaulter(SSH, GPGTool):
 				rmtree(self.weakz)
 				self._rmlns_()
 			chmod(self.vault, 0o600)
-			if self.rem:
-				self._copynews_()
 			self._fixmod_()
 		finally:
 			chdir(self._pwd)
 
-	def unvault(self):
+	def unvault(self, force=None):
 		if self.dbg:
 			print(bgre(self.unvault))
-		if not isfile(self.vault):
-			return error(
-                'vault', self.vault, 'does not exist or is inaccessable')
-		elif isdir(self.weakz):
-			return
+		if not force:
+			if not isfile(self.vault):
+				return error(
+					'vault', self.vault, 'does not exist or is inaccessable')
+			elif isdir(self.weakz):
+				return
 		try:
 			if self.weakz and isdir(dirname(self.weakz)):
 				chdir(dirname(self.weakz))
-			if self.rem:
-				self._copynews_()
 			with open(self.vault, 'r') as cfh:
 				try:
 					self._dictpath(load(str(self.decrypt(cfh.read()))))
