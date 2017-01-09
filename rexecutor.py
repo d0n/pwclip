@@ -48,6 +48,7 @@ class SSHCommand(Command):
 			if vals:
 				ssh.append(vals)
 		ssh.append(host)
+		#print(ssh + self._list(commands))
 		return ssh + self._list(commands)
 
 	def run(self, *commands, host=None, user=None):
