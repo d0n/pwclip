@@ -1,9 +1,9 @@
-from .csr import csrgen
-from .blogger import BreitLogger
-from .misc import listhosts, listclusters, jolofix
-from .puppet import Puppet
-from .keyverteiler import kvntool
-from .ndcli import ndcli
-from .deborphan import orphan
-from .unitix import UnitixUsers
-from .timsatan import TimeSatan
+from work.csr import csrgen
+from work.blogger import BreitLogger
+from work.misc import listhosts, listclusters, jolofix
+from work.puppet import Puppet
+from work.keyverteiler import kvntool
+from work.ndcli import ndcli
+from work.deborphan import orphan
+from work.unitix import UnitixUsers
+from work.timsatan import TimeSatan

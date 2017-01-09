@@ -41,7 +41,7 @@ def listhosts(stageha):
 				servers.append(fqdn(stageha))
 		else:
 			break
-	return servers
+	return servers if servers else [stageha]
 
 def listclusters(name):
 	stages = ('dev', 'test', 'cert', 'ac1', 'prod', 'build')

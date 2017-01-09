@@ -29,7 +29,8 @@ __version__ = '0.0'
 def orphan(server, background=None, debug=None):
 	if debug:
 		print(orphan)
-	ssh = SSHCommand(*('dbg' if debug else None, ), **{'host': server, 'user': 'root'})
+	ssh = SSHCommand(*('dbg' if debug else None, ),
+        **{'host_': server, 'user_': 'root'})
 	xce = ssh.call
 	if background:
 		xce = ssh.erno
@@ -45,7 +46,7 @@ def orphan(server, background=None, debug=None):
 	if pkgs:
 		if int(xce('apt-get -y purge %s'%(' '.join(p for p in pkgs)))) == 0:
 			return pkgs
-	
+
 
 
 
