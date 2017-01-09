@@ -214,7 +214,17 @@ class WeakVaulter(SSH, GPGTool):
 		nvlt = self._pathdict(basename(self.weakz))
 		try:
 			with open(self.vault, 'r') as cfh:
-				ovlt = load(str(self.decrypt(cfh.read())))
+				plain = self.decrypt(cfh.read())
+				recvs = [
+                    l.split('[GNUPG:] ENC_TO ')[1].split(' ')[0] \
+                    for l in str(plain.stderr).split('\n') \
+                    if l.startswith('[GNUPG:] ENC_TO')]
+				srecvs = [
+                    r.split('0x')[1] for r in self.recvs \
+                    if r.startswith('0x')]
+				if srecvs != recvs:
+					return False
+				ovlt = load(str(plain))
 		except FileNotFoundError:
 			ovlt = False
 		if ovlt != nvlt:

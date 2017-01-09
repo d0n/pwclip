@@ -106,26 +106,6 @@ class GPGTool(object):
 		__g.encoding = 'utf-8'
 		return __g
 
-	def _garr(self):
-		for proc in piter():
-			if proc.name() in ('gpg-agent', 'scdaemon', 'dirmngr'):
-				try:
-					proc.kill()
-				except PermissionError:
-					error(
-                        'cannot kill process',
-                        proc.name, 'with PID', proc.pid())
-		gacfg = path.join(self.homedir, 'gpg-agent.conf')
-		try:
-			with open(gacfg, 'r') as afh:
-				for l in afh.readlines():
-					if 'enable-ssh-support' in l and not '#' in l:
-						environ['GPG_AGENT_INFO'] = \
-                            path.join(self.homedir, 'S.gpg-agent.ssh')
-		except FileNotFoundError as err:
-			error(err)
-		environ['GPG_AGENT_INFO'] = path.join(self.homedir, 'S.gpg-agent')
-
 	@staticmethod
 	def _passwd(rpt=False):
 		"""
@@ -256,10 +236,8 @@ class GPGTool(object):
 			while True:
 				__plain = self._gpg_.decrypt(
                     message.strip(), always_trust=True, output=output)
-				if __plain:
+				if __plain.ok:
 					return __plain
-				if not __plain and c == 0:
-					self._garr()
 				yesno = True
 				if c > 3:
 					yesno = False
