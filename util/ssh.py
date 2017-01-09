@@ -4,7 +4,7 @@
 #global imports"""
 import os
 import sys
-from paramiko import ssh_exception, SSHClient, AutoAddPolicy
+from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
 from shutil import copy2
 from socket import getfqdn as fqdn, gaierror as NameResolveError
 
@@ -15,15 +15,13 @@ from system.user import whoami
 __version__ = '0.1'
 
 class SecureSHell(object):
-	dbg = False
+	dbg = None
 	reuser = ''
 	remote = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, '_%s'%(arg)):
-				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
@@ -37,10 +35,12 @@ class SecureSHell(object):
 		if '@' in remote:
 			_user, remote = remote.split('@')
 		user = _user if not user else user
+		_fqdn = fqdn(remote)
+		remote = _fqdn if _fqdn else remote
 		ssh = SSHClient()
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
-			ssh.connect(fqdn(remote), int(port), username=user)
+			ssh.connect(remote, int(port), username=user)
 		except (ssh_exception.SSHException, NameResolveError) as err:
 			error(err)
 			raise err
