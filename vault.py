@@ -64,13 +64,9 @@ class WeakVaulter(SSH, GPGTool):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-			elif hasattr(self, '_%s'%(arg)):
-				setattr(self, '_%s'%(arg), True)
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-			elif hasattr(self, '_%s'%(key)):
-				setattr(self, '_%s'%(key), val)
 		self._clean_()
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
@@ -276,6 +272,8 @@ class WeakVaulter(SSH, GPGTool):
 		try:
 			if self.weakz and isdir(dirname(self.weakz)):
 				chdir(dirname(self.weakz))
+			if self.rem:
+				self._copynews_()
 			with open(self.vault, 'r') as cfh:
 				try:
 					self._dictpath(load(str(self.decrypt(cfh.read()))))
