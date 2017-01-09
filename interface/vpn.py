@@ -22,7 +22,7 @@ class VPNConfig(ResolvConfParser):
 	sh_ = True
 	su_ = True
 	pid = None
-	ocbin = which('openconnect')
+	_ocbin = which('openconnect')
 	_pidfile = '/run/openconnect.pid'
 	dbg = False
 	host = uname()[1]
