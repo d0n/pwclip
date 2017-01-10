@@ -22,6 +22,7 @@ class UEFITool(Command):
 	__efiout_ = []
 	def __init__(self, *args):
 		for arg in args:
+			print(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
