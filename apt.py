@@ -108,13 +108,10 @@ class Apytude(DePyKG):
 	def autoclean(self, opts=''):
 		if self.dbg:
 			print(bgre(self.purge))
+		opts = opts if opts else self.opts
+		self.purge(self.partlyinstalleds(), opts=opts)
 		if opts:
-			opts = '-%s'%(
-                ' -'.join(opt for opt in opts.split(' ')))
-		if self.aptopts:
-			opts = '%s %s'%(
-                opts, ' -'.join(opt for opt in self.aptopts))
-		self.purge(self.partlyinstalleds(), opts='-y')
+			opts = '-%s'%' -'.join(opt for opt in opts.split(' '))
 		command = '%s %s autoremove'%(self.aptbin, opts)
 		return int(self.call(command))
 
