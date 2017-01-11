@@ -41,13 +41,13 @@ class Puppet(SSHCommand):
 	scp = SecureSHell()
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
-			if hasattr(self, key) and not type(val) in (None, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
+			elif hasattr(self, '%s_'%key):
+				setattr(self, '%s_'%key, val)
 		if self.dbg:
 			print(bgre(Puppet.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
@@ -116,7 +116,7 @@ class Puppet(SSHCommand):
 		xec = self.call
 		if bgr:
 			xec = self.run
-		xec('puppet agent -vot', host=fqdn(self.host))
+		xec('puppet agent -vot', host=fqdn(self.host_))
 
 
 
