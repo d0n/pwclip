@@ -6,9 +6,17 @@ from os import listdir
 
 from os.path import isfile
 
+import sys
+
+from time import sleep
+
 from netifaces import ifaddresses, AF_INET, AF_INET6
 
 from net.addr import addrmask
+
+from colortext import blu, yel, vio
+
+from executor.executor import command as cmd
 
 def ifaces(netdir='/sys/class/net'):
 	return [d.strip() for d in listdir(netdir)]
@@ -36,6 +44,38 @@ def ifaddrs(iface, ipv4=True, ipv6=True):
 		return {'ipv4':ip4s}
 	elif ip6s:
 		return {'ipv6':ip6s}
+
+def _rxtx(iface):
+	ln = [l for l in cmd.stdo(
+        'ifconfig %s'%iface).split('\n'
+        ) if 'RX bytes:' and 'TX bytes:' in l][0]
+	rb, tb = ln.strip().split('  ')
+	return int(rb.split('RX bytes:')[1].split(' ')[0]), \
+        int(tb.split('TX bytes:')[1].split(' ')[0])
+
+def _xbytes(iface):
+	ru, tu = 'Kb/s', 'Kb/s'
+	srb, stb = _rxtx(iface)
+	sleep(1)
+	nrb, ntb = _rxtx(iface)
+	rb, tb = int(int(nrb-srb)/1024), int(int(ntb-stb)/1024)
+	if rb > 1024:
+		ru = 'Mb/s'
+		rb = int(rb/1024)
+	if tb > 1024:
+		tu = 'Mb/s'
+		tb = int(tb/1024)
+	return '  %03s %s  %sD %s U%s  %03s %s'%(
+        rb if rb else '', vio(ru), blu('<<'),
+        yel(iface if iface != 'lo' else ' lo '),
+        blu('>>'), tb if tb else '', vio(tu))
+
+
+def iftrough(ifaces):
+	while True:
+		print('\033c%s'%'\n\n'.join(
+            _xbytes(i) for i in ifaces if i), end='\r')
+
 
 def anyifconfd():
 	confdifs = []

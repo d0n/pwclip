@@ -10,7 +10,7 @@ from net.iface import \
 	haslink, isup, \
 	ifaces, ifaddrs, \
 	anyifconfd, isconfd, \
-	iftype, currentnets
+	iftype, currentnets, iftrough
 
 from net.mac import mac, macs
 
