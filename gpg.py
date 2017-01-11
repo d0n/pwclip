@@ -44,7 +44,6 @@ class GPGTool(object):
 	dmcfg = path.join(homedir, 'dirmngr.conf')
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
-	__pin = None
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -94,10 +93,8 @@ class GPGTool(object):
 	def _gpg_(self):
 		"""object"""
 		opts = ['--batch', '--always-trust']
-		#print(self.binary.rstrip('.exe').endswith('2'))
 		if osname != 'nt' and self.binary.rstrip('.exe').endswith('2'):
 			opts.append('--pinentry-mode=loopback')
-		if self.__pin: opts = opts + ['--passphrase=%s'%self.__pin]
 		__g = GPG(
             keyring=self.keyring, secret_keyring=self.secring,
             gnupghome=self.homedir, gpgbinary=self.binary,
@@ -233,9 +230,11 @@ class GPGTool(object):
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
 		c = 0
 		try:
+			__pass = None
 			while True:
 				__plain = self._gpg_.decrypt(
-                    message.strip(), always_trust=True, output=output)
+                    message.strip(), always_trust=True,
+					output=output, passphrase=__pass)
 				if __plain.ok:
 					return __plain
 				yesno = True
@@ -253,7 +252,7 @@ class GPGTool(object):
 						yesno = True if str(input(
                             'decryption failed - retry? [Y/n]'
                             )).lower() in ('y', '') else False
-				elif c > 1 and not self.__pin:
+				elif c > 1 and not __pass:
 					yesno = False
 					try:
 						yesno = xyesno('no passphrase entered, retry?')
@@ -265,8 +264,8 @@ class GPGTool(object):
 					raise RuntimeError('cannot decrypt')
 				c+=1
 				try:
-					self.__pin = xinput('enter gpg-passphrase')
+					__pass = xinput('enter gpg-passphrase')
 				except TclError:
-					self.__pin = getpass('enter gpg-passphrase: ')
+					__pass = getpass('enter gpg-passphrase: ')
 		except KeyboardInterrupt:
 			abort()
