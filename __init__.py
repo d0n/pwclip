@@ -1,16 +1,16 @@
 # to only import all necessarry modules/libs define the calling executable
 from net.addr import \
-	addrmask, netips, \
-	iternet, gateway, isip
+    addrmask, netips, \
+    iternet, gateway, isip
 
 from net.dns import \
-	fqdn, askdns, raflookup
+    fqdn, askdns, raflookup
 
 from net.iface import \
-	haslink, isup, \
-	ifaces, ifaddrs, \
-	anyifconfd, isconfd, \
-	iftype, currentnets, iftrough
+    haslink, isup, \
+    ifaces, ifaddrs, \
+    anyifconfd, isconfd, \
+    iftype, currentnets, iftrough
 
 from net.mac import mac, macs
 from net.ssh import SecureSHell
