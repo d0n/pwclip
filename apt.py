@@ -26,7 +26,6 @@ class Apytude(DePyKG):
 	opts = []
 	aptbin = which('apt')
 	def __init__(self, *args, **kwargs):
-		#DePyKG.__init__(self, *args, **kwargs)
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
@@ -35,7 +34,9 @@ class Apytude(DePyKG):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(Apytude.__mro__))
-			print(bgre(tabd(self.__dict__, 2)))
+			print(bgre(tabd(Apytude.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 
 	def search(self, pattern=''):
 		if self.dbg:
