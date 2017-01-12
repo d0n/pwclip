@@ -100,7 +100,7 @@ class Apytude(DePyKG):
 		else:
 			return erno
 
-	def autoclean(self, opts=''):
+	def autoclean(self, *opts):
 		if self.dbg:
 			print(bgre(self.purge))
 		opts = opts if opts else self.opts
