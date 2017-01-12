@@ -19,7 +19,7 @@
 import os
 import sys
 
-from colortext import blu
+from colortext import blu, bgre
 from executor import SSHCommand
 
 # global default variables
@@ -28,9 +28,9 @@ __version__ = '0.0'
 
 def orphan(server, background=None, debug=None):
 	if debug:
-		print(orphan)
-	ssh = SSHCommand(*('dbg' if debug else None, ),
-        **{'host_': server, 'user_': 'root'})
+		print(bgre(orphan))
+	ssh = SSHCommand(*[a for a in ['dbg' if debug else None] if a],
+        **{'remote': server, 'reuser': 'root'})
 	xce = ssh.call
 	if background:
 		xce = ssh.erno
