@@ -190,8 +190,8 @@ def tabd(dats, ind=0, iind=0):
 		for (key, val) in sorted(dats.items()):
 			spc = ' '*int(lim-len(str(key)))
 			if isinstance(val, dict):
-				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
-					val, ind+iind, iind).lstrip('\n'))
+				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*int(ind+iind), key, tabd(
+                    val, ind+iind, iind).lstrip('\n'))
 				continue
 			tabbd = str('%s\n%s%s%s = %s'%(
 				tabbd, ' '*ind, key, spc, val)).lstrip('\n')
