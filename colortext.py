@@ -185,7 +185,7 @@ def tabd(dats, ind=0, iind=0):
 	except ValueError:
 		return dats
 	tabbd = ''
-	iind = iind if ind else 2
+	iind = ind if ind else 2
 	try:
 		for (key, val) in sorted(dats.items()):
 			spc = ' '*int(lim-len(str(key)))
