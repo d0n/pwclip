@@ -104,7 +104,7 @@ class Apytude(DePyKG):
 		if self.dbg:
 			print(bgre(self.purge))
 		opts = opts if opts else self.opts
-		self.purge(self.partlyinstalleds(), opts)
+		self.purge(self.partlyinstalleds(), *opts)
 		if opts:
 			opts = '-%s'%' -'.join(opts)
 		opts = '' if not opts else opts
