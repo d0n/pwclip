@@ -20,10 +20,10 @@ class Apytude(DePyKG):
 	su_ = True
 	sh_ = True
 	# common/internal properties
-	aptopts = []
 	dbg = None
 	dry = None
 	vrb = None
+	opts = []
 	aptbin = which('apt')
 	def __init__(self, *args, **kwargs):
 		#DePyKG.__init__(self, *args, **kwargs)
@@ -48,29 +48,25 @@ class Apytude(DePyKG):
 		if sudo.call(self.aptbin, 'update') == 0:
 			return True
 
-	def upgrade(self, mode='upgrade'):
+	def upgrade(self, *opts):
 		if self.dbg:
 			print(bgre(self.upgrade))
-		opts = ''
-		if self.aptopts:
-			opts = '-'+''.join(opt for opt in self.aptopts)
-		if mode in ('full', 'dist'):
-			mode = 'dist-upgrade'
-		command = '%s %s %s' %(self.aptbin, opts, mode)
+		opts = opts if opts else self.opts
+		if opts:
+			opts = '-%s'%' -'.join(opt for opt in opts)
+		opts = '' if not opts else opts
+		command = '%s %s upgrade' %(self.aptbin, opts)
 		if sudo.call(command) == 0:
 			return True
 
-	def install(self, packages, opts=''):
+	def install(self, packages, *opts):
 		if self.dbg:
 			print(bgre(self.install))
 		if self.dry:
 			self.aptopts.append('s')
 		if opts:
-			opts = '-%s'%(
-                ' -'.join(opt for opt in opts.split(' ')))
-		if self.aptopts:
-			opts = '%s %s'%(
-                opts, ' -'.join(opt for opt in self.aptopts))
+			opts = '-%s'%' -'.join(opt for opt in opts)
+		opts = '' if not opts else opts
 		if packages:
 			packages = self._list(packages)
 			packages = ' '.join(
@@ -84,15 +80,13 @@ class Apytude(DePyKG):
 		else:
 			return erno
 
-	def purge(self, packages, opts=''):
+	def purge(self, packages, *opts):
 		if self.dbg:
 			print(bgre(self.purge))
+		opts = opts if opts else self.opts
 		if opts:
-			opts = '-%s'%(
-                ' -'.join(opt for opt in opts.split(' ')))
-		if self.aptopts:
-			opts = '%s %s'%(
-                opts, ' -'.join(opt for opt in self.aptopts))
+			opts = '-%s'%' -'.join(opt for opt in opts)
+		opts = '' if not opts else opts
 		if packages:
 			packages = ' '.join(
                 pkg for pkg in packages if self.isinstalled(pkg))
@@ -109,9 +103,10 @@ class Apytude(DePyKG):
 		if self.dbg:
 			print(bgre(self.purge))
 		opts = opts if opts else self.opts
-		self.purge(self.partlyinstalleds(), opts=opts)
+		self.purge(self.partlyinstalleds(), opts)
 		if opts:
-			opts = '-%s'%' -'.join(opt for opt in opts.split(' '))
+			opts = '-%s'%' -'.join(opt for opt in opts)
+		opts = '' if not opts else opts
 		command = '%s %s autoremove'%(self.aptbin, opts)
 		return int(self.call(command))
 
