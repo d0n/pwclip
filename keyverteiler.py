@@ -22,13 +22,13 @@ import time
 
 # local relative imports
 from colortext import abort
-from executor import SSHCommand
+from net import SecureSHell as SSH
 
 # global default variables
 __version__ = '0.0'
 
 def kvntool(modes, hostgroups=':all', users=[]):
-	ssh = SSHCommand(
+	ssh = SSH(
         'sh',
         **{'user': 'keys', 'host': 'keyverteiler-neu.schlund.de'})
 	def __distribute(hostgroup):

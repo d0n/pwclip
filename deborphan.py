@@ -20,7 +20,7 @@ import os
 import sys
 
 from colortext import blu, bgre
-from executor import SSHCommand
+from net import SecureSHell as SSH
 
 # global default variables
 __version__ = '0.0'
@@ -29,7 +29,7 @@ __version__ = '0.0'
 def orphan(server, background=None, debug=None):
 	if debug:
 		print(bgre(orphan))
-	ssh = SSHCommand(*[a for a in ['dbg' if debug else None] if a],
+	ssh = SSH(*[a for a in ['dbg' if debug else None] if a],
         **{'remote': server, 'reuser': 'root'})
 	xce = ssh.call
 	if background:

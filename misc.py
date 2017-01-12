@@ -21,13 +21,12 @@ import sys
 from socket import getfqdn as fqdn
 
 from colortext import blu, yel, error
-from net import askdns, netcat as nc
-from executor import SSHCommand
+from net import askdns, netcat as nc, SecureSHell as SSH
 
 # global default variables
 __version__ = '0.0'
 
-ssh = SSHCommand()
+ssh = SSH()
 
 def listhosts(stageha):
 	servers = []

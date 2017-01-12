@@ -22,14 +22,13 @@ from socket import getfqdn as fqdn
 # local relative imports
 from colortext import bgre, tabd
 from system import which
-from net import netcat as nc, SecureSHell
-from executor import SSHCommand
+from net import netcat as nc, SecureSHell as SSH
 
 # global default variables
 __me__ = os.path.basename(sys.argv[0]).split('.')[0]
 __version__ = '0.2'
 
-class Puppet(SSHCommand):
+class Puppet(SSH):
 	"""puppet wrapper class"""
 	sh_ = True
 	dbg = False
@@ -50,7 +49,7 @@ class Puppet(SSHCommand):
 		if self.dbg:
 			print(bgre(Puppet.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-		SSHCommand.__init__(self, *args, **kwargs)
+		SSH.__init__(self, *args, **kwargs)
 
 	def pupush(self):
 		"""push current svn revision to puppet master"""

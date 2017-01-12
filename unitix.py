@@ -21,13 +21,13 @@ import sys
 
 # local relative imports
 from colortext import blu, red, yel, byel, error, fatal
-from executor import SSHCommand
+from net import SecureSHell as SSH
 
 
 # global default variables
 __version__ = '0.0'
 
-class UnitixUsers(SSHCommand):
+class UnitixUsers(SSH):
 	_sh_ = True
 	acclog = 'acclog.server.lan'
 	login = 'lpelzer'
