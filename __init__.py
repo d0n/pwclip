@@ -13,6 +13,8 @@ from net.iface import \
 	iftype, currentnets, iftrough
 
 from net.mac import mac, macs
+from net.ssh import SecureSHell
+from net.ldap import LDAPSearch
 
 # interface
 from net.interface.eth import ETHConfig
@@ -24,10 +26,8 @@ from net.interface.wwan import WWANConfig
 from net.util.dhcp import DHCPDiscover
 from net.util.ifdrougs import \
 	dhclient, ifup, ifdown, ifconfup, ifconfdown, ping
-from net.util.ldap import LDAPSearch
 from net.util.mailing import sendmail
 from net.util.netcat import netcat
 from net.util.ping import ping
 from net.util.rfkill import rfklocks, rfklist
-from net.util.ssh import SecureSHell
 from net.util.wakeonlan import wol
