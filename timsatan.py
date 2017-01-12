@@ -196,11 +196,9 @@ class TimeSatan(Cmd, Satan):
 		print('TimeSatan - book efforts to fuck-up-tool timsato\n' \
             '  empty line ends booking efforts')
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key) and not isinstance(val, bool):
 				setattr(self, key, val)
 		if self.dbg:
