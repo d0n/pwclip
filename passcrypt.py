@@ -21,7 +21,7 @@ from colortext import bgre, tabd, error, fatal
 
 from system import userfind
 
-from net.util import SecureSHell as SSH
+from net.ssh import SecureSHell as SSH
 
 from secrecy.gpg import GPGTool
 
