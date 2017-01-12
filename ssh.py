@@ -167,9 +167,9 @@ class SecureSHell(object):
 	def _remotestamp(self, trg, remote, reuser):
 		if self.dbg:
 			print(bgre(self._remotestamp))
-		tat = self.rstdo(
+		tat = self.stdo(
             'stat -c %%X %s'%trg, remote, reuser)
-		tmt = self.rstdo(
+		tmt = self.stdo(
             'stat -c %%Y %s'%trg, remote, reuser)
 		if tat and tmt: return int(tat), int(tmt)
 		return None, None
