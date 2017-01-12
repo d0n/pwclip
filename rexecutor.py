@@ -3,41 +3,34 @@ from system.user import whoami
 from executor.executor import Command
 
 class SSHCommand(Command):
-	dbg = False
 	sh_ = True
 	su_ = False
-	_sshbin = which('ssh')
-	_sshopts = {
+	dbg = False
+	sshbin = which('ssh')
+	sshopts = {
         'o': [
             'StrictHostKeyChecking=no',
-            'UserKnownHostsFile=/dev/null', 'LogLevel=ERROR'],
-        '4': None
-        }
-	host_ = ''
-	user_ = whoami()
-	tout_ = 30
+            'UserKnownHostsFile=/dev/null', 'LogLevel=ERROR']}
+	remote = ''
+	reuser = whoami()
+	timeout = 30
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
 			if hasattr(self, key):
 				setattr(self, key, val)
-			elif hasattr(self, '%s_'%key):
-				setattr(self, '%s_'%key, val)
 		Command.__init__(self, *args, **kwargs)
 
-	def _hostcmd(self, *commands, host=None, user=None):
-		"""ssh host prepending function"""
-		if not user:
-			user = self.user_
-		if not host:
-			host = self.host_
-		self._sshopts['l'] = user
-		ssh = [self._sshbin]
-		for (key, vals) in self._sshopts.items():
+	def _remotecmd(self, *commands, remote=None, reuser=None):
+		"""ssh remote prepending function"""
+		reuser = reuser if reuser else self.reuser
+		remote = remote if remote else self.remote
+		assert remote != None
+		self.sshopts['l'] = reuser
+		ssh = [self.sshbin]
+		for (key, vals) in self.sshopts.items():
 			key = '-%s'%(key)
 			if isinstance(vals, list):
 				for val in vals:
@@ -47,34 +40,34 @@ class SSHCommand(Command):
 			ssh.append(key)
 			if vals:
 				ssh.append(vals)
-		ssh.append(host)
+		ssh.append(remote)
 		#print(ssh + self._list(commands))
 		return ssh + self._list(commands)
 
-	def run(self, *commands, host=None, user=None):
-		commands = self._hostcmd(*commands, host=host, user=user)
+	def run(self, *commands, remote=None, reuser=None):
+		commands = self._remotecmd(*commands, remote=remote, reuser=reuser)
 		return super().run(*commands)
 
-	def call(self, *commands, host=None, user=None):
-		commands = self._hostcmd(commands, host, user)
+	def call(self, *commands, remote=None, reuser=None):
+		commands = self._remotecmd(commands, remote, reuser)
 		return super().call(commands)
 
-	def stdx(self, *commands, host=None, user=None):
-		commands = self._hostcmd(commands, host, user)
+	def stdx(self, *commands, remote=None, reuser=None):
+		commands = self._remotecmd(commands, remote, reuser)
 		return super().stdx(commands)
 
-	def stdo(self, *commands, host=None, user=None):
-		commands = self._hostcmd(commands, host, user)
+	def stdo(self, *commands, remote=None, reuser=None):
+		commands = self._remotecmd(commands, remote, reuser)
 		return super().stdo(commands)
 
-	def stde(self, *commands, host=None, user=None):
-		commands = self._hostcmd(commands, host, user)
+	def stde(self, *commands, remote=None, reuser=None):
+		commands = self._remotecmd(commands, remote, reuser)
 		return super().stde(commands)
 
-	def erno(self, *commands, host=None, user=None):
-		commands = self._hostcmd(commands, host, user)
+	def erno(self, *commands, remote=None, reuser=None):
+		commands = self._remotecmd(commands, remote, reuser)
 		return super().erno(commands)
 
-	def oerc(self, *commands, host=None, user=None):
-		commands = self._hostcmd(commands, host, user)
+	def oerc(self, *commands, remote=None, reuser=None):
+		commands = self._remotecmd(commands, remote, reuser)
 		return super().oerc(commands)

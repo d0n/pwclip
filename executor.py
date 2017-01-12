@@ -17,7 +17,7 @@ class Command(object):
 	sh_ = True
 	su_ = False
 	dbg = False
-	tout_ = None
+	timeout = None
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, '%s_'%arg):
@@ -97,7 +97,7 @@ class Command(object):
 		"""command execution which returns STDERR and/or STDOUT"""
 		commands = self.__cmdprep(commands, self.stdx)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
-		out, err = prc.communicate(timeout=self.tout_)
+		out, err = prc.communicate(timeout=self.timeout)
 		if out:
 			return out.decode()
 		if err:
@@ -107,7 +107,7 @@ class Command(object):
 		"""command execution which returns STDOUT only"""
 		commands = self.__cmdprep(commands, self.stdo)
 		prc = Popen(commands, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
-		out, _ = prc.communicate(timeout=self.tout_)
+		out, _ = prc.communicate(timeout=self.timeout)
 		if out:
 			return out.decode()
 
@@ -115,7 +115,7 @@ class Command(object):
 		"""command execution which returns STDERR only"""
 		commands = self.__cmdprep(commands, self.stde)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
-		_, err = prc.communicate(timeout=self.tout_)
+		_, err = prc.communicate(timeout=self.timeout)
 		if err:
 			return err.decode()
 
@@ -123,14 +123,14 @@ class Command(object):
 		"""command execution which returns the exitcode only"""
 		commands = self.__cmdprep(commands, self.erno)
 		prc = Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
-		prc.communicate(timeout=self.tout_)
+		prc.communicate(timeout=self.timeout)
 		return int(prc.returncode)
 
 	def oerc(self, *commands):
 		"""command execution which returns STDERR only"""
 		commands = self.__cmdprep(commands, self.oerc)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
-		out, err = prc.communicate(timeout=self.tout_)
+		out, err = prc.communicate(timeout=self.timeout)
 		return out.decode(), err.decode(), int(prc.returncode)
 
 
