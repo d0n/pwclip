@@ -54,7 +54,7 @@ class Apytude(DePyKG):
 			print(bgre(self.upgrade))
 		opts = opts if opts else self.opts
 		if opts:
-			opts = '-%s'%' -'.join(opt for opt in opts)
+			opts = '-%s'%' -'.join(opts)
 		opts = '' if not opts else opts
 		command = '%s %s upgrade' %(self.aptbin, opts)
 		if sudo.call(command) == 0:
@@ -66,7 +66,7 @@ class Apytude(DePyKG):
 		if self.dry:
 			self.aptopts.append('s')
 		if opts:
-			opts = '-%s'%' -'.join(opt for opt in opts)
+			opts = '-%s'%' -'.join(opts)
 		opts = '' if not opts else opts
 		if packages:
 			packages = self._list(packages)
@@ -86,7 +86,7 @@ class Apytude(DePyKG):
 			print(bgre(self.purge))
 		opts = opts if opts else self.opts
 		if opts:
-			opts = '-%s'%' -'.join(opt for opt in opts)
+			opts = '-%s'%' -'.join(opts)
 		opts = '' if not opts else opts
 		if packages:
 			packages = ' '.join(
@@ -106,7 +106,7 @@ class Apytude(DePyKG):
 		opts = opts if opts else self.opts
 		self.purge(self.partlyinstalleds(), opts)
 		if opts:
-			opts = '-%s'%' -'.join(opt for opt in opts)
+			opts = '-%s'%' -'.join(opts)
 		opts = '' if not opts else opts
 		command = '%s %s autoremove'%(self.aptbin, opts)
 		return int(self.call(command))
