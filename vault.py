@@ -71,6 +71,8 @@ class WeakVaulter(SSH, GPGTool):
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 		SSH.__init__(self, *args, **kwargs)
 		GPGTool.__init__(self, *args, **kwargs)
 

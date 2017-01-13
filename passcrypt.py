@@ -28,9 +28,9 @@ from secrecy.gpg import GPGTool
 from secrecy.yubi import ykchalres
 
 class PassCrypt(GPGTool):
-	dbg = False
-	aal = False
-	sho = False
+	dbg = None
+	aal = None
+	sho = None
 	try:
 		user = userfind()
 		home = userfind(user, 'home')
@@ -56,7 +56,9 @@ class PassCrypt(GPGTool):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(PassCrypt.__mro__))
-			print(bgre(tabd(self.__dict__, 2)))
+			print(bgre(tabd(PassCrypt.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 		self._copynews_()
 		__weaks = self._readcrypt()
 		if path.exists(self.crypt) and __weaks is None:
