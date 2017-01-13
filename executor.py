@@ -20,7 +20,9 @@ class Command(object):
 	timeout = None
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			if hasattr(self, '%s_'%arg):
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+			elif hasattr(self, '%s_'%arg):
 				setattr(self, '%s_'%arg, True)
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
@@ -140,7 +142,6 @@ sucommand = Command('sh', 'su')
 def sudofork(*args):
 	enr = 0
 	try:
-		#print(args)
 		return sucommand.call(args)
 	except KeyboardInterrupt:
 		_echo_('\n\033[34maborted by keystroke\033[0m\n')
