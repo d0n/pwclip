@@ -46,19 +46,26 @@ def ifaddrs(iface, ipv4=True, ipv6=True):
 		return {'ipv6':ip6s}
 
 def _rxtx(iface):
-	ln = [l for l in cmd.stdo(
-        'ifconfig %s'%iface).split('\n'
+	out = cmd.stdo('/sbin/ifconfig %s'%iface)
+	if not out: raise RuntimeError('could not get ifconfig output')
+	ln = [l for l in out.split('\n'
         ) if 'RX bytes:' and 'TX bytes:' in l][0]
 	rb, tb = ln.strip().split('  ')
 	return int(rb.split('RX bytes:')[1].split(' ')[0]), \
         int(tb.split('TX bytes:')[1].split(' ')[0])
 
 def _xbytes(iface):
-	ru, tu = 'Kb/s', 'Kb/s'
+	ru, tu = 'b/s', 'b/s'
 	srb, stb = _rxtx(iface)
 	sleep(1)
 	nrb, ntb = _rxtx(iface)
-	rb, tb = int(int(nrb-srb)/1024), int(int(ntb-stb)/1024)
+	rb, tb = int(nrb-srb), int(ntb-stb)
+	if rb > 1024:
+		ru = 'Kb/s'
+		rb = int(rb/1024)
+	if tb > 1024:
+		tu = 'Kb/s'
+		tb = int(tb/1024)
 	if rb > 1024:
 		ru = 'Mb/s'
 		rb = int(rb/1024)

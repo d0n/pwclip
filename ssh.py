@@ -123,7 +123,7 @@ class SecureSHell(object):
 	def get(self, src, trg, remote=None, reuser=None):
 		if self.dbg:
 			print(bgre(self.get))
-		reuser = user if user else self.reuser
+		reuser = reuser if reuser else self.reuser
 		remote = remote if remote else self.remote
 		if not (os.path.isfile(src) or os.path.isfile(trg)):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
@@ -134,7 +134,7 @@ class SecureSHell(object):
 	def put(self, src, trg, remote=None, reuser=None):
 		if self.dbg:
 			print(bgre(self.put))
-		reuser = user if user else self.reuser
+		reuser = reuser if reuser else self.reuser
 		remote = remote if remote else self.remote
 		if not (os.path.isfile(src) or os.path.isfile(trg)):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
@@ -182,9 +182,9 @@ class SecureSHell(object):
 	def _setrstamp(self, trg, atime, mtime, remote, reuser):
 		if self.dbg:
 			print(bgre(self._setrstamp))
-		self.rstdo(
+		self.stdo(
             'touch -a --date=@%s %s'%(atime, trg), remote, reuser)
-		self.rstdo(
+		self.stdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
 	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
