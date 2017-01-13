@@ -10,7 +10,7 @@ from net.iface import \
     haslink, isup, \
     ifaces, ifaddrs, \
     anyifconfd, isconfd, \
-    iftype, currentnets, iftrough
+    iftype, currentnets, ifthrough
 
 from net.mac import mac, macs
 from net.ssh import SecureSHell

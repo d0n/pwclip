@@ -71,7 +71,7 @@ def _xbytes(iface):
         blu('>>'), tb if tb else '', vio(tu))
 
 
-def iftrough(ifaces):
+def ifthrough(ifaces):
 	while True:
 		print('\033c%s'%'\n\n'.join(
             _xbytes(i) for i in ifaces if i), end='\r')
