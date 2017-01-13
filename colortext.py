@@ -185,14 +185,16 @@ def tabd(dats, ind=0, iind=0):
 	except ValueError:
 		return dats
 	tabbd = ''
-	iind = ind if not iind else iind
 	try:
 		for (key, val) in sorted(dats.items()):
 			spc = ' '*int(lim-len(str(key)))
 			if isinstance(val, dict):
+				iind = ind if not iind else iind
 				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
-                    val, ind+iind, iind))
+                    val, ind+iind, ind))
 				continue
+			if iind:
+				iind = ind-iind
 			tabbd = str('%s\n%s%s%s = %s'%(
                 tabbd, ' '*ind, key, spc, val)).lstrip('\n')
 	except AttributeError:
