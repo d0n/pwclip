@@ -53,7 +53,7 @@ class GitSync(GitRepo):
 		stats = {}
 		trees = self.gitsubtrees()
 		if trees:
-			print(blu('syncing subtrees\n%s'%(getcwd(), yel(getcwd()))))
+			print(blu('syncing subtrees\n%s'%getcwd()))
 			for tree in trees:
 				print('\t', yel(tree))
 
