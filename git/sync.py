@@ -50,8 +50,10 @@ class GitSync(GitRepo):
 			return {branch: status}
 
 	def treesync(self):
-		if [m for m in self.syncmodes if m in ('sync', 'pull')]:
-			pass
+		trees = self.gitsubtrees()
+		if trees:
+			for tree in trees:
+				print(blu('syncing subtree'), blu('%s...'%yel(tree)))
 
 	def giter(self, repos, syncall=None):
 		if self.dbg:
@@ -76,13 +78,10 @@ class GitSync(GitRepo):
 					branchstats[branch] = stats
 			if self.dbg and branchstats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
+			treestats = self.treesync()
+			print(treestats)
 			if branchstats:
 				yield {repo: branchstats}
-			trees = self.gitsubtrees()
-			if trees:
-				print(blu('syncing subtrees:\n\t'), '\n\t '.join(yel(t) for t in self.gitsubtrees()))
-
-
 
 if __name__ == '__main__':
 	exit(1)
