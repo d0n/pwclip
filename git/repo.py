@@ -205,8 +205,12 @@ class GitRepo(Command):
 		return repos
 
 	def gittreepull(self, prefix):
-		out, err, eno = self.oerc(
-            '%s subtree pull -P ')
+		out, err, eno = self.oerc('%s subtree pull -P %s'%(
+            self.gitbin, prefix))
+
+	def gittreepush(self, prefix):
+		out, err, eno = self.oerc('%s subtree push -P %s'%(
+            self.gitbin, prefix))
 
 	def gitsubtrees(self):
 		if self.dbg:
