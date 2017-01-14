@@ -218,11 +218,10 @@ class GitRepo(Command):
 		if trees:
 			lens = [len(t.split('/')) for t in trees]
 			for i in reversed(lens):
-				for log in self.gitlog():
-					if 'git-subtree-dir' in log:
-						if len(str(log.split(': ')[1]).split('/')) == i:
-							strees.append(log.split(': ')[1])
-		return list(set(strees))
+				for tree in trees:
+					if len(tree.split('/')) == i:
+						strees.append(tree)
+		return strees
 
 	def gitstatus(self):
 		if self.dbg:
