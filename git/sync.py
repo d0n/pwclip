@@ -15,7 +15,7 @@ class GitSync(GitRepo):
 	sh_ = True
 	dbg = False
 	abr = False
-	treremote = ''
+	gitremote = ''
 	syncmodes = ['sync'] # commit|push|pull
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -55,8 +55,8 @@ class GitSync(GitRepo):
 			print(bgre(self.treesync))
 		stats = {}
 		trees = self.gitsubtrees()
-		if trees and self.treeremote:
-			print(self.treeremote)
+		if trees and self.gitremote:
+			print(self.gitremote)
 			print(blu('syncing subtrees: %s'%(yel(getcwd()))))
 			for tree in trees:
 				print(' ', yel(tree))
