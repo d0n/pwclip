@@ -220,7 +220,7 @@ class GitRepo(Command):
 			for i in reversed(lens):
 				for tree in trees:
 					if len(tree.split('/')) == i:
-						strees.append(tree)
+						if not tree in strees: strees.append(tree)
 		return strees
 
 	def gitstatus(self):
