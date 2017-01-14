@@ -64,8 +64,6 @@ class GitSync(GitRepo):
 			except FileNotFoundError:
 				error('path', repo, 'does not exist and has been omitted')
 				continue
-			for tree in self.gitsubtrees():
-				print(blu('syncing'), '%s%s'%(yel(tree), blu('...')))
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			branchstats = {}
 			head = self._head()
@@ -80,6 +78,8 @@ class GitSync(GitRepo):
 				print(bgre('{%s: %s}'%(repo, branchstats)))
 			if branchstats:
 				yield {repo: branchstats}
+			for tree in self.gitsubtrees():
+				print(blu('syncing subtree'), '%s%s'%(yel(tree), blu('...')))
 
 
 
