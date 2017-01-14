@@ -212,8 +212,8 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitsubtrees))
 		strees = []
-		lens = reversed(list(set(len(str(l.split(': ')[1]).split('/')) \
-            for l in self.gitlog() if 'git-subtree-dir' in l)))
+		lens = list(set(len(str(l.split(': ')[1]).split('/')) \
+            for l in self.gitlog() if 'git-subtree-dir' in l))
 		if lens:
 			print(lens)
 		for log in self.gitlog():
