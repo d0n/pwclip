@@ -212,9 +212,12 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitsubtrees))
 		strees = []
+		inn = max(len(l.split('/')) for l in self.gitlog())
+		print(inn)
 		for log in self.gitlog():
 			if 'git-subtree-dir' in log:
 				strees.append(log.split(': ')[1])
+
 		return list(set(strees))
 
 	def gitstatus(self):
