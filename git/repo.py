@@ -204,7 +204,7 @@ class GitRepo(Command):
 				repos = self.gitsubmods(mods) + list(repos)
 		return repos
 
-	def gittreepull(self):
+	def gittreepull(self, prefix):
 		out, err, eno = self.oerc(
 			'%s subtree pull -P ')
 
@@ -215,7 +215,7 @@ class GitRepo(Command):
 		for log in self.gitlog():
 			if 'git-subtree-dir' in log:
 				strees.append(log.split(': ')[1])
-		return sorted(list(set(strees)))
+		return list(set(strees))
 
 	def gitstatus(self):
 		if self.dbg:
