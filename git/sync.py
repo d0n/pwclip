@@ -50,6 +50,7 @@ class GitSync(GitRepo):
 			return {branch: status}
 
 	def treesync(self):
+		stats = {}
 		trees = self.gitsubtrees()
 		if trees:
 			for tree in trees:
@@ -79,7 +80,6 @@ class GitSync(GitRepo):
 			if self.dbg and branchstats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
 			treestats = self.treesync()
-			print(treestats)
 			if branchstats:
 				yield {repo: branchstats}
 
