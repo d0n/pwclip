@@ -204,6 +204,10 @@ class GitRepo(Command):
 				repos = self.gitsubmods(mods) + list(repos)
 		return repos
 
+	def gittreepull(self):
+		out, err, eno = self.oerc(
+			'%s subtree pull -P ')
+
 	def gitsubtrees(self):
 		if self.dbg:
 			print(bgre(self.gitsubtrees))

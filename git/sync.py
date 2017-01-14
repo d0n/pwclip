@@ -49,6 +49,10 @@ class GitSync(GitRepo):
 		if status:
 			return {branch: status}
 
+	def treesync(self):
+		if [m for m in self.syncmodes if m in ('sync', 'pull')]:
+			pass
+
 	def giter(self, repos, syncall=None):
 		if self.dbg:
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
