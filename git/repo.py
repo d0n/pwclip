@@ -211,7 +211,7 @@ class GitRepo(Command):
 		for log in self.gitlog():
 			if 'git-subtree-dir' in log:
 				strees.append(log.split(': ')[1])
-		return strees
+		return list(set(strees))
 
 	def gitstatus(self):
 		if self.dbg:
