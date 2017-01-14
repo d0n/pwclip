@@ -212,7 +212,7 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(self.gitsubtrees))
 		strees = []
-		print([l for l in self.gitlog() if 'git-subtree-dir' in l])
+		print([l.split(': ')[1] for l in self.gitlog() if 'git-subtree-dir' in l])
 		for log in self.gitlog():
 			if 'git-subtree-dir' in log:
 				strees.append(log.split(': ')[1])
