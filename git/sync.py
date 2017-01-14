@@ -3,7 +3,7 @@
 # global imports
 import re
 import sys
-from os import chdir
+from os import chdir, getcwd
 from os.path import basename, dirname, isfile
 
 # local relative imports
@@ -53,7 +53,7 @@ class GitSync(GitRepo):
 		stats = {}
 		trees = self.gitsubtrees()
 		if trees:
-			print(blu('syncing subtrees'), blu('%s...'%yel(tree)))
+			print(blu('syncing subtrees'), blu('%s...'%yel(getcwd())))
 			for tree in trees:
 				print('\t', yel(tree))
 
