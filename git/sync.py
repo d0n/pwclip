@@ -78,7 +78,9 @@ class GitSync(GitRepo):
 				print(bgre('{%s: %s}'%(repo, branchstats)))
 			if branchstats:
 				yield {repo: branchstats}
-			print(blu('syncing'), yel(repo), blu('subtrees:\n'), yel('  ').join(self.gitsubtrees()))
+			trees = self.gitsubtrees()
+			if trees:
+				print(blu('syncing'), yel(repo), blu('subtrees:\n'), yel('  ').join(self.gitsubtrees()))
 
 
 
