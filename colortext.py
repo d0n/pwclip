@@ -203,13 +203,6 @@ def tabd(dats, ind=0, iind=0):
 	try:
 		for (key, val) in sorted(dats.items()):
 			spc = ' '*int(lim-len(str(key)))
-			if isinstance(val, dict):
-				iind = 2 if not ind else iind+ind
-				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
-                    val, ind, iind))
-				continue
-			if iind:
-				iind = ind-iind
 			tabbd = str('%s\n%s%s%s = %s'%(
                 tabbd, ' '*ind, key, spc, val)).lstrip('\n')
 	except AttributeError:
