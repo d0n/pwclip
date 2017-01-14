@@ -215,10 +215,11 @@ class GitRepo(Command):
 		lens = list(set(len(str(l.split(': ')[1]).split('/')) \
             for l in self.gitlog() if 'git-subtree-dir' in l))
 		if lens:
-			print(lens)
-		for log in self.gitlog():
-			if 'git-subtree-dir' in log:
-				strees.append(log.split(': ')[1])
+			for i in reversed(lens):
+				for log in self.gitlog():
+					if 'git-subtree-dir' in log:
+						if len(str(log.split(': ')[1]).split('/')) == i:
+							strees.append(log.split(': ')[1])
 		return list(set(strees))
 
 	def gitstatus(self):
