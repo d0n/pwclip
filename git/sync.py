@@ -53,8 +53,9 @@ class GitSync(GitRepo):
 		stats = {}
 		trees = self.gitsubtrees()
 		if trees:
+			print(blu('syncing subtrees'), blu('%s...'%yel(tree)))
 			for tree in trees:
-				print(blu('syncing subtree'), blu('%s...'%yel(tree)))
+				print('\t', yel(tree))
 
 	def giter(self, repos, syncall=None):
 		if self.dbg:
