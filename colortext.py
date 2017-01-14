@@ -169,55 +169,21 @@ def tabl(dats, ind=0, iind=0):
 			continue
 		tabbl = '%s\n%s%s'%(tabbl, ' '*ind, i)
 	return tabbl.lstrip('\n')
-'''
-def tabd(dct, ind=2, iind=0):
+
+def tabd(dct, ind=0, spc=1, iind=0):
 	try:
-		lim = int(max(len(str(k)) for k in dct if k)+int(ind))
+		lim = int(max(len(str(k)) for k in dct if k)+spc)
 	except ValueError:
 		return dct
 	for (k, v) in dct.items():
 		if isinstance(v, dict):
-			iind = iind+ind if iind else ind+ind
-			print(ind, iind)
-			dct[k] = '\n%s'%tabd(v, ind, iind)
-	return '\n'.join('%s%s%s %s'%(' '*iind, k, '%s='%str(' '*int(lim-len(str(k)))) if not str(v).startswith('\n') else ':', v) for (k, v) in dct.items())
+			#print(ind, iind)
+			dct[k] = '\n%s'%tabd(
+                v, int(ind if ind else 2), spc, int(iind+ind))
+	return '\n'.join(
+        '%s%s%s %s'%(' '*int(ind+iind), k, '%s='%(
+            ' '*int(lim-len(k))) if not str(v).startswith('\n') else ':', \
+            '%s%s'%(' '*int(spc-1), v)) for (k, v) in sorted(dct.items()))
 
-
-
-'''
-def tabd(dats, ind=0, iind=0):
-	"""
-	this is a function where i try to guess the best indentation for text
-	representation of keyvalue paires with best matching indentation
-	e.g:
-	foo         = bar
-	a           = b
-	blibablubb  = bla
-	^^indent "bar" and "b" as much as needed ("add" is added to each length)
-	"""
-	try:
-		lim = int(max(len(str(k)) for k in dats if k)+int(ind))
-	except ValueError:
-		return dats
-	tabbd = ''
-	try:
-		for (key, val) in sorted(dats.items()):
-			spc = ' '*int(lim-len(str(key)))
-			if isinstance(val, dict):
-				iind = ind if not iind else iind
-				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
-                    val, ind+iind, ind))
-				continue
-			if iind:
-				iind = ind-iind
-			tabbd = str('%s\n%s%s%s = %s'%(
-                tabbd, ' '*ind, key, spc, val)).lstrip('\n')
-	except AttributeError:
-		return tabl(dats, ind)
-	return tabbd.strip('\n')
-
-if __name__ == "__main__":
-	# module debugging area
-	for i in (3, 4, 5):
-		print(', '.join(m for m in dir() if len(m) == i))
-	#exit(1)
+if __name__ == '__main__':
+	exit(1)
