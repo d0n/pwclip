@@ -79,7 +79,7 @@ class GitSync(GitRepo):
 			if branchstats:
 				yield {repo: branchstats}
 			for tree in self.gitsubtrees():
-				print(blu('syncing subtree'), '%s%s'%(yel('%s/%s'%(repo, tree)), blu('...')))
+				print(blu('syncing subtree'), yel(tree), blu('in'), '%s%s'%(yel(repo), blu('...')))
 
 
 
