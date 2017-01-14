@@ -24,6 +24,7 @@ class GitRepo(Command):
 	dbg = None
 	vrb = None
 	lwd = None
+	gitremote = ''
 	_gitdir = None
 	_gitbin = which('git')
 	def __init__(self, *args, **kwargs):

@@ -18,6 +18,7 @@ class RepoSync(GitSync):
 	abr = False
 	syncmodes = ['sync']
 	svnuser = ''
+	gitremote = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
