@@ -3,7 +3,7 @@
 # global imports
 import re
 import os
-from os.path import isfile as _isfile
+from os.path import isfile
 import sys
 
 # local relative imports
@@ -180,13 +180,38 @@ class GitRepo(Command):
 			cmd = '%s show -s --format=%%at' %(self.gitbin)
 		return self.stdo(cmd).strip()
 
-	def gitlog(self):
-		stats, ermsg, ernum = self.oerc(
+	def gitlog(self, *args):
+		if self.dbg:
+			print(bgre(self.gitlog))
+		logs, ermsg, ernum = self.oerc(
             '%s log'%self.gitbin)
-		logs = logs.split('\n')
-		for log in logs:
+		return logs.split('\n')
+
+	def gitsubmods(self, repos):
+		if self.dbg:
+			print(bgre(self.gitsubmods))
+		def __gitmods(gitmodfile):
+			with open(gitmodfile, 'r') as gmf:
+				modlines = gmf.readlines()
+			return [l.split('=')[1].strip() for l in modlines if 'path =' in l]
+		def __modpaths(gitdir):
+			modfile = '%s/.gitmodules'%gitdir
+			if isfile(modfile):
+				return ['%s/%s'%(gitdir, m) for m in __gitmods(modfile)]
+		for repo in repos:
+			mods = __modpaths(repo)
+			if mods:
+				repos = self.gitsubmods(mods) + list(repos)
+		return repos
+
+	def gitsubtrees(self):
+		if self.dbg:
+			print(bgre(self.gitsubtrees))
+		strees = []
+		for log in self.gitlog():
 			if 'git-subtree-dir' in log:
-				print(log)
+				strees.append(log.split(': ')[1])
+		return strees
 
 	def gitstatus(self):
 		if self.dbg:
