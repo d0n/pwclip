@@ -216,7 +216,7 @@ class GitRepo(Command):
             l.split(': ')[1] for l in self.gitlog() if 'git-subtree-dir' in l
             ]))
 		if trees:
-			lens = set([len(t.split('/')) for t in trees])
+			lens = list(set([len(t.split('/')) for t in trees]))
 			print(lens)
 			for i in reversed(lens):
 				print(i)
