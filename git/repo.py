@@ -218,7 +218,7 @@ class GitRepo(Command):
 		if trees:
 			lens = list(set([len(t.split('/')) for t in trees]))
 			for i in reversed(lens):
-				for tree in trees:
+				for tree in sorted(trees):
 					if len(tree.split('/')) == i:
 						if not tree in strees: strees.append(tree)
 		return strees
