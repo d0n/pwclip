@@ -204,9 +204,9 @@ def tabd(dats, ind=0, iind=0):
 		for (key, val) in sorted(dats.items()):
 			spc = ' '*int(lim-len(str(key)))
 			if isinstance(val, dict):
-				iind = ind if not iind else iind
+				iind = 2 if not ind else iind+ind
 				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
-                    val, ind+iind, ind))
+                    val, ind, iind))
 				continue
 			if iind:
 				iind = ind-iind
