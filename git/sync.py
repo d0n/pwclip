@@ -28,6 +28,11 @@ class GitSync(GitRepo):
 			print(bgre(tabd(self.__dict__, 2)))
 		GitRepo.__init__(self, *args, **kwargs)
 
+	def _gitsubtrees(self, repos):
+		for repo in repos:
+			print(repo)
+		return repos
+
 	def _gitsubmods(self, repos):
 		if self.dbg:
 			print(bgre(self._gitsubmods))
@@ -71,6 +76,10 @@ class GitSync(GitRepo):
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
                 self.giter, repos, syncall)))
 		syncall = syncall if syncall else self.abr
+
+		for repo in self._gitsubtrees(repos):
+			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
+
 		for repo in self._gitsubmods(repos):
 			try:
 				chdir(repo)

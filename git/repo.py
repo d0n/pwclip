@@ -180,6 +180,14 @@ class GitRepo(Command):
 			cmd = '%s show -s --format=%%at' %(self.gitbin)
 		return self.stdo(cmd).strip()
 
+	def gitlog(self):
+		stats, ermsg, ernum = self.oerc(
+            '%s log'%self.gitbin)
+		logs = logs.split('\n')
+		for log in logs:
+			if 'git-subtree-dir' in log:
+				print(log)
+
 	def gitstatus(self):
 		if self.dbg:
 			print(bgre(self.gitstatus))
