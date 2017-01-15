@@ -213,7 +213,7 @@ class GitRepo(Command):
 
 	def gittreepush(self, prefix, remote, branch='master'):
 		return int(self.call(
-		    '%s subtree push -P %s %s %s'%(
+            '%s subtree push -P %s %s %s'%(
             self.gitbin, prefix, remote, branch)))
 
 	def gitsubtrees(self):
