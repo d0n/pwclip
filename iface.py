@@ -72,6 +72,12 @@ def _xbytes(iface):
 	if tb > 1024:
 		tu = 'Mb/s'
 		tb = int(tb/1024)
+	if rb > 1024:
+		ru = 'Gb/s'
+		rb = int(rb/1024)
+	if tb > 1024:
+		tu = 'Gb/s'
+		tb = int(tb/1024)
 	return '  %03s %s  %sD %s U%s  %03s %s'%(
         rb if rb else '', vio(ru), blu('<<'),
         yel(iface if iface != 'lo' else ' lo '),

@@ -4,9 +4,10 @@
 #global imports"""
 import os
 import sys
+from io import StringIO
 from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
 from shutil import copy2
-from socket import getfqdn as fqdn, gaierror as NameResolveError
+from socket import getfqdn as fqdn, gaierror as NameResolveError, timeout as sockettimeout
 
 from colortext import bgre, tabd, abort, error, fatal
 from system.user import whoami
@@ -68,15 +69,28 @@ class SecureSHell(object):
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
 		ssh = self._ssh_(remote, reuser)
 		try:
-			(_, out, err) = ssh.exec_command(cmd)
-			if out:
-				print(''.join(out.readlines()))
-			if err:
-				print(''.join(err.readlines()))
-		except (AttributeError, ssh_exception.SSHException) as err:
+			chn = ssh.get_transport().open_session()
+			chn.settimeout(10800)
+			chn.exec_command(cmd)
+			while not chn.exit_status_ready():
+				if chn.recv_ready():
+					och = chn.recv(1024)
+					while och:
+						sys.stdout.write(och.decode())
+						och = chn.recv(1024)
+				if chn.recv_stderr_ready():
+					ech = chn.recv_stderr(1024)
+					while ech:
+						sys.stderr.write(och.decode())
+						ech = chn.recv_stderr(1024)
+			return int(chn.recv_exit_status())
+		except (
+            AttributeError, ssh_exception.SSHException, sockettimeout
+            ) as err:
 			error(err)
 			raise err
-		return int(out.channel.recv_exit_status())
+		except KeyboardInterrupt:
+			abort()
 
 	def stdo(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
