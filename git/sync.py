@@ -67,10 +67,10 @@ class GitSync(GitRepo):
 			print(blu('syncing subtrees: %s'%(yel(getcwd()))))
 			for tree in trees:
 				print(' ', yel(tree))
-				if [m for m in self.syncmodes if m in ('sync', 'pull')]:
+				if [m for m in self.syncmodes if m == 'sync']:
 					self.gittreepull(
                         tree, '%s/%s.git'%(tremote, basename(tree)))
-				if [m for m in self.syncmodes if m in ('sync', 'push')]:
+				if [m for m in self.syncmodes if m == 'sync']:
 					self.gittreepush(
                         tree, '%s/%s.git'%(tremote, basename(tree)))
 
