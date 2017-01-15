@@ -17,7 +17,7 @@ class GitSync(GitRepo):
 	abr = False
 	remote = ''
 	rpodir = ''
-	subtrees = ''
+	subtree = ''
 	syncmodes = ['sync'] # commit|push|pull
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -55,6 +55,11 @@ class GitSync(GitRepo):
 	def treesync(self):
 		if self.dbg:
 			print(bgre(self.treesync))
+		if not self.remote or not self.rpodir or not self.subtree:
+			raise AttributeError(
+                'at least on mandatory attribute was not assigned ' \
+                'remote: %s, rpodir: %s, subtree: %s'%(
+                    self.remote, self.rpodir, self.subtree))
 		stats = {}
 		trees = self.gitsubtrees()
 		if trees and self.gitremote:
