@@ -15,7 +15,9 @@ class GitSync(GitRepo):
 	sh_ = True
 	dbg = False
 	abr = False
-	gitremote = ''
+	remote = ''
+	rpodir = ''
+	subtrees = ''
 	syncmodes = ['sync'] # commit|push|pull
 	def __init__(self, *args, **kwargs):
 		for arg in args:

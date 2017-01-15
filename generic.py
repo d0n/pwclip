@@ -16,9 +16,9 @@ class RepoSync(GitSync):
 	sh_ = True
 	dbg = False
 	abr = False
-	syncmodes = ['sync']
 	svnuser = ''
-	git = ''
+	syncmodes = ['sync']
+	gitkwargs = {}
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -29,7 +29,9 @@ class RepoSync(GitSync):
 		if self.dbg:
 			print(bgre(RepoSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-		GitSync.__init__(self, *args, **kwargs)
+		if 'gitkwargs' in kwargs.keys():
+			gitkwargs = kwargs['gitkwargs']
+		GitSync.__init__(self, *args, **gitkwargs)
 
 	def rposync(self, repotypes, syncall=None):
 		if self.dbg:
