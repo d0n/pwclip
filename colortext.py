@@ -207,7 +207,7 @@ def tabd(dats, ind=0, iind=0):
                 tabbd, ' '*ind, key, spc, val)).lstrip('\n')
 	except AttributeError:
 		return tabl(dats, ind)
-	return tabbd.strip('\n')
+	return tabbd.rstrip('\n')
 
 if __name__ == "__main__":
 	# module debugging area
