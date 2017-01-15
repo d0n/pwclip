@@ -207,7 +207,7 @@ class GitRepo(Command):
 		return repos
 
 	def gittreepull(self, prefix, remote, branch='master'):
-		return int(self.oerc('%s subtree pull -P %s %s'%(
+		return int(self.oerc('%s subtree pull -P %s %s %s'%(
             self.gitbin, prefix, remote, branch)))
 
 	def gittreepush(self, prefix, remote, branch='master'):
