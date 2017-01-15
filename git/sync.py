@@ -63,16 +63,14 @@ class GitSync(GitRepo):
 		stats = {}
 		tremote = '%s:%s/%s'%(self.remote, self.rpodir, self.subtree)
 		trees = self.gitsubtrees()
-		if trees and self.remote:
+		if trees and self.remote and [m for m in self.syncmodes if m == 'sync']:
 			print(blu('syncing subtrees: %s'%(yel(getcwd()))))
 			for tree in trees:
 				print(' ', yel(tree))
-				if [m for m in self.syncmodes if m == 'sync']:
-					self.gittreepull(
-                        tree, '%s/%s.git'%(tremote, basename(tree)))
-				if [m for m in self.syncmodes if m == 'sync']:
-					self.gittreepush(
-                        tree, '%s/%s.git'%(tremote, basename(tree)))
+				self.gittreepull(
+                    tree, '%s/%s.git'%(tremote, basename(tree)))
+				self.gittreepush(
+                    tree, '%s/%s.git'%(tremote, basename(tree)))
 
 	def giter(self, repos, syncall=None):
 		if self.dbg:
