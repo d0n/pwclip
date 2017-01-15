@@ -54,6 +54,7 @@ class GitRepo(Command):
 			self._gitdir = self.__gitdir_(val)
 		else:
 			raise ValueError('directory %s does not exist'%val)
+
 	@property               # gitbin <str>
 	def gitbin(self):
 		return self._gitbin
