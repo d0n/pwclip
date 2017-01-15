@@ -59,6 +59,25 @@ class SecureSHell(object):
 			error(err)
 			raise err
 
+	def call(self, cmd, remote=None, reuser=None):
+		remote = remote if remote else self.remote
+		#print(remote)
+		reuser = reuser if reuser else self.reuser
+		if self.dbg:
+			print(bgre(self.stdo))
+			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self._ssh_(remote, reuser)
+		try:
+			(_, out, err) = ssh.exec_command(cmd)
+			if out:
+				print(''.join(out.readlines()))
+			if err:
+				print(''.join(err.readlines()))
+		except (AttributeError, ssh_exception.SSHException) as err:
+			error(err)
+			raise err
+		return int(out.channel.recv_exit_status())
+
 	def stdo(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
@@ -73,6 +92,7 @@ class SecureSHell(object):
 			error(err)
 			raise err
 		return ''.join(out.readlines())
+
 
 	def stde(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
@@ -102,7 +122,7 @@ class SecureSHell(object):
 		except (AttributeError, ssh_exception.SSHException) as err:
 			error(err)
 			raise err
-		return out.channel.recv_exit_status()
+		return int(out.channel.recv_exit_status())
 
 	def oerc(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
