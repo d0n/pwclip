@@ -97,7 +97,8 @@ class GitSync(GitRepo):
 					branchstats[branch] = stats
 			if self.dbg and branchstats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
-			treestats = self.treesync()
+			if 'subtrees' in self.syncmodes:
+				self.treesync()
 			if branchstats:
 				yield {repo: branchstats}
 
