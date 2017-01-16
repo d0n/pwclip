@@ -140,13 +140,12 @@ command = Command('sh')
 sucommand = Command('sh', 'su')
 
 def sudofork(*args):
-	enr = 0
 	try:
-		return sucommand.call(args)
+		eno = int(sucommand.call(args))
 	except KeyboardInterrupt:
-		_echo_('\n\033[34maborted by keystroke\033[0m\n')
-
-
+		_echo_('\033[34maborted by keystroke\033[0m\n')
+		eno = 1
+	return eno
 
 if __name__ == '__main__':
-	exit(0)
+	exit(1)
