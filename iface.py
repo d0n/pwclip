@@ -10,6 +10,8 @@ import sys
 
 from time import sleep
 
+from curses import initscr, resetty
+
 from netifaces import ifaddresses, AF_INET, AF_INET6
 
 from net.addr import addrmask
@@ -55,7 +57,7 @@ def _rxtx(iface):
         int(tb.split('TX bytes:')[1].split(' ')[0])
 
 def _xbytes(iface):
-	ru, tu = 'b/s', 'b/s'
+	ru, tu = ' b/s', ' b/s'
 	srb, stb = _rxtx(iface)
 	sleep(1)
 	nrb, ntb = _rxtx(iface)
@@ -85,9 +87,14 @@ def _xbytes(iface):
 
 
 def ifthrough(ifaces):
-	while True:
-		print('\033c%s'%'\n\n'.join(
-            _xbytes(i) for i in ifaces if i), end='\r')
+	try:
+		stdin = initscr()
+		stdin.nodelay(1)
+		while stdin.getch() == -1:
+			print('\033c%s'%'\n\n'.join(
+                _xbytes(i) for i in ifaces if i), end='\r')
+	finally:
+		resetty()
 
 
 def anyifconfd():
