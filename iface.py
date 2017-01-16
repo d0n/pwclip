@@ -8,9 +8,9 @@ from os.path import isfile
 
 import sys
 
-from time import sleep
+import curses
 
-from curses import initscr, resetty
+from time import sleep
 
 from netifaces import ifaddresses, AF_INET, AF_INET6
 
@@ -80,21 +80,28 @@ def _xbytes(iface):
 	if tb > 1024:
 		tu = 'Gb/s'
 		tb = int(tb/1024)
-	return '  %03s %s  %sD %s U%s  %03s %s'%(
+	return '%03s %s  %sD %s U%s  %03s %s'%(
         rb if rb else '', vio(ru), blu('<<'),
         yel(iface if iface != 'lo' else ' lo '),
         blu('>>'), tb if tb else '', vio(tu))
 
 
 def ifthrough(ifaces):
+	print(blu('monitoring interface troughput (press any key to exit)'))
+	stdio = curses.initscr()
+	stdio.nodelay(1)
 	try:
-		stdin = initscr()
-		stdin.nodelay(1)
-		while stdin.getch() == -1:
-			print('\033c%s'%'\n\n'.join(
-                _xbytes(i) for i in ifaces if i), end='\r')
+		while stdio.getch() == -1:
+			print('\033c%s\n\n\r%s\r'%(
+                blu('monitoring interface troughput'),
+                '\r\n\n'.join(_xbytes(i) for i in ifaces if i)))
+	except KeyboardInterrupt:
+		pass
 	finally:
-		resetty()
+		curses.nocbreak()
+		curses.echo()
+		curses.endwin()
+		print('\033c%s'%blu('troughput monitor stopped by user input'))
 
 
 def anyifconfd():
