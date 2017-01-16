@@ -29,9 +29,7 @@ class RepoSync(GitSync):
 		if self.dbg:
 			print(bgre(RepoSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-		if 'gitkwargs' in kwargs.keys():
-			gitkwargs = kwargs['gitkwargs']
-		GitSync.__init__(self, *args, **gitkwargs)
+		GitSync.__init__(self, *args, **kwargs)
 
 	def rposync(self, repotypes, syncall=None):
 		if self.dbg:
