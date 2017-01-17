@@ -62,10 +62,11 @@ class SecureSHell(object):
 
 	def call(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
-		#print(remote)
 		reuser = reuser if reuser else self.reuser
+		#print(remote)
+		#print(reuser)
 		if self.dbg:
-			print(bgre(self.stdo))
+			print(bgre(self.call))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
 		ssh = self._ssh_(remote, reuser)
 		try:
