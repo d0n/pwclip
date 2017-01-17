@@ -43,8 +43,12 @@ def orphan(server, background=None, debug=None):
 		pkgs = orphpks.split(' ')
 	if confdps:
 		pkgs = pkgs + confdps.split(' ')
-	if pkgs:
-		if int(xce('apt-get -y purge %s'%(' '.join(p for p in pkgs)))) == 0:
+	atocpks = ssh.stdo('apt-get -y autoremove')
+	pkgs = pkgs + [
+        i.split(' ')[1].strip() for i in atocpks.split('\n') \
+        if i.startswith('Removing ')]
+	if int(xce('apt-get -y purge %s'%(' '.join(p for p in pkgs)))) == 0:
+		if pkgs:
 			return pkgs
 
 
