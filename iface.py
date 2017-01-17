@@ -80,28 +80,29 @@ def _xbytes(iface):
 	if tb > 1024:
 		tu = 'Gb/s'
 		tb = int(tb/1024)
-	return '%03s %s  %sD %s U%s  %03s %s'%(
+	return '  %03s %s  %sD %s U%s  %03s %s'%(
         rb if rb else '', vio(ru), blu('<<'),
         yel(iface if iface != 'lo' else ' lo '),
         blu('>>'), tb if tb else '', vio(tu))
 
 
 def ifthrough(ifaces):
-	print(blu('monitoring interface troughput (press any key to exit)'))
+	print(blu('monitoring network throughput...'))
+	sleep(1.5)
 	stdio = curses.initscr()
 	stdio.nodelay(1)
 	try:
 		while stdio.getch() == -1:
-			print('\033c%s\n\n\r%s\r'%(
-                blu('monitoring interface troughput'),
-                '\r\n\n'.join(_xbytes(i) for i in ifaces if i)))
+			print('\033c\n\r%s\r%s'%(
+                '\r\n\n'.join(_xbytes(i) for i in ifaces if i),
+                blu('\n\n      ( press any key to exit )\r')))
 	except KeyboardInterrupt:
 		pass
 	finally:
 		curses.nocbreak()
 		curses.echo()
 		curses.endwin()
-		print('\033c%s'%blu('troughput monitor stopped by user input'))
+		print('\033c%s'%blu('monitor stopped by user input'))
 
 
 def anyifconfd():
