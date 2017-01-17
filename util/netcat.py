@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 from socket import \
-    socket as _socket, AF_INET, SOCK_STREAM, SOCK_DGRAM, timeout as _timeout
+    socket as _socket, \
+    timeout as _timeout, \
+    SOCK_DGRAM, SHUT_WR, \
+    AF_INET, SOCK_STREAM
 
 from colortext import error
 
