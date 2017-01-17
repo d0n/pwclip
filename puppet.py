@@ -109,7 +109,7 @@ class Puppet(SSH):
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
 		if self.dbg:
-			print(self.puprun)
+			print(bgre(self.puprun))
 		if not bgr:
 			bgr = self.bgr
 		xec = self.call
