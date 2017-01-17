@@ -95,7 +95,7 @@ def ifthrough(ifaces):
 		while stdio.getch() == -1:
 			print('\033c\n\r%s\r%s'%(
                 '\r\n\n'.join(_xbytes(i) for i in ifaces if i),
-                blu('\n\n      ( press any key to exit )\r')))
+                blu('\n\n       ( press any key to exit )\r')))
 	except KeyboardInterrupt:
 		pass
 	finally:
