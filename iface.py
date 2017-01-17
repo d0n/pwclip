@@ -80,10 +80,10 @@ def _xbytes(iface):
 	if tb > 1024:
 		tu = 'Gb/s'
 		tb = int(tb/1024)
-	return '  %03s %s  %sD %s U%s  %03s %s'%(
-        rb if rb else '', vio(ru), blu('<<'),
+	return '  %03s %s  U%s %s %sD  %03s %s'%(
+        tb if tb else '', vio(tu), blu('>>'),
         yel(iface if iface != 'lo' else ' lo '),
-        blu('>>'), tb if tb else '', vio(tu))
+        blu('<<'), rb if rb else '', vio(ru))
 
 
 def ifthrough(ifaces):
