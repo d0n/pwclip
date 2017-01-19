@@ -82,7 +82,7 @@ class SecureSHell(object):
 				if chn.recv_stderr_ready():
 					ech = chn.recv_stderr(1024)
 					while ech:
-						sys.stderr.write(och.decode())
+						sys.stderr.write(ech.decode())
 						ech = chn.recv_stderr(1024)
 			return int(chn.recv_exit_status())
 		except (
