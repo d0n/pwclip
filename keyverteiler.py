@@ -30,7 +30,7 @@ __version__ = '0.0'
 def kvntool(modes, hostgroups=':all', users=[]):
 	ssh = SSH(
         'sh',
-        **{'user': 'keys', 'host': 'keyverteiler-neu.schlund.de'})
+        **{'reuser': 'keys', 'remote': 'keyverteiler-neu.schlund.de'})
 	def __distribute(hostgroup):
 		if not hostgroup.startswith('hg:') and not hostgroup == ':all':
 			hostgroup = 'hg:%s'%(hostgroup)
