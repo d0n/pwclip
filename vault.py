@@ -17,10 +17,14 @@
 
 from sys import stderr
 
-from os import symlink, getcwd, listdir, \
-     makedirs, walk, uname, chdir, remove, readlink, environ, chmod
+from os import \
+    symlink, getcwd, listdir, \
+    makedirs, walk, uname, chdir, \
+    remove, readlink, environ, chmod
 
-from os.path import isdir, islink, isfile, dirname, expanduser, basename
+from os.path import \
+    isdir, islink, isfile, \
+    dirname, expanduser, exists, basename
 
 from psutil import process_iter as piter
 
@@ -50,9 +54,9 @@ class WeakVaulter(SSH, GPGTool):
 	home = expanduser('~')
 	user = whoami()
 	host = uname()[1]
-	vault = '%s/.vault'%home
-	weakz = '%s/.weaknez'%home
-	stamp = '%s.stamp'%vault
+	_vault = '%s/.vault'%home
+	_weakz = '%s/.weaknez'%home
+	stamp = '%s.stamp'%_vault
 	recvs = []
 	remote = ''
 	reuser = user
@@ -75,6 +79,28 @@ class WeakVaulter(SSH, GPGTool):
 			print(bgre(tabd(self.__dict__, 4)))
 		SSH.__init__(self, *args, **kwargs)
 		GPGTool.__init__(self, *args, **kwargs)
+
+	@property                # weakz <str>
+	def weakz(self):
+		return self._abspath(self._weakz)
+	@weakz.setter
+	def weakz(self, val):
+		self._weakz = val
+
+	@property                # vault <str>
+	def vault(self):
+		return self._abspath(self._vault)
+	@vault.setter
+	def vault(self, val):
+		self._vault = val
+
+	@staticmethod
+	def _abspath(path):
+		if path.startswith('~'):
+			path = expanduser(path)
+		if not path.startswith('/'):
+			path = '%s/%s'%(getcwd(), path)
+		return path
 
 	def _fixmod_(self):
 		if self.dbg:
@@ -116,6 +142,8 @@ class WeakVaulter(SSH, GPGTool):
 	def _clean_(self):
 		if self.dbg:
 			print(bgre(self._clean_))
+		if self.nod:
+			return
 		if not isdir(self.weakz):
 			for ln in listdir(self.home):
 				if not ln.startswith('.'):
@@ -138,8 +166,8 @@ class WeakVaulter(SSH, GPGTool):
 					if not islink(hl) and isdir('%s/%s/%s'%(self.home, whh, ln)):
 						if isdir(hl) and not isdir('%s.1'%hl):
 							move(hl, '%s.1'%hl)
-						elif isdir('%s.1'%hl):
-							remove('%s.1'%hl)
+						if isdir('%s.1'%hl) and isdir(hl) and not islink(hl):
+							rmtree(hl)
 						symlink('%s/%s'%(whh, ln), ln)
 			finally:
 				chdir(pwd)
@@ -242,20 +270,23 @@ class WeakVaulter(SSH, GPGTool):
 			return True
 
 	def checkvault(self, vault):
-		with open(vault, 'r') as vfh:
-			vlt = vfh.readlines()
-		if (
-              vlt[0] == '-----BEGIN PGP MESSAGE-----\n' and \
-              vlt[-1] == '-----END PGP MESSAGE-----\n'):
-			return True
+		try:
+			with open(vault, 'r') as vfh:
+				vlt = vfh.readlines()
+			if (
+                  vlt[0] == '-----BEGIN PGP MESSAGE-----\n' and \
+                  vlt[-1] == '-----END PGP MESSAGE-----\n'):
+				return True
+		except FileNotFoundError:
+			return False
 
 	def envault(self):
 		if self.dbg:
 			print(bgre(self.envault))
-		if not isdir(self.weakz):
+		if not exists(self.weakz):
 			return
 		try:
-			if self.weakz and isdir(dirname(self.weakz)):
+			if isdir(dirname(self.weakz)):
 				chdir(dirname(self.weakz))
 			if self._checkdiff():
 				try:
@@ -266,32 +297,29 @@ class WeakVaulter(SSH, GPGTool):
 				self.encrypt(
                     str(dump(self._pathdict(basename(self.weakz)))),
                     output=self.vault, recipients=self.recvs)
-			try:
-				self._movesocks_(
-					'%s/%s/.gnupg'%(self.weakz, self.host),
-					'%s/.gnupg.1'%self.home)
-			except FileNotFoundError:
-				pass
 			if not self.nod and self.checkvault(self.vault):
+				try:
+					self._movesocks_(
+                        '%s/%s/.gnupg'%(self.weakz, self.host),
+                        '%s/.gnupg.1'%self.home)
+				except FileNotFoundError:
+					pass
 				rmtree(self.weakz)
 				self._rmlns_()
+				self._fixmod_()
 			chmod(self.vault, 0o600)
-			self._fixmod_()
 		finally:
 			chdir(self._pwd)
 
 	def unvault(self, force=None):
 		if self.dbg:
 			print(bgre(self.unvault))
-		if not force:
-			if not isfile(self.vault):
-				return error(
-					'vault', self.vault, 'does not exist or is inaccessable')
-			elif isdir(self.weakz):
-				return
+		if not isfile(self.vault):
+			return error(
+                'vault', self.vault, 'does not exist or is inaccessable')
 		try:
-			if self.weakz and isdir(dirname(self.weakz)):
-				chdir(dirname(self.weakz))
+			if isdir(dirname(self.vault)):
+				chdir(dirname(self.vault))
 			with open(self.vault, 'r') as cfh:
 				try:
 					self._dictpath(load(str(self.decrypt(cfh.read()))))
@@ -304,7 +332,8 @@ class WeakVaulter(SSH, GPGTool):
                     '%s/%s/.gnupg'%(self.weakz, self.host))
 			except (OSError, FileNotFoundError):
 				pass
-			self._fixmod_()
+			if not self.nod:
+				self._fixmod_()
 		finally:
 			chdir(self._pwd)
 
