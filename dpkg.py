@@ -26,6 +26,8 @@ class DePyKG(Command):
 			key = '_%s'%(key)
 			if hasattr(self, key) and not isinstance(val, bool):
 				setattr(self, key, val)
+		self.packages = [
+            p.split()[1] for p in self.stdo(self.pkgbin, '-l').split('\n')]
 		if self.dbg:
 			print(bgre(DePyKG.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
@@ -35,8 +37,7 @@ class DePyKG(Command):
 		return self._pkgbin
 
 	def isinstalled(self, package):
-		if self.erno(self.pkgbin, '-s', package) == 0:
-			return True
+		if package in self.packages: return True
 
 	def partlyinstalleds(self):
 		return [d for d in self.stdo(
