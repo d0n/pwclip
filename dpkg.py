@@ -17,17 +17,15 @@ __version__ = '0.1'
 class DePyKG(Command):
 	dbg = None
 	_pkgbin = which('dpkg')
+	co = Command('sh_').stdo
+	packages = [p.split() for p in co(_pkgbin, '-l').split('\n') if p]
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
-			if hasattr(self, key) and not isinstance(val, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
-		self.packages = [
-            p.split()[1] for p in self.stdo(self.pkgbin, '-l').split('\n')]
 		if self.dbg:
 			print(bgre(DePyKG.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
@@ -37,11 +35,16 @@ class DePyKG(Command):
 		return self._pkgbin
 
 	def isinstalled(self, package):
-		if package in self.packages: return True
+		if self.dbg:
+			print(bgre(self.isinstalled))
+		for pkg in self.packages:
+			if len(pkg) < 2:
+				continue
+			if pkg[1].split(':')[0] == package:
+				return True
 
 	def partlyinstalleds(self):
-		return [d for d in self.stdo(
-            self.pkgbin, '-l').split('\n') if d.startswith('rc')]
+		return [p[1] for p in  self.packages if p and p[0] == 'rc']
 
 
 if __name__ == '__main__':
