@@ -45,7 +45,7 @@ class GitSync(GitRepo):
 		if [m for m in self.syncmodes if m in ('sync', 'commit')]:
 			if status:
 				self.add()
-				self.commit(status)
+				self.commit('%s %s'%(status, branch))
 		_, ahead, _ = self.gitstatus()
 		if [m for m in self.syncmodes if m in ('sync', 'push')]:
 			if ahead: self.push(branch)
