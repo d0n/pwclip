@@ -207,11 +207,15 @@ class GitRepo(Command):
 		return repos
 
 	def gittreepull(self, prefix, remote, branch='master'):
+		if self.dbg:
+			print(bgre(self.gittreepush))
 		return int(self.call(
             '%s subtree pull -P %s %s %s -m "%s merge commit"'%(
             self.gitbin, prefix, remote, branch, branch)))
 
 	def gittreepush(self, prefix, remote, branch='master'):
+		if self.dbg:
+			print(bgre(self.gittreepush))
 		return int(self.call(
             '%s subtree push -P %s %s %s'%(
             self.gitbin, prefix, remote, branch)))
