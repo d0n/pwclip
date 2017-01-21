@@ -58,7 +58,7 @@ class GitSync(GitRepo):
 			print(bgre(self.treesync))
 		if not self.remote or not self.rpodir or not self.subtree:
 			raise AttributeError(
-                'at least on mandatory attribute was not assigned ' \
+                'at least one mandatory attribute was not assigned ' \
                 'remote: %s, rpodir: %s, subtree: %s'%(
                     self.remote, self.rpodir, self.subtree))
 		stats = {}
