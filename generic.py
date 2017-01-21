@@ -31,8 +31,8 @@ class RepoSync(GitSync):
 			print(bgre(RepoSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 		if 'gitkwargs' in kwargs.keys():
-			kwargs = kwargs['gitkwargs']
-		GitSync.__init__(self, *args, **kwargs)
+			self.gitkwargs = kwargs['gitkwargs']
+		GitSync.__init__(self, *args, **self.gitkwargs)
 
 	def rposync(self, repotypes, syncall=None):
 		if self.dbg:
@@ -41,9 +41,9 @@ class RepoSync(GitSync):
 		repostats = []
 		if 'git' in repotypes.keys():
 			for rbstat in self.giter(repotypes['git'], syncall):
+				if self.tsy:
+					rbstat['treesync'] = self.treesync()
 				repostats.append(rbstat)
-			if self.tsy:
-				rbstat['treesync'] = self.treesync()
 		if 'svn' in repotypes.keys():
 			svnopts = ' --username=%s'%self.svnuser if self.svnuser else ''
 			stats = {}

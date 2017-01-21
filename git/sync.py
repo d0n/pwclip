@@ -4,7 +4,7 @@
 import re
 import sys
 from os import chdir, getcwd
-from os.path import basename, dirname, isfile
+from os.path import basename, dirname, isfile, expanduser
 
 # local relative imports
 from colortext import blu, yel, bgre, tabd, error
@@ -30,6 +30,8 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre(GitSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+		if self.remote:
+			kwargs['gitremote'] = self.remote
 		GitRepo.__init__(self, *args, **kwargs)
 
 	def gitsync(self, branch=None):
