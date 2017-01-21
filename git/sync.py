@@ -65,7 +65,6 @@ class GitSync(GitRepo):
 		tremote = '%s:%s/%s'%(self.remote, self.rpodir, self.subtree)
 		trees = self.gitsubtrees(tremote)
 		if trees and self.remote:
-			self.gitsync()
 			print(blu('syncing subtrees: %s'%(yel(getcwd()))))
 			for tree in trees:
 				if tree == 'lib':
@@ -99,8 +98,6 @@ class GitSync(GitRepo):
 					branchstats[branch] = stats
 			if self.dbg and branchstats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
-			if self.tsy:
-				self.treesync()
 			if branchstats:
 				yield {repo: branchstats}
 
