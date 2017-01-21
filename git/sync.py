@@ -63,8 +63,8 @@ class GitSync(GitRepo):
                     self.remote, self.rpodir, self.subtree))
 		stats = {}
 		tremote = '%s:%s/%s'%(self.remote, self.rpodir, self.subtree)
-		trees = self.gitsubtrees()
-		if trees and self.remote and [m for m in self.syncmodes if m == 'sync']:
+		trees = self.gitsubtrees(tremote)
+		if trees and self.remote:
 			print(blu('syncing subtrees: %s'%(yel(getcwd()))))
 			for tree in trees:
 				if tree == 'lib':

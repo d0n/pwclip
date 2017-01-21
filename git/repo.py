@@ -216,7 +216,7 @@ class GitRepo(Command):
             '%s subtree push -P %s %s %s'%(
             self.gitbin, prefix, remote, branch)))
 
-	def gitsubtrees(self):
+	def gitsubtrees(self, treemote):
 		if self.dbg:
 			print(bgre(self.gitsubtrees))
 		strees = []
