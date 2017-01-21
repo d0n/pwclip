@@ -107,6 +107,5 @@ class GitSync(GitRepo):
 				rpobranchstats[repo]['treesync'] = self.treesync()
 		return rpobranchstats
 
-
 if __name__ == '__main__':
 	exit(1)

@@ -43,6 +43,8 @@ class RepoSync(GitSync):
 			rbstat = self.giter(repotypes['git'], syncall)
 			if rbstat:
 				repostats.append(rbstat)
+			if self.tsy:
+				rbstat['treesync'] = self.treesync()
 		if 'svn' in repotypes.keys():
 			svnopts = ' --username=%s'%self.svnuser if self.svnuser else ''
 			stats = {}
