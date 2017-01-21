@@ -13,8 +13,9 @@ from repo.git import GitRepo
 
 class GitSync(GitRepo):
 	sh_ = True
-	dbg = False
-	abr = False
+	dbg = None
+	abr = None
+	tsy = None
 	remote = ''
 	rpodir = ''
 	subtree = ''
@@ -97,7 +98,7 @@ class GitSync(GitRepo):
 					branchstats[branch] = stats
 			if self.dbg and branchstats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
-			if 'subtrees' in self.syncmodes:
+			if self.tsy:
 				self.treesync()
 			if branchstats:
 				yield {repo: branchstats}

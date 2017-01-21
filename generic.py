@@ -14,8 +14,9 @@ __version__ = '0.1'
 
 class RepoSync(GitSync):
 	sh_ = True
-	dbg = False
-	abr = False
+	dbg = None
+	abr = None
+	tsy = None
 	svnuser = ''
 	syncmodes = ['sync']
 	gitkwargs = {}
