@@ -101,8 +101,8 @@ class GitSync(GitRepo):
 				if stats:
 					rpobranchstats[repo][branch] = stats
 			if self.dbg and stats:
-				print(bgre('{%s: %s}'%(repo, branchstats)))
-				rpobranchstats[repo] = branchstats
+				print(bgre('{%s: %s}'%(repo, stats)))
+				rpobranchstats[repo] = stats
 			if self.tsy:
 				rpobranchstats[repo]['treesync'] = self.treesync()
 		return rpobranchstats
