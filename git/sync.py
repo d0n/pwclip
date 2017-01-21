@@ -83,6 +83,7 @@ class GitSync(GitRepo):
 			print(bgre('%s\n  repos = %s\n  syncall = %s'%(
                 self.giter, repos, syncall)))
 		syncall = syncall if syncall else self.abr
+		rpobranchstats = {}
 		for repo in self.gitsubmods(repos):
 			try:
 				chdir(repo)
@@ -90,7 +91,7 @@ class GitSync(GitRepo):
 				error('path', repo, 'does not exist and has been omitted')
 				continue
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
-			branchstats = {}
+			rpobranchstats[repo] = {}
 			head = self._head()
 			branchs = [head]
 			if syncall:
@@ -98,11 +99,14 @@ class GitSync(GitRepo):
 			for branch in branchs:
 				stats = self.gitsync(branch)
 				if stats:
-					branchstats[branch] = stats
-			if self.dbg and branchstats:
+					rpobranchstats[repo][branch] = stats
+			if self.dbg and stats:
 				print(bgre('{%s: %s}'%(repo, branchstats)))
-			if branchstats:
-				yield {repo: branchstats}
+				rpobranchstats[repo] = branchstats
+			if self.tsy:
+				rpobranchstats[repo]['treesync'] = self.treesync()
+		return rpobranchstats
+
 
 if __name__ == '__main__':
 	exit(1)
