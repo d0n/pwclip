@@ -88,7 +88,7 @@ class GitSync(GitRepo):
 			try:
 				chdir(repo)
 			except FileNotFoundError:
-				error('path', repo, 'does not exist and has been omitted')
+				error('path ', repo, ' does not exist and has been omitted')
 				continue
 			print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 			rpobranchstats[repo] = {}

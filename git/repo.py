@@ -242,10 +242,10 @@ class GitRepo(Command):
             '%s status -b --porcelain'%self.gitbin)
 		if ermsg or ernum != 0:
 			error(
-                'command', 'git status',
-                'exited with errorcode',
-                '%d'%ernum, 'and message:\n',
-                '%s'%ermsg)
+                'command ', 'git status ',
+                'exited with errorcode ',
+                '%d '%ernum, 'and message:\n',
+                '%s '%ermsg)
 		stats = stats.split('\n')
 		ablines = [l for l in stats if l.startswith('##')]
 		anum, bnum = 0, 0
