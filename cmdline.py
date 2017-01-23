@@ -181,7 +181,7 @@ def cli():
 		args.lst = None
 	for a in (args.lst, args.add, args.chg):
 		if a and len(a) < 2:
-			fatal('input', a, 'is too short')
+			fatal('input ', a, ' is too short')
 	if args.gpgv:
 		pkwargs['binary'] = 'gpg'
 
@@ -193,7 +193,7 @@ def cli():
 				fatal('could not decrypt')
 			error('the passcrypt file is empyty')
 		elif __ent and args.lst and not __ent[args.lst]:
-			fatal('could not find entry for', args.lst, 'in', pkwargs['crypt'])
+			fatal('could not find entry for ', args.lst, ' in ', pkwargs['crypt'])
 		elif args.lst and __ent:
 			__pc = __ent[args.lst]
 			if __pc:
@@ -202,16 +202,16 @@ def cli():
 				forkwaitclip(__pc[0], poclp, boclp, args.time)
 	elif args.add:
 		if not pcm.adpw(args.add):
-			fatal('could not add entry', args.add)
+			fatal('could not add entry ', args.add)
 		__ent = pcm.lspw(args.add)
 	elif args.chg:
 		if not pcm.chpw(args.chg):
-			fatal('could not change entry', args.chg)
+			fatal('could not change entry ', args.chg)
 		__ent = pcm.lspw(args.chg)
 	elif args.rms:
 		for r in args.rms:
 			if not pcm.rmpw(r):
-				fatal('could not delete entry', r)
+				fatal('could not delete entry ', r)
 		__ent = pcm.lspw()
 	else:
 		__in = xinput()
@@ -221,8 +221,8 @@ def cli():
 		if __ent:
 			if not __in in __ent.keys() or not __ent[__in]:
 				fatal(
-                    'could not find entry for',
-                    __in, 'in', pkwargs['crypt'])
+                    'could not find entry for ',
+                    __in, ' in ', pkwargs['crypt'])
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
