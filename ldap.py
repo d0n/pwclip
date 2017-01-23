@@ -149,7 +149,7 @@ class LDAPSearch(object):
 					print(self._result(
                         self._translator(result['raw_attributes'])), '\n')
 			else:
-				error('ldap search returned no hits for', pattern)
+				error('ldap search returned no hits for ', pattern)
 		elif mode == 'fun':
 			typ = 'cn'
 			if len(patterns) < 2:
@@ -184,7 +184,7 @@ class LDAPSearch(object):
                     self._translator(results[0]['raw_attributes'])))
 			else:
 				error(
-                    'ldap search returned no hits for',
+                    'ldap search returned no hits for ',
                     ' '.join(p for p in patterns))
 		elif mode == 'ins':
 			typ = 'o'
@@ -196,9 +196,9 @@ class LDAPSearch(object):
                             results[0]['raw_attributes'])), '\n'
                         )
 				else:
-					error('ldap search returned no hits for', pattern)
+					error('ldap search returned no hits for ', pattern)
 		else:
-			error('unknown mode', mode)
+			error('unknown mode ', mode)
 
 
 
