@@ -48,18 +48,18 @@ from secrecy import GPGTool
 
 class WeakVaulter(SSH, GPGTool):
 	dbg = None
-	_pwd = getcwd()
 	rem = None
 	nod = None
+	nln = None
 	home = expanduser('~')
 	user = whoami()
 	host = uname()[1]
-	_vault = '%s/.vault'%home
-	_weakz = '%s/.weaknez'%home
-	stamp = '%s.stamp'%_vault
 	recvs = []
 	remote = ''
 	reuser = user
+	_pwd = getcwd()
+	_vault = '%s/.vault'%home
+	_weakz = '%s/.weaknez'%home
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
@@ -71,12 +71,11 @@ class WeakVaulter(SSH, GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		self._clean_()
+		if not self.nln:
+			self._clean_()
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-			print(' ', bgre(self.__init__))
-			print(bgre(tabd(self.__dict__, 4)))
 		SSH.__init__(self, *args, **kwargs)
 		GPGTool.__init__(self, *args, **kwargs)
 
@@ -98,7 +97,7 @@ class WeakVaulter(SSH, GPGTool):
 	def _abspath(path):
 		if path.startswith('~'):
 			path = expanduser(path)
-		if not path.startswith('/'):
+		elif not path.startswith('/'):
 			path = '%s/%s'%(getcwd(), path)
 		return path
 
@@ -298,15 +297,13 @@ class WeakVaulter(SSH, GPGTool):
                     str(dump(self._pathdict(basename(self.weakz)))),
                     output=self.vault, recipients=self.recvs)
 			if not self.nod and self.checkvault(self.vault):
-				try:
-					self._movesocks_(
-                        '%s/%s/.gnupg'%(self.weakz, self.host),
-                        '%s/.gnupg.1'%self.home)
-				except FileNotFoundError:
-					pass
 				rmtree(self.weakz)
+			if not self.nln:
 				self._rmlns_()
 				self._fixmod_()
+				self._movesocks_(
+                    '%s/%s/.gnupg'%(self.weakz, self.host),
+                    '%s/.gnupg.1'%self.home)
 			chmod(self.vault, 0o600)
 		finally:
 			chdir(self._pwd)
@@ -318,22 +315,15 @@ class WeakVaulter(SSH, GPGTool):
 			return error(
                 'vault', self.vault, 'does not exist or is inaccessable')
 		try:
-			if isdir(dirname(self.vault)):
-				chdir(dirname(self.vault))
 			with open(self.vault, 'r') as cfh:
-				try:
-					self._dictpath(load(str(self.decrypt(cfh.read()))))
-				except RuntimeError:
-					return
-			try:
+				self._dictpath(load(str(self.decrypt(cfh.read()))))
+			if not self.nln:
 				self._mklns_(self.weakz)
 				self._movesocks_(
                     '%s/.gnupg.1'%self.home,
                     '%s/%s/.gnupg'%(self.weakz, self.host))
-			except (OSError, FileNotFoundError):
-				pass
-			if not self.nod:
 				self._fixmod_()
+		except (OSError, FileNotFoundError):
+			pass
 		finally:
 			chdir(self._pwd)
-

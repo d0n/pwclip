@@ -53,7 +53,10 @@ class GPGTool(object):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
-			print(bgre(tabd(self.__dict__, 2)))
+			print(bgre(tabd(GPGTool.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
+
 
 	@property                # keyring <str>
 	def keyring(self):
