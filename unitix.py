@@ -58,9 +58,8 @@ class UnitixUsers(SSH):
 					'adduser', user, group, host=self.acclog, user='root')
 				if rtc != 0:
 					error(
-						'while adding user', user, 'to group',
-						group, 'the following error occoured:\n', err
-						)
+                        'while adding user ', user, ' to group ',
+                        group, ' the following error occoured:\n', err)
 			message = '%s %s %s\n%s\n'%(
 				blu('successfully added user'), yel(user),
 				blu('to group(s):'), '\n'.join(byel(g) for g in groups))
@@ -79,9 +78,8 @@ class UnitixUsers(SSH):
 						'deluser', user, group, host=self.acclog, user='root')
 					if rtc != 0:
 						error(
-							'while deleting user', user, 'from group',
-							group, 'the following error occoured:\n', err
-							)
+                            'while deleting user ', user, ' from group',
+                            group, ' the following error occoured:\n', err)
 				message = '%s %s %s\n%s\n'%(
 					blu('successfully deleted user'), yel(user),
 					blu('from group(s):'), '\n'.join(byel(g) for g in grps))

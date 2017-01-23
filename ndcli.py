@@ -38,8 +38,8 @@ def ndcli(pattern):
 		if isip:
 			if pattern.endswith('.0') or isnet:
 				error(
-				    'entered pattern', pattern,
-				    'is a netaddress but no mask defined')
+                    'entered pattern ', pattern,
+                    ' is a netaddress but no mask defined')
 				print(blu('trying to guess...'))
 				ip = re.sub(r'\d$', '1', pattern)
 				out = c.stdx(ndcli+' show ip '+str(ip))

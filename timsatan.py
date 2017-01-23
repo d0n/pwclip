@@ -292,7 +292,7 @@ class TimeSatan(Cmd, Satan):
 				if __d == 'EOF':
 					return self.__exit(True)
 				return error(
-                    'need duration', __d, 'is not')
+                    'need duration ', __d, ' is not')
 			__e['duration'] = __d
 			if len(frags) > 1 and not __e['comment']:
 				__e['comment'] = ' '.join(frags[:-1])
@@ -317,7 +317,7 @@ class TimeSatan(Cmd, Satan):
 	def do_list(self, line):
 		frags = line.split()
 		if len(frags) > 1:
-			return error('list does only accept the "day" argument, got',
+			return error('list does only accept the "day" argument, got ',
                 frags)
 		elif len(frags) == 1:
 			self.do_today(frags[0])
@@ -355,7 +355,7 @@ class TimeSatan(Cmd, Satan):
 	def do_train(self, line):
 		__e = {'task': 'train', 'project': 'p.nod2'}
 		if len(line.split()) < 2:
-			return error('comment missing, got', __e, line)
+			return error('comment missing, got ', __e, line)
 		self.default(line, __e)
 
 	def do_jourfixe(self, line):
@@ -374,7 +374,7 @@ class TimeSatan(Cmd, Satan):
 		if not len(line.split()) > 1:
 			if self._test_duration(line.split()[-1]):
 				if not 'comment' in __e.keys():
-					return error('comment missing, got', __e)
+					return error('comment missing, got ', __e)
 			line = '1 %s'%line
 		self.default(line, margs=__e)
 	def do_teammeeting(self, line):
