@@ -175,6 +175,6 @@ class DirYamlVault(GPGTool):
 			with open(self.vault, 'r') as cfh:
 				self._dictpath(load(str(self.decrypt(cfh.read()))))
 		except (OSError, FileNotFoundError) as err:
-			error(err,  self.vault, 'does not exist or is inaccessable')
+			error('%s '%err,  self.vault, ' does not exist or is inaccessable')
 		finally:
 			chdir(self._pwd)

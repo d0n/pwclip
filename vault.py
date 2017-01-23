@@ -117,14 +117,13 @@ class WeakVaulter(SSH, GPGTool):
 	def _movesocks_(self, src, trg):
 		if self.dbg:
 			print(bgre(self._movesocks_))
-		socks = [
-            f for f in listdir(src) if f.startswith('S')]
-		socks.append('random_seed')
-		for s in socks:
-			try:
+		try:
+			socks = ['random_seed'] + [
+                f for f in listdir(src) if f.startswith('S')]
+			for s in socks:
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
-			except FileNotFoundError:
-				pass
+		except FileNotFoundError:
+			pass
 
 	def _copynews(self):
 		if self.dbg:
@@ -313,7 +312,7 @@ class WeakVaulter(SSH, GPGTool):
 			print(bgre(self.unvault))
 		if not isfile(self.vault):
 			return error(
-                'vault', self.vault, 'does not exist or is inaccessable')
+                'vault ', self.vault, ' does not exist or is inaccessable')
 		try:
 			with open(self.vault, 'r') as cfh:
 				self._dictpath(load(str(self.decrypt(cfh.read()))))
