@@ -153,7 +153,7 @@ def fatal(*args, **kwargs):
 			msgs.append(bred(arg))
 		else:
 			msgs.append(yel(arg))
-	__puke('%s\n'%' '.join(msg for msg in msgs))
+	__puke('%s\n'%''.join(msg for msg in msgs))
 	exit(1)
 
 def tabs(dat, ind=0, ll=80):
