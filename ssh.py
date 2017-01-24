@@ -46,7 +46,7 @@ class SecureSHell(object):
 			raise err
 		return ssh
 
-	def run(self, cmd, remote=None, reuser=None):
+	def rrun(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -60,7 +60,7 @@ class SecureSHell(object):
 			error(err)
 			raise err
 
-	def call(self, cmd, remote=None, reuser=None):
+	def rcall(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		reuser = reuser if reuser else self.reuser
 		#print(remote)
@@ -93,7 +93,7 @@ class SecureSHell(object):
 		except KeyboardInterrupt:
 			abort()
 
-	def stdx(self, cmd, remote=None, reuser=None):
+	def rstdx(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -109,7 +109,7 @@ class SecureSHell(object):
 		return ''.join(out.readlines()), ''.join(err.readlines())
 
 
-	def stdo(self, cmd, remote=None, reuser=None):
+	def rstdo(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -125,7 +125,7 @@ class SecureSHell(object):
 		return ''.join(out.readlines())
 
 
-	def stde(self, cmd, remote=None, reuser=None):
+	def rstde(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -140,7 +140,7 @@ class SecureSHell(object):
 			raise err
 		return ''.join(err.readlines())
 
-	def erno(self, cmd, remote=None, reuser=None):
+	def rerno(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -155,7 +155,7 @@ class SecureSHell(object):
 			raise err
 		return int(out.channel.recv_exit_status())
 
-	def oerc(self, cmd, remote=None, reuser=None):
+	def roerc(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -199,7 +199,7 @@ class SecureSHell(object):
 		remote = remote if remote else self.remote
 		reuser = reuser if reuser else self.reuser
 		smt = int(str(int(os.stat(src).st_mtime))[:6])
-		rmt = self.stdo(
+		rmt = self.rstdo(
             'stat -c %%Y %s'%trg, remote=remote, reuser=user)
 		if rmt:
 			rmt = int(str(rmt)[:6])
@@ -218,10 +218,10 @@ class SecureSHell(object):
 	def _remotestamp(self, trg, remote, reuser):
 		if self.dbg:
 			print(bgre(self._remotestamp))
-		tat = self.stdo(
-            'stat -c %%X %s'%(trg), remote, reuser).strip()
-		tmt = self.stdo(
-            'stat -c %%Y %s'%(trg), remote, reuser).strip()
+		tat = self.rstdo(
+            'stat -c %%X %s'%trg, remote, reuser).strip()
+		tmt = self.rstdo(
+            'stat -c %%Y %s'%trg, remote, reuser).strip()
 		#print(tat)
 		if tat and tmt: return int(tat), int(tmt)
 		return None, None
@@ -234,9 +234,9 @@ class SecureSHell(object):
 	def _setrstamp(self, trg, atime, mtime, remote, reuser):
 		if self.dbg:
 			print(bgre(self._setrstamp))
-		self.stdo(
+		self.rstdo(
             'touch -a --date=@%s %s'%(atime, trg), remote, reuser)
-		self.stdo(
+		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
 	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
