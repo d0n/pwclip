@@ -12,13 +12,7 @@
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
 #
-"""module disclaimer"""
-
-# global & stdlib imports
-#import re
-import os
-import sys
-
+"""unitix users module"""
 # local relative imports
 from colortext import blu, red, yel, byel, error, fatal
 from net import SecureSHell as SSH

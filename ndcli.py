@@ -30,29 +30,28 @@ __version__ = '0.1'
 def ndcli(pattern):
 	#if not DePyKG().isinstalled('ui-ndcli'):
 	#	fatal('packet', 'ui-ndcli', 'is not installed')
-	ndcli = which('ndcli')
+	ndclibin = which('ndcli')
 	def __ndclicmd(pattern):
-		ndclicmd = None
-		isip = re.search('^(\d{1,3}\.){3}\d{1,3}$', pattern)
-		isnet = re.search('^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$', pattern)
+		ndclicmd = ''
+		isip = re.search(r'^(\d{1,3}\.){3}\d{1,3}$', pattern)
+		isnet = re.search(r'^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$', pattern)
 		if isip:
 			if pattern.endswith('.0') or isnet:
-				error(
-                    'entered pattern ', pattern,
+				error('entered pattern ', pattern, \
                     ' is a netaddress but no mask defined')
 				print(blu('trying to guess...'))
 				ip = re.sub(r'\d$', '1', pattern)
-				out = c.stdx(ndcli+' show ip '+str(ip))
+				out = c.stdx('%s show ip %s'%(ndclibin, ip))
 				for line in str(out).split('\\n'):
 					if 'subnet' in line:
-						return '%s list pools %s'%(ndcli, line.split(':')[1])
+						return '%s list pools %s'%(ndclibin, line.split(':')[1])
 			else:
-				return '%s show ip %s'%(ndcli, pattern)
+				return '%s show ip %s'%(ndclibin, pattern)
 		else:
 			ip = askdns(pattern)
 			if ip:
-				return '%s show ip %s'%(ndcli, ip)
-			return '%s list pools %s'%(ndcli, pattern)
+				return '%s show ip %s'%(ndclibin, ip)
+			return '%s list pools %s'%(ndclibin, pattern)
 	cmd = __ndclicmd(pattern)
 	return c.stdo(cmd)
 
