@@ -93,6 +93,22 @@ class SecureSHell(object):
 		except KeyboardInterrupt:
 			abort()
 
+	def stdx(self, cmd, remote=None, reuser=None):
+		remote = remote if remote else self.remote
+		#print(remote)
+		reuser = reuser if reuser else self.reuser
+		if self.dbg:
+			print(bgre(self.stdo))
+			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self._ssh_(remote, reuser)
+		try:
+			_, out, err = ssh.exec_command(cmd)
+		except (AttributeError, ssh_exception.SSHException) as err:
+			error(err)
+			raise err
+		return ''.join(out.readlines()), ''.join(err.readlines())
+
+
 	def stdo(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
 		#print(remote)
