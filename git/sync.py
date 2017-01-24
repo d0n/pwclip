@@ -4,7 +4,8 @@
 import re
 import sys
 from os import chdir, getcwd
-from os.path import basename, dirname, isfile, expanduser
+from os.path import basename, dirname, isfile, isdir, expanduser
+from shutil import rmtree
 
 # local relative imports
 from colortext import blu, yel, bgre, tabd, error
@@ -77,6 +78,11 @@ class GitSync(GitRepo):
                     tree, '%s/%s.git'%(tremote, basename(tree)))
 				self.gittreepush(
                     tree, '%s/%s.git'%(tremote, basename(tree)))
+		try:
+			print('%s/.git/subtree-cache'%self.rpodir)
+			#rmtree('%s/.git/subtree-cache'%self.rpodir)
+		except FileNotFoundError as err:
+			error(err)
 
 	def giter(self, repos, syncall=None):
 		if self.dbg:
