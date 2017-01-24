@@ -111,6 +111,11 @@ class GitSync(GitRepo):
 				rpobranchstats[repo] = stats
 			if self.tsy:
 				rpobranchstats[repo]['treesync'] = self.treesync()
+		try:
+			print('%s/.git/subtree-cache'%getcwd())
+			#rmtree('%s/.git/subtree-cache'%self.rpodir)
+		except FileNotFoundError as err:
+			error(err)
 		return rpobranchstats
 
 if __name__ == '__main__':
