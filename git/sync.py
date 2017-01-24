@@ -78,6 +78,11 @@ class GitSync(GitRepo):
                     tree, '%s/%s.git'%(tremote, basename(tree)))
 				self.gittreepush(
                     tree, '%s/%s.git'%(tremote, basename(tree)))
+		try:
+			print('%s/.git/subtree-cache'%self.rpodir)
+			#rmtree('%s/.git/subtree-cache'%self.rpodir)
+		except FileNotFoundError as err:
+			error(err)
 
 	def giter(self, repos, syncall=None):
 		if self.dbg:
