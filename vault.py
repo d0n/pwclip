@@ -71,8 +71,7 @@ class WeakVaulter(SSH, GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		if not self.nln:
-			self._clean_()
+		self._clean_()
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
