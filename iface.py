@@ -59,7 +59,7 @@ def _rxtx(iface):
 def _xbytes(iface):
 	ru, tu = ' b/s', ' b/s'
 	srb, stb = _rxtx(iface)
-	sleep(1)
+	sleep(0.99)
 	nrb, ntb = _rxtx(iface)
 	rb, tb = int(nrb-srb), int(ntb-stb)
 	if rb > 1024:
@@ -94,11 +94,10 @@ def ifthrough(ifaces):
 	curses.noecho()
 	try:
 		while True:
-			nc = stdio.getch()
 			print('\033c\n\r%s\r%s'%(
                 '\r\n\n'.join(_xbytes(i) for i in ifaces if i),
-                blu('\n\n         ( press ESC to exit )\r')))
-			if nc == 27 and stdio.getch() == -1:
+                blu('\n\n     ( press any key to exit )\r')))
+			if stdio.getch() != -1:
 				break
 	except KeyboardInterrupt:
 		pass
