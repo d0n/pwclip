@@ -57,7 +57,7 @@ class RepoSync(GitSync):
 					error(err)
 				if out:
 					out.translate(('\\n', '>> '))
-					print(out)
+					print(out.strip())
 				repostats.append({repo: out})
 		if repostats:
 			return repostats
