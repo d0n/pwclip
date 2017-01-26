@@ -6,4 +6,5 @@ from work.keyverteiler import kvntool
 from work.ndcli import ndcli
 from work.deborphan import orphan
 from work.unitix import UnitixUsers
-from work.timsatan import TimeSatan
+from work.timsatan import TimeSatan, LoginFailedError
+from work.jumper import jump
