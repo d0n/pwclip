@@ -28,7 +28,7 @@ from os.path import \
 
 from psutil import process_iter as piter
 
-from shutil import rmtree, move, copyfile
+from shutil import rmtree, move, copy2
 
 from paramiko.ssh_exception import SSHException
 
@@ -69,20 +69,32 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 			print(bgre(WeakVaulter.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 		SecureSHell.__init__(self, *args, **kwargs)
-		args = list(args) + ['rmp']
 		kwargs['plain'] = kwargs['weakz']
 		DirYamlVault.__init__(self, *args, **kwargs)
+
+	def _fixmod_(self):
+		if self.dbg:
+			print(bgre(self._fixmod_))
+		for p in ('~/.gnupg', '~/.weaknez'):
+			for (d, _, fs) in walk(expanduser(p)):
+				for f in fs:
+					if f.startswith('S.'):
+						continue
+					f = '%s/%s'%(d, f)
+					#print(f)
+					chmod(f, 0o600)
+				chmod(d, 0o700)
 
 	def _movesocks_(self, src, trg):
 		if self.dbg:
 			print(bgre(self._movesocks_))
-		try:
-			socks = ['random_seed'] + [
-                f for f in listdir(src) if f.startswith('S')]
-			for s in socks:
+		socks = [
+            f for f in listdir(src) if f.startswith('S')] + ['random_seed']
+		for s in socks:
+			try:
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
-		except FileNotFoundError:
-			pass
+			except (FileNotFoundError, OSError):
+				pass
 
 	def _copynews_(self):
 		if self.dbg:
@@ -102,6 +114,7 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 			self._rmlns_()
 		elif isdir('%s/%s'%(self.weakz, self.host)):
 			self._mklns_()
+		self._fixmod_()
 		if self.rem:
 			self._copynews_()
 
@@ -110,6 +123,14 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 			print(bgre(self._rmlns_))
 		for ln in self.__dirs:
 			hl = '%s/%s'%(self.home, ln)
+			try:
+				remove(hl)
+			except (IsADirectoryError, FileNotFoundError):
+				continue
+			try:
+				move('%s.1'%hl, hl)
+			except FileNotFoundError:
+				pass
 
 	def _mklns_(self):
 		if self.dbg:
@@ -138,22 +159,24 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 			print(bgre(self.vaultweak))
 		if not exists(self.weakz):
 			return
+		self.envault()
 		self._movesocks_(
             '%s/%s/.gnupg'%(self.weakz, uname()[1]), '%s/.gnupg.1'%self.home)
-		chg = self.envault()
-		self._rmlns_()
-		if chg:
-			self._copynews_()
+		try:
+			rmtree(self.weakz)
+		except FileNotFoundError:
+			pass
+		self._clean_()
 
-	def weakvault(self):
+	def weakvault(self, force=True):
 		if self.dbg:
 			print(bgre(self.weakvault))
 		if not isfile(self.vault):
 			return error(
                 'vault ', self.vault, ' does not exist or is inaccessable')
-		if exists(self.weakz):
+		if exists(self.weakz) and not force:
 			return
 		self.unvault()
+		self._clean_()
 		self._movesocks_(
             '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, uname()[1]))
-		self._mklns_()
