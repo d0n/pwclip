@@ -54,7 +54,7 @@ class DirYamlVault(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		if not self._vault or not self._plain:
+		if not self.vault or not self.plain:
 			raise RuntimeError('setting a file and directory is mandatory')
 		if self.dbg:
 			print(bgre(DirYamlVault.__mro__))
@@ -108,9 +108,9 @@ class DirYamlVault(GPGTool):
 			except PermissionError:
 				pass
 
-	def _checkdiff(self):
+	def diffvault(self):
 		if self.dbg:
-			print(bgre(self._checkdiff))
+			print(bgre(self.diffvault))
 		nvlt = self._pathdict(basename(self.plain))
 		try:
 			with open(self.vault, 'r') as cfh:
@@ -147,9 +147,11 @@ class DirYamlVault(GPGTool):
 		if self.dbg:
 			print('%s\n%s\n%s'%(
                 bgre(self.envault), bgre(self.plain), bgre(self.vault)))
+		changed = False
 		try:
 			chdir(dirname(self.plain))
-			if self._checkdiff():
+			if self.diffvault():
+				changed = True
 				try:
 					copyfile(self.vault, '%s.1'%self.vault)
 					chmod('%s.1'%self.vault, 0o600)
@@ -163,6 +165,7 @@ class DirYamlVault(GPGTool):
 				rmtree(self.plain)
 		finally:
 			chdir(self._pwd)
+			return changed
 
 	def unvault(self):
 		if self.dbg:
