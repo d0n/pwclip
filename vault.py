@@ -261,8 +261,6 @@ class WeakVaulter(SSH, GPGTool):
 				ovlt = load(str(plain))
 		except FileNotFoundError:
 			return True
-		print(tabd(ovlt))
-		print(tabd(nvlt))
 		if ovlt != nvlt:
 			return True
 
