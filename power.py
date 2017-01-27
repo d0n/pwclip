@@ -56,7 +56,7 @@ class SystemPower(UEFITool):
 	def efi(self, pattern):
 		efihex = self._efihex(pattern)
 		if efihex:
-			if self._vrb:
+			if self.vrb:
 				label = self._efilabel(efihex)
 			self.nextboot(efihex)
 			self._efi = efihex
