@@ -112,9 +112,9 @@ class Puppet(SSH):
 			print(bgre(self.puprun))
 		if not bgr:
 			bgr = self.bgr
-		xec = self.call
+		xec = self.rcall
 		if bgr:
-			xec = self.run
+			xec = self.rrun
 		xec('puppet agent -vot', remote=fqdn(self.remote))
 
 
