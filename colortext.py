@@ -191,9 +191,9 @@ def tabd(dats, ind=0, iind=0):
 			if isinstance(val, dict):
 				tabbd = '%s\n%s%s:\n%s'%(
                     tabbd, ' '*ind, key, tabd(val, ind+int(iind if iind else 2 ), iind if iind else 2))
-				continue
-			tabbd = str('%s\n%s%s%s = %s'%(
-                tabbd, ' '*ind, key, spc, val)).strip('\n')
+			else:
+				tabbd = str('%s\n%s%s%s = %s'%(
+                    tabbd, ' '*ind, key, spc, val)).strip('\n')
 	except AttributeError:
 		return tabl(dats, ind)
 	return tabbd.strip('\n')
