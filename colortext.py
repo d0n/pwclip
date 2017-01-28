@@ -189,8 +189,8 @@ def tabd(dats, ind=0, iind=0):
 		for (key, val) in sorted(dats.items()):
 			spc = ' '*int(lim-len(str(key)))
 			if isinstance(val, dict):
-				tabbd = '%s\n%s%s:\n%s'%(
-                    tabbd, ' '*ind, key, tabd(val, ind+int(iind if iind else 2 ), iind if iind else 2))
+				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
+                    val, ind+int(iind if iind else 2 ), iind if iind else 2))
 			else:
 				tabbd = str('%s\n%s%s%s = %s'%(
                     tabbd, ' '*ind, key, spc, val)).strip('\n')
