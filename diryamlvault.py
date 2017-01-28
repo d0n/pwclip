@@ -65,17 +65,17 @@ class DirYamlVault(GPGTool):
 
 	@property                # plain <str>
 	def plain(self):
-		return absrelpath(self._plain)
+		return self._plain
 	@plain.setter
 	def plain(self, val):
-		self._plain = val
+		self._plain = absrelpath(val, getcwd())
 
 	@property                # vault <str>
 	def vault(self):
-		return absrelpath(self._vault)
+		return self._vault
 	@vault.setter
 	def vault(self, val):
-		self._vault = val
+		self._vault = absrelpath(val, getcwd())
 
 	def _pathdict(self, path):
 		if self.dbg:
@@ -172,9 +172,9 @@ class DirYamlVault(GPGTool):
 			print('%s\n%s\n%s'%(
                 bgre(self.unvault), bgre(self.vault), bgre(self.plain)))
 		try:
-			if not isdir(dirname(self.plain)):
-				makedirs(dirname(self.plain))
-			chdir(dirname(self.plain))
+			if not isdir(self.plain):
+				makedirs(self.plain)
+			chdir(self.plain)
 			with open(self.vault, 'r') as cfh:
 				self._dictpath(load(str(self.decrypt(cfh.read()))))
 		except (OSError, FileNotFoundError) as err:

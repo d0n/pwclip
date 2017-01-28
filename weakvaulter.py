@@ -88,13 +88,13 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 	def _movesocks_(self, src, trg):
 		if self.dbg:
 			print(bgre(self._movesocks_))
-		socks = [
-            f for f in listdir(src) if f.startswith('S')] + ['random_seed']
-		for s in socks:
-			try:
+		try:
+			socks = [
+                f for f in listdir(src) if f.startswith('S')] + ['random_seed']
+			for s in socks:
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
-			except (FileNotFoundError, OSError):
-				pass
+		except (FileNotFoundError, OSError):
+			pass
 
 	def _copynews_(self):
 		if self.dbg:
@@ -176,6 +176,7 @@ class WeakVaulter(SecureSHell, DirYamlVault):
                 'vault ', self.vault, ' does not exist or is inaccessable')
 		if exists(self.weakz) and not force:
 			return
+		setattr(self, 'plain', dirname(self.weakz))
 		self.unvault()
 		self._clean_()
 		self._movesocks_(
