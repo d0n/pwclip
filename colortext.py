@@ -191,7 +191,7 @@ def tabd(dats, ind=0, iind=0):
 			if isinstance(val, dict):
 				iind = iind if iind else 2
 				ind+=iind
-				tabbd = '%s%s\n%s:\n%s%s'%(
+				tabbd = '%s\n%s%s:\n%s%s'%(
                     tabbd, ' '*ind, key, ' '*ind,
                     tabd(val, ind, iind if iind else 2))
 				continue
