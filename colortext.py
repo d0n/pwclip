@@ -169,22 +169,7 @@ def tabl(dats, ind=0, iind=0):
 			continue
 		tabbl = '%s\n%s%s'%(tabbl, ' '*ind, i)
 	return tabbl.lstrip('\n')
-'''
-def tabd(dct, ind=2, iind=0):
-	try:
-		lim = int(max(len(str(k)) for k in dct if k)+int(ind))
-	except ValueError:
-		return dct
-	for (k, v) in dct.items():
-		if isinstance(v, dict):
-			iind = iind+ind if iind else ind+ind
-			print(ind, iind)
-			dct[k] = '\n%s'%tabd(v, ind, iind)
-	return '\n'.join('%s%s%s %s'%(' '*iind, k, '%s='%str(' '*int(lim-len(str(k)))) if not str(v).startswith('\n') else ':', v) for (k, v) in dct.items())
 
-
-
-'''
 def tabd(dats, ind=0, iind=0):
 	"""
 	this is a function where i try to guess the best indentation for text
@@ -200,9 +185,15 @@ def tabd(dats, ind=0, iind=0):
 	except ValueError:
 		return dats
 	tabbd = ''
+	ind = iind if iind else ind
 	try:
 		for (key, val) in sorted(dats.items()):
 			spc = ' '*int(lim-len(str(key)))
+			if isinstance(val, dict):
+				tabbd = '%s%s%s:\n%s%s\n'%(
+                    tabbd, ' '*ind, key, ' '*int(ind+iind),
+                    tabd(val, ind, iind+int(ind if ind else 2)))
+				continue
 			tabbd = str('%s\n%s%s%s = %s'%(
                 tabbd, ' '*ind, key, spc, val)).strip('\n')
 	except AttributeError:
