@@ -147,7 +147,7 @@ def fatal(*args, **kwargs):
 		errfile = '%s:'%(kwargs['file'])
 	if 'line' in kwargs.keys():
 		errline = '%s: '%(kwargs['line'])
-	msgs = ['%s%s%s'%(errfile, errline, bred('FATAL:'))]
+	msgs = ['%s%s%s'%(errfile, errline, bred('FATAL: '))]
 	for arg in args:
 		if (args.index(arg) % 2) == 0:
 			msgs.append(bred(arg))
