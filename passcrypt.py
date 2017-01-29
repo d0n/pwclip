@@ -31,6 +31,7 @@ class PassCrypt(GPGTool):
 	dbg = None
 	aal = None
 	sho = None
+	rem = None
 	try:
 		user = userfind()
 		home = userfind(user, 'home')
@@ -59,7 +60,8 @@ class PassCrypt(GPGTool):
 			print(bgre(tabd(PassCrypt.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
-		self._copynews_()
+		if self.rem:
+			self._copynews_()
 		__weaks = self._readcrypt()
 		if path.exists(self.crypt) and __weaks is None:
 			self._garr()
@@ -79,6 +81,8 @@ class PassCrypt(GPGTool):
 		self.__weaks = __weaks
 
 	def _copynews_(self):
+		if self.dbg:
+			print(bgre(self._copynews_))
 		if self.remote:
 			try:
 				SSH().scpcompstats(
@@ -88,19 +92,23 @@ class PassCrypt(GPGTool):
 				pass
 
 	def _chkcrypt(self):
+		if self.dbg:
+			print(bgre(self._chkcrypt))
 		if self._readcrypt() == self.__weaks:
 			return True
 
-	def _findentry(self, pattern, weaks=None):
-		__weaks = weaks if weaks else self.__weaks
-		for (u, p) in __weaks.items():
+	def _findentry(self, pattern, weakz=None):
+		if self.dbg:
+			print(bgre(tabd({self._findentry: {'pattern': pattern}})))
+		__weakz = weakz if weakz else self.__weakz
+		for (u, p) in __weakz.items():
 			if pattern == u or (
                   len(p) == 2 and len(pattern) > 1 and pattern in p[1]):
 				return p
 
 	def _readcrypt(self):
 		if self.dbg:
-			print('%s\n  crypt = %s'%(self._readcrypt, self.crypt))
+			print(bgre(self._readcrypt))
 		try:
 			with open(self.crypt, 'r') as vlt:
 				crypt = vlt.read()
@@ -108,9 +116,9 @@ class PassCrypt(GPGTool):
 			return None
 		return load(str(self.decrypt(crypt)))
 
-	def _writecrypt_(self, plain):
+	def _writecrypt(self, plain):
 		if self.dbg:
-			print('%s\n  weaknez = %s'%(self._writecrypt, plain))
+			print(bgre(tabd({self._writecrypt: {'plain': plain}})))
 		kwargs = {'output': self.crypt}
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
@@ -119,15 +127,19 @@ class PassCrypt(GPGTool):
 			copyfile(self.crypt, '%s.1'%self.crypt)
 			chmod('%s.1'%self.crypt, 0o600)
 		except FileNotFoundError:
-			pass
+			return False
 		while True:
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
 				self._copynews_()
 				chmod(self.crypt, 0o600)
 				break
+		return True
 
 	def adpw(self, usr, pwd=None):
+		if self.dbg:
+			print(bgre(tabd({
+                self.adpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
 		pwdcom = [pwd if pwd else self._passwd()]
 		com = input('enter a comment: ')
 		if com:
@@ -138,10 +150,13 @@ class PassCrypt(GPGTool):
 		__weak = self._readcrypt()
 		if __weak and self.user in __weak.keys():
 			__weak[self.user][usr] = pwdcom
-			self._writecrypt_(__weak)
+			self._writecrypt(__weak)
 			return True
 
 	def chpw(self, usr, pwd=None):
+		if self.dbg:
+			print(bgre(tabd({
+                self.chpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
 		pwdcom = [pwd if pwd else self._passwd()]
 		com = input('enter a comment: ')
 		if com:
@@ -153,24 +168,23 @@ class PassCrypt(GPGTool):
 		if __weak and self.user in __weak.keys() and \
               usr in __weak[self.user].keys():
 			__weak[self.user][usr] = pwdcom
-			self._writecrypt_(__weak)
+			self._writecrypt(__weak)
 			return True
 
 	def rmpw(self, usr):
 		if self.dbg:
-			print('%s\n  user = %s\n  deluser = %s'%(
-                self.rmpw, self.user, usr))
+			print(bgre(tabd({self.rmpw: {'user': self.user, 'entry': usr}})))
 		__weak = self._readcrypt()
 		if __weak and self.user in __weak.keys() and \
               usr in __weak[self.user].keys():
 			del __weak[self.user][usr]
-			self._writecrypt_(__weak)
+			if self._writecrypt(__weak):
+				self._copynews_()
 			return True
 
 	def lspw(self, usr=None, aal=None, display=None):
 		if self.dbg:
-			print('%s\n  user = %s\n  getuser = %s'%(
-                self.lspw, self.user, usr))
+			print(bgre(tabd({self.lspw: {'user': self.user, 'entry': usr}})))
 		aal = True if aal else self.aal
 		sho = True if display else self.sho
 		if self.__weaks:
@@ -189,6 +203,8 @@ class PassCrypt(GPGTool):
 			return __ents
 
 def lscrypt(usr):
+	if self.dbg:
+		print(bgre(lscrypt))
 	if usr:
 		return PassCrypt().lspw(usr)
 
