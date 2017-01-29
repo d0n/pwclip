@@ -88,13 +88,17 @@ def cli():
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
-        '-1',
-        dest='gpgv', action='store_true',
-        help='force usage of gpg in version 1.x')
+        '-2',
+        dest='gv2', action='store_true',
+        help='force usage of gpg in version 2.x')
 	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
         help='switch to all users entrys (instead of current user only)')
+	pars.add_argument(
+        '-R', '--remote',
+        dest='rem', action='store_true',
+        help='use remote file backup if available')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -148,6 +152,7 @@ def cli():
 	pargs = [a for a in [
         'dbg' if args.dbg else None,
         'aal' if args.aal else None,
+        'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
 	pkwargs = {}
 	if args.pcr:
@@ -182,8 +187,8 @@ def cli():
 	for a in (args.lst, args.add, args.chg):
 		if a and len(a) < 2:
 			fatal('input ', a, ' is too short')
-	if args.gpgv:
-		pkwargs['binary'] = 'gpg'
+	if args.gv2:
+		pkwargs['binary'] = 'gpg2'
 
 	pcm = PassCrypt(*pargs, **pkwargs)
 	if args.lst is not False:
