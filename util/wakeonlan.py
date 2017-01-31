@@ -2,7 +2,8 @@
 """wake on lan python module"""
 from sys import stderr
 
-from socket import socket, AF_INET, SOCK_DGRAM, SOL_SOCKET, SO_BROADCAST
+from socket import \
+    AF_INET, SOCK_DGRAM, SOL_SOCKET, SO_BROADCAST, socket as sock
 
 from struct import pack
 
@@ -26,15 +27,15 @@ def _magicpacket(macaddress):
 def wol(mac, port=9, bcast='255.255.255.255'):
 	"""magic packet sending function - requires a mac-address"""
 	packet = _magicpacket(mac)
-	sock = socket(AF_INET, SOCK_DGRAM)
-	sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-	sock.connect((bcast, int(port)))
+	socket = sock(AF_INET, SOCK_DGRAM)
+	socket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+	socket.connect((bcast, int(port)))
 	try:
-		return sock.send(packet)
+		return socket.send(packet)
 	except ValueError as err:
 		print(err, file=stderr)
 	finally:
-		sock.close()
+		socket.close()
 
 
 

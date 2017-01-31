@@ -7,7 +7,8 @@ import sys
 from io import StringIO
 from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
 from shutil import copy2
-from socket import getfqdn as fqdn, gaierror as NameResolveError, timeout as sockettimeout
+from socket import \
+    getfqdn as fqdn, gaierror as NameResolveError, timeout as sockettimeout
 
 from colortext import bgre, tabd, abort, error, fatal
 from system.user import whoami

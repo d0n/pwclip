@@ -26,9 +26,6 @@ from pars.network import NetworkInterfacesParser
 from net.iface import ifaces
 from net.util.ifdrougs import ifup, ifdown
 
-# default vars
-__version__ = '0.1'
-
 class ETHConfig(NetworkInterfacesParser):
 	"""eth base configuration module"""
 	dbg = False

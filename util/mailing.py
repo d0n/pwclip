@@ -14,27 +14,26 @@
 #
 """mailing module disclaimer"""
 # global & stdlib imports
-from smtplib import SMTP as _smtp
-from email.mime.text import MIMEText as _mimetext
-from getpass import getpass as _getpass
+from smtplib import SMTP
+from email.mime.text import MIMEText
+from getpass import getpass
 
 from colortext import error
 
-# default constant definitions
-__version__ = '0.1'
 
 def sendmail(message, sender, sendto, subject='',
       server='smtp.1und1.de', smtpuser=None, smtppass=None):
 	"""sndmail to provide function"""
 	if not sender or not sendto:
 		return error('cannot sent mail if sender and recipient is not set')
-	msg = _mimetext(message)
+	smtppass = getpass() if smtpuser else None
+	msg = MIMEText(message)
 	if subject:
 		msg['Subject'] = subject
 	msg['From'] = sender
 	msg['To'] = sendto
-	smtp = _smtp(server)
-	if smtpuser:
+	smtp = SMTP(server)
+	if smtpuser and smtppass:
 		smtp.login(smtpuser, smtppass)
 	smtp.sendmail(sender, sendto, msg.as_string())
 	smtp.quit()

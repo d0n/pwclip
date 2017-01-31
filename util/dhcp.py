@@ -23,9 +23,6 @@ from random import randint
 # local relative imports
 from net.mac import mac
 
-# global default variables
-__version__ = '0.0'
-
 class DHCPDiscover(object):
 	dbg = False
 	id_ = b''
@@ -35,13 +32,16 @@ class DHCPDiscover(object):
 	_iface = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
-			arg = '_%s'%(arg)
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			key = '_%s'%(key)
-			if hasattr(self, key) and not type(val) in (None, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
+		if self.dbg:
+			print(bgre(DHCPDiscover.__mro__))
+			print(bgre(tabd(DHCPDiscover.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 
 	@property               # iface <str>
 	def iface(self):

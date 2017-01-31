@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """module disclaimer"""
-
-# global imports
-import re
 from os import readlink, path, uname, remove, getuid
-import sys
 import psutil
 from time import sleep
 
@@ -14,9 +10,6 @@ from system import which, absrelpath
 from net.iface import ifaces, ifaddrs
 from pars.network import ResolvConfParser
 from colortext import bgre, tabd, abort, error
-
-# default vars
-__version__ = '0.1'
 
 class VPNConfig(ResolvConfParser):
 	sh_ = True

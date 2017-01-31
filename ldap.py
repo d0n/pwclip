@@ -13,18 +13,11 @@
 # details.
 #
 """module disclaimer"""
-
-# global & stdlib imports
-#import re
-import os
-import sys
 import ldap3
 
 # local relative imports
-from colortext import blu, yel, bgre, error
+from colortext import blu, yel, bgre, tabd, error
 
-# global default variables
-__version__ = '0.0'
 
 """
 # 21232445, People, contacts, 1und1, DE
@@ -63,7 +56,9 @@ class LDAPSearch(object):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(LDAPSearch.__mro__))
-			print(bgre(tabd(self.__dict__, 2)))
+			print(bgre(tabd(LDAPSearch.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 
 	def __connect(self):
 		if self.dbg:
