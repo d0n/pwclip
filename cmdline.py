@@ -97,8 +97,12 @@ def cli():
         help='switch to all users entrys (instead of current user only)')
 	pars.add_argument(
         '-R', '--remote',
-        dest='rem', action='store_true',
-        help='use remote file backup if available')
+        dest='remote', metavar='HOST',
+        help='use remote HOST for file backups (via scp)')
+	pars.add_argument(
+        '-U', '--remote-user',
+        dest='reuser', metavar='USER',
+        help='use USER for connections to HOST')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -132,8 +136,8 @@ def cli():
         help='set location of CRYPTFILE to use for gpg features')
 	pars.add_argument(
         '-r', '--recipients',
-        dest='rcp', metavar='RECIPIENT',
-        help='gpg recipients (identifier) for GPG-Keys to use')
+        dest='rcp', metavar='ID(s)',
+        help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
         dest='usr', metavar='USER', default=environ['USER'],
@@ -152,7 +156,6 @@ def cli():
 	pargs = [a for a in [
         'dbg' if args.dbg else None,
         'aal' if args.aal else None,
-        'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
 	pkwargs = {}
 	if args.pcr:
