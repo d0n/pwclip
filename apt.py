@@ -9,11 +9,7 @@ import sys
 from system import which
 from executor import sucommand as sudo
 from colortext import bgre, tabd
-
 from deb.dpkg import DePyKG
-
-# default constant definitions
-__version__ = '0.1'
 
 class Apytude(DePyKG):
 	# external properties

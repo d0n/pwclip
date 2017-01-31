@@ -10,9 +10,6 @@ from system import which
 from executor import Command
 from colortext import bgre, tabd
 
-# default constant definitions
-__version__ = '0.1'
-
 
 class DePyKG(Command):
 	dbg = None
