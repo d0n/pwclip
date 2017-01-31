@@ -12,14 +12,6 @@ from system import which
 from net.addr import isip
 from executor import Command
 
-# default vars
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.readlink(os.path.dirname(os.path.abspath(__file__)))
-
 class ResolvConfParser(Command):
 	dbg = False
 	_resolvconf = {}
