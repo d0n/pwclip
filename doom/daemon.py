@@ -14,46 +14,23 @@
 """python3 daemon"""
 # (std)lib imports
 from os import \
-    getuid as _getuid, \
-    setuid as _setuid, \
-    getgid as _getgid, \
-    setgid as _setgid, \
-    getpid as _getpid, \
-    devnull as _devnull, \
-    fork as _fork, \
-    kill as _kill, \
-    umask as _umask, \
-    remove as _remove, \
-    setsid as _setsid, \
-    dup2 as _dup2, \
-    nice as _nice
+    getuid, setuid, getgid, \
+    setgid, getpid, devnull, \
+    fork, kill, umask, remove, \
+    setsid, dup2, nice
 
 from os.path import \
-    basename as _basename, \
-    isfile as _isfile, \
-    exists as _exists, \
-    isdir as _isdir
+    basename, isfile, exists, isdir
 
 from sys import \
-    argv as _argv, \
-    stdin as _stdin, \
-    stdout as _stdout, \
-    stderr as _stderr
+    argv, stdin, stdout, stderr
 
-from atexit import \
-    register as _register
+from atexit import register
 
-from time import \
-    sleep as _sleep
+from time import sleep
 
-# default constant definitions
-__me__ = _basename(_argv[0]).split('.')[0]
-__version__ = '0.3'
-__author__ = 'd0n@janeiskla.de'
-
-# echo for not using print due to its py2 incompatibitity
-_echo_ = _stdout.write
-_puke_ = _stderr.write
+_echo_ = stdout.write
+_puke_ = stderr.write
 
 class Daemon(object):
 	"""
@@ -64,16 +41,17 @@ class Daemon(object):
 	"""
 	dbg = False
 	pid = None
-	uid = int(_getuid())
-	gid = int(_getgid())
+	uid = int(getuid())
+	gid = int(getgid())
 	interval = 60 # seconds
 	umask = 0o022
-	stdin = open(_devnull, 'r')
-	stdout = open(_devnull, 'a+')
-	stderr = open(_devnull, 'a+')
-	_pidfile = '/var/run/%s.pid'%__me__
-	if _getuid() != 0:
-		_pidfile = '/var/run/user/%s/%s.pid'%(_getuid(), __me__)
+	stdin = open(devnull, 'r')
+	stdout = open(devnull, 'a+')
+	stderr = open(devnull, 'a+')
+	__me = basename(argv[0]).split('.')[0]
+	_pidfile = '/var/run/%s.pid'%__me
+	if getuid() != 0:
+		_pidfile = '/var/run/user/%s/%s.pid'%(getuid(), __me)
 	def __init__(self, *args, **kwargs):
 		"""
 		initializing function which takes args and kwargs - init checks for
@@ -88,6 +66,8 @@ class Daemon(object):
 				setattr(self, key, val)
 		if self.dbg:
 			_echo_('\033[01;30%s\033[0m'%sDaemon.__mro__)
+			_echo_('\033[01;30%s\033[0m'%sDaemon.__dict__)
+			_echo_('\033[01;30%s\033[0m'%self.__init__)
 			_echo_('\033[01;30%s\033[0m'%self.__dict__)
 
 	@property               # pidfile <str>
