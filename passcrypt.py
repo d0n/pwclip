@@ -21,17 +21,16 @@ from colortext import bgre, tabd, error, fatal
 
 from system import userfind
 
-from net.ssh import SecureSHell as SSH
+from net.ssh import SecureSHell
 
 from secrecy.gpg import GPGTool
 
 from secrecy.yubi import ykchalres
 
-class PassCrypt(GPGTool):
+class PassCrypt(GPGTool, SecureSHell):
 	dbg = None
 	aal = None
 	sho = None
-	rem = None
 	try:
 		user = userfind()
 		home = userfind(user, 'home')
@@ -60,7 +59,9 @@ class PassCrypt(GPGTool):
 			print(bgre(tabd(PassCrypt.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
-		if self.rem:
+		GPGTool.__init__(self, *args, **kwargs)
+		SecureSHell.__init__(self, *args, **kwargs)
+		if self.remote:
 			self._copynews_()
 		__weaks = self._readcrypt()
 		if path.exists(self.crypt) and __weaks is None:
@@ -85,7 +86,7 @@ class PassCrypt(GPGTool):
 			print(bgre(self._copynews_))
 		if self.remote:
 			try:
-				SSH().scpcompstats(
+				self.scpcompstats(
                     self.crypt, path.basename(self.crypt),
                     self.remote, self.reuser)
 			except FileNotFoundError:
@@ -131,7 +132,8 @@ class PassCrypt(GPGTool):
 		while True:
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
-				self._copynews_()
+				if self.remote:
+					self._copynews_()
 				chmod(self.crypt, 0o600)
 				break
 		return True
@@ -179,7 +181,8 @@ class PassCrypt(GPGTool):
               usr in __weak[self.user].keys():
 			del __weak[self.user][usr]
 			if self._writecrypt(__weak):
-				self._copynews_()
+				if self.remote:
+					self._copynews_()
 			return True
 
 	def lspw(self, usr=None, aal=None, display=None):
