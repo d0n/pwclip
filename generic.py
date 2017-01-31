@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """repo common functions module"""
 # global imports
-from os import listdir as _listdir, chdir as _chdir
-from os.path import exists as _exists, isdir as _isdir
+from os import chdir
 
 # local relative imports
 from colortext import blu, yel, bgre, tabd, error
@@ -30,6 +29,8 @@ class RepoSync(GitSync):
 		if self.dbg:
 			print(bgre(RepoSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 		if 'gitkwargs' in kwargs.keys():
 			self.gitkwargs = kwargs['gitkwargs']
 		GitSync.__init__(self, *args, **self.gitkwargs)
@@ -49,7 +50,7 @@ class RepoSync(GitSync):
 			svnopts = ' --username=%s'%self.svnuser if self.svnuser else ''
 			stats = {}
 			for repo in sorted(repotypes['svn']):
-				_chdir(repo)
+				chdir(repo)
 				print(blu('syncing'), '%s%s'%(yel(repo), blu('...')))
 				out, err, eno = self.oerc(
                     '%s%s update'%(which('svn'), svnopts))

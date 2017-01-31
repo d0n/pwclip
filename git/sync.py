@@ -31,6 +31,8 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre(GitSync.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 		if self.remote:
 			kwargs['gitremote'] = self.remote
 		GitRepo.__init__(self, *args, **kwargs)

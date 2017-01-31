@@ -41,6 +41,8 @@ class GitRepo(Command):
 		if self.dbg:
 			print(bgre(GitRepo.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
 
 	@property                # gitdir <str>
 	def gitdir(self):
