@@ -3,9 +3,9 @@
 text colorisation functions  due to extendet use of the python3 print
 function this is for python3 only
 """
-import sys
-__echo = sys.stdout.write
-__puke = sys.stderr.write
+from sys import stdout, stderr
+__echo = stdout.write
+__puke = stderr.write
 
 # get color escape sequence from string
 def __colorize(color, text):
@@ -38,8 +38,6 @@ def __colorize(color, text):
 
 def blu(text):
 	"""function for color blue"""
-	#import sys
-	#func = sys._getframe().f_code.co_name
 	return __colorize('blu', text)
 def bblu(text):
 	"""function for color boldblue"""
