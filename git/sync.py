@@ -81,7 +81,6 @@ class GitSync(GitRepo):
 				self.gittreepush(
                     tree, '%s/%s.git'%(tremote, basename(tree)))
 		try:
-			print('%s/.git/subtree-cache'%getcwd())
 			rmtree('%s/.git/subtree-cache'%getcwd())
 		except (FileNotFoundError, NotADirectoryError) as err:
 			pass
