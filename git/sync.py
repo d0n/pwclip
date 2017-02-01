@@ -71,7 +71,7 @@ class GitSync(GitRepo):
 		trees = self.gitsubtrees(tremote)
 		if trees and self.remote:
 			self.gitsync()
-			print(blu('syncing subtrees: %s'%(yel(getcwd()))))
+			print(yel(getcwd()), blu('syncing subtrees:'))
 			for tree in trees:
 				if tree == 'lib':
 					continue
