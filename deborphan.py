@@ -22,9 +22,6 @@ import sys
 from colortext import blu, bgre
 from net import SecureSHell as SSH
 
-# global default variables
-__version__ = '0.0'
-
 
 def orphan(server, background=None, debug=None):
 	if debug:

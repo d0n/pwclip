@@ -24,9 +24,6 @@ import time
 from colortext import abort
 from net import SecureSHell as SSH
 
-# global default variables
-__version__ = '0.0'
-
 def kvntool(modes, hostgroups=':all', users=[]):
 	ssh = SSH(
         'sh',

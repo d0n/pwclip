@@ -24,10 +24,6 @@ from colortext import bgre, tabd
 from system import which
 from net import netcat as nc, SecureSHell as SSH
 
-# global default variables
-__me__ = os.path.basename(sys.argv[0]).split('.')[0]
-__version__ = '0.2'
-
 class Puppet(SSH):
 	"""puppet wrapper class"""
 	sh_ = True

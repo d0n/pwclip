@@ -18,9 +18,6 @@ from colortext import blu, red, yel, byel, error, fatal
 from net import SecureSHell as SSH
 
 
-# global default variables
-__version__ = '0.0'
-
 class UnitixUsers(SSH):
 	_sh_ = True
 	acclog = 'acclog.server.lan'

@@ -13,23 +13,14 @@
 # details.
 #
 """module disclaimer"""
-
-# global & stdlib imports
-#import re
 from os import \
     remove, makedirs
-
 from os.path import \
     isdir, expanduser
-
 import sys
 from tempfile import mkstemp
 
-# local relative imports
 from executor import command
-
-# global default variables
-__version__ = '0.0'
 
 cfghead = """
 # --- BEGIN custom openssl.cnf ---

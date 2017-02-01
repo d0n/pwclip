@@ -24,8 +24,6 @@ from executor import command as c
 from net import askdns
 from deb import DePyKG
 
-# global default variables
-__version__ = '0.1'
 
 def ndcli(pattern):
 	#if not DePyKG().isinstalled('ui-ndcli'):
