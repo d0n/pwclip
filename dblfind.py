@@ -19,14 +19,6 @@ import sys
 import filecmp
 # local relative imports
 from system import absrelpath
-# global default variables
-__me__ = os.path.basename(__file__)
-__at__ = os.path.dirname(
-    os.path.abspath(__file__)
-    ) if not os.path.islink(
-        os.path.dirname(os.path.abspath(__file__))
-    ) else os.readlink(os.path.dirname(__file__))
-__version__ = '0.0'
 
 def deldialog(src, trg):
 	"""ask for file delete permission"""

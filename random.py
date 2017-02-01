@@ -1,16 +1,15 @@
-from sys import stdout as _stdout
-from re import search as _search
-from os import urandom as _urandom
+from re import search
+from os import urandom
 
 def random(limit=10, regex='[\w -~]'):
 	retstr = ''
 	while True:
 		try:
-			out = _urandom(1).decode()
+			out = urandom(1).decode()
 		except UnicodeDecodeError:
 			continue
 		try:
-			if _search(regex, out).group(0):
+			if search(regex, out).group(0):
 				retstr = '%s%s'%(retstr, out.strip())
 		except AttributeError:
 			continue

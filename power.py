@@ -10,11 +10,7 @@ from time import sleep
 from colortext import bgre, tabd
 from executor import Command
 from system import which
-
-from .uefi import UEFITool
-
-# default vars
-__version__ = '0.2'
+from system.uefi import UEFITool
 
 class SystemPower(UEFITool):
 	sh_ = True

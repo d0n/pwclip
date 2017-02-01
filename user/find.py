@@ -1,6 +1,6 @@
 from sys import \
-    stderr as _stderr
-__puke = _stderr.write
+    stderr as stderr
+__puke = stderr.write
 
 def userfind(pattern='1000', mode='user'):
 	"""

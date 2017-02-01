@@ -1,9 +1,6 @@
-from os import \
-    X_OK as _XOK, \
-    access as _access,\
-    environ as _environ
+from os import X_OK, access, environ
 
 def which(prog):
-	for path in _environ['PATH'].split(':'):
-		if _access('%s/%s'%(path, prog), _XOK):
+	for path in environ['PATH'].split(':'):
+		if access('%s/%s'%(path, prog), X_OK):
 			return '%s/%s'%(path, prog)

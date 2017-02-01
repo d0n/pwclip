@@ -1,4 +1,5 @@
 from os import getuid
+
 def whoami():
 	with open('/etc/passwd', 'r') as pwf:
 		pwl = pwf.readlines()
