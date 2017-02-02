@@ -25,12 +25,13 @@ from executor import command as c
 
 class BreitLogger(Cmd):
 	"""breitlogger main class"""
+	__me = os.uname()[1]
 	intro = 'BreitLogger - write timestamped text to file\n'
 	logfile = '%s/log/%s-%s.log'%(
 	    os.path.expanduser('~'),
-	    __me__.split('.')[0],
+	    __me.split('.')[0],
 	    stamp().split('.')[0])
-	prompt = '%s %s>> '%(__me__.split('.')[0], stamp().split('.')[1])
+	prompt = '%s %s>> '%(__me.split('.')[0], stamp().split('.')[1])
 	case_insensitive = False
 	dbg = True
 
