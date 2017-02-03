@@ -79,19 +79,6 @@ class VPNConfig(ResolvConfParser):
 			if proc.is_running():
 				return True
 
-	@staticmethod
-	def _sethost(hostname=None):
-		if hostname:
-			with open('/tmp/hostname.local', 'w+') as hfh:
-				hfh.write(uname()[1])
-		else:
-			try:
-				with open('/tmp/hostname.local', 'r') as hfh:
-					hostname = hfh.read()
-			except FileNotFoundError as err:
-				error(err)
-		sudo.call('hostname %s'%hostname)
-
 	def connect(self):
 		if self.dbg:
 			print(bgre(self.connect))
@@ -105,8 +92,6 @@ class VPNConfig(ResolvConfParser):
                 self.vpncfgs['user'],  self.vpncfgs['gate'])
 		try:
 			if self.call(occmd) == 0:
-				if 'hostname' in self.vpncfgs.keys():
-					self._sethost(self.vpncfgs['hostname'])
 				if 'dns' in self.vpncfgs.keys() or \
                       'search' in self.vpncfgs.keys():
 					rccfg = {}
@@ -127,8 +112,6 @@ class VPNConfig(ResolvConfParser):
 	def disconnect(self):
 		if self.dbg:
 			print(bgre(self.disconnect))
-		if 'hostname' in self.vpncfgs.keys():
-			self._sethost()
 		ocpid = None
 		if path.isfile('/var/run/%s'%(self.pidfile)):
 			with open('/var/run/%s'%(self.vpncfgs['pidfile']), 'r') as f:
