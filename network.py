@@ -122,9 +122,9 @@ class NetworkInterfacesParser(object):
 			with open(self.netconf, 'w+') as nif:
 				nif.write(netcfg)
 		except IOError as err:
-			with open(self.__tmpfile, 'w+') as tmp:
+			with open(self._tmpfile, 'w+') as tmp:
 				tmp.write(netcfg)
-			self.sudo.call(which('cp'), self.__tmpfile, self.netconf)
+			self.sudo.call(which('cp'), self._tmpfile, self.netconf)
 		return True
 
 	def __ifline(self, iface, mode='dhcp', config=None):
