@@ -46,7 +46,7 @@ class WLANConfig(NetworkInterfacesParser):
 		if not isup(self.iface) and not ifconfup(self.iface):
 			raise RuntimeError('could not bring up iface %s'%(self.iface))
 		if not os.path.isfile(dumpfile) or fileage(dumpfile) >= 60:
-			data = self.stdx('%s %s scan'%(self.__iwlistbin, self.iface))
+			data = self.stdx('%s %s scan'%(self._iwlistbin, self.iface))
 			with open(dumpfile, 'w+') as f:
 				f.write(data)
 		with open(dumpfile, 'r') as f:
@@ -121,7 +121,7 @@ class WLANConfig(NetworkInterfacesParser):
 		essid = input('Enter name of access point (ESSID)\n')
 		pwd = input('enter password for %s\n'%(essid))
 		cfgset = '\n'.join([line for line in\
-		  self.stdx('%s %s %s'%(self.__wpapasbin, essid, pwd)).split('\n')\
+		  self.stdx('%s %s %s'%(self._wpapasbin, essid, pwd)).split('\n')\
 		  if not line.startswith('\t#')])
 		if cfgset:
 			cfgset = '%s\n\tscan_ssid=1\n\tkey_mgmt=WPA-PSK\n\tproto=RSN\n}\n'\
@@ -156,7 +156,7 @@ class WLANConfig(NetworkInterfacesParser):
 		if not isup(self.iface) and not isconfd(self.iface):
 			return
 		if ifdown(self.iface):
-			self.call('killall %s'%(self.__wpasupbin))
+			self.call('killall %s'%(self._wpasupbin))
 			return True
 
 
