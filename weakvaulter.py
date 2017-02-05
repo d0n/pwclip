@@ -168,13 +168,13 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 			pass
 		self._clean_()
 
-	def weakvault(self, force=True):
+	def weakvault(self, force=False):
 		if self.dbg:
 			print(bgre(self.weakvault))
 		if not isfile(self.vault):
 			return error(
                 'vault ', self.vault, ' does not exist or is inaccessable')
-		if exists(self.weakz) and not force:
+		elif exists(self.weakz) and not force:
 			return
 		setattr(self, 'plain', dirname(self.weakz))
 		self.unvault()
