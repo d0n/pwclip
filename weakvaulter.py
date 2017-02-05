@@ -85,13 +85,13 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 					chmod(f, 0o600)
 				chmod(d, 0o700)
 
-	def _movesocks_(self, src, trg):
+	def _mvrtfiles_(self, src, trg):
 		if self.dbg:
-			print(bgre(self._movesocks_))
+			print(bgre(self._mvrtfiles_))
+		rtfs = [f for f in listdir(src) if (
+            f.startswith('S') or f.startswith('.#') or f == 'random_seed')]
 		try:
-			socks = [
-                f for f in listdir(src) if f.startswith('S')] + ['random_seed']
-			for s in socks:
+			for s in rtfs:
 				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
 		except (FileNotFoundError, OSError):
 			pass
@@ -160,7 +160,7 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 		if not exists(self.weakz):
 			return
 		self.envault()
-		self._movesocks_(
+		self._mvrtfiles_(
             '%s/%s/.gnupg'%(self.weakz, uname()[1]), '%s/.gnupg.1'%self.home)
 		try:
 			rmtree(self.weakz)
@@ -179,5 +179,5 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 		setattr(self, 'plain', dirname(self.weakz))
 		self.unvault()
 		self._clean_()
-		self._movesocks_(
+		self._mvrtfiles_(
             '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, uname()[1]))
