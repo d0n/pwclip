@@ -6,8 +6,6 @@ from socket import \
     SOCK_DGRAM, SHUT_WR, \
     AF_INET, SOCK_STREAM
 
-from colortext import error
-
 def netcat(host, port, content='telnet', proto='tcp', timeout=5):
 	socket = sock(AF_INET, SOCK_STREAM)
 	if proto == 'udp':
@@ -16,7 +14,8 @@ def netcat(host, port, content='telnet', proto='tcp', timeout=5):
 	try:
 		socket.connect((host, int(port)))
 	except (ConnectionRefusedError, TimeOutError) as err:
-		error('connecting ', host, ' on ', '%s '%port, err)
+		raise ConnectionError('connection to %s on %s failed by error %s'%(
+            host, port, err.errno))
 		return 0 if not err.errno else int(err.errno)
 	socket.sendall(content.encode())
 	socket.shutdown(SHUT_WR)
