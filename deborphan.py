@@ -28,19 +28,19 @@ def orphan(server, background=None, debug=None):
 		print(bgre(orphan))
 	ssh = SSH(*[a for a in ['dbg' if debug else None] if a],
         **{'remote': server, 'reuser': 'root'})
-	xce = ssh.call
+	xce = ssh.rcall
 	if background:
-		xce = ssh.erno
-	if ssh.erno('dpkg -s deborphan') != 0:
+		xce = ssh.rerno
+	if ssh.rerno('dpkg -s deborphan') != 0:
 		xce('apt-get -y install deborphan')
-	orphpks = ssh.stdo('deborphan |tr "\n" " "')
-	confdps = ssh.stdo('dpkg -l |grep "^rc.*" |awk \'{print $2}\' |tr "\n" " "')
+	orphpks = ssh.rstdo('deborphan |tr "\n" " "')
+	confdps = ssh.rstdo('dpkg -l |grep "^rc.*" |awk \'{print $2}\' |tr "\n" " "')
 	pkgs = []
 	if orphpks:
 		pkgs = orphpks.split(' ')
 	if confdps:
 		pkgs = pkgs + confdps.split(' ')
-	atocpks = ssh.stdo('apt-get -y autoremove')
+	atocpks = ssh.rstdo('apt-get -y autoremove')
 	pkgs = pkgs + [
         i.split(' ')[1].strip() for i in atocpks.split('\n') \
         if i.startswith('Removing ')]
