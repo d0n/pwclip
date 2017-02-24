@@ -32,7 +32,7 @@ class Puppet(SSH):
 	bgr = False
 	reuser = 'root'
 	remote = ''
-	_template = '~/.config/puppet.tmpl'
+	_template = '~/.config/amt/puppet.tmpl'
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -63,7 +63,7 @@ class Puppet(SSH):
 		"""remove puppet ssl certificates remotely"""
 		if self.dbg:
 			print(self.pupssl)
-		if self.call(
+		if self.rcall(
               'rm -rf /var/lib/puppet/ssl/',
               remote=fqdn(self.remote)) == 0:
 			return True
@@ -74,16 +74,16 @@ class Puppet(SSH):
 			print(self.pupini)
 		if not background:
 			background = self.bgr
-		xec = self.call
+		xec = self.rcall
 		if background:
-			xec = self.run
-		debver = self.stdo(
+			xec = self.rrun
+		debver = self.rstdo(
             'cat /etc/debian_version',
             remote=self.remote)
 		debver = '' if not debver else debver[0].split('.')[0]
 		aptopts = '-y'
 		if debver and debver == '6':
-			bprpo = self.stdo(
+			bprpo = self.rstdo(
                 'grep -r "squeeze-backports" "/etc/apt/sources.list.d"',
                 remote=fqdn(self.remote))
 			if not bprpo:
@@ -98,9 +98,9 @@ class Puppet(SSH):
               'apt-get install -y puppet lsb-release'): # %(aptopts)):
 			xec(cmd, remote=fqdn(self.remote))
 		#print(self._template, '/etc/puppet/puppet.conf')
-		self.scp.put(
+		self.put(
             os.path.expanduser(self._template),
-            '/etc/puppet/puppet.conf', remote=fqdn(self.remote), user='root')
+            '/etc/puppet/puppet.conf', remote=fqdn(self.remote), reuser='root')
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
