@@ -111,7 +111,9 @@ class Puppet(SSH):
 		xec = self.rcall
 		if bgr:
 			xec = self.rrun
-		xec('puppet agent -vot', remote=fqdn(self.remote))
+		xec(
+            'PATH=$PATH:/opt/puppetlabs/bin puppet agent -vot --debug',
+            remote=fqdn(self.remote))
 
 
 
