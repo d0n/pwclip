@@ -117,22 +117,25 @@ def error(*args, **kwargs):
 	one or more primary causes i want the text parts printed
 	in red and the causes printed in yellow as follows
 	'''
+	delim = ' '
 	errfile = ''
 	errline = ''
-	buzzword = 'ERROR: '
+	buzzword = 'ERROR:'
 	if 'file' in kwargs.keys():
 		errfile = '%s:'%(kwargs['file'])
 	if 'line' in kwargs.keys():
 		errline = '%s:'%(kwargs['line'])
 	if 'warn' in kwargs.keys():
 		buzzword = 'WARNING:'
+	if 'sep' in kwargs.keys():
+		delim = kwargs['sep']
 	msgs = [errfile+errline+red(buzzword)]
 	for arg in args:
 		if (args.index(arg) % 2) == 0:
 			msgs.append(red(arg))
 		else:
 			msgs.append(yel(arg))
-	__puke('%s\n'%''.join(msg for msg in msgs))
+	__puke('%s\n'%str(delim).join(msg for msg in msgs))
 
 def fatal(*args, **kwargs):
 	'''
