@@ -100,7 +100,7 @@ class Puppet(SSH):
 		#print(self._template, '/etc/puppet/puppet.conf')
 		self.put(
             os.path.expanduser(self._template),
-            '/etc/puppet/puppet.conf', remote=fqdn(self.remote), reuser='root')
+            '/etc/puppetlabs/puppet/puppet.conf', remote=fqdn(self.remote), reuser='root')
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
