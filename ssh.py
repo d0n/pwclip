@@ -4,6 +4,7 @@
 #global imports"""
 import os
 import sys
+import time
 from io import StringIO
 from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
 from shutil import copy2
@@ -11,7 +12,7 @@ from socket import \
     getfqdn as fqdn, gaierror as NameResolveError, timeout as sockettimeout
 
 from colortext import bgre, tabd, abort, error, fatal
-from system.user import whoami
+from system import whoami
 
 # default vars
 __version__ = '0.1'
@@ -240,6 +241,13 @@ class SecureSHell(object):
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
+	def _setnow_(self, lfile, rfile, remote, reuser):
+		if self.dbg:
+			print(bgre(self._setnow_))
+		now = int(time.time())
+		self._setlstamp(lfile, now, now)
+		self._setrstamp(rfile, now, now, remote, reuser)
+
 	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
 		if self.dbg:
 			print(bgre(self.scpcompstats))
@@ -253,12 +261,12 @@ class SecureSHell(object):
 			elif rmt and rmt > lmt:
 				copy2(lfile, '%s.1'%lfile)
 				self.get(rfile, lfile, remote, reuser)
-				self._setlstamp(lfile, rat, rmt)
 			else:
 				self.put(lfile, rfile, remote, reuser)
-				self._setrstamp(rfile, lat, lmt, remote, reuser)
 		except SSHException as err:
 			error(err)
+		finally:
+			self._setnow_(lfile, rfile, remote, reuser)
 		return True
 
 
