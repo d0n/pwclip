@@ -97,7 +97,7 @@ def cli():
         help='switch to all users entrys (instead of current user only)')
 	pars.add_argument(
         '-R', '--remote',
-        dest='remote', metavar='HOST',
+        dest='remote', metavar='HOST', nargs='?',
         help='use remote HOST for file backups (via scp)')
 	pars.add_argument(
         '-U', '--remote-user',
