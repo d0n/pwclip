@@ -14,24 +14,19 @@
 # details.
 #
 """pwclip main program"""
-
 # global & stdlib imports
-import sys
-
 try:
-    from os import fork
+	from os import fork
 except ImportError:
-	def fork(): return 0
+	def fork(): """fork fake funktion""" ;return 0
 
 from os import environ, path
-
-from os.path import isfile, basename, dirname, expanduser
-
-from yaml import load
 
 from argparse import ArgumentParser
 
 from time import sleep
+
+from yaml import load
 
 # local relative imports
 from colortext import bgre, abort, tabd, error, fatal
@@ -43,6 +38,7 @@ from secrecy import PassCrypt, ykchalres
 from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3):
+	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
 		try:
 			copy(text, mode='pb')
@@ -71,9 +67,11 @@ def __dictreplace(pwdict):
 			__pwdict[usr] = __passreplace(ent)
 	return __pwdict
 
+
 def cli():
-	_me = basename(dirname(__file__))
-	cfg = expanduser('~/.config/%s.yaml'%_me)
+	"""pwclip command line opt/arg parsing function"""
+	_me = path.basename(path.dirname(__file__))
+	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
 		with open(cfg, 'r') as cfh:
 			cfgs = load(cfh.read())
@@ -96,11 +94,15 @@ def cli():
         dest='aal', action='store_true',
         help='switch to all users entrys (instead of current user only)')
 	pars.add_argument(
-        '-R', '--remote',
-        dest='remote', metavar='HOST', nargs='?',
-        help='use remote HOST for file backups (via scp)')
+        '-R',
+        dest='rem', action='store_true',
+        help='use remote backup given by --remote-host')
 	pars.add_argument(
-        '-U', '--remote-user',
+        '--remote-host',
+        dest='rehost', metavar='HOST',
+        help='use HOST for connections')
+	pars.add_argument(
+        '--remote-user',
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST')
 	pars.add_argument(
@@ -121,8 +123,7 @@ def cli():
         help='delete ENTRY(s) from the passcrypt list')
 	pars.add_argument(
         '-l', '--list',
-        nargs='?', default=False,
-        dest='lst', metavar='PATTERN',
+        nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
 	pars.add_argument(
         '--yaml',
@@ -144,98 +145,91 @@ def cli():
         help='query entrys of USER (defaults to current user)')
 	pars.add_argument(
         '-y', '--ykserial',
-        nargs='?', default=False,
-        dest='yks', metavar='SERIAL',
+        nargs='?', default=False, dest='yks', metavar='SERIAL',
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
 	pars.add_argument(
-        'time',
-        nargs='?', default=3, metavar='seconds', type=int,
+        '-t',
+        dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
 	args = pars.parse_args()
 
-	pargs = [a for a in [
+	__pargs = [a for a in [
         'dbg' if args.dbg else None,
         'aal' if args.aal else None,
         'sho' if args.sho else None] if a]
-	pkwargs = {}
+	__pkwargs = {}
 	if args.pcr:
-		pkwargs['crypt'] = args.pcr
+		__pkwargs['crypt'] = args.pcr
 	if args.usr:
-		pkwargs['user'] = args.usr
+		__pkwargs['user'] = args.usr
 	if args.yml:
-		pkwargs['plain'] = args.yml
+		__pkwargs['plain'] = args.yml
 	if hasattr(args, 'remote'):
-		pkwargs['remote'] = args.remote
+		__pkwargs['remote'] = args.remote
 	if hasattr(args, 'reuser'):
-		pkwargs['reuser'] = args.reuser
+		__pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
-		print(bgre(pkwargs))
+		print(bgre(__pkwargs))
 
-	if not isfile(args.yml) and not isfile(args.pcr) and args.yks is False:
+	if not path.isfile(args.yml) and \
+          not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
 	if args.yks is not False:
 		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
 		if 'YKSERIAL' in environ.keys():
-			ykser = environ['YKSERIAL']
-		ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		forkwaitclip(ykchalres(xinput(), ykser=ykser), poclp, boclp, args.time)
+			__ykser = environ['YKSERIAL']
+		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
+		forkwaitclip(ykchalres(xinput(), ykser=__ykser), poclp, boclp, args.time)
 		exit(0)
-	if args.lst and args.lst.isdigit() and int(args.lst) <= 3600:
-		args.time = int(args.lst)
-		args.lst = None
-	for a in (args.lst, args.add, args.chg):
-		if a and len(a) < 2:
-			fatal('input ', a, ' is too short')
-	if args.gv2:
-		pkwargs['binary'] = 'gpg2'
-
-	pcm = PassCrypt(*pargs, **pkwargs)
-	if args.lst is not False:
-		__ent = pcm.lspw(args.lst)
-		if not __ent:
-			if __ent is None:
-				fatal('could not decrypt')
-			error('the passcrypt file is empyty')
-		elif __ent and args.lst and not __ent[args.lst]:
-			fatal('could not find entry for ', args.lst, ' in ', pkwargs['crypt'])
-		elif args.lst and __ent:
-			__pc = __ent[args.lst]
-			if __pc:
-				if len(__pc) == 2:
-					xnotify('%s: %s'%(args.lst, __pc[1]), wait=args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time)
-	elif args.add:
-		if not pcm.adpw(args.add):
-			fatal('could not add entry ', args.add)
-		__ent = pcm.lspw(args.add)
-	elif args.chg:
-		if not pcm.chpw(args.chg):
-			fatal('could not change entry ', args.chg)
-		__ent = pcm.lspw(args.chg)
-	elif args.rms:
-		for r in args.rms:
-			if not pcm.rmpw(r):
-				fatal('could not delete entry ', r)
-		__ent = pcm.lspw()
 	else:
-		__in = xinput()
-		if not __in:
-			exit(1)
-		__ent = pcm.lspw(__in)
+		pcm = PassCrypt(*__pargs, **__pkwargs)
+		__ent = None
+		if args.lst is not False:
+			if args.gv2:
+				__pkwargs['binary'] = 'gpg2'
+
+			if args.add:
+				if not pcm.adpw(args.add):
+					fatal('could not add entry ', args.add)
+			elif args.chg:
+				if not pcm.chpw(args.chg):
+					fatal('could not change entry ', args.chg)
+			elif args.rms:
+				for r in args.rms:
+					if not pcm.rmpw(r):
+						fatal('could not delete entry ', r)
+			pattern = args.lst
+			__ent = pcm.lspw(pattern)
+			if not __ent:
+				if __ent is None:
+					fatal('could not decrypt')
+				fatal('could not find ', pattern, ' in ', args.pcr)
+			elif __ent and args.lst and not __ent[args.lst]:
+				fatal('could not find entry for ', args.lst, ' in ', __pkwargs['crypt'])
+			elif args.lst and __ent:
+				__pc = __ent[args.lst]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(args.lst, __pc[1]), wait=args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
+		else:
+			__in = xinput()
+			__ent = pcm.lspw(__in)
+			if __ent:
+				if __in not in __ent.keys() or not __ent[__in]:
+					fatal(
+						'could not find entry for ',
+						__in, ' in ', __pkwargs['crypt'])
+				__pc = __ent[__in]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(__in, __pc[1]), args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent:
-			if not __in in __ent.keys() or not __ent[__in]:
-				fatal(
-                    'could not find entry for ',
-                    __in, ' in ', pkwargs['crypt'])
-			__pc = __ent[__in]
-			if __pc:
-				if len(__pc) == 2:
-					xnotify('%s: %s'%(__in, __pc[1]), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time)
-	if not args.sho:
-		__ent = __dictreplace(__ent)
-	print(tabd(__ent))
+			if not args.sho:
+				__ent = __dictreplace(__ent)
+			print(tabd(__ent))

@@ -1,16 +1,14 @@
 """pwclip packaging information"""
-import sys
-from os import getcwd
-from os.path import join, dirname
+from os import getcwd, path
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 9)
+numversion = (0, 4, 10)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
     'pyusb', 'PyYAML', 'argcomplete',
     'python-gnupg', 'python-yubico', 'paramiko']
-license = 'GPL'
+lic = 'GPL'
 description = "gui to temporarily save passwords to clipboard (paste-buffer)"
 web = 'http://janeiskla.de'
 mailinglist = ""
@@ -33,15 +31,14 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: Utilities',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
-
 try:
-	with open(join(getcwd(), 'README'), 'r') as rfh:
+	with open(path.join(getcwd(), 'README'), 'r') as rfh:
 		readme = rfh.read()
-except FileNotFoundError:
+except OSError:
 	readme = ''
 
-long_desc = ( readme )
+long_desc = (readme)
 
-scripts = [join('bin', 'pwclip')]
+scripts = [path.join('bin', 'pwclip')]
 
 entry_points = {'console_scripts': ['pwclip = pwclip.__init__:pwclipper']}
