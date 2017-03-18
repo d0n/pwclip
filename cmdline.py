@@ -67,6 +67,11 @@ def __dictreplace(pwdict):
 			__pwdict[usr] = __passreplace(ent)
 	return __pwdict
 
+def _printpws_(pwdict, insecure=False):
+	if not insecure:
+		pwdict = __dictreplace(pwdict)
+	print(tabd(pwdict))
+	exit(0)
 
 def cli():
 	"""pwclip command line opt/arg parsing function"""
@@ -188,48 +193,48 @@ def cli():
 	else:
 		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
-		if args.lst is not False:
-			if args.gv2:
-				__pkwargs['binary'] = 'gpg2'
-
-			if args.add:
-				if not pcm.adpw(args.add):
-					fatal('could not add entry ', args.add)
-			elif args.chg:
-				if not pcm.chpw(args.chg):
-					fatal('could not change entry ', args.chg)
-			elif args.rms:
-				for r in args.rms:
-					if not pcm.rmpw(r):
-						fatal('could not delete entry ', r)
-			pattern = args.lst
-			__ent = pcm.lspw(pattern)
-			if not __ent:
-				if __ent is None:
-					fatal('could not decrypt')
-				fatal('could not find ', pattern, ' in ', args.pcr)
-			elif __ent and args.lst and not __ent[args.lst]:
-				fatal('could not find entry for ', args.lst, ' in ', __pkwargs['crypt'])
-			elif args.lst and __ent:
-				__pc = __ent[args.lst]
-				if __pc:
-					if len(__pc) == 2:
-						xnotify('%s: %s'%(args.lst, __pc[1]), wait=args.time)
-					forkwaitclip(__pc[0], poclp, boclp, args.time)
+		if args.gv2:
+			__pkwargs['binary'] = 'gpg2'
+		if args.add:
+			if not pcm.adpw(args.add):
+				fatal('could not add entry ', args.add)
+			_printpws_(pcm.lspw(args.add), args.sho)
+		elif args.chg:
+			if not pcm.chpw(args.chg):
+				fatal('could not change entry ', args.chg)
+			_printpws_(pcm.lspw(args.chg), args.sho)
+		elif args.rms:
+			for r in args.rms:
+				if not pcm.rmpw(r):
+					error('could not delete entry ', r)
+			_printpws_(pcm.lspw(), args.sho)
 		else:
-			__in = xinput()
-			__ent = pcm.lspw(__in)
-			if __ent:
-				if __in not in __ent.keys() or not __ent[__in]:
-					fatal(
-						'could not find entry for ',
-						__in, ' in ', __pkwargs['crypt'])
-				__pc = __ent[__in]
-				if __pc:
-					if len(__pc) == 2:
-						xnotify('%s: %s'%(__in, __pc[1]), args.time)
-					forkwaitclip(__pc[0], poclp, boclp, args.time)
-		if __ent:
-			if not args.sho:
-				__ent = __dictreplace(__ent)
-			print(tabd(__ent))
+			if args.lst is not False:
+				pattern = args.lst
+				__ent = pcm.lspw(pattern)
+				if not __ent:
+					if __ent is None:
+						fatal('could not decrypt')
+					fatal('could not find ', pattern, ' in ', args.pcr)
+				elif __ent and args.lst and not __ent[args.lst]:
+					fatal('could not find entry for ', args.lst, ' in ', __pkwargs['crypt'])
+				elif args.lst and __ent:
+					__pc = __ent[args.lst]
+					if __pc:
+						if len(__pc) == 2:
+							xnotify('%s: %s'%(args.lst, __pc[1]), wait=args.time)
+						forkwaitclip(__pc[0], poclp, boclp, args.time)
+			else:
+				__in = xinput()
+				__ent = pcm.lspw(__in)
+				if __ent:
+					if __in not in __ent.keys() or not __ent[__in]:
+						fatal(
+							'could not find entry for ',
+							__in, ' in ', __pkwargs['crypt'])
+					__pc = __ent[__in]
+					if __pc:
+						if len(__pc) == 2:
+							xnotify('%s: %s'%(__in, __pc[1]), args.time)
+						forkwaitclip(__pc[0], poclp, boclp, args.time)
+		if __ent: _printpws_(__ent, args.sho)

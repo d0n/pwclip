@@ -2,14 +2,14 @@
 from os import getcwd, path
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 10)
+numversion = (0, 4, 12)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
     'pyusb', 'PyYAML', 'argcomplete',
     'python-gnupg', 'python-yubico', 'paramiko']
 lic = 'GPL'
-description = "gui to temporarily save passwords to clipboard (paste-buffer)"
+description = "gui to temporarily save passwords to system-clipboard"
 web = 'http://janeiskla.de'
 mailinglist = ""
 author = 'Leon Pelzer'
