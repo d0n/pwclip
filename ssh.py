@@ -266,7 +266,7 @@ class SecureSHell(object):
 		except SSHException as err:
 			error(err)
 		else:
-			self._settime_(lfile, rfile, stamp, remote, reuser)
+			self._settime_(lfile, rfile, remote, reuser)
 		return True
 
 
