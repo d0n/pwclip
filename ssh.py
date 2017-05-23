@@ -241,12 +241,12 @@ class SecureSHell(object):
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
-	def _setnow_(self, lfile, rfile, remote, reuser):
+	def _settime_(self, lfile, rfile, remote, reuser, stamp=None):
 		if self.dbg:
-			print(bgre(self._setnow_))
-		now = int(time.time())
-		self._setlstamp(lfile, now, now)
-		self._setrstamp(rfile, now, now, remote, reuser)
+			print(bgre(self._settime_))
+		stamp = stamp if stamp else int(time.time())
+		self._setlstamp(lfile, stamp, stamp)
+		self._setrstamp(rfile, stamp, stamp, remote, reuser)
 
 	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
 		if self.dbg:
@@ -265,8 +265,8 @@ class SecureSHell(object):
 				self.put(lfile, rfile, remote, reuser)
 		except SSHException as err:
 			error(err)
-		finally:
-			self._setnow_(lfile, rfile, remote, reuser)
+		else:
+			self._settime_(lfile, rfile, stamp, remote, reuser)
 		return True
 
 
