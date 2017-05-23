@@ -13,7 +13,7 @@ from net.iface import \
     iftype, currentnets, ifthrough
 
 from net.mac import mac, macs
-from net.ssh import SecureSHell
+from net.ssh import SecureSHell, SSHException
 from net.ldap import LDAPSearch
 
 # interface
