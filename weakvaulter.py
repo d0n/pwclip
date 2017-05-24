@@ -46,7 +46,7 @@ from net import SecureSHell
 
 from secrecy.diryamlvault import DirYamlVault
 
-class WeakVaulter(SecureSHell, DirYamlVault):
+class WeakVaulter(DirYamlVault, SecureSHell):
 	dbg = None
 	home = expanduser('~')
 	user = whoami()
@@ -68,8 +68,8 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-		SecureSHell.__init__(self, *args, **kwargs)
 		kwargs['plain'] = kwargs['weakz']
+		SecureSHell.__init__(self, *args, **kwargs)
 		DirYamlVault.__init__(self, *args, **kwargs)
 
 	def _fixmod_(self):
@@ -159,7 +159,10 @@ class WeakVaulter(SecureSHell, DirYamlVault):
 			print(bgre(self.vaultweak))
 		if not exists(self.weakz):
 			return
-		self.envault()
+		try:
+			self.envault()
+		except ValueError as err:
+			print(err)
 		self._mvrtfiles_(
             '%s/%s/.gnupg'%(self.weakz, uname()[1]), '%s/.gnupg.1'%self.home)
 		try:
