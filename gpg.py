@@ -35,6 +35,8 @@ class GPGTool(object):
 	__bindir = '/usr/bin'
 	__gpgbin = 'gpg2'
 	if osname == 'nt':
+		homedir = path.join(
+            path.expanduser('~'), 'AppData', 'roaming', '.gnupg')
 		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
 		__gpgbin = 'gpg2.exe'
 	_binary = path.join(__bindir, __gpgbin)
