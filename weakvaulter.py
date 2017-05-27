@@ -24,7 +24,8 @@ from os import \
 
 from os.path import \
     isdir, islink, isfile, \
-    dirname, expanduser, exists, basename
+    dirname, expanduser, exists, \
+    basename, join as pjoin
 
 from psutil import process_iter as piter
 
@@ -54,8 +55,8 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	recvs = []
 	remote = ''
 	reuser = user
-	vault = '%s/.vault'%home
-	weakz = '%s/.weaknez'%home
+	vault = pjoin(home, '.vault')
+	weakz = pjoin(home, '.weaknez')
 	__dirs = ['.gnupg', '.ssh', '.vpn']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -75,14 +76,16 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	def _fixmod_(self):
 		if self.dbg:
 			print(bgre(self._fixmod_))
-		for p in ('~/.gnupg', '~/.weaknez'):
+		fixmes = self.__dirs + [self.weakz]
+		for p in fixmes:
 			for (d, _, fs) in walk(expanduser(p)):
 				for f in fs:
 					if f.startswith('S.'):
 						continue
-					f = '%s/%s'%(d, f)
+					f = pjoin(d, f)
 					#print(f)
 					chmod(f, 0o600)
+				#print(d)
 				chmod(d, 0o700)
 
 	def _mvrtfiles_(self, src, trg):
@@ -92,7 +95,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
             f.startswith('S') or f.startswith('.#') or f == 'random_seed')]
 		try:
 			for s in rtfs:
-				move('%s/%s'%(src, s), '%s/%s'%(trg, s))
+				move(pjoin(src, s), pjoin(trg, s))
 		except (FileNotFoundError, OSError):
 			pass
 
@@ -112,7 +115,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 			print(bgre(self._clean_))
 		if not isdir(self.weakz):
 			self._rmlns_()
-		elif isdir('%s/%s'%(self.weakz, self.host)):
+		elif isdir(pjoin(self.weakz, self.host)):
 			self._mklns_()
 		self._fixmod_()
 		if self.rem:
@@ -122,7 +125,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if self.dbg:
 			print(bgre(self._rmlns_))
 		for ln in self.__dirs:
-			hl = '%s/%s'%(self.home, ln)
+			hl = pjoin(self.home, ln)
 			try:
 				remove(hl)
 			except (IsADirectoryError, FileNotFoundError):
@@ -137,10 +140,10 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 			print(bgre(self._mklns_))
 		__pwd = getcwd()
 		chdir(self.home)
-		whh = '%s/%s'%(basename(self.weakz), uname()[1])
+		whh = pjoin(basename(self.weakz), uname()[1])
 		for ln in self.__dirs:
-			hl = '%s/%s'%(self.home, ln)
-			whl = '%s/%s'%(whh, ln)
+			hl = pjoin(self.home, ln)
+			whl = pjoin(whh, ln)
 			if isfile(whl) or islink(hl):
 				continue
 			if not isdir('%s.1'%hl):
@@ -164,7 +167,8 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		except ValueError as err:
 			print(err)
 		self._mvrtfiles_(
-            '%s/%s/.gnupg'%(self.weakz, uname()[1]), '%s/.gnupg.1'%self.home)
+            pjoin(self.weakz, uname()[1], '.gnupg'),
+            pjoin(self.home, '.gnupg.1'))
 		try:
 			rmtree(self.weakz)
 		except FileNotFoundError:
@@ -182,5 +186,5 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		setattr(self, 'plain', dirname(self.weakz))
 		self.unvault()
 		self._clean_()
-		self._mvrtfiles_(
-            '%s/.gnupg.1'%self.home, '%s/%s/.gnupg'%(self.weakz, uname()[1]))
+		self._mvrtfiles_(pjoin(
+            self.home, '.gnupg.1'), pjoin(self.weakz, uname()[1], '.gnupg'))

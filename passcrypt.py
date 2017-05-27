@@ -37,8 +37,8 @@ class PassCrypt(GPGTool, SecureSHell):
 	except FileNotFoundError:
 		user = environ['USERNAME']
 		home = path.join(environ['HOMEDRIVE'], environ['HOMEPATH'])
-	plain = '%s/.pwd.yaml'%home
-	crypt = '%s/.passcrypt'%home
+	plain = path.join(home, '.pwd.yaml')
+	crypt = path.join(home, '.passcrypt')
 	recvs = []
 	remote = ''
 	reuser = user
