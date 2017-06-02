@@ -2,7 +2,8 @@ from system.stamp import stamp
 
 from system.fileage import fileage
 
-from system.path import absrelpath, realpaths, confpaths, confdats, jconfdats
+from system.path import absrelpath, realpaths, \
+    confpaths, confdats, jconfdats, filesiter
 
 from system.blockdevice import BlockDevice
 
