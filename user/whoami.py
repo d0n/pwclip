@@ -1,4 +1,7 @@
-from os import getuid
+try:
+	from os import getuid
+except ImportError:
+	def whoami(): return os.environ['USERNAME']
 
 def whoami():
 	with open('/etc/passwd', 'r') as pwf:
