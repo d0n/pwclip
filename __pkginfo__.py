@@ -2,7 +2,7 @@
 from os import getcwd, path
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 15)
+numversion = (0, 4, 18)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
@@ -32,10 +32,10 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 try:
-	with open(path.join(getcwd(), 'README'), 'r') as rfh:
-		readme = rfh.read()
+    with open(path.join(getcwd(), 'README'), 'r') as rfh:
+        readme = rfh.read()
 except OSError:
-	readme = ''
+    readme = ''
 
 long_desc = (readme)
 

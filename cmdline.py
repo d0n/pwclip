@@ -75,6 +75,10 @@ def _printpws_(pwdict, insecure=False):
 
 def cli():
 	"""pwclip command line opt/arg parsing function"""
+	try:
+		user = environ['USER']
+	except KeyError:
+		user = environ['USERNAME']
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -146,7 +150,7 @@ def cli():
         help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER', default=environ['USER'],
+        dest='usr', metavar='USER', default=user,
         help='query entrys of USER (defaults to current user)')
 	pars.add_argument(
         '-y', '--ykserial',
@@ -182,7 +186,13 @@ def cli():
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
-	poclp, boclp = paste('pb')
+		
+	pboclp = paste('pb')
+	if isinstance(pboclp, tuple):
+		poclp, boclp = pboclp
+	else:
+		poclp, boclp = pboclp, ''
+		
 	if args.yks is not False:
 		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
 		if 'YKSERIAL' in environ.keys():
