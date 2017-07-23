@@ -78,7 +78,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			for (k, v) in __newpws.items():
 				__weaks[k] = v
 		if __weaks != self._readcrypt():
-			self._writecrypt_(__weaks)
+			self._writecrypt(__weaks)
 		self.__weaks = __weaks
 
 	def _copynews_(self):
@@ -101,7 +101,7 @@ class PassCrypt(GPGTool, SecureSHell):
 	def _findentry(self, pattern, weakz=None):
 		if self.dbg:
 			print(bgre(tabd({self._findentry: {'pattern': pattern}})))
-		__weakz = weakz if weakz else self.__weakz
+		__weakz = weakz if weakz else self.__weaks
 		for (u, p) in __weakz.items():
 			if pattern == u or (
                   len(p) == 2 and len(pattern) > 1 and pattern in p[1]):
