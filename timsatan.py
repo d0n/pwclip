@@ -6,7 +6,7 @@ from cmd import Cmd
 
 from datetime import date as datetime
 
-from ssl import create_default_context
+from ssl import _create_unverified_context #create_default_context
 
 from getpass import getpass
 
@@ -53,7 +53,7 @@ class Satan(object):
             'casslpem' not in kwargs.keys()) else kwargs['casslpem']
 		self.day = self.day if 'day' not in kwargs.keys() else self.day
 		self.cj = CookieJar()
-		self.cxt = create_default_context(cafile=self.casslpem)
+		self.cxt = _create_unverified_context()
 		self.browser = build_opener(
             HTTPCookieProcessor(self.cj),
             HTTPSHandler(debuglevel=0,context=self.cxt))

@@ -32,10 +32,10 @@ def kvntool(modes, hostgroups=':all', users=[]):
 		if not hostgroup.startswith('hg:') and not hostgroup == ':all':
 			hostgroup = 'hg:%s'%(hostgroup)
 		cmd = 'distribute %s'%(hostgroup)
-		return ssh.call(cmd)
+		return ssh.rcall(cmd)
 	if users:
 		for user in users:
-			ssh.call('userinfo', user)
+			ssh.rcall('userinfo', user)
 	else:
 		for mod in ('export', 'make', 'distribute'):
 			if mod in modes:
@@ -50,7 +50,7 @@ def kvntool(modes, hostgroups=':all', users=[]):
 					else:
 						__distribute(hostgroups)
 				else:
-					ssh.call(mod)
+					ssh.rcall(mod)
 
 
 
