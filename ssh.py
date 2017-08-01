@@ -13,6 +13,7 @@ from socket import \
 
 from colortext import bgre, tabd, abort, error, fatal
 from system import whoami
+from net import askdns
 
 # default vars
 __version__ = '0.1'
@@ -42,7 +43,9 @@ class SecureSHell(object):
 		ssh = SSHClient()
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
-			ssh.connect(remote, int(port), username=reuser)
+			ssh.connect(
+                askdns(remote), int(port),
+                username=reuser, allow_agent=False, look_for_keys=False)
 		except (ssh_exception.SSHException, NameResolveError) as err:
 			error(err)
 			raise err
