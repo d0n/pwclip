@@ -31,7 +31,7 @@ class Puppet(SSH):
 	vrb = False
 	bgr = False
 	reuser = 'root'
-	rehost = ''
+	remote = ''
 	puptenv = 'accmo_master'
 	puptmpl = '~/.config/amt/puppet.tmpl'
 	pupconf = '/etc/puppetlabs/puppet/puppet.conf'
@@ -48,6 +48,7 @@ class Puppet(SSH):
 				setattr(self, key, val)
 			elif hasattr(self, '%s_'%key):
 				setattr(self, '%s_'%key, val)
+		self.remote = fqdn(self.remote)
 		if self._debversion() < '8':
 			self.pupvers = 2
 			self.puptmpl = '~/.config/amt/puppet2.tmpl'
@@ -60,11 +61,12 @@ class Puppet(SSH):
 			print(bgre(Puppet.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 		SSH.__init__(self, *args, **kwargs)
-	
 
 	def _debversion(self):
+		if self.dbg:
+			print(self._debversion)
 		return list(str(self.rstdo(
-              'cat /etc/debian_version', remote=fqdn(self.remote)
+              'cat /etc/debian_version', remote=self.remote
               )).split('.'))[0]
 
 	def pupush(self):
@@ -77,7 +79,9 @@ class Puppet(SSH):
 		"""remove puppet ssl certificates on puppetca"""
 		if self.dbg:
 			print(self.pupcrt)
-		return nc(self.ppcasrv, '18140', fqdn(self.remote))
+		msg = 'cert clean %s'%self.remote if self.pupvers == 4 else self.remote
+		print(self.ppcasrv, msg)
+		return nc(self.ppcasrv, '18140', self.remote)
 
 	def pupssl(self):
 		"""remove puppet ssl certificates remotely"""
@@ -89,7 +93,7 @@ class Puppet(SSH):
                   remote=fqdn(self.remote)) == 0:
 				return True
 		if self.rcall(
-              '',
+              'rm -rf /etc/puppetlabs/puppet/ssl',
               remote=fqdn(self.remote)) == 0:
 			return True
 
