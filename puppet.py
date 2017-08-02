@@ -15,7 +15,7 @@
 """puppet wrapping module"""
 
 # global imports
-import os
+from os.path import expanduser
 import sys
 from socket import getfqdn as fqdn
 
@@ -31,8 +31,14 @@ class Puppet(SSH):
 	vrb = False
 	bgr = False
 	reuser = 'root'
-	remote = ''
-	_template = '~/.config/amt/puppet.tmpl'
+	rehost = ''
+	puptenv = 'accmo_master'
+	puptmpl = '~/.config/amt/puppet.tmpl'
+	pupconf = '/etc/puppetlabs/puppet/puppet.conf'
+	pupdpkg = 'puppet-agent'
+	ppcasrv = 'puppet-access-ca.server.lan'
+	ppsysrv = 'puppet-access-sync.server.lan'
+	pupvers = 4
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -42,31 +48,51 @@ class Puppet(SSH):
 				setattr(self, key, val)
 			elif hasattr(self, '%s_'%key):
 				setattr(self, '%s_'%key, val)
+		if self._debversion() < '8':
+			self.pupvers = 2
+			self.puptmpl = '~/.config/amt/puppet2.tmpl'
+			self.pupconf = '/etc/puppet/puppet.conf'
+			self.pupdpkg = 'puppet'
+			self.puptenv = 'itoacclive'
+			self.ppcasrv = 'puppetca.dlan.cinetic.de'
+			self.ppsysrv = 'puppetsync.server.lan'
 		if self.dbg:
 			print(bgre(Puppet.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 		SSH.__init__(self, *args, **kwargs)
+	
+
+	def _debversion(self):
+		return list(str(self.rstdo(
+              'cat /etc/debian_version', remote=fqdn(self.remote)
+              )).split('.'))[0]
 
 	def pupush(self):
 		"""push current svn revision to puppet master"""
 		if self.dbg:
 			print(self.pupush)
-		return nc('puppetsync.server.lan', '18140', 'itoacclive')
+		return nc(self.ppsysrv, '18140', self.puptenv)
 
 	def pupcrt(self):
 		"""remove puppet ssl certificates on puppetca"""
 		if self.dbg:
 			print(self.pupcrt)
-		return nc('puppetca.dlan.cinetic.de', '18140', fqdn(self.remote))
+		return nc(self.ppcasrv, '18140', fqdn(self.remote))
 
 	def pupssl(self):
 		"""remove puppet ssl certificates remotely"""
 		if self.dbg:
 			print(self.pupssl)
+		if self.pupvers == 2:
+			if self.rcall(
+                  'rm -rf /var/lib/puppet/ssl/',
+                  remote=fqdn(self.remote)) == 0:
+				return True
 		if self.rcall(
-              'rm -rf /var/lib/puppet/ssl/',
+              '',
               remote=fqdn(self.remote)) == 0:
 			return True
+
 
 	def pupini(self, background=None):
 		"""puppet writing method by using template"""
@@ -77,30 +103,15 @@ class Puppet(SSH):
 		xec = self.rcall
 		if background:
 			xec = self.rrun
-		debver = self.rstdo(
-            'cat /etc/debian_version',
-            remote=self.remote)
-		debver = '' if not debver else debver[0].split('.')[0]
 		aptopts = '-y'
-		if debver and debver == '6':
-			bprpo = self.rstdo(
-                'grep -r "squeeze-backports" "/etc/apt/sources.list.d"',
-                remote=fqdn(self.remote))
-			if not bprpo:
-				xec(
-                    'echo "deb http://debian.schlund.de/debian-backports ' \
-                    'squeeze-backports main contrib non-free" > ' \
-                    '/etc/apt/sources.list.d/debian-backports.list',
-                    remote=fqdn(self.remote))
-			aptopts = '-y -t squeeze-backports'
-		for cmd in (
-              'apt-get update', 'apt-get -y upgrade',
-              'apt-get install -y puppet lsb-release'): # %(aptopts)):
+		cmds = [
+            'apt-get update', 'apt-get -y upgrade',
+            'apt-get install -y lsb-release %s'%self.pupdpkg]
+		for cmd in cmds:
 			xec(cmd, remote=fqdn(self.remote))
-		#print(self._template, '/etc/puppet/puppet.conf')
 		self.put(
-            os.path.expanduser(self._template),
-            '/etc/puppetlabs/puppet/puppet.conf', remote=fqdn(self.remote), reuser='root')
+            expanduser(self.puptmpl), self.pupconf,
+            remote=fqdn(self.remote), reuser='root')
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
