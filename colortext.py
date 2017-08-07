@@ -159,10 +159,10 @@ def fatal(*args, **kwargs):
 
 def tabs(dat, ind=0, ll=80):
 	tabds = ''
-	if isinstance(dat, str) and '\n' in tabs:
+	if isinstance(dat, str) and dat and '\n' in dat:
 		for s in dat.split('\n'):
 			tabds = '%s\n%s%s'%(tabds, ' '*ind, s)
-	tabds = tbads if tabds else '%s%s'%(' '*ind, dat)
+	tabds = tabds if tabds else '%s%s'%(' '*ind, dat)
 	return tabds
 
 def tabl(dats, ind=0, iind=0):
