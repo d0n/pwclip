@@ -159,7 +159,7 @@ def fatal(*args, **kwargs):
 
 def tabs(dat, ind=0, ll=80):
 	tabds = ''
-	if isinstance(dat, str) and dat and '\n' in dat:
+	if dat and isinstance(dat, str):
 		for s in dat.split('\n'):
 			tabds = '%s\n%s%s'%(tabds, ' '*ind, s)
 	tabds = tabds if tabds else '%s%s'%(' '*ind, dat)
@@ -197,9 +197,8 @@ def tabd(dats, ind=0, iind=0):
 				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
                     val, ind+int(iind if iind else 2 ), iind if iind else 2))
 			elif isinstance(val, (list, tuple)):
-				return tabl(dats, ind)
-				#tabbd = str('%s\n%s%s%s = %s'%(
-                #    tabbd, ' '*ind, key, spc, val)).strip('\n')
+				tabbd = str('%s\n%s%s%s = %s'%(
+                    tabbd, ' '*ind, key, spc, val)).strip('\n')
 			else:
 				return tabs(dats, ind)
 	except AttributeError:
