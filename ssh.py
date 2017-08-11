@@ -33,13 +33,13 @@ class SecureSHell(object):
 			print(bgre(SecureSHell.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 
-	@staticmethod
-	def _ssh_(remote, reuser=None, port=22):
+	def _ssh_(self, remote, reuser=None, port=22):
 		if '@' in remote:
 			_reuser, remote = remote.split('@')
 		reuser = whoami() if not reuser else reuser
-		_fqdn = fqdn(remote)
-		remote = _fqdn if _fqdn else remote
+		if self.dbg:
+			print(bgre('%s\n  remote = %s\n  reuser = %s\n  port = %d'%(
+                self._ssh_, remote, reuser, port)))
 		ssh = SSHClient()
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
@@ -47,7 +47,7 @@ class SecureSHell(object):
                 askdns(remote), int(port),
                 username=reuser, allow_agent=True, look_for_keys=True)
 		except (ssh_exception.SSHException, NameResolveError) as err:
-			error(err)
+			error(self._ssh_, err)
 			raise err
 		return ssh
 
@@ -62,7 +62,7 @@ class SecureSHell(object):
 		try:
 			ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
-			error(err)
+			error(self.rrun, err)
 			raise err
 
 	def rcall(self, cmd, remote=None, reuser=None):
@@ -93,7 +93,7 @@ class SecureSHell(object):
 		except (
             AttributeError, ssh_exception.SSHException, sockettimeout
             ) as err:
-			error(err)
+			error(self.rcall, err)
 			raise err
 		except KeyboardInterrupt:
 			abort()
@@ -109,7 +109,7 @@ class SecureSHell(object):
 		try:
 			_, out, err = ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
-			error(err)
+			error(self.rstdx, err)
 			raise err
 		return ''.join(out.readlines()), ''.join(err.readlines())
 
@@ -125,10 +125,9 @@ class SecureSHell(object):
 		try:
 			_, out, _ = ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
-			error(err)
+			error(self.stdo, err)
 			raise err
 		return ''.join(out.readlines())
-
 
 	def rstde(self, cmd, remote=None, reuser=None):
 		remote = remote if remote else self.remote
@@ -141,7 +140,7 @@ class SecureSHell(object):
 		try:
 			_, _, err = ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
-			error(err)
+			error(self.rstde, err)
 			raise err
 		return ''.join(err.readlines())
 
@@ -156,7 +155,7 @@ class SecureSHell(object):
 		try:
 			_, out, _ = ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
-			error(err)
+			error(self.rerno, err)
 			raise err
 		return int(out.channel.recv_exit_status())
 
@@ -171,7 +170,7 @@ class SecureSHell(object):
 		try:
 			_, out, err = ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
-			error(err)
+			error(self.roerc, err)
 			raise err
 		return ''.join(out.readlines()), ''.join(err.readlines()), \
             out.channel.recv_exit_status()
@@ -244,13 +243,6 @@ class SecureSHell(object):
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
-	def _settime_(self, lfile, rfile, remote, reuser, stamp=None):
-		if self.dbg:
-			print(bgre(self._settime_))
-		stamp = stamp if stamp else int(time.time())
-		self._setlstamp(lfile, stamp, stamp)
-		self._setrstamp(rfile, stamp, stamp, remote, reuser)
-
 	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
 		if self.dbg:
 			print(bgre(self.scpcompstats))
@@ -264,12 +256,12 @@ class SecureSHell(object):
 			elif rmt and rmt > lmt:
 				copy2(lfile, '%s.1'%lfile)
 				self.get(rfile, lfile, remote, reuser)
+				self._setlstamp(lfile, rat, rmt)
 			else:
 				self.put(lfile, rfile, remote, reuser)
+				self._setlstamp(rfile, lat, lmt)
 		except SSHException as err:
 			error(err)
-		else:
-			self._settime_(lfile, rfile, remote, reuser)
 		return True
 
 
