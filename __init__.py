@@ -3,4 +3,4 @@ from colortext.colortext import \
     blu, cya, gre, grn, red, vio, whi, yel, \
     bblu, bcya, bgre, bgrn, bred, bvio, bwhi, byel, \
     tabd, tabl, tabs, abort, error, fatal
-from colortext.logger import logger
+from colortext.loger import logger
