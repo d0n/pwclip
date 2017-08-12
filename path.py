@@ -20,7 +20,6 @@ def absrelpath(path, base=None):
 		chdir(pwd)
 	return path.rstrip('/')
 
-
 def realpaths(pathlist, base=None):
 	base = base if base else getcwd()
 	paths = []
