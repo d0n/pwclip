@@ -67,7 +67,8 @@ class GPGTool(object):
 		if self.binary.endswith('.exe'):
 			return path.join(self.homedir, 'pubring.gpg')
 		return path.join(self.homedir, 'pubring.kbx') \
-            if __bin.endswith('2') else path.join(self.homedir, 'pubring.gpg')
+            if self.binary.endswith('2') else path.join(
+                self.homedir, 'pubring.gpg')
 
 	@property                # secring <str>
 	def secring(self):
