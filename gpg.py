@@ -31,12 +31,13 @@ class GPGTool(object):
 	one - also i can prepare some program related stuff in here
 	"""
 	dbg = None
+	__isp = None
 	homedir = path.join(path.expanduser('~'), '.gnupg')
 	__bindir = '/usr/bin'
 	__gpgbin = 'gpg2'
 	if osname == 'nt':
 		homedir = path.join(
-            path.expanduser('~'), 'AppData', 'roaming', '.gnupg')
+            path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
 		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
 		__gpgbin = 'gpg2.exe'
 	_binary = path.join(__bindir, __gpgbin)
@@ -46,6 +47,7 @@ class GPGTool(object):
 	dmcfg = path.join(homedir, 'dirmngr.conf')
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
+	recvs = []
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -62,18 +64,18 @@ class GPGTool(object):
 
 	@property                # keyring <str>
 	def keyring(self):
-		__bin = self.binary.rstrip('.exe')
+		if self.binary.endswith('.exe'):
+			return path.join(self.homedir, 'pubring.gpg')
 		return path.join(self.homedir, 'pubring.kbx') \
             if __bin.endswith('2') else path.join(self.homedir, 'pubring.gpg')
 
 	@property                # secring <str>
 	def secring(self):
-		__bin = self.binary.rstrip('.exe')
-		if __bin.endswith('2') and self.keyring.endswith('gpg'):
+		if self.binary.endswith('.exe'):
 			return path.join(self.homedir, 'secring.gpg')
-		elif not __bin.endswith('2'):
+		elif self.binary.endswith('2') and self.keyring.endswith('gpg'):
 			return path.join(self.homedir, 'secring.gpg')
-		return self.keyring
+		return path.join(self.homedir, 'secring.kbx')
 
 	@property                # dmcfg <str>
 	def dmcfg(self):
@@ -100,6 +102,11 @@ class GPGTool(object):
 		opts = ['--batch', '--always-trust']
 		if osname != 'nt' and self.binary.rstrip('.exe').endswith('2'):
 			opts.append('--pinentry-mode=loopback')
+		elif osname == 'nt':
+			if self.__isp is None:
+				setattr(self, '__isp', self._passwd())
+			opts.append('--passphrase=%s'%self.__isp)
+			
 		__g = GPG(
             keyring=self.keyring, secret_keyring=self.secring,
             gnupghome=self.homedir, gpgbinary=self.binary,
@@ -216,14 +223,16 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre(self.encrypt))
-		fingers = list(self.export(**{'typ': 'e'}))
+		fingers = list(self.export())
+		if self.recvs:
+			fingers = list(self.export(*self.recvs, **{'typ': 'e'}))			
 		if 'recipients' in kwargs.keys():
 			fingers = list(self.export(*kwargs['recipients'], **{'typ': 'e'}))
 		if 'keystr' in kwargs.keys():
 			res = self._gpg_.import_keys(keystr).results[0]
 			fingers = [res['fingerprint']]
 		output = None if not 'output' in kwargs.keys() else kwargs['output']
-		#print(fingers)
+		print(fingers)
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=output)
 

@@ -7,8 +7,6 @@ try:
 except ImportError:
 	def uname(): return [_, environ['COMPUTERNAME']]
 
-from tarfile import open as taropen
-
 from yaml import load, dump
 
 from time import sleep
@@ -70,7 +68,8 @@ class PassCrypt(GPGTool, SecureSHell):
 		try:
 			with open(self.plain, 'r') as pfh:
 				__newpws = load(pfh.read())
-			remove(self.plain)
+			if not self.dbg:
+				remove(self.plain)
 		except FileNotFoundError:
 			__newpws = {}
 		if __newpws:
@@ -128,7 +127,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			copyfile(self.crypt, '%s.1'%self.crypt)
 			chmod('%s.1'%self.crypt, 0o600)
 		except FileNotFoundError:
-			return False
+			pass
 		while True:
 			self.encrypt(message=dump(self.__weaks), **kwargs)
 			if self._chkcrypt():
