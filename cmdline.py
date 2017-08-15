@@ -169,6 +169,11 @@ def cli():
 	__pkwargs = {}
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
+	if args.rcp:
+		if ' ' in args.rcp:
+			environ['GPGKEYS'] = args.rcp
+		environ['GPGKEY'] = str(args.rcp).split(' ')[0]
+		__pkwargs['recvs'] = args.rcp
 	if args.usr:
 		__pkwargs['user'] = args.usr
 	if args.yml:
@@ -237,7 +242,7 @@ def cli():
 			else:
 				__in = xinput()
 				__ent = pcm.lspw(__in)
-				if __ent:
+				if __ent and __in:
 					if __in not in __ent.keys() or not __ent[__in]:
 						fatal(
 							'could not find entry for ',
