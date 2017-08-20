@@ -122,12 +122,12 @@ def clips():
 			with window() as hwnd:
 				with clipboard(hwnd):
 					delclip()
-					if text:
+					if text and mode != 'b':
 						count = len(text) + 1
 						handle = allock(GMEM_MOVEABLE, count*sizeof(c_wchar))
 						locked_handle = dolock(handle)
 						memmove(
-						    c_wchar_p(locked_handle),
+                            c_wchar_p(locked_handle),
                             c_wchar_p(text), count*sizeof(c_wchar))
 						unlock(handle)
 						setclip(CF_UNICODETEXT, handle)
