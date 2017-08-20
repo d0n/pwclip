@@ -57,6 +57,7 @@ def xinput(message="input will not be displayed"):
 			self.cl.pack(side="right")
 	# instanciate Tk and create window
 	root = Tk()
+	root.after(1, lambda: root.focus_force())
 	try:
 		pwc = PassClip(root)
 	except KeyboardInterrupt:

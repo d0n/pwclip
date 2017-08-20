@@ -26,11 +26,11 @@ except (AttributeError, ImportError) as err:
 	def xnotify(*args): return
 
 def xnotify(msg, name=stack()[1][3], wait=3):
-	xnote.init(str(name))
-	note = xnote.Notification.new(msg)
-	wait = int(wait)*600
-	note.set_timeout(wait)
 	try:
+		xnote.init(str(name))
+		note = xnote.Notification.new(msg)
+		wait = int(wait)*600
+		note.set_timeout(wait)
 		note.show()
-	except RuntimeError:
+	except (NameError, RuntimeError):
 		pass

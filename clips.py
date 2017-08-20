@@ -126,7 +126,7 @@ def clips():
 						count = len(text) + 1
 						handle = allock(GMEM_MOVEABLE, count*sizeof(c_wchar))
 						locked_handle = dolock(handle)
-						ctypes.memmove(
+						memmove(
 						    c_wchar_p(locked_handle),
                             c_wchar_p(text), count*sizeof(c_wchar))
 						unlock(handle)
