@@ -2,8 +2,6 @@
 """pwclip init module"""
 import sys
 
-from os import environ
-
 from os.path import abspath, dirname, exists
 
 # this only makes sence while i need the lib folder in the PYTHONPATH
@@ -12,11 +10,10 @@ from os.path import abspath, dirname, exists
 __lib = '%s/lib'%abspath(dirname(__file__))
 if exists(__lib) and __lib not in sys.path:
 	sys.path = [__lib] + sys.path
-
 from colortext import abort, fatal
-from pwclip.cmdline import cli
+from pwclip.cmdline import cli, gui
 
-def pwclipper():
+def pwclip():
 	"""pwclip wrapper function"""
 	try:
 		cli()
@@ -24,3 +21,9 @@ def pwclipper():
 		fatal(err)
 	except KeyboardInterrupt:
 		abort()
+
+def pwclip():
+	gui('pw')
+
+def ykclip():
+	gui('yk')

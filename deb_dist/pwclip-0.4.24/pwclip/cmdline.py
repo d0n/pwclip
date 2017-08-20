@@ -20,7 +20,7 @@ try:
 except ImportError:
 	def fork(): """fork fake funktion""" ;return 0
 
-from os import environ, path
+from os import environ, path, name as osname
 
 from argparse import ArgumentParser
 
@@ -39,14 +39,18 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3):
 	"""clipboard forking, after time resetting function"""
-	if fork() == 0:
-		try:
-			copy(text, mode='pb')
-			sleep(int(wait))
-		except KeyboardInterrupt:
-			abort()
-		finally:
-			copy(poclp, mode='p')
+	if osname == 'nt':
+		pass
+	elif fork() == 0:
+		error('could not fork')
+	try:
+		copy(text, mode='pb')
+		sleep(int(wait))
+	except KeyboardInterrupt:
+		abort()
+	finally:
+		copy(poclp, mode='p')
+		if osname != 'nt':
 			copy(boclp, mode='b')
 	exit(0)
 
@@ -73,8 +77,7 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def cli():
-	"""pwclip command line opt/arg parsing function"""
+def __readconf():
 	try:
 		user = environ['USER']
 	except KeyError:
@@ -86,8 +89,34 @@ def cli():
 			cfgs = load(cfh.read())
 	except FileNotFoundError:
 		cfgs = {}
+	return dict(cfgs)
+
+def gui(typ):
+	if typ == 'yk':
+		if 'YKSERIAL' in environ.keys():
+			__ykser = environ['YKSERIAL']
+		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
+		forkwaitclip(ykchalres(xinput(), ykser=__ykser), poclp, boclp, args.time)
+		exit(0)
+	pcm = PassCrypt(*('aal', ), **__readconf)
+	__in = xinput()
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			fatal(
+                'could not find entry for ',
+                __in, ' in ', __pkwargs['crypt'])
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time)
+
+
+def cli():
+	"""pwclip command line opt/arg parsing function"""
 	pars = ArgumentParser() #add_help=False)
-	pars.set_defaults(**cfgs)
+	pars.set_defaults(**__readconf)
 	pars.add_argument(
         '--version',
         action='version', version='%(prog)s-v'+version)
@@ -161,7 +190,6 @@ def cli():
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
 	args = pars.parse_args()
-
 	__pargs = [a for a in [
         'dbg' if args.dbg else None,
         'aal' if args.aal else None,
@@ -227,11 +255,12 @@ def cli():
 			if args.lst is not False:
 				pattern = args.lst
 				__ent = pcm.lspw(pattern)
+				print(__ent)
 				if not __ent:
 					if __ent is None:
 						fatal('could not decrypt')
 					fatal('could not find ', pattern, ' in ', args.pcr)
-				elif __ent and args.lst and not __ent[args.lst]:
+				elif __ent and args.lst and not args.lst in __ent.keys():
 					fatal('could not find entry for ', args.lst, ' in ', __pkwargs['crypt'])
 				elif args.lst and __ent:
 					__pc = __ent[args.lst]

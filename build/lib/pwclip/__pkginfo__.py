@@ -2,15 +2,14 @@
 from os import getcwd, path
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 18)
+numversion = (0, 4, 24)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
-    'pyusb', 'PyYAML', 'argcomplete', 'psutil',
-    'python-gnupg', 'python-yubico', 'paramiko']
+    'pyusb', 'PyYAML', 'argcomplete', 'netaddr',
+    'psutil', 'python-gnupg', 'python-yubico', 'paramiko']
 lic = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
-web = 'http://janeiskla.de'
 mailinglist = ""
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
@@ -32,7 +31,7 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 try:
-    with open(path.join(getcwd(), 'README'), 'r') as rfh:
+    with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
         readme = rfh.read()
 except OSError:
     readme = ''
@@ -41,4 +40,8 @@ long_desc = (readme)
 
 scripts = [path.join('bin', 'pwclip')]
 
-entry_points = {'console_scripts': ['pwclip = pwclip.__init__:pwclipper']}
+entry_points = {
+    'gui_scripts': [
+        'pwclip = pwclip.__init__:pwclip',
+        'ykclip = pwclip.__init__:ykclip'],
+    'console_scripts': ['pwclip = pwclip.__init__:pwcli']}
