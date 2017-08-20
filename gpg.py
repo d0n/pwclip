@@ -104,16 +104,16 @@ class GPGTool(object):
 		if osname != 'nt' and self.binary.rstrip('.exe').endswith('2'):
 			opts.append('--pinentry-mode=loopback')
 		elif osname == 'nt':
-			if self.__isp is None:
-				setattr(self, '__isp', self._passwd())
+			if not self.__isp:
+				self.__isp = xinput('enter gpg-passphrase')
 			opts.append('--passphrase=%s'%self.__isp)
-			
 		__g = GPG(
             keyring=self.keyring, secret_keyring=self.secring,
             gnupghome=self.homedir, gpgbinary=self.binary,
             use_agent=True, options=opts,
             verbose=1 if self.dbg else 0)
-		__g.encoding = 'utf-8'
+		if osname != 'nt':
+			__g.encoding = 'utf-8'
 		return __g
 
 	@staticmethod
