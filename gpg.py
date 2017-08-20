@@ -233,7 +233,6 @@ class GPGTool(object):
 			res = self._gpg_.import_keys(keystr).results[0]
 			fingers = [res['fingerprint']]
 		output = None if not 'output' in kwargs.keys() else kwargs['output']
-		print(fingers)
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=output)
 
