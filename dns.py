@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-from os import uname
+try:
+	from os import uname
+except ImportError:
+	from os import environ
+	uname = ['', environ['COMPUTERNAME']]
 
 from socket import getfqdn, gethostbyaddr, gaierror, herror
 
