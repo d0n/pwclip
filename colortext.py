@@ -158,8 +158,12 @@ def fatal(*args, **kwargs):
 	exit(1)
 
 def tabs(dat, ind=0, ll=80):
-	return '\n'.join(
-        '%s%s'%(' '*ind, dat[i:int(i+ll)]) for i in range(0, len(dat), ll))
+	tabds = ''
+	if dat and isinstance(dat, str):
+		for s in dat.split('\n'):
+			tabds = '%s\n%s%s'%(tabds, ' '*ind, s)
+	tabds = tabds if tabds else '%s%s'%(' '*ind, dat)
+	return tabds
 
 def tabl(dats, ind=0, iind=0):
 	tabbl = ''
@@ -192,11 +196,13 @@ def tabd(dats, ind=0, iind=0):
 			if val and isinstance(val, dict):
 				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
                     val, ind+int(iind if iind else 2 ), iind if iind else 2))
-			else:
+			elif isinstance(val, (list, tuple)):
 				tabbd = str('%s\n%s%s%s = %s'%(
                     tabbd, ' '*ind, key, spc, val)).strip('\n')
+			else:
+				return tabs(dats, ind)
 	except AttributeError:
-		return tabl(dats, ind)
+		return tabs(dats, ind)
 	return tabbd.strip('\n')
 
 if __name__ == "__main__":
