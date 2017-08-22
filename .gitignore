@@ -1,5 +1,9 @@
 # ignore python compiled files #
 ##############
 __pycache__
+<<<<<<< HEAD
+=======
+pybuild
+>>>>>>> build
 *.pyc
 *.swp

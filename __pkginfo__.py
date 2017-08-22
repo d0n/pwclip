@@ -2,7 +2,7 @@
 from os import getcwd, path, name as osname
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 25)
+numversion = (0, 4, 26)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
@@ -40,6 +40,6 @@ long_desc = (readme)
 
 scripts = [path.join('bin', 'pwclip')]
 
-entry_points = {'console_scripts': ['pwcli = pwclip.__init__:pwclip']}
-if osname == 'nt':
-    entry_points = {'gui_scripts': ['pwclip = pwclip.__init__:pwclip']}
+entry_points = {
+    'gui_scripts': ['pwclip = pwclip.__init__:pwclip'],
+    'console_scripts': ['pwclip = pwclip.__init__:pwclip']}

@@ -74,7 +74,8 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def __defconfs():
+def cli():
+	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -86,17 +87,7 @@ def __defconfs():
 		user = environ['USER']
 	except KeyError:
 		user = environ['USERNAME']
-	cfgs['user'] = user
-	if not 'crypt' in cfgs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	if not 'plain' in cfgs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	return dict(cfgs)
-
-def cli():
-	"""pwclip command line opt/arg parsing function"""
 	pars = ArgumentParser() #add_help=False)
-	cfgs = __defconfs()
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -160,7 +151,7 @@ def cli():
         help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER', default=cfgs['user'],
+        dest='usr', metavar='USER', default=user,
         help='query entrys of USER (defaults to current user)')
 	pars.add_argument(
         '-y', '--ykserial',
@@ -229,12 +220,11 @@ def cli():
 			_printpws_(pcm.lspw(), args.sho)
 		else:
 			if args.lst is not False:
-				pattern = args.lst
-				__ent = pcm.lspw(pattern)
-				if not __ent:
+				__ent = pcm.lspw(args.lst)
+				if not __ent or (__ent and args.lst in __ent.keys()):
 					if __ent is None:
 						fatal('could not decrypt')
-					fatal('could not find ', pattern, ' in ', args.pcr)
+					fatal('could not find ', args.lst, ' in ', args.pcr)
 				elif __ent and args.lst and not args.lst in __ent.keys():
 					fatal(
                         'could not find entry for ',
