@@ -18,9 +18,10 @@
 try:
 	from os import fork
 except ImportError:
-	def fork(): """fork fake funktion""" ;return 0
+	# define fork function fake
+	def fork(): return 0
 
-from os import environ, path
+from os import environ, path, name as osname
 
 from argparse import ArgumentParser
 
@@ -73,12 +74,7 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def cli():
-	"""pwclip command line opt/arg parsing function"""
-	try:
-		user = environ['USER']
-	except KeyError:
-		user = environ['USERNAME']
+def __defconfs():
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -86,7 +82,21 @@ def cli():
 			cfgs = load(cfh.read())
 	except FileNotFoundError:
 		cfgs = {}
+	try:
+		user = environ['USER']
+	except KeyError:
+		user = environ['USERNAME']
+	cfgs['user'] = user
+	if not 'crypt' in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	if not 'plain' in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	return dict(cfgs)
+
+def cli():
+	"""pwclip command line opt/arg parsing function"""
 	pars = ArgumentParser() #add_help=False)
+	cfgs = __defconfs()
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -150,7 +160,7 @@ def cli():
         help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER', default=user,
+        dest='usr', metavar='USER', default=cfgs['user'],
         help='query entrys of USER (defaults to current user)')
 	pars.add_argument(
         '-y', '--ykserial',
@@ -161,18 +171,15 @@ def cli():
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
 	args = pars.parse_args()
-
 	__pargs = [a for a in [
-        'dbg' if args.dbg else None,
         'aal' if args.aal else None,
+        'dbg' if args.dbg else None,
+        'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
 	__pkwargs = {}
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
-		if ' ' in args.rcp:
-			environ['GPGKEYS'] = args.rcp
-		environ['GPGKEY'] = str(args.rcp).split(' ')[0]
 		__pkwargs['recvs'] = args.rcp
 	if args.usr:
 		__pkwargs['user'] = args.usr
@@ -191,25 +198,22 @@ def cli():
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
-		
-	pboclp = paste('pb')
-	if isinstance(pboclp, tuple):
-		poclp, boclp = pboclp
-	else:
-		poclp, boclp = pboclp, ''
-		
+
+	poclp, boclp = paste('pb')
 	if args.yks is not False:
 		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
 		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		forkwaitclip(ykchalres(xinput(), ykser=__ykser), poclp, boclp, args.time)
+		forkwaitclip(
+            ykchalres(xinput(), ykser=__ykser), poclp, boclp, args.time)
 		exit(0)
 	else:
 		pcm = PassCrypt(*__pargs, **__pkwargs)
+		__in = None
 		__ent = None
 		if args.gv2:
-			__pkwargs['binary'] = 'gpg2'
+			pcm.binary = 'gpg2' if osname != 'nt' else 'gpg2.exe'
 		if args.add:
 			if not pcm.adpw(args.add):
 				fatal('could not add entry ', args.add)
@@ -231,22 +235,26 @@ def cli():
 					if __ent is None:
 						fatal('could not decrypt')
 					fatal('could not find ', pattern, ' in ', args.pcr)
-				elif __ent and args.lst and not __ent[args.lst]:
-					fatal('could not find entry for ', args.lst, ' in ', __pkwargs['crypt'])
+				elif __ent and args.lst and not args.lst in __ent.keys():
+					fatal(
+                        'could not find entry for ',
+                        args.lst, ' in ', __pkwargs['crypt'])
 				elif args.lst and __ent:
 					__pc = __ent[args.lst]
 					if __pc:
 						if len(__pc) == 2:
-							xnotify('%s: %s'%(args.lst, __pc[1]), wait=args.time)
+							xnotify(
+                                '%s: %s'%(args.lst, __pc[1]), wait=args.time)
 						forkwaitclip(__pc[0], poclp, boclp, args.time)
 			else:
 				__in = xinput()
+				if not __in: exit(1)
 				__ent = pcm.lspw(__in)
 				if __ent and __in:
 					if __in not in __ent.keys() or not __ent[__in]:
 						fatal(
-							'could not find entry for ',
-							__in, ' in ', __pkwargs['crypt'])
+                            'could not find entry for ',
+                            __in, ' in ', __pkwargs['crypt'])
 					__pc = __ent[__in]
 					if __pc:
 						if len(__pc) == 2:

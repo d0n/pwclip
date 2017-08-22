@@ -1,7 +1,0 @@
-Put the .pwd.yaml within this folder into your ~/ ($HOME) directory. Replace 
-the <systemuser> by the username you are loged into the system.
-
-By setting GPGKEY or GPGKEYS you may set the gpg-keys used for en/decryption.
-By entering wlan you see the 2nd field of the wlan: user beneith the
-<systemuser>. Theese are defaults for explanation on how pwclip works. Please
-see https://pypi.python.org/pypi/pwclip for more and up-to-date information.
