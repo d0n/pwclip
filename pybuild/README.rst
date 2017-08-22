@@ -178,8 +178,19 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-0.4.25 (current)
+0.4.26 (current)
 ----------------
+
+Released: 2017-08-22
+
+  * changed entry-points to match reverted names - trying to find correct
+    exec mode for windows
+
+  * cleanup of build environment - preparing final version
+
+
+0.4.25
+------
 
 Released: 2017-08-21
 

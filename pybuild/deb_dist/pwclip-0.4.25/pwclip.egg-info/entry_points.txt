@@ -1,3 +1,0 @@
-[console_scripts]
-pwcli = pwclip.__init__:pwclip
-

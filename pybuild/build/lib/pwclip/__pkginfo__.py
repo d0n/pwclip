@@ -2,7 +2,7 @@
 from os import getcwd, path, name as osname
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 25)
+numversion = (0, 4, 26)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip']
 install_requires = [
