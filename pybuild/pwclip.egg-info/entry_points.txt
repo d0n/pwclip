@@ -1,0 +1,6 @@
+[console_scripts]
+pwclip = pwclip.__init__:pwclip
+
+[gui_scripts]
+pwclip = pwclip.__init__:pwclip
+
