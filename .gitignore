@@ -1,5 +1,9 @@
 # ignore python compiled files #
 ##############
-__pycache__
 *.pyc
 *.swp
+*.tar.gz
+__pycache__
+pybuild/build
+pybuild/deb_dist
+pybuild/dist
