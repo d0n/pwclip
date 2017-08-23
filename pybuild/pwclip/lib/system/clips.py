@@ -137,23 +137,22 @@ def clips():
 			with clipboard(None):
 				handle = getclip(CF_UNICODETEXT)
 				if not handle:
-					return ""
-				if mode in ('pb', 'bp'):
-					c_wchar_p(handle).value, c_wchar_p(handle).value
-				return c_wchar_p(handle).value, ''
+					return "", ""
+				c_wchar_p(handle).value, c_wchar_p(handle).value
+			return c_wchar_p(handle).value, None
 		return _copy, _paste
 
 	def osxclips():
 		def _copy(text, mode=None):
 			text = text if text else ''
-			if mode == 'p':
+			if mode == 'b':
 				return
 			with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
 				prc.communicate(input=text.encode('utf-8'))
 		def _paste(mode=None):
 			with Popen(['pbpaste'], stdout=PIPE, close_fds=True) as prc:
 				out, _ = p.communicate()
-				return out.decode('utf-8'), ''
+				return out.decode('utf-8'), None
 		return _copy, _paste
 
 	def linclips():

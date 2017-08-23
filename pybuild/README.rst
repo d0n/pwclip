@@ -178,8 +178,18 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-0.4.26 (current)
+0.4.27 (current)
 ----------------
+
+Released: 2017-08-23
+
+  * [W] hotfix for clipboard paste function to return objects correctly
+
+  * (still) preparing final version
+
+
+0.4.26
+------
 
 Released: 2017-08-22
 
