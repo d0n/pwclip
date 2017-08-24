@@ -193,8 +193,19 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-0.4.27 (current)
+
+0.4.28 (current)
 ----------------
+
+Released: 2017-08-24
+
+  * fixed password-search function on cmdline
+
+  * (still) preparing final version :D
+
+
+0.4.27
+------
 
 Released: 2017-08-23
 
