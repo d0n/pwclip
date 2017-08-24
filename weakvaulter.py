@@ -191,6 +191,6 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		setattr(self, 'plain', dirname(self.weakz))
 		self.unvault()
 		self._mvrtfiles_(
-            pjoin(self.home, '.gnupg.1'),
+            pjoin(self.home, '.gnupg'),
             pjoin(self.weakz, uname()[1], '.gnupg'))
 		self._clean_()
