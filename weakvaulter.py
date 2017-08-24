@@ -20,7 +20,7 @@ from sys import stderr
 from os import \
     symlink, getcwd, listdir, \
     makedirs, walk, uname, chdir, \
-    remove, readlink, environ, chmod
+    remove, readlink, environ, chmod, chown
 
 from os.path import \
     isdir, islink, isfile, \
@@ -87,6 +87,11 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 					chmod(f, 0o600)
 				#print(d)
 				chmod(d, 0o700)
+		for d in self.__dirs:
+			try:
+				chown(pjoin(self.home, d), 1000, 1000)
+			except FileNotFoundError:
+				pass
 
 	def _mvrtfiles_(self, src, trg):
 		if self.dbg:
