@@ -6,6 +6,8 @@ Generic Setup script, takes package info from __pkginfo__.py file.
 from sys import argv
 from os import listdir, chdir, getcwd, path
 from setuptools import setup
+from setuptools.command.install import install
+from atexit import register
 
 __docformat__ = "restructuredtext en"
 
@@ -63,7 +65,6 @@ def setupkwargs(pinf):
                 del skwargs[key]
     return skwargs
 
-
 if __name__ == '__main__':
     __pkginfo__ = {}
     __pkginfo__['packages'] = ['pwclip'] + packages('pwclip')
@@ -76,5 +77,4 @@ if __name__ == '__main__':
             print(k, '=', v)
         print()
     kwargs['package_data'] = {'': ['*.rst']}
-    print(kwargs)
     setup(**kwargs)

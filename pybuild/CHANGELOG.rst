@@ -11,9 +11,10 @@ Released: 2017-08-23
   * implemented -S to set the slot number of the yubikey used which is
     only relevant for the challenge-response functionality (-y)
 
-  * 
+  * added a "Troubleshooting" section to README on fixing yubico-usb-hid-bug
 
   * (still) preparing final version
+
 
 0.4.26
 ------

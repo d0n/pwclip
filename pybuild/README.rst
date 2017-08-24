@@ -161,6 +161,21 @@ used or also the command accepts that as input:
 The timer option can only be privided last on cmdline.
 
 
+Troubleshooting
+===============
+
+When using the yubikey challenge-response mode there is a bug in the usb_hid
+interface. This is because of python2 => 3 transition, most likely and can be
+fixed easily (having root privileges) by executing the following commands:
+``sudo su -`` # only needed if current user isn't root already
+``ykfile=/usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py``
+``sudo vi +':107s/\(.* =\).*/\1 response[0]/' +':wq' $ykfile``
+Explained in short the line
+`r_len = ord(response[0])`
+is replaced by
+`r_len = response[0]`
+
+
 Credits
 =======
 
@@ -184,6 +199,11 @@ Changelog
 Released: 2017-08-23
 
   * [W] hotfix for clipboard paste function to return objects correctly
+
+  * implemented -S to set the slot number of the yubikey used which is
+    only relevant for the challenge-response functionality (-y)
+
+  * added a "Troubleshooting" section to README on fixing yubico-usb-hid-bug
 
   * (still) preparing final version
 

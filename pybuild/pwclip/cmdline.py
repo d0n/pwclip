@@ -200,12 +200,12 @@ def cli():
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
 		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		forkwaitclip(
-            ykchalres(xinput(), args.ysl, __ykser), poclp, boclp, args.time)
-		exit(0)
+		__res = ykchalres(xinput(), args.ysl, __ykser)
+		if not __res:
+			fatal('could not get valid response on slot ', args.ysl)
+		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
 		pcm = PassCrypt(*__pargs, **__pkwargs)
-		__in = None
 		__ent = None
 		if args.gv2:
 			pcm.binary = 'gpg2' if osname != 'nt' else 'gpg2.exe'
@@ -222,36 +222,33 @@ def cli():
 				if not pcm.rmpw(r):
 					error('could not delete entry ', r)
 			_printpws_(pcm.lspw(), args.sho)
+		elif args.lst is not False:
+			__ent = pcm.lspw(args.lst)
+			if not __ent:
+				fatal('could not decrypt')
+			elif __ent and args.lst and not args.lst in __ent.keys():
+				fatal(
+                    'could not find entry for ',
+                    args.lst, ' in ', __pkwargs['crypt'])
+			elif args.lst and __ent:
+				__pc = __ent[args.lst]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify(
+							'%s: %s'%(args.lst, __pc[1]), wait=args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
-			if args.lst is not False:
-				__ent = pcm.lspw(args.lst)
-				if not __ent or (__ent and args.lst in __ent.keys()):
-					if __ent is None:
-						fatal('could not decrypt')
-					fatal('could not find ', args.lst, ' in ', args.pcr)
-				elif __ent and args.lst and not args.lst in __ent.keys():
+			__in = xinput()
+			if not __in: exit(1)
+			__ent = pcm.lspw(__in)
+			if __ent and __in:
+				if __in not in __ent.keys() or not __ent[__in]:
 					fatal(
-                        'could not find entry for ',
-                        args.lst, ' in ', __pkwargs['crypt'])
-				elif args.lst and __ent:
-					__pc = __ent[args.lst]
-					if __pc:
-						if len(__pc) == 2:
-							xnotify(
-                                '%s: %s'%(args.lst, __pc[1]), wait=args.time)
-						forkwaitclip(__pc[0], poclp, boclp, args.time)
-			else:
-				__in = xinput()
-				if not __in: exit(1)
-				__ent = pcm.lspw(__in)
-				if __ent and __in:
-					if __in not in __ent.keys() or not __ent[__in]:
-						fatal(
-                            'could not find entry for ',
-                            __in, ' in ', __pkwargs['crypt'])
-					__pc = __ent[__in]
-					if __pc:
-						if len(__pc) == 2:
-							xnotify('%s: %s'%(__in, __pc[1]), args.time)
-						forkwaitclip(__pc[0], poclp, boclp, args.time)
+						'could not find entry for ',
+						__in, ' in ', __pkwargs['crypt'])
+				__pc = __ent[__in]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(__in, __pc[1]), args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent: _printpws_(__ent, args.sho)
