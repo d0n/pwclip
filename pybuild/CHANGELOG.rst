@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.32-36 (current)
+0.4.32-37 (current)
 -------------------
 
 Released: 2017-08-25
@@ -14,7 +14,7 @@ Released: 2017-08-25
 
   * [W] fixed colortext (disabled colors)
 
-  * fixed changelog not beeing displayed
+  * fixed changelog not beeing displayed ... again
 
 
 0.4.31

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: pwclip
-Version: 0.4.36
+Version: 0.4.37
 Summary: gui to temporarily save passwords to system-clipboard
 Home-page: UNKNOWN
 Author: Leon Pelzer
@@ -198,7 +198,61 @@ Description: pwclip
         feature/bug requests: <d0n@janeiskla.de>
         
         
-        {}
+        Changelog
+        =========
+        
+        0.4.32-37 (current)
+        -------------------
+        
+        Released: 2017-08-25
+        
+          * [W] hotfix release for gpg binary path selection
+        
+          * w00ht @ dev environemnt - linux/windows dev/testing can be very... intense
+        
+          * made changelog => readme generic via __pkginfo__.py
+        
+          * [W] fixed colortext (disabled colors)
+        
+          * fixed changelog not beeing displayed ... again
+        
+        
+        0.4.31
+        ------
+        
+        Released: 2017-08-25
+        
+          * hotfix release for gui calls
+        
+          * readded work revoked unintensionally
+        
+          * fixed yubico mode and ykclip gui
+        
+        
+        0.4.30
+        ------
+        
+        Released: 2017-08-25
+        
+          * made reading configs somewhat more modular
+        
+          * made gui function accepting option for (pw/yk)mode switching
+        
+          * made yubikey challenge-response mode behave correctly
+        
+          * changed names of binaries to pwcli(cmdline), pwclip(gui), ykclip(gui)
+        
+        
+        0.4.29
+        ------
+        
+        Released: 2017-08-25
+        
+          * removed empty password check and info
+        
+          * added pwclip-gui to "provides" section in __pkginfo__.py
+        
+          * hotfix release (fixing password-prompter)
         
         
         Documentation
