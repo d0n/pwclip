@@ -1,14 +1,14 @@
 Changelog
 =========
 
-0.4.32-40 (current)
+0.4.32-41 (current)
 -------------------
 
 Released: 2017-08-25
 
   * [W] hotfix release for gpg binary path selection
 
-  * w00ht @ dev environemnt - linux/windows dev/testing can be very... intense
+  * w00ht @ dev-environemnt - linux/windows dev/testing can be very... intense
 
   * made changelog => readme generic via __pkginfo__.py
 

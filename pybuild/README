@@ -193,14 +193,14 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-0.4.32-40 (current)
+0.4.32-41 (current)
 -------------------
 
 Released: 2017-08-25
 
   * [W] hotfix release for gpg binary path selection
 
-  * w00ht @ dev environemnt - linux/windows dev/testing can be very... intense
+  * w00ht @ dev-environemnt - linux/windows dev/testing can be very... intense
 
   * made changelog => readme generic via __pkginfo__.py
 
@@ -237,18 +237,6 @@ Released: 2017-08-25
   * made yubikey challenge-response mode behave correctly
 
   * changed names of binaries to pwcli(cmdline), pwclip(gui), ykclip(gui)
-
-
-0.4.29
-------
-
-Released: 2017-08-25
-
-  * removed empty password check and info
-
-  * added pwclip-gui to "provides" section in __pkginfo__.py
-
-  * hotfix release (fixing password-prompter)
 
 
 Documentation

@@ -18,7 +18,7 @@
 try:
 	from os import fork
 except ImportError:
-	from os import spawn as fork
+	def fork(): return 0
 
 from os import environ, path, name as osname
 
