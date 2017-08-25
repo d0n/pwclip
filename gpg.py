@@ -39,7 +39,7 @@ class GPGTool(object):
 		homedir = path.join(
             path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
 		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
-		__gpgbin = 'gpg2.exe'
+		__gpgbin = 'gpg.exe'
 	_binary = path.join(__bindir, __gpgbin)
 	if not path.isfile(_binary) or not access(_binary, X_OK):
 		raise RuntimeError('%s needs to be executable'%binary)
