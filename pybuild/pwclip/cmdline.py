@@ -93,7 +93,7 @@ def __confcfgs():
 	try:
 		cfgs['ykser'] = environ['YKSERIAL']
 	except KeyError:
-		cfgs['ykser'] = ''
+		cfgs['ykser'] = None
 	try:
 		cfgs['user'] = environ['USER']
 	except KeyError:
@@ -112,7 +112,8 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	cfgs = __confcfgs()
 	if typ == 'yk':
-		__res = ykchalres(xinput(), cfgs['ykslot'], cfgs['ykser'])
+		__in = xinput()
+		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
 		if not __res:
 			fatal('could not get valid response on slot ', cfgs['ykslot'])
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
@@ -122,9 +123,7 @@ def gui(typ='pw'):
 	__ent = pcm.lspw(__in)
 	if __ent and __in:
 		if __in not in __ent.keys() or not __ent[__in]:
-			fatal(
-                'could not find entry for ',
-                __in, ' in ', __pkwargs['crypt'])
+			fatal('could not find entry for ', __in, ' in ', cfgs['crypt'])
 		__pc = __ent[__in]
 		if __pc:
 			if len(__pc) == 2:
@@ -244,11 +243,11 @@ def cli():
 
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
-		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
 		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		__res = ykchalres(xinput(), args.ysl, __ykser)
+		__in = xinput()
+		__res = ykchalres(__in, args.ysl, __ykser)
 		if not __res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)

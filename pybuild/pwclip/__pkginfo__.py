@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
 """pwclip packaging information"""
-from os import getcwd, path, name as osname
+from os import getcwd, path, name as osname, remove
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 31)
+numversion = (0, 4, 36)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip', 'ykclip', 'pwcli']
 install_requires = [
@@ -14,8 +15,7 @@ mailinglist = ""
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
 download_url = 'https://pypi.python.org/pypi/pwclip/%s#downloads'%version
-classifiers = ['Development Status :: 4 - Beta',
-               'Environment :: Console',
+classifiers = ['Environment :: Console',
                'Environment :: MacOS X',
                'Environment :: Win32 (MS Windows)',
                'Environment :: X11 Applications',
@@ -33,12 +33,14 @@ classifiers = ['Development Status :: 4 - Beta',
 try:
     with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
         readme = rfh.read()
+    with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
+        changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
+    with open(path.join(getcwd(), 'README'), 'w+') as rfh:
+        rfh.write(readme.format(changelog))
 except OSError:
     readme = ''
 
 long_desc = (readme)
-
-scripts = [path.join('bin', 'pwclip')]
 
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',

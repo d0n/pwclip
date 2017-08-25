@@ -41,9 +41,11 @@ class GPGTool(object):
             path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
 		__bindir = 'C:\Program Files (x86)\GNU\GnuPG'
 		__gpgbin = 'gpg2.exe'
+		if not path.exists(path.join(__bindir, __gpgbin)):
+			__gpgbin = 'gpg.exe'
 	_binary = path.join(__bindir, __gpgbin)
 	if not path.isfile(_binary) or not access(_binary, X_OK):
-		raise RuntimeError('%s needs to be executable'%binary)
+		raise RuntimeError('%s needs to be executable'%_binary)
 	_keyserver = ''
 	dmcfg = path.join(homedir, 'dirmngr.conf')
 	agentinfo = path.join(homedir, 'S.gpg-agent')
@@ -104,11 +106,7 @@ class GPGTool(object):
 		opts = ['--batch', '--always-trust']
 		if osname != 'nt' and self.binary.rstrip('.exe').endswith('2'):
 			opts.append('--pinentry-mode=loopback')
-		elif osname == 'nt' and self.__c >= 1:
-			if not self.__ppw:
-				self.__ppw = xinput('enter passphrase')
-			if self.__ppw is None:
-				abort()
+		elif osname == 'nt':
 			opts.append('--passphrase="%s"'%self.__ppw)
 		__g = GPG(
             keyring=self.keyring, secret_keyring=self.secring,

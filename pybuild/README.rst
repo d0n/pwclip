@@ -190,78 +190,7 @@ ideas. You're alway welcome to leave me a message for requests, review or
 feature/bug requests: <d0n@janeiskla.de>
 
 
-Changelog
-=========
-
-0.4.31 (current)
-----------------
-
-Released: 2017-08-25
-
-  * hotfix release for gui calls
-
-
-0.4.30
-------
-
-Released: 2017-08-25
-
-  * made reading configs somewhat more modular
-
-  * made gui function accepting option for (pw/yk)mode switching
-
-  * made yubikey challenge-response mode behave correctly
-
-  * changed names of binaries to pwcli(cmdline), pwclip(gui), ykclip(gui)
-
-
-0.4.29
-------
-
-Released: 2017-08-25
-
-  * removed empty password check and info
-
-  * added pwclip-gui to "provides" section in __pkginfo__.py
-
-  * hotfix release (fixing password-prompter)
-
-
-0.4.28
-------
-
-Released: 2017-08-24
-
-  * fixed password-search function on cmdline
-
-  * (still) preparing final version :D
-
-
-0.4.27
-------
-
-Released: 2017-08-23
-
-  * [W] hotfix for clipboard paste function to return objects correctly
-
-  * implemented -S to set the slot number of the yubikey used which is
-    only relevant for the challenge-response functionality (-y)
-
-  * added a "Troubleshooting" section to README on fixing yubico-usb-hid-bug
-
-  * (still) preparing final version
-
-
-0.4.26
-------
-
-Released: 2017-08-22
-
-  * changed entry-points to match reverted names - trying to find correct
-    exec mode for windows
-
-  * cleanup of build environment - preparing final version
-
+{}
 
 
 Documentation

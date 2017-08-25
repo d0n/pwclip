@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.32-36 (current)
+0.4.32-34 (current)
 -------------------
 
 Released: 2017-08-25
@@ -12,9 +12,7 @@ Released: 2017-08-25
 
   * made changelog => readme generic via __pkginfo__.py
 
-  * [W] fixed colortext (disabled colors)
-
-  * fixed changelog not beeing displayed
+  * fixed colortext on windows (disabled colors completly)
 
 
 0.4.31

@@ -3,6 +3,7 @@
 text colorisation functions  due to extendet use of the python3 print
 function this is for python3 only
 """
+from os import name as osname
 from sys import stdout, stderr
 __echo = stdout.write
 __puke = stderr.write
@@ -32,6 +33,10 @@ def __colorize(color, text):
 		string = '%s37m'%(string)
 	colortext = '%s%s\033[0m'%(string, text)
 	return colortext
+
+if osname == 'nt':
+	# color faker function for windows compatibility
+	def __colorize(color, text): return text
 
 # define 2 functions for each color
 # one for normal and one for bold text
