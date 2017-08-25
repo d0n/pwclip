@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.32-37 (current)
+0.4.32-39 (current)
 -------------------
 
 Released: 2017-08-25
@@ -15,6 +15,10 @@ Released: 2017-08-25
   * [W] fixed colortext (disabled colors)
 
   * fixed changelog not beeing displayed ... again
+
+  * fixed displying of changelog while program exec
+
+  * fixed unnecessarily asking for passphrase
 
 
 0.4.31

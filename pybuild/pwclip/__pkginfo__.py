@@ -3,7 +3,7 @@
 from os import getcwd, path, name as osname, remove
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 37)
+numversion = (0, 4, 40)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwclip', 'ykclip', 'pwcli']
 install_requires = [
@@ -35,7 +35,6 @@ try:
         changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
     with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
         readme = str(rfh.read()).format(changelog)
-    print(readme)
     with open(path.join(getcwd(), 'README'), 'w+') as rfh:
         rfh.write(readme)
 except OSError:

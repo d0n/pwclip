@@ -245,9 +245,10 @@ class GPGTool(object):
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
 		try:
 			while True:
-				__plain = self._gpg_.decrypt(
-                    message.strip(), always_trust=True,
-                    output=output, passphrase=self.__ppw)
+				gos = {'always_trust': True, 'output': output}
+				if self.__c >= 1:
+					gos['passphrase'] = self.__ppw
+				__plain = self._gpg_.decrypt(message.strip(), **gos)
 				if __plain.ok:
 					return __plain
 				yesno = True

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: pwclip
-Version: 0.4.37
+Version: 0.4.39
 Summary: gui to temporarily save passwords to system-clipboard
 Home-page: UNKNOWN
 Author: Leon Pelzer
@@ -201,7 +201,7 @@ Description: pwclip
         Changelog
         =========
         
-        0.4.32-37 (current)
+        0.4.32-39 (current)
         -------------------
         
         Released: 2017-08-25
@@ -215,6 +215,10 @@ Description: pwclip
           * [W] fixed colortext (disabled colors)
         
           * fixed changelog not beeing displayed ... again
+        
+          * fixed displying of changelog while program exec
+        
+          * fixed unnecessarily asking for passphrase
         
         
         0.4.31
