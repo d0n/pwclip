@@ -44,8 +44,8 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 		try:
 			copy(text, mode='pb')
 			sleep(int(wait))
-		except KeyboardInterrupt:
-			abort()
+		except (KeyboardInterrupt, RuntimeError):
+			exit(1)
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
@@ -74,8 +74,7 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def cli():
-	"""pwclip command line opt/arg parsing function"""
+def __confcfgs():
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -84,9 +83,58 @@ def cli():
 	except FileNotFoundError:
 		cfgs = {}
 	try:
-		user = environ['USER']
+		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
-		user = environ['USERNAME']
+		cfgs['time'] = 3 if not 'time' in cfgs.keys() else cfgs['time']
+	try:
+		cfgs['ykslot'] = environ['YKSLOT']
+	except KeyError:
+		cfgs['ykslot'] = 2 if not 'ykslot' in cfgs.keys() else cfgs['ykslot']
+	try:
+		cfgs['ykser'] = environ['YKSERIAL']
+	except KeyError:
+		cfgs['ykser'] = ''
+	try:
+		cfgs['user'] = environ['USER']
+	except KeyError:
+		cfgs['user'] = environ['USERNAME']
+	if not 'crypt' in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if not 'plain' in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	return cfgs
+
+def gui(typ='pw'):
+	poclp, boclp = paste('pb')
+	cfgs = __confcfgs()
+	if typ == 'yk':
+		__res = ykchalres(xinput(), cfgs['ykslot'], cfgs['ykser'])
+		if not __res:
+			fatal('could not get valid response on slot ', cfgs['ykslot'])
+		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	__in = xinput()
+	if not __in: exit(1)
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			fatal(
+                'could not find entry for ',
+                __in, ' in ', __pkwargs['crypt'])
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
+			poclp, boclp = paste('pb')
+			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+
+def cli():
+	"""pwclip command line opt/arg parsing function"""
+	cfgs = __confcfgs()
 	pars = ArgumentParser() #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
@@ -151,7 +199,7 @@ def cli():
         help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER', default=user,
+        dest='usr', metavar='USER', default=cfgs['user'],
         help='query entrys of USER (defaults to current user)')
 	pars.add_argument(
         '-y', '--ykserial',

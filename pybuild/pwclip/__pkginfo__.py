@@ -2,9 +2,9 @@
 from os import getcwd, path, name as osname
 
 modname = distname = 'pwclip'
-numversion = (0, 4, 28)
+numversion = (0, 4, 31)
 version = '.'.join([str(num) for num in numversion])
-provides = ['pwclip']
+provides = ['pwclip', 'ykclip', 'pwcli']
 install_requires = [
     'pyusb', 'PyYAML', 'argcomplete', 'netaddr',
     'psutil', 'python-gnupg', 'python-yubico', 'paramiko']
@@ -41,5 +41,6 @@ long_desc = (readme)
 scripts = [path.join('bin', 'pwclip')]
 
 entry_points = {
-    'gui_scripts': ['pwclip = pwclip.__init__:pwclip'],
-    'console_scripts': ['pwclip = pwclip.__init__:pwclip']}
+    'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
+                    'ykclip = pwclip.__init__:ykclip'],
+    'console_scripts': ['pwcli = pwclip.__init__:pwcli']}

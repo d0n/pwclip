@@ -1,14 +1,58 @@
 Changelog
 =========
 
-0.4.28 (current)
+0.4.31 (current)
 ----------------
 
-Released: 2017-08-24
+Released: 2017-08-25
+
+  * hotfix release for gui calls
+
+
+0.4.30
+------
+
+Released: 2017-08-25
+
+  * made reading configs somewhat more modular
+
+  * made gui function accepting option for (pw/yk)mode switching
+
+  * made yubikey challenge-response mode behave correctly
+
+  * changed names of binaries to pwcli(cmdline), pwclip(gui), ykclip(gui)
+
+
+0.4.29
+------
+
+Released: 2017-08-25
+
+  * removed empty password check and info
+
+  * added pwclip-gui to "provides" section in __pkginfo__.py
+
+  * hotfix release (fixing password-prompter)
+
+
+0.4.28
+------
+
+Released: 2017-08-25
 
   * fixed password-search function on cmdline
 
-  * (still) preparing final version :D
+  * reimplemented gui function for pwclip-gui executable
+
+  * fixed program exit when forked to not endup in stack-dump
+
+  * fixed gpg decrypt iterator to begin with 0
+
+  * fighting gpg-agent (passphrase remember) to comply to my pass-prompter
+
+  * [W] fixed non-sence printing of colored text (no colors on windows)
+
+  * preparing final version (it's getting serious :D)
 
 
 0.4.27

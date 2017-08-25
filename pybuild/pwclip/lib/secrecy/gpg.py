@@ -5,7 +5,7 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import X_OK, access, getcwd, environ, path, name as osname
+from os import X_OK, access, getcwd, path, name as osname
 
 from getpass import getpass
 
@@ -31,6 +31,7 @@ class GPGTool(object):
 	one - also i can prepare some program related stuff in here
 	"""
 	dbg = None
+	__c = 0
 	__ppw = None
 	homedir = path.join(path.expanduser('~'), '.gnupg')
 	__bindir = '/usr/bin'
@@ -103,7 +104,7 @@ class GPGTool(object):
 		opts = ['--batch', '--always-trust']
 		if osname != 'nt' and self.binary.rstrip('.exe').endswith('2'):
 			opts.append('--pinentry-mode=loopback')
-		elif osname == 'nt':
+		elif osname == 'nt' and self.__c >= 1:
 			if not self.__ppw:
 				self.__ppw = xinput('enter passphrase')
 			if self.__ppw is None:
@@ -235,7 +236,6 @@ class GPGTool(object):
 			res = self._gpg_.import_keys(keystr).results[0]
 			fingers = [res['fingerprint']]
 		output = None if not 'output' in kwargs.keys() else kwargs['output']
-		print(fingers)
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=output)
 
@@ -245,23 +245,22 @@ class GPGTool(object):
 		"""
 		if self.dbg:
 			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
-		c = 1
 		try:
 			while True:
 				__plain = self._gpg_.decrypt(
                     message.strip(), always_trust=True,
-					output=output, passphrase=self.__ppw)
+                    output=output, passphrase=self.__ppw)
 				if __plain.ok:
 					return __plain
 				yesno = True
-				if c > 3:
+				if self.__c > 3:
 					yesno = False
 					try:
 						xmsgok('too many wrong attempts')
 					except TclError:
 						fatal('too many wrong attempts')
 					exit(1)
-				elif c >= 1 and c < 3:
+				elif self.__c >= 1 and self.__c < 3:
 					yesno = False
 					try:
 						yesno = xyesno('decryption failed - try again?')
@@ -269,17 +268,9 @@ class GPGTool(object):
 						yesno = True if str(input(
                             'decryption failed - retry? [Y/n]'
                             )).lower() in ('y', '') else False
-				elif c > 1 and not self.__ppw:
-					yesno = False
-					try:
-						yesno = xyesno('no passphrase entered, retry?')
-					except TclError:
-						yesno = True if str(input(
-                            'no passphrase entered, retry? [Y/n]'
-                            )).lower() in ('y', '') else False
 				if not yesno:
 					raise RuntimeError('cannot decrypt')
-				c+=1
+				self.__c+=1
 				try:
 					self.__ppw = xinput('enter passphrase')
 				except TclError:

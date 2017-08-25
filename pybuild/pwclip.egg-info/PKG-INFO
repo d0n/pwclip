@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: pwclip
-Version: 0.4.27
+Version: 0.4.31
 Summary: gui to temporarily save passwords to system-clipboard
 Home-page: UNKNOWN
 Author: Leon Pelzer
@@ -201,8 +201,52 @@ Description: pwclip
         Changelog
         =========
         
-        0.4.27 (current)
+        0.4.31 (current)
         ----------------
+        
+        Released: 2017-08-25
+        
+          * hotfix release for gui calls
+        
+        
+        0.4.30
+        ------
+        
+        Released: 2017-08-25
+        
+          * made reading configs somewhat more modular
+        
+          * made gui function accepting option for (pw/yk)mode switching
+        
+          * made yubikey challenge-response mode behave correctly
+        
+          * changed names of binaries to pwcli(cmdline), pwclip(gui), ykclip(gui)
+        
+        
+        0.4.29
+        ------
+        
+        Released: 2017-08-25
+        
+          * removed empty password check and info
+        
+          * added pwclip-gui to "provides" section in __pkginfo__.py
+        
+          * hotfix release (fixing password-prompter)
+        
+        
+        0.4.28
+        ------
+        
+        Released: 2017-08-24
+        
+          * fixed password-search function on cmdline
+        
+          * (still) preparing final version :D
+        
+        
+        0.4.27
+        ------
         
         Released: 2017-08-23
         
@@ -226,69 +270,6 @@ Description: pwclip
         
           * cleanup of build environment - preparing final version
         
-        
-        0.4.25
-        ------
-        
-        Released: 2017-08-21
-        
-          * [W|O] changed copy & paste functions to handle modes correctly
-        
-          * [W] lots of fixed for xlib functions to correctly set focus
-        
-          * [W] fixed catching/setting password (no password-agent for now)
-        
-          * reverted seperation of gui and cli via entry-points
-        
-          * some classes are renamed to fit the intension
-        
-        
-        0.4.24
-        ------
-        
-        Released: 2017-08-21
-        
-          * [W] fixed I/O error wich occours when setting gpg to utf-8 on gpg4win
-        
-          * [W] fixed path errors and other platform related stuff
-        
-          * seperated gui from cli via entry-points (experimental)
-        
-        
-        0.4.20-23
-        ---------
-        
-        Released: 2017-08-16
-        
-          * fixed README location
-        
-          * fixed release date of last release
-        
-          * some documentation updates
-        
-        
-        0.4.19
-        ------
-        
-        Released: 2017-08-16
-        
-          * merged private libs into ./lib - many changes related to that
-            lib respectivly:
-            - ./lib/net:
-             -- ssh.py module updated to match paramiko changes and some other fixes
-             -- added functions to do DNS lookups for the (optional) scp backup
-                function
-            - ./lib/secrecy/gpg.py
-             -- fixed passing of command line setting of gpg-key-recipient option
-             -- [W] fixed path to gnupg home
-             -- [W] fixed setting wrong keystores (.gpg|.kbx) in windows
-             -- [W] replaced concatenated string by path.join
-             -- [W] added passphrase input mode while pinentry is not available
-            - ./lib/secrecy/passcrypt.py
-             -- if debugging is enabled the plaintext file is removed no more
-            - ./__init__.py
-             -- fixed comment for strange lib include
-             -- changed wrapper to gereric name
         
         
         Documentation

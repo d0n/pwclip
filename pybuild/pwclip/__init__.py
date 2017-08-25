@@ -9,10 +9,24 @@ __lib = '%s/lib'%abspath(dirname(__file__))
 if exists(__lib) and __lib not in sys.path:
 	sys.path = [__lib] + sys.path
 from colortext import abort, fatal
-from pwclip.cmdline import cli
+from pwclip.cmdline import cli, gui
+
+def ykclip():
+	"""yubi mode pwclip gui mode"""
+	try:
+		gui('yk')
+	except (RuntimeError, KeyboardInterrupt):
+		exit(1)
 
 def pwclip():
-	"""pwclip wrapper function"""
+	"""pwclip gui mode"""
+	try:
+		gui()
+	except (RuntimeError, KeyboardInterrupt):
+		exit(1)
+	
+def pwcli():
+	"""pwclip cli mode"""
 	try:
 		cli()
 	except RuntimeError as err:
