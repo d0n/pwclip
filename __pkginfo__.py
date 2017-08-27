@@ -1,10 +1,11 @@
+#!/usr/bin/env python3
 """pwclip packaging information"""
-from os import getcwd, path, name as osname
+from os import getcwd, path
 
-modname = distname = 'pwclip'
-numversion = (0, 4, 26)
+name = distname = modname = 'pwclip'
+numversion = (1, 0, 0)
 version = '.'.join([str(num) for num in numversion])
-provides = ['pwclip']
+provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'pyusb', 'PyYAML', 'argcomplete', 'netaddr',
     'psutil', 'python-gnupg', 'python-yubico', 'paramiko']
@@ -14,8 +15,7 @@ mailinglist = ""
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
 download_url = 'https://pypi.python.org/pypi/pwclip/%s#downloads'%version
-classifiers = ['Development Status :: 4 - Beta',
-               'Environment :: Console',
+classifiers = ['Environment :: Console',
                'Environment :: MacOS X',
                'Environment :: Win32 (MS Windows)',
                'Environment :: X11 Applications',
@@ -31,15 +31,18 @@ classifiers = ['Development Status :: 4 - Beta',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 try:
-    with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
-        readme = rfh.read()
+	with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
+		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
+	with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
+		readme = rfh.read().format(ChangeLog=changelog)
+	with open(path.join(getcwd(), 'README'), 'w+') as rfh:
+		rfh.write(readme)
 except OSError:
-    readme = ''
+	readme = ''
 
 long_desc = (readme)
 
-scripts = [path.join('bin', 'pwclip')]
-
 entry_points = {
-    'gui_scripts': ['pwclip = pwclip.__init__:pwclip'],
-    'console_scripts': ['pwclip = pwclip.__init__:pwclip']}
+    'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
+                    'ykclip = pwclip.__init__:ykclip'],
+    'console_scripts': ['pwcli = pwclip.__init__:pwcli']}

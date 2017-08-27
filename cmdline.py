@@ -15,13 +15,14 @@
 #
 """pwclip main program"""
 # global & stdlib imports
+import sys
+
 try:
 	from os import fork
 except ImportError:
-	# define fork function fake
-	def fork(): return 0
+	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, name as osname
+from os import environ, path, devnull, name as osname
 
 from argparse import ArgumentParser
 
@@ -30,7 +31,7 @@ from time import sleep
 from yaml import load
 
 # local relative imports
-from colortext import bgre, abort, tabd, error, fatal
+from colortext import bgre, tabd, error, fatal
 
 from system import copy, paste, xinput, xnotify
 
@@ -44,20 +45,22 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 		try:
 			copy(text, mode='pb')
 			sleep(int(wait))
-		except KeyboardInterrupt:
-			abort()
+		except (KeyboardInterrupt, RuntimeError):
+			exit(1)
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 	exit(0)
 
 def __passreplace(pwlist):
+	"""returnes a string of asterisk's as long as the password is"""
 	__pwcom = ['*'*len(pwlist[0])]
 	if len(pwlist) > 1:
 		__pwcom.append(pwlist[1])
 	return __pwcom
 
 def __dictreplace(pwdict):
+	"""password => asterisk replacement function"""
 	__pwdict = {}
 	for (usr, ent) in pwdict.items():
 		if isinstance(ent, dict):
@@ -69,13 +72,14 @@ def __dictreplace(pwdict):
 	return __pwdict
 
 def _printpws_(pwdict, insecure=False):
+	"""password printer with in/secure option"""
 	if not insecure:
 		pwdict = __dictreplace(pwdict)
 	print(tabd(pwdict))
 	exit(0)
 
-def cli():
-	"""pwclip command line opt/arg parsing function"""
+def __confcfgs():
+	"""config parser function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -84,9 +88,58 @@ def cli():
 	except FileNotFoundError:
 		cfgs = {}
 	try:
-		user = environ['USER']
+		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
-		user = environ['USERNAME']
+		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
+	try:
+		cfgs['ykslot'] = environ['YKSLOT']
+	except KeyError:
+		cfgs['ykslot'] = 2 if 'ykslot' not in cfgs.keys() else cfgs['ykslot']
+	try:
+		cfgs['ykser'] = environ['YKSERIAL']
+	except KeyError:
+		cfgs['ykser'] = None
+	try:
+		cfgs['user'] = environ['USER']
+	except KeyError:
+		cfgs['user'] = environ['USERNAME']
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	return cfgs
+
+def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
+	poclp, boclp = paste('pb')
+	cfgs = __confcfgs()
+	if typ == 'yk':
+		__in = xinput()
+		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
+		if not __res:
+			exit(1)
+		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	__in = xinput()
+	if not __in: exit(1)
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			exit(1)
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
+			poclp, boclp = paste('pb')
+			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+
+def cli():
+	"""pwclip command line opt/arg parsing function"""
+	cfgs = __confcfgs()
 	pars = ArgumentParser() #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
@@ -139,7 +192,7 @@ def cli():
         '--yaml',
         dest='yml', metavar='YAMLFILE',
         default=path.expanduser('~/.pwd.yaml'),
-        help='set location of one-time YAMLFILE to read')
+        help='set location of one-time password YAMLFILE to read & delete')
 	pars.add_argument(
         '-p', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
@@ -148,15 +201,21 @@ def cli():
 	pars.add_argument(
         '-r', '--recipients',
         dest='rcp', metavar='ID(s)',
-        help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
+        help='gpg-key ID(s) to use for ' \
+             'encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER', default=user,
-        help='query entrys of USER (defaults to current user)')
+        dest='usr', metavar='USER', default=cfgs['user'],
+        help='query entrys only for USER ' \
+             '(defaults to current user, overridden by -A)')
 	pars.add_argument(
         '-y', '--ykserial',
-        nargs='?', default=False, dest='yks', metavar='SERIAL',
+        nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
+	pars.add_argument(
+        '-S', '--ykslot',
+        dest='ysl', default=2, type=int, choices=(1, 2),
+        help='set one of the two slots on the yubi-key (only useful for -y)')
 	pars.add_argument(
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
@@ -191,17 +250,17 @@ def cli():
 			yfh.write("""---\n%s:  {}"""%args.usr)
 
 	poclp, boclp = paste('pb')
-	if args.yks is not False:
-		args.time = args.yks if args.yks and len(args.yks) < 6 else args.time
+	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
 		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		forkwaitclip(
-            ykchalres(xinput(), ykser=__ykser), poclp, boclp, args.time)
-		exit(0)
+		__in = xinput()
+		__res = ykchalres(__in, args.ysl, __ykser)
+		if not __res:
+			fatal('could not get valid response on slot ', args.ysl)
+		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
 		pcm = PassCrypt(*__pargs, **__pkwargs)
-		__in = None
 		__ent = None
 		if args.gv2:
 			pcm.binary = 'gpg2' if osname != 'nt' else 'gpg2.exe'
@@ -218,36 +277,38 @@ def cli():
 				if not pcm.rmpw(r):
 					error('could not delete entry ', r)
 			_printpws_(pcm.lspw(), args.sho)
+		elif args.lst is not False:
+			__ent = pcm.lspw(args.lst)
+			if not __ent:
+				fatal('could not decrypt')
+			elif __ent and args.lst and not args.lst in __ent.keys():
+				fatal(
+                    'could not find entry for ',
+                    args.lst, ' in ', __pkwargs['crypt'])
+			elif args.lst and __ent:
+				__pc = __ent[args.lst]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify(
+                            '%s: %s'%(args.lst, __pc[1]), wait=args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
-			if args.lst is not False:
-				__ent = pcm.lspw(args.lst)
-				if not __ent or (__ent and args.lst in __ent.keys()):
-					if __ent is None:
-						fatal('could not decrypt')
-					fatal('could not find ', args.lst, ' in ', args.pcr)
-				elif __ent and args.lst and not args.lst in __ent.keys():
+			__in = xinput()
+			if not __in: exit(1)
+			__ent = pcm.lspw(__in)
+			if __ent and __in:
+				if __in not in __ent.keys() or not __ent[__in]:
 					fatal(
                         'could not find entry for ',
-                        args.lst, ' in ', __pkwargs['crypt'])
-				elif args.lst and __ent:
-					__pc = __ent[args.lst]
-					if __pc:
-						if len(__pc) == 2:
-							xnotify(
-                                '%s: %s'%(args.lst, __pc[1]), wait=args.time)
-						forkwaitclip(__pc[0], poclp, boclp, args.time)
-			else:
-				__in = xinput()
-				if not __in: exit(1)
-				__ent = pcm.lspw(__in)
-				if __ent and __in:
-					if __in not in __ent.keys() or not __ent[__in]:
-						fatal(
-                            'could not find entry for ',
-                            __in, ' in ', __pkwargs['crypt'])
-					__pc = __ent[__in]
-					if __pc:
-						if len(__pc) == 2:
-							xnotify('%s: %s'%(__in, __pc[1]), args.time)
-						forkwaitclip(__pc[0], poclp, boclp, args.time)
+                        __in, ' in ', __pkwargs['crypt'])
+				__pc = __ent[__in]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(__in, __pc[1]), args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent: _printpws_(__ent, args.sho)
+
+
+
+if __name__ == '__main__':
+	exit(1)
