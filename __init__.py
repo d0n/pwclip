@@ -1,10 +1,12 @@
 # to only import all necessarry modules/libs define the calling executable
 from net.addr import \
     addrmask, netips, \
-    iternet, gateway, isip
+    iternet, gateway
 
 from net.dns import \
     fqdn, askdns, raflookup
+
+from net.isip import isip
 
 from net.iface import \
     haslink, isup, \
