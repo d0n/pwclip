@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+"""net.dns module"""
 
 try:
 	from os import uname
@@ -6,20 +8,32 @@ except ImportError:
 	from os import environ
 	uname = ['', environ['COMPUTERNAME']]
 
+from re import search
+
 from socket import getfqdn, gethostbyaddr, gaierror, herror
 
-from net.addr import isip
+def isip(pattern):
+	"""return true if input is possibly an ip-address"""
+	# return True if "pattern" is RFC conform IP otherwise False
+	iplike = r'^(?!0+\.0+\.0+\.0+|255\.255\.255\.255)' \
+		r'(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)' \
+		r'\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$'
+	if search(iplike, pattern):
+		return True
+	return False
 
 def fqdn(name):
-	fqdn = getfqdn(name) if name else uname()[1]
-	if fqdn:
-		return fqdn
+	"""get the fully qualified domain name"""
+	__fqdn = getfqdn(name) if name else uname()[1]
+	if __fqdn:
+		return __fqdn
 	return name
 
 def askdns(host):
+	"""ask dns for ip or name and return answer if ther is one"""
 	try:
 		dnsinfo = gethostbyaddr(host)
-	except (gaierror, herror, TypeError) as e:
+	except (gaierror, herror, TypeError):
 		return
 	if isip(host):
 		return dnsinfo[0]
@@ -28,6 +42,7 @@ def askdns(host):
 	return dnsinfo[2]
 
 def raflookup(host):
+	"""reverse and forward lookup function"""
 	if host:
 		lookup = askdns(host)
 		if lookup:
