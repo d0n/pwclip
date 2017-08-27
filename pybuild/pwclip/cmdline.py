@@ -115,27 +115,21 @@ def __confcfgs():
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
-	if (sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe'):
-		sys.stdout = open(devnull, 'w')
-		sys.stderr = open(devnull, 'w')
 	poclp, boclp = paste('pb')
 	cfgs = __confcfgs()
 	if typ == 'yk':
 		__in = xinput()
 		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
 		if not __res:
-			fatal('could not get valid response on slot ', cfgs['ykslot'])
+			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	try:
-		pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
-	except RuntimeError as err:
-		sys.exit(err)
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
 	__in = xinput()
 	if not __in: exit(1)
 	__ent = pcm.lspw(__in)
 	if __ent and __in:
 		if __in not in __ent.keys() or not __ent[__in]:
-			fatal('could not find entry for ', __in, ' in ', cfgs['crypt'])
+			exit(1)
 		__pc = __ent[__in]
 		if __pc:
 			if len(__pc) == 2:
@@ -198,7 +192,7 @@ def cli():
         '--yaml',
         dest='yml', metavar='YAMLFILE',
         default=path.expanduser('~/.pwd.yaml'),
-        help='set location of one-time YAMLFILE to read')
+        help='set location of one-time password YAMLFILE to read & delete')
 	pars.add_argument(
         '-p', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
@@ -207,11 +201,13 @@ def cli():
 	pars.add_argument(
         '-r', '--recipients',
         dest='rcp', metavar='ID(s)',
-        help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
+        help='gpg-key ID(s) to use for ' \
+             'encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
         dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys of USER (defaults to current user)')
+        help='query entrys only for USER ' \
+             '(defaults to current user, overridden by -A)')
 	pars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
@@ -294,7 +290,7 @@ def cli():
 				if __pc:
 					if len(__pc) == 2:
 						xnotify(
-							'%s: %s'%(args.lst, __pc[1]), wait=args.time)
+                            '%s: %s'%(args.lst, __pc[1]), wait=args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
 			__in = xinput()
@@ -303,8 +299,8 @@ def cli():
 			if __ent and __in:
 				if __in not in __ent.keys() or not __ent[__in]:
 					fatal(
-						'could not find entry for ',
-						__in, ' in ', __pkwargs['crypt'])
+                        'could not find entry for ',
+                        __in, ' in ', __pkwargs['crypt'])
 				__pc = __ent[__in]
 				if __pc:
 					if len(__pc) == 2:

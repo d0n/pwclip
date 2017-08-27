@@ -1,8 +1,30 @@
 Changelog
 =========
 
-0.4.42 (current)
--------------------
+1.0.0 (current)
+---------------
+
+Released: 2017-08-27
+
+  * final version bumper
+
+
+0.4.43
+------
+
+Released: 2017-08-27
+
+  * finally fixed the last issue about windows command box displaying
+
+  * removed printing messages on gui errors (just exit returning 1)
+
+  * some i/o related changes without logical relevance
+
+  * displaying one more changelog message
+
+
+0.4.42
+------
 
 Released: 2017-08-27
 

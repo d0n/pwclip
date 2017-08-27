@@ -245,7 +245,7 @@ class GPGTool(object):
                         'decryption failed - retry? [Y/n]'
                         )).lower() in ('y', '') else False
 			if not yesno:
-				raise RuntimeError('decryption failed')
+				raise RuntimeError('%s cannot decrypt'%self.decrypt)
 			self.__c += 1
 			try:
 				self.__ppw = xinput('enter passphrase')
