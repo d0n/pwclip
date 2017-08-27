@@ -1,3 +1,4 @@
+"""system module"""
 from system.clips import clips, copy, paste
 
 from system.user import userfind, whoami

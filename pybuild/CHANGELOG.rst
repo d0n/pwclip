@@ -1,8 +1,23 @@
 Changelog
 =========
 
-0.4.32-41 (current)
+0.4.42 (current)
 -------------------
+
+Released: 2017-08-27
+
+  * fixed setting sys.path in __init__.py for windows compatibility
+
+  * trying to fix command box showup on windows
+
+  * linted the whole code - so lots of changes, some just stylistically,
+    others where errors in syntax or even logical (see git diff for details)
+
+  * (still) preparing final version :P
+
+
+0.4.32-41
+---------
 
 Released: 2017-08-25
 

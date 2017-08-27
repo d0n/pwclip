@@ -15,12 +15,14 @@
 #
 """pwclip main program"""
 # global & stdlib imports
+import sys
+
 try:
 	from os import fork
 except ImportError:
-	def fork(): return 0
+	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, name as osname
+from os import environ, path, devnull, name as osname
 
 from argparse import ArgumentParser
 
@@ -29,7 +31,7 @@ from time import sleep
 from yaml import load
 
 # local relative imports
-from colortext import bgre, abort, tabd, error, fatal
+from colortext import bgre, tabd, error, fatal
 
 from system import copy, paste, xinput, xnotify
 
@@ -51,12 +53,14 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 	exit(0)
 
 def __passreplace(pwlist):
+	"""returnes a string of asterisk's as long as the password is"""
 	__pwcom = ['*'*len(pwlist[0])]
 	if len(pwlist) > 1:
 		__pwcom.append(pwlist[1])
 	return __pwcom
 
 def __dictreplace(pwdict):
+	"""password => asterisk replacement function"""
 	__pwdict = {}
 	for (usr, ent) in pwdict.items():
 		if isinstance(ent, dict):
@@ -68,12 +72,14 @@ def __dictreplace(pwdict):
 	return __pwdict
 
 def _printpws_(pwdict, insecure=False):
+	"""password printer with in/secure option"""
 	if not insecure:
 		pwdict = __dictreplace(pwdict)
 	print(tabd(pwdict))
 	exit(0)
 
 def __confcfgs():
+	"""config parser function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -84,11 +90,11 @@ def __confcfgs():
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
-		cfgs['time'] = 3 if not 'time' in cfgs.keys() else cfgs['time']
+		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
 	try:
 		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
-		cfgs['ykslot'] = 2 if not 'ykslot' in cfgs.keys() else cfgs['ykslot']
+		cfgs['ykslot'] = 2 if 'ykslot' not in cfgs.keys() else cfgs['ykslot']
 	try:
 		cfgs['ykser'] = environ['YKSERIAL']
 	except KeyError:
@@ -97,17 +103,21 @@ def __confcfgs():
 		cfgs['user'] = environ['USER']
 	except KeyError:
 		cfgs['user'] = environ['USERNAME']
-	if not 'crypt' in cfgs.keys():
+	if 'crypt' not in cfgs.keys():
 		cfgs['crypt'] = path.expanduser('~/.passcrypt')
 	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
 		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if not 'plain' in cfgs.keys():
+	if 'plain' not in cfgs.keys():
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
 	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	return cfgs
 
 def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
+	if (sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe'):
+		sys.stdout = open(devnull, 'w')
+		sys.stderr = open(devnull, 'w')
 	poclp, boclp = paste('pb')
 	cfgs = __confcfgs()
 	if typ == 'yk':
@@ -116,7 +126,10 @@ def gui(typ='pw'):
 		if not __res:
 			fatal('could not get valid response on slot ', cfgs['ykslot'])
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	try:
+		pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	except RuntimeError as err:
+		sys.exit(err)
 	__in = xinput()
 	if not __in: exit(1)
 	__ent = pcm.lspw(__in)
@@ -298,3 +311,8 @@ def cli():
 						xnotify('%s: %s'%(__in, __pc[1]), args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent: _printpws_(__ent, args.sho)
+
+
+
+if __name__ == '__main__':
+	exit(1)

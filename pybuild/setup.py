@@ -5,9 +5,7 @@ Generic Setup script, takes package info from __pkginfo__.py file.
 """
 from sys import argv
 from os import listdir, chdir, getcwd, path
-from setuptools import setup
-from setuptools.command.install import install
-from atexit import register
+from setuptools import setup, find_packages
 
 __docformat__ = "restructuredtext en"
 

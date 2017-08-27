@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: pwclip
-Version: 0.4.41
+Version: 0.4.42
 Summary: gui to temporarily save passwords to system-clipboard
 Home-page: UNKNOWN
 Author: Leon Pelzer
@@ -201,8 +201,23 @@ Description: pwclip
         Changelog
         =========
         
-        0.4.32-41 (current)
+        0.4.42 (current)
         -------------------
+        
+        Released: 2017-08-27
+        
+          * fixed setting sys.path in __init__.py for windows compatibility
+        
+          * trying to fix command box showup on windows
+        
+          * linted the whole code - so lots of changes, some just stylistically,
+            others where errors in syntax or even logical (see git diff for details)
+        
+          * (still) preparing final version
+        
+        
+        0.4.32-41
+        ---------
         
         Released: 2017-08-25
         
@@ -231,20 +246,6 @@ Description: pwclip
           * readded work revoked unintensionally
         
           * fixed yubico mode and ykclip gui
-        
-        
-        0.4.30
-        ------
-        
-        Released: 2017-08-25
-        
-          * made reading configs somewhat more modular
-        
-          * made gui function accepting option for (pw/yk)mode switching
-        
-          * made yubikey challenge-response mode behave correctly
-        
-          * changed names of binaries to pwcli(cmdline), pwclip(gui), ykclip(gui)
         
         
         Documentation

@@ -13,7 +13,7 @@
 # Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
-
+"""x input window module"""
 try:
 	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
 except ImportError:
@@ -25,6 +25,7 @@ def xinput(message="input will not be displayed"):
 		"""class to capture user input for x environments"""
 		inp = None
 		def __init__(self, master):
+			"""xinput init function"""
 			Frame.__init__(self, master)
 			self.pack()
 			self.inputwindow()
@@ -63,3 +64,8 @@ def xinput(message="input will not be displayed"):
 	win.mainloop()
 	root.destroy()
 	return win.inp
+
+
+
+if __name__ == '__main__':
+	exit(1)

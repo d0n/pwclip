@@ -4,14 +4,12 @@
 #global imports"""
 import os
 import sys
-import time
-from io import StringIO
-from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
 from shutil import copy2
 from socket import \
-    getfqdn as fqdn, gaierror as NameResolveError, timeout as sockettimeout
+    gaierror as NameResolveError, timeout as sockettimeout
+from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
 
-from colortext import bgre, tabd, abort, error, fatal
+from colortext import bgre, tabd, abort, error
 from system import whoami
 from net import askdns
 
@@ -19,10 +17,12 @@ from net import askdns
 __version__ = '0.1'
 
 class SecureSHell(object):
+	"""paramiko wrapper class"""
 	dbg = None
 	reuser = ''
 	remote = ''
 	def __init__(self, *args, **kwargs):
+		"""ssh init function"""
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
@@ -34,8 +34,9 @@ class SecureSHell(object):
 			print(bgre(tabd(self.__dict__, 2)))
 
 	def _ssh_(self, remote, reuser=None, port=22):
+		"""ssh connector method"""
 		if '@' in remote:
-			_reuser, remote = remote.split('@')
+			reuser, remote = remote.split('@')
 		reuser = whoami() if not reuser else reuser
 		if self.dbg:
 			print(bgre('%s\n  remote = %s\n  reuser = %s\n  port = %d'%(
@@ -52,11 +53,12 @@ class SecureSHell(object):
 		return ssh
 
 	def rrun(self, cmd, remote=None, reuser=None):
+		"""remote run method"""
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
 		if self.dbg:
-			print(bgre(self.stdo))
+			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
 		ssh = self._ssh_(remote, reuser)
 		try:
@@ -66,6 +68,7 @@ class SecureSHell(object):
 			raise err
 
 	def rcall(self, cmd, remote=None, reuser=None):
+		"""remote call method"""
 		remote = remote if remote else self.remote
 		reuser = reuser if reuser else self.reuser
 		#print(remote)
@@ -99,11 +102,12 @@ class SecureSHell(object):
 			abort()
 
 	def rstdx(self, cmd, remote=None, reuser=None):
+		"""remote stout/error method"""
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
 		if self.dbg:
-			print(bgre(self.stdo))
+			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
 		ssh = self._ssh_(remote, reuser)
 		try:
@@ -115,6 +119,7 @@ class SecureSHell(object):
 
 
 	def rstdo(self, cmd, remote=None, reuser=None):
+		"""remote stdout method"""
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -125,16 +130,17 @@ class SecureSHell(object):
 		try:
 			_, out, _ = ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
-			error(self.stdo, err)
+			error(self.rstdo, err)
 			raise err
 		return ''.join(out.readlines())
 
 	def rstde(self, cmd, remote=None, reuser=None):
+		"""remote stderr method"""
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
 		if self.dbg:
-			print(bgre(self.stdo))
+			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
 		ssh = self._ssh_(remote, reuser)
 		try:
@@ -145,6 +151,7 @@ class SecureSHell(object):
 		return ''.join(err.readlines())
 
 	def rerno(self, cmd, remote=None, reuser=None):
+		"""remote error code  method"""
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
@@ -160,11 +167,12 @@ class SecureSHell(object):
 		return int(out.channel.recv_exit_status())
 
 	def roerc(self, cmd, remote=None, reuser=None):
+		"""remote stdout/stderr/errorcode method"""
 		remote = remote if remote else self.remote
 		#print(remote)
 		reuser = reuser if reuser else self.reuser
 		if self.dbg:
-			print(bgre(self.stdo))
+			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
 		ssh = self._ssh_(remote, reuser)
 		try:
@@ -176,6 +184,7 @@ class SecureSHell(object):
             out.channel.recv_exit_status()
 
 	def get(self, src, trg, remote=None, reuser=None):
+		"""sftp get method"""
 		if self.dbg:
 			print(bgre(self.get))
 		reuser = reuser if reuser else self.reuser
@@ -187,6 +196,7 @@ class SecureSHell(object):
 		return scp.get(src, trg)
 
 	def put(self, src, trg, remote=None, reuser=None):
+		"""sftp put method"""
 		if self.dbg:
 			print(bgre(self.put))
 		reuser = reuser if reuser else self.reuser
@@ -198,13 +208,14 @@ class SecureSHell(object):
 		return scp.put(src, trg)
 
 	def rcompstats(self, src, trg, remote=None, reuser=None):
+		"""remote file-stats compare """
 		if self.dbg:
 			print(bgre(self.rcompstats))
 		remote = remote if remote else self.remote
 		reuser = reuser if reuser else self.reuser
 		smt = int(str(int(os.stat(src).st_mtime))[:6])
 		rmt = self.rstdo(
-            'stat -c %%Y %s'%trg, remote=remote, reuser=user)
+            'stat -c %%Y %s'%trg, remote=remote, reuser=reuser)
 		if rmt:
 			rmt = int(str(rmt)[:6])
 		if rmt == smt:
@@ -215,11 +226,13 @@ class SecureSHell(object):
 		return srctrg
 
 	def _localstamp(self, trg):
+		"""local file-timestamp method"""
 		if self.dbg:
 			print(bgre(self._localstamp))
 		return int(os.stat(trg).st_atime), int(os.stat(trg).st_mtime)
 
 	def _remotestamp(self, trg, remote, reuser):
+		"""remote file-timestamp method"""
 		if self.dbg:
 			print(bgre(self._remotestamp))
 		tat = self.rstdo(
@@ -231,11 +244,13 @@ class SecureSHell(object):
 		return None, None
 
 	def _setlstamp(self, trg, atime, mtime):
+		"""local file-timestamp set method"""
 		if self.dbg:
 			print(bgre(self._setlstamp))
 		os.utime(trg, (atime, mtime))
 
 	def _setrstamp(self, trg, atime, mtime, remote, reuser):
+		"""remote file-timestamp set method"""
 		if self.dbg:
 			print(bgre(self._setrstamp))
 		self.rstdo(
@@ -244,6 +259,10 @@ class SecureSHell(object):
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
 	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
+		"""
+		remote/local file compare method copying and
+		setting the file/timestamp of the neweer one
+		"""
 		if self.dbg:
 			print(bgre(self.scpcompstats))
 		reuser = reuser if reuser else self.reuser
