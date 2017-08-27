@@ -17,9 +17,7 @@
 """
 clips - clipboard for various systems
 """
-import sys
-
-from os import name as osname, environ
+from os import name as osname
 
 from platform import system
 
@@ -32,34 +30,29 @@ def clips():
 	def winclips():
 		"""windows clipboards - the ugliest thing i've ever seen"""
 		from ctypes import \
-            windll, memmove, \
-            c_size_t, sizeof, \
-            c_wchar_p, get_errno, c_wchar
+            windll, memmove, c_size_t, \
+            sizeof, c_wchar_p, get_errno, c_wchar
 		from ctypes.wintypes import \
-            INT, HWND, DWORD, \
-            LPCSTR, HGLOBAL, LPVOID, \
-            HINSTANCE, HMENU, BOOL, UINT, HANDLE
+            INT, HWND, DWORD, LPCSTR, HGLOBAL, \
+            LPVOID, HINSTANCE, HMENU, BOOL, UINT, HANDLE
 		from contextlib import contextmanager
 		GMEM_MOVEABLE = 0x0002
 		CF_UNICODETEXT = 13
 		class CheckedCall(object):
+			"""fancy windows callchecker"""
 			def __init__(self, f):
 				super(CheckedCall, self).__setattr__("f", f)
 			def __call__(self, *args):
 				ret = self.f(*args)
 				if not ret and get_errno():
-					raise PyperclipWindowsException("Error calling " + self.f.__name__)
+					raise RuntimeError("Error calling %s"%self.f.__name__)
 				return ret
 			def __setattr__(self, key, value):
 				setattr(self.f, key, value)
 		mkwin = CheckedCall(windll.user32.CreateWindowExA)
 		mkwin.argtypes = [
-            DWORD, LPCSTR,
-            LPCSTR, DWORD,
-            INT, INT,
-            INT, INT,
-            HWND, HMENU,
-            HINSTANCE, LPVOID]
+            DWORD, LPCSTR, LPCSTR, DWORD, INT, INT,
+            INT, INT, HWND, HMENU, HINSTANCE, LPVOID]
 		mkwin.restype = HWND
 		delwin = CheckedCall(windll.user32.DestroyWindow)
 		delwin.argtypes = [HWND]
@@ -90,9 +83,7 @@ def clips():
 		unlock.restype = BOOL
 		@contextmanager
 		def window():
-			"""
-			Context that provides a valid Windows hwnd.
-			"""
+			"""context that provides a valid window (hwnd)"""
 			hwnd = mkwin(0, b"STATIC", None, 0, 0, 0, 0, 0,
 									   None, None, None, None)
 			try:
@@ -101,6 +92,7 @@ def clips():
 				delwin(hwnd)
 		@contextmanager
 		def clipboard(hwnd):
+			"""windows clipboard context manager"""
 			"""
 			Context manager that opens the clipboard and prevents
 			other applications from modifying the clipboard content.
@@ -119,10 +111,13 @@ def clips():
 			finally:
 				clsclip()
 		def _copy(text, mode=None):
+			"""windows copy function"""
+			if mode == 'b':
+				return
 			with window() as hwnd:
 				with clipboard(hwnd):
 					delclip()
-					if text and mode != 'b':
+					if text:
 						count = len(text) + 1
 						handle = allock(GMEM_MOVEABLE, count*sizeof(c_wchar))
 						locked_handle = dolock(handle)
@@ -131,33 +126,37 @@ def clips():
                             c_wchar_p(text), count*sizeof(c_wchar))
 						unlock(handle)
 						setclip(CF_UNICODETEXT, handle)
-		def _paste(mode=None):
+		def _paste(_=None):
+			"""windows paste function"""
 			with clipboard(None):
 				handle = getclip(CF_UNICODETEXT)
 				if not handle:
-					return ""
-				if mode in ('pb', 'bp'):
-					c_wchar_p(handle).value, c_wchar_p(handle).value
-				return c_wchar_p(handle).value
+					return "", ""
+			return c_wchar_p(handle).value, c_wchar_p(handle).value
 		return _copy, _paste
 
 	def osxclips():
+		""""OSX clipboards"""
 		def _copy(text, mode=None):
+			"""osx copy function"""
 			text = text if text else ''
+			if mode == 'b':
+				return
 			with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
 				prc.communicate(input=text.encode('utf-8'))
-		def _paste(mode=None):
+		def _paste(_=None):
+			"""osx paste function"""
 			with Popen(['pbpaste'], stdout=PIPE, close_fds=True) as prc:
-				out, _ = p.communicate()
-				return out.decode('utf-8')
+				out, _ = prc.communicate()
+				return out.decode('utf-8'), None
 		return _copy, _paste
 
 	def linclips():
 		"""linux clipboards"""
-		xsel = ['xsel', '-l', '/dev/null', '-t', '10000']
-		def _copy(text, mode='p'): # mode in ('p', 'b', 'pb')
-			_xsel = xsel + ['-i']
+		xsel = ['xsel', '-l', '/dev/null']
+		def _copy(text, mode='p'):
 			"""linux copy function"""
+			_xsel = xsel + ['-i']
 			text = text if text else ''
 			for m in mode:
 				with Popen(
