@@ -3,35 +3,41 @@
 text colorisation functions  due to extendet use of the python3 print
 function this is for python3 only
 """
+from os import name as osname
 from sys import stdout, stderr
 __echo = stdout.write
 __puke = stderr.write
 
 # get color escape sequence from string
-def __colorize(color, text):
-	"""colortag prepending and end-tag appending function"""
-	string = '\033['
-	if len(color) == 4:
-		color = color[1:]
-		string = '%s;01;'%(string)
-	if color == 'gre':
-		string = '%s30m'%(string)
-	if color == 'red':
-		string = '%s31m'%(string)
-	if color == 'grn':
-		string = '%s32m'%(string)
-	if color == 'yel':
-		string = '%s33m'%(string)
-	if color == 'blu':
-		string = '%s34m'%(string)
-	if color == 'vio':
-		string = '%s35m'%(string)
-	if color == 'cya':
-		string = '%s36m'%(string)
-	if color == 'whi':
-		string = '%s37m'%(string)
-	colortext = '%s%s\033[0m'%(string, text)
-	return colortext
+if osname == 'nt':
+	# color faker function for windows compatibility
+	def __colorize(color, text): del color ;return text
+else:
+	def __colorize(color, text):
+		"""colortag prepending and end-tag appending function"""
+		string = '\033['
+		if len(color) == 4:
+			color = color[1:]
+			string = '%s;01;'%(string)
+		if color == 'gre':
+			string = '%s30m'%(string)
+		if color == 'red':
+			string = '%s31m'%(string)
+		if color == 'grn':
+			string = '%s32m'%(string)
+		if color == 'yel':
+			string = '%s33m'%(string)
+		if color == 'blu':
+			string = '%s34m'%(string)
+		if color == 'vio':
+			string = '%s35m'%(string)
+		if color == 'cya':
+			string = '%s36m'%(string)
+		if color == 'whi':
+			string = '%s37m'%(string)
+		colortext = '%s%s\033[0m'%(string, text)
+		return colortext
+
 
 # define 2 functions for each color
 # one for normal and one for bold text
@@ -112,11 +118,11 @@ def abort(*messages):
 	exit(1)
 
 def error(*args, **kwargs):
-	'''
+	"""
 	while i most often want to display error texts which heave
 	one or more primary causes i want the text parts printed
 	in red and the causes printed in yellow as follows
-	'''
+	"""
 	delim = ' '
 	errfile = ''
 	errline = ''
@@ -138,10 +144,10 @@ def error(*args, **kwargs):
 	__puke('%s\n'%str(delim).join(msg for msg in msgs))
 
 def fatal(*args, **kwargs):
-	'''
+	"""
 	does exactly the same as "error" except it prints texts
 	in bold and kills its parent processes
-	'''
+	"""
 	errfile = ''
 	errline = ''
 	if 'file' in kwargs.keys():
@@ -158,10 +164,12 @@ def fatal(*args, **kwargs):
 	exit(1)
 
 def tabs(dat, ind=0, ll=80):
+	"""string indentations on newline"""
 	return '\n'.join(
         '%s%s'%(' '*ind, dat[i:int(i+ll)]) for i in range(0, len(dat), ll))
 
 def tabl(dats, ind=0, iind=0):
+	"""list to string with indentations"""
 	tabbl = ''
 	for i in dats:
 		if isinstance(i, (tuple, list)):
@@ -191,7 +199,7 @@ def tabd(dats, ind=0, iind=0):
 			spc = ' '*int(lim-len(str(key)))
 			if val and isinstance(val, dict):
 				tabbd = '%s\n%s%s:\n%s'%(tabbd, ' '*ind, key, tabd(
-                    val, ind+int(iind if iind else 2 ), iind if iind else 2))
+                    val, ind+int(iind if iind else 2), iind if iind else 2))
 			else:
 				tabbd = str('%s\n%s%s%s = %s'%(
                     tabbd, ' '*ind, key, spc, val)).strip('\n')
@@ -201,6 +209,6 @@ def tabd(dats, ind=0, iind=0):
 
 if __name__ == "__main__":
 	# module debugging area
-	for i in (3, 4, 5):
-		print(', '.join(m for m in dir() if len(m) == i))
-	#exit(1)
+	#for i in (3, 4, 5):
+	#	print(', '.join(m for m in dir() if len(m) == i))
+	exit(1)
