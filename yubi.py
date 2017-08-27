@@ -17,16 +17,12 @@
 """
 yubikey challenge-response lib
 """
-
-from os import environ
-
 from binascii import hexlify
 
 from yubico import \
-    find_yubikey, yubikey, \
-    yubico_exception
+    find_yubikey, yubikey, yubico_exception
 
-def yubikeys(ykser=None, dbg=None):
+def yubikeys(ykser=None, dbg=False):
 	"""
 	return a list of yubikeys objects
 	"""
@@ -48,7 +44,7 @@ def ykslotchalres(yk, chal, slot):
 	"""
 	try:
 		return hexlify(yk.challenge_response(
-			str(chal).ljust(64, '\0').encode(), slot=slot)).decode()
+            str(chal).ljust(64, '\0').encode(), slot=slot)).decode()
 	except (AttributeError, yubico_exception.YubicoError):
 		pass
 
@@ -57,11 +53,8 @@ def ykchalres(chal, slot=2, ykser=None):
 	challenge-response function using specified slot
 	or default (2) as wrapping function for yubikeys() and slotchalres()
 	"""
-	if 'YKSERIAL' in environ.keys():
-		ykser = ykser if ykser else environ['YKSERIAL']
 	keys = yubikeys(ykser)
 	for (_, key) in keys.items():
-		res = ykslotchalres(key, chal, slot)
+		res = ykslotchalres(key, chal, int(slot))
 		if res:
 			return res
-
