@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """pwclip packaging information"""
-from os import getcwd, path, name as osname, remove
+from os import getcwd, path
 
-modname = distname = 'pwclip'
-numversion = (0, 4, 40)
+name = distname = modname = 'pwclip'
+numversion = (1, 0, 0)
 version = '.'.join([str(num) for num in numversion])
-provides = ['pwclip', 'ykclip', 'pwcli']
+provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'pyusb', 'PyYAML', 'argcomplete', 'netaddr',
     'psutil', 'python-gnupg', 'python-yubico', 'paramiko']
@@ -31,14 +31,14 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 try:
-    with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
-        changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
-    with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
-        readme = str(rfh.read()).format(changelog)
-    with open(path.join(getcwd(), 'README'), 'w+') as rfh:
-        rfh.write(readme)
+	with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
+		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
+	with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
+		readme = rfh.read().format(ChangeLog=changelog)
+	with open(path.join(getcwd(), 'README'), 'w+') as rfh:
+		rfh.write(readme)
 except OSError:
-    readme = ''
+	readme = ''
 
 long_desc = (readme)
 

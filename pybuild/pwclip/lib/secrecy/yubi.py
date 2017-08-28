@@ -17,9 +17,6 @@
 """
 yubikey challenge-response lib
 """
-
-from os import environ
-
 from binascii import hexlify
 
 from yubico import \
@@ -61,4 +58,3 @@ def ykchalres(chal, slot=2, ykser=None):
 		res = ykslotchalres(key, chal, int(slot))
 		if res:
 			return res
-

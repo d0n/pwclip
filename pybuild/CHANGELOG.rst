@@ -1,14 +1,51 @@
 Changelog
 =========
 
-0.4.32-39 (current)
--------------------
+1.0.0 (current)
+---------------
+
+Released: 2017-08-27
+
+  * final version bumper
+
+
+0.4.43
+------
+
+Released: 2017-08-27
+
+  * finally fixed the last issue about windows command box displaying
+
+  * removed printing messages on gui errors (just exit returning 1)
+
+  * some i/o related changes without logical relevance
+
+  * displaying one more changelog message
+
+
+0.4.42
+------
+
+Released: 2017-08-27
+
+  * fixed setting sys.path in __init__.py for windows compatibility
+
+  * trying to fix command box showup on windows
+
+  * linted the whole code - so lots of changes, some just stylistically,
+    others where errors in syntax or even logical (see git diff for details)
+
+  * (still) preparing final version :P
+
+
+0.4.32-41
+---------
 
 Released: 2017-08-25
 
   * [W] hotfix release for gpg binary path selection
 
-  * w00ht @ dev environemnt - linux/windows dev/testing can be very... intense
+  * w00ht @ dev-environemnt - linux/windows dev/testing can be very... intense
 
   * made changelog => readme generic via __pkginfo__.py
 

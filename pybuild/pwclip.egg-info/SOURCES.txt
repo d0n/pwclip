@@ -14,7 +14,6 @@ pwclip/lib/__init__.py
 pwclip/lib/colortext/__init__.py
 pwclip/lib/colortext/colortext.py
 pwclip/lib/net/__init__.py
-pwclip/lib/net/addr.py
 pwclip/lib/net/dns.py
 pwclip/lib/net/ssh.py
 pwclip/lib/secrecy/__init__.py

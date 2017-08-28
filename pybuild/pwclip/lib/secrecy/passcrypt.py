@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+"""passcrypt module"""
 
 from os import path, remove, environ, chmod
 
-try:
-	from os import uname
-except ImportError:
-	def uname(): return [_, environ['COMPUTERNAME']]
+from shutil import copyfile
 
 from yaml import load, dump
 
-from time import sleep
-
-from shutil import copyfile
-
 from paramiko.ssh_exception import SSHException
 
-from colortext import bgre, tabd, error, fatal
+from colortext import bgre, tabd
 
 from system import userfind
 
@@ -23,9 +18,8 @@ from net.ssh import SecureSHell
 
 from secrecy.gpg import GPGTool
 
-from secrecy.yubi import ykchalres
-
 class PassCrypt(GPGTool, SecureSHell):
+	"""passcrypt main class"""
 	dbg = None
 	aal = None
 	sho = None
@@ -46,6 +40,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		recvs = recvs + [
             environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
 	def __init__(self, *args, **kwargs):
+		"""passcrypt init function"""
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
@@ -62,9 +57,6 @@ class PassCrypt(GPGTool, SecureSHell):
 		if self.remote:
 			self._copynews_()
 		__weaks = self._readcrypt()
-		if path.exists(self.crypt) and __weaks is None:
-			self._garr()
-			__weaks = self._readcrypt()
 		try:
 			with open(self.plain, 'r') as pfh:
 				__newpws = load(pfh.read())
@@ -81,6 +73,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		self.__weaks = __weaks
 
 	def _copynews_(self):
+		"""copy new file method"""
 		if self.dbg:
 			print(bgre(self._copynews_))
 		if self.remote:
@@ -92,12 +85,14 @@ class PassCrypt(GPGTool, SecureSHell):
 				pass
 
 	def _chkcrypt(self):
+		"""crypt file checker method"""
 		if self.dbg:
 			print(bgre(self._chkcrypt))
 		if self._readcrypt() == self.__weaks:
 			return True
 
 	def _findentry(self, pattern, weakz=None):
+		"""entry finder method"""
 		if self.dbg:
 			print(bgre(tabd({self._findentry: {'pattern': pattern}})))
 		__weakz = weakz if weakz else self.__weaks
@@ -107,6 +102,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				return p
 
 	def _readcrypt(self):
+		"""read crypt file method"""
 		if self.dbg:
 			print(bgre(self._readcrypt))
 		try:
@@ -117,6 +113,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		return load(str(self.decrypt(crypt)))
 
 	def _writecrypt(self, plain):
+		"""crypt file writing method"""
 		if self.dbg:
 			print(bgre(tabd({self._writecrypt: {'plain': plain}})))
 		kwargs = {'output': self.crypt}
@@ -138,6 +135,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		return True
 
 	def adpw(self, usr, pwd=None):
+		"""password adding method"""
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
@@ -155,6 +153,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			return True
 
 	def chpw(self, usr, pwd=None):
+		"""change existing password method"""
 		if self.dbg:
 			print(bgre(tabd({
                 self.chpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
@@ -173,6 +172,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			return True
 
 	def rmpw(self, usr):
+		"""remove password method"""
 		if self.dbg:
 			print(bgre(tabd({self.rmpw: {'user': self.user, 'entry': usr}})))
 		__weak = self._readcrypt()
@@ -184,16 +184,16 @@ class PassCrypt(GPGTool, SecureSHell):
 					self._copynews_()
 			return True
 
-	def lspw(self, usr=None, aal=None, display=None):
+	def lspw(self, usr=None, aal=None):
+		"""password listing method"""
 		if self.dbg:
 			print(bgre(tabd({self.lspw: {'user': self.user, 'entry': usr}})))
 		aal = True if aal else self.aal
-		sho = True if display else self.sho
 		if self.__weaks:
 			if aal:
 				__ents = self.__weaks
 				if usr:
-					for (user, entrys) in self.__weaks.items():
+					for (user, _) in self.__weaks.items():
 						__match = self._findentry(usr, self.__weaks[user])
 						if __match:
 							__ents = {usr: __match}
@@ -204,11 +204,15 @@ class PassCrypt(GPGTool, SecureSHell):
 					__ents = {usr: self._findentry(usr, __ents)}
 			return __ents
 
-def lscrypt(usr):
-	if self.dbg:
+def lscrypt(usr, dbg=None):
+	"""passlist wrapper function"""
+	if dbg:
 		print(bgre(lscrypt))
 	if usr:
 		return PassCrypt().lspw(usr)
 
+
+
+
 if __name__ == '__main__':
-    exit(1)
+	exit(1)

@@ -13,11 +13,12 @@
 # Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
+"""x yes/no message/answer window module"""
 
 try:
-	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
+	from tkinter import Button, Frame, Label, Tk
 except ImportError:
-	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
+	from Tkinter import Button, Frame, Label, Tk
 
 def xyesno(message="do you accept that?"):
 	"""gui representing function"""
@@ -59,3 +60,8 @@ def xyesno(message="do you accept that?"):
 	xyn.mainloop()
 	root.destroy()
 	return xyn.yesno
+
+
+
+if __name__ == '__main__':
+	exit(1)

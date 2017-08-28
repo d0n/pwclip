@@ -190,7 +190,7 @@ ideas. You're alway welcome to leave me a message for requests, review or
 feature/bug requests: <d0n@janeiskla.de>
 
 
-{}
+{ChangeLog}
 
 
 Documentation

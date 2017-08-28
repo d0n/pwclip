@@ -15,7 +15,6 @@
 # details.
 #
 """linux x-notification library"""
-from sys import stderr
 from inspect import stack
 try:
 	import gi
@@ -23,14 +22,22 @@ try:
 	from gi.repository import Notify as xnote
 except (AttributeError, ImportError) as err:
 	#print(err, file=stderr)
-	def xnotify(*args): return
+	def xnotify(*_): """xnotify faker function""" ;return
+else:
+	def xnotify(msg, name=stack()[1][3], wait=3):
+		"""
+		disply x notification usually in the upper right corner of the display
+		"""
+		try:
+			xnote.init(str(name))
+			note = xnote.Notification.new(msg)
+			wait = int(wait)*600
+			note.set_timeout(wait)
+			note.show()
+		except (NameError, RuntimeError):
+			pass
 
-def xnotify(msg, name=stack()[1][3], wait=3):
-	try:
-		xnote.init(str(name))
-		note = xnote.Notification.new(msg)
-		wait = int(wait)*600
-		note.set_timeout(wait)
-		note.show()
-	except (NameError, RuntimeError):
-		pass
+
+
+if __name__ == '__main__':
+	exit(1)

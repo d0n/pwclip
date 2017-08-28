@@ -15,12 +15,14 @@
 #
 """pwclip main program"""
 # global & stdlib imports
+import sys
+
 try:
 	from os import fork
 except ImportError:
-	from os import spawn as fork
+	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, name as osname
+from os import environ, path, devnull, name as osname
 
 from argparse import ArgumentParser
 
@@ -29,7 +31,7 @@ from time import sleep
 from yaml import load
 
 # local relative imports
-from colortext import bgre, abort, tabd, error, fatal
+from colortext import bgre, tabd, error, fatal
 
 from system import copy, paste, xinput, xnotify
 
@@ -51,12 +53,14 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 	exit(0)
 
 def __passreplace(pwlist):
+	"""returnes a string of asterisk's as long as the password is"""
 	__pwcom = ['*'*len(pwlist[0])]
 	if len(pwlist) > 1:
 		__pwcom.append(pwlist[1])
 	return __pwcom
 
 def __dictreplace(pwdict):
+	"""password => asterisk replacement function"""
 	__pwdict = {}
 	for (usr, ent) in pwdict.items():
 		if isinstance(ent, dict):
@@ -68,12 +72,14 @@ def __dictreplace(pwdict):
 	return __pwdict
 
 def _printpws_(pwdict, insecure=False):
+	"""password printer with in/secure option"""
 	if not insecure:
 		pwdict = __dictreplace(pwdict)
 	print(tabd(pwdict))
 	exit(0)
 
 def __confcfgs():
+	"""config parser function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -84,11 +90,11 @@ def __confcfgs():
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
-		cfgs['time'] = 3 if not 'time' in cfgs.keys() else cfgs['time']
+		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
 	try:
 		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
-		cfgs['ykslot'] = 2 if not 'ykslot' in cfgs.keys() else cfgs['ykslot']
+		cfgs['ykslot'] = 2 if 'ykslot' not in cfgs.keys() else cfgs['ykslot']
 	try:
 		cfgs['ykser'] = environ['YKSERIAL']
 	except KeyError:
@@ -97,24 +103,25 @@ def __confcfgs():
 		cfgs['user'] = environ['USER']
 	except KeyError:
 		cfgs['user'] = environ['USERNAME']
-	if not 'crypt' in cfgs.keys():
+	if 'crypt' not in cfgs.keys():
 		cfgs['crypt'] = path.expanduser('~/.passcrypt')
 	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
 		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if not 'plain' in cfgs.keys():
+	if 'plain' not in cfgs.keys():
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
 	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	return cfgs
 
 def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	cfgs = __confcfgs()
 	if typ == 'yk':
 		__in = xinput()
 		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
 		if not __res:
-			fatal('could not get valid response on slot ', cfgs['ykslot'])
+			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
 	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
 	__in = xinput()
@@ -122,7 +129,7 @@ def gui(typ='pw'):
 	__ent = pcm.lspw(__in)
 	if __ent and __in:
 		if __in not in __ent.keys() or not __ent[__in]:
-			fatal('could not find entry for ', __in, ' in ', cfgs['crypt'])
+			exit(1)
 		__pc = __ent[__in]
 		if __pc:
 			if len(__pc) == 2:
@@ -185,7 +192,7 @@ def cli():
         '--yaml',
         dest='yml', metavar='YAMLFILE',
         default=path.expanduser('~/.pwd.yaml'),
-        help='set location of one-time YAMLFILE to read')
+        help='set location of one-time password YAMLFILE to read & delete')
 	pars.add_argument(
         '-p', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
@@ -194,11 +201,13 @@ def cli():
 	pars.add_argument(
         '-r', '--recipients',
         dest='rcp', metavar='ID(s)',
-        help='gpg-key ID(s) to use for encryption (string seperated by spaces)')
+        help='gpg-key ID(s) to use for ' \
+             'encryption (string seperated by spaces)')
 	pars.add_argument(
         '-u', '--user',
         dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys of USER (defaults to current user)')
+        help='query entrys only for USER ' \
+             '(defaults to current user, overridden by -A)')
 	pars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
@@ -281,7 +290,7 @@ def cli():
 				if __pc:
 					if len(__pc) == 2:
 						xnotify(
-							'%s: %s'%(args.lst, __pc[1]), wait=args.time)
+                            '%s: %s'%(args.lst, __pc[1]), wait=args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
 			__in = xinput()
@@ -290,11 +299,16 @@ def cli():
 			if __ent and __in:
 				if __in not in __ent.keys() or not __ent[__in]:
 					fatal(
-						'could not find entry for ',
-						__in, ' in ', __pkwargs['crypt'])
+                        'could not find entry for ',
+                        __in, ' in ', __pkwargs['crypt'])
 				__pc = __ent[__in]
 				if __pc:
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(__in, __pc[1]), args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent: _printpws_(__ent, args.sho)
+
+
+
+if __name__ == '__main__':
+	exit(1)
