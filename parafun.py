@@ -20,12 +20,11 @@ from queue import Queue
 
 __version__ = '0.1'
 
-def parafun(iterable, procnum, function, *args, **kwargs):
+def parafun(function, iterable, procnum=None, *args, **kwargs):
 	global _lock
 	_lock = Lock()
 	queue = Queue()
 	procnum = procnum if procnum else len(iterable)
-	print(procnum)
 	def _iterqueue(function, args, **kwargs):
 		while True:
 			item = queue.get()

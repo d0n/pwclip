@@ -34,3 +34,5 @@ from system.user import userfind, whoami
 from system.xlib import xinput, xnotify, xyesno, xmsgok
 
 from system.doom import Daemon
+
+from system.parafun import parafun
