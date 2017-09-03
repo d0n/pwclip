@@ -1,5 +1,6 @@
 README
 setup.py
+pwclip/__gpg4win__.py
 pwclip/__init__.py
 pwclip/__main__.py
 pwclip/__pkginfo__.py

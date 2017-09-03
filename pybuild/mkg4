@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+
+with open('/home/d0n/dow/gpg4win-2.3.4.exe', 'rb') as gfh:
+	gpg4win = gfh.read()
+
+with open('__gpg4win__.py', 'wb+') as pfh:
+	pfh.write(gpg4win)
