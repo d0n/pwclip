@@ -185,9 +185,17 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-
 1.0.1 (current)
 ---------------
+
+Released: 2017-09-08
+
+  * made lib.system.which windows compatible (hopefully)
+
+  * fix for non-generic installed gpg4win installation recovery
+
+1.0.1
+-----
 
 Released: 2017-09-07
 
@@ -216,6 +224,21 @@ Released: 2017-08-27
   * some i/o related changes without logical relevance
 
   * displaying one more changelog message
+
+
+0.4.42
+------
+
+Released: 2017-08-27
+
+  * fixed setting sys.path in __init__.py for windows compatibility
+
+  * trying to fix command box showup on windows
+
+  * linted the whole code - so lots of changes, some just stylistically,
+    others where errors in syntax or even logical (see git diff for details)
+
+  * (still) preparing final version :P
 
 
 Documentation

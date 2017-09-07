@@ -1,9 +1,17 @@
 Changelog
 =========
 
-
 1.0.1 (current)
 ---------------
+
+Released: 2017-09-08
+
+  * made lib.system.which windows compatible (hopefully)
+
+  * fix for non-generic installed gpg4win installation recovery
+
+1.0.1
+-----
 
 Released: 2017-09-07
 
