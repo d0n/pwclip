@@ -8,9 +8,19 @@ except ImportError:
 	from os import environ
 	uname = ['', environ['COMPUTERNAME']]
 
+from re import search
+
 from socket import getfqdn, gethostbyaddr, gaierror, herror
 
-from net.isip import isip
+def isip(pattern):
+	"""return true if input is possibly an ip-address"""
+	# return True if "pattern" is RFC conform IP otherwise False
+	iplike = r'^(?!0+\.0+\.0+\.0+|255\.255\.255\.255)' \
+		r'(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)' \
+		r'\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$'
+	if search(iplike, pattern):
+		return True
+	return False
 
 def fqdn(name):
 	"""get the fully qualified domain name"""
