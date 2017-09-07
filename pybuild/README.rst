@@ -73,17 +73,9 @@ Installation
 ============
 
 pwclip requires the "xsel" package on Debian-Like Systems to have access to
-copy/paste buffers. On Windows Systems the libusb package must be integrated
-to python3 as "USB-Backend". Here should be all infos needed for that:
+copy/paste buffers.
 
 * https://wiki.ubuntuusers.de/xsel/
-* https://sourceforge.net/projects/libusb/
-* http://libusb.info/
-
-If you are on a Debian-Like systems, presuming you have my apt repository
-deb.janeiskla.de/ubuntu in your sources list, install like:
-
-$ apt-get install pwclip
 
 Installing via pip3
 --------------------

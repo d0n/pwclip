@@ -1,8 +1,17 @@
 Changelog
 =========
 
-1.0.0 (current)
+
+1.0.1 (current)
 ---------------
+
+Released: 2017-09-07
+
+  * trying to implement gpg4win installation on windows systems
+
+
+1.0.0
+-----
 
 Released: 2017-08-27
 
