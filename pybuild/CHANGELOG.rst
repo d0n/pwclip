@@ -9,6 +9,8 @@ Released: 2017-09-07
 
   * trying to implement gpg4win installation on windows systems
 
+  * removed depricated installation desclaimer/links
+
 
 1.0.0
 -----
