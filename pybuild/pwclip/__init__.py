@@ -16,15 +16,6 @@ if (sys.platform == 'win32' and \
 	sys.stderr = open(devnull, 'w')
 from pwclip.cmdline import cli, gui
 
-if osname == 'nt' and not which('gpg.exe'):
-	g4w = path.join(path.dirname(__file__), '__gpg4win__.py')
-	trg = path.expanduser(
-        path.join(('~', 'AppData', 'Local', 'Temp', 'gpg4win.exe')))
-	with open(g4w, 'rb') as gfh, open(trg, 'wb+') as tfh:
-		tfh.write(gfh.read())
-	call(trg)
-	remove(trg)
-
 def pwclip():
 	"""pwclip passcrypt gui mode"""
 	gui()

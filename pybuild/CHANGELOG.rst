@@ -1,21 +1,38 @@
 Changelog
 =========
 
-1.0.1 (current)
+1.0.3 (current)
 ---------------
 
 Released: 2017-09-08
 
-  * made lib.system.which windows compatible (hopefully)
+  * [W] fixed using wrong PATH delimiter for which on windows
 
-  * fix for non-generic installed gpg4win installation recovery
+  * [W] implemented question if gpg4win is not installed (install on "yes")
+
+  * [W] fixed hard coded gpg2.exe path (replaced by which function as well)
+
+  * fixed missing [W] tags in a few previous changelog messages
+
+  * first "whole in one" release
+
+
+1.0.2
+-----
+
+Released: 2017-09-08
+
+  * [W] made lib.system.which windows compatible (hopefully)
+
+  * [W] fix for non-generic installed gpg4win installation recovery
+
 
 1.0.1
 -----
 
 Released: 2017-09-07
 
-  * trying to implement gpg4win installation on windows systems
+  * [W] trying to implement gpg4win installation on windows systems
 
   * removed depricated installation desclaimer/links
 
