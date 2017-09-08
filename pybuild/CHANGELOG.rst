@@ -1,8 +1,26 @@
 Changelog
 =========
 
-1.0.3 (current)
+1.0.5 (current)
 ---------------
+
+Released: 2017-09-08
+
+  * [W] hotfix - readded __gpg4win__.py
+
+
+1.0.4
+-----
+
+Released: 2017-09-08
+
+  * fixed depreicated link to nowhere in README
+
+  * linted again - fixed lots of things
+
+
+1.0.3
+-----
 
 Released: 2017-09-08
 

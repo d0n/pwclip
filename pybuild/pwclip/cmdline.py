@@ -15,14 +15,12 @@
 #
 """pwclip main program"""
 # global & stdlib imports
-import sys
-
 try:
 	from os import fork
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, devnull, remove, name as osname
+from os import environ, path, remove, name as osname
 
 from subprocess import call
 

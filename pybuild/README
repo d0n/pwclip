@@ -185,8 +185,26 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-1.0.3 (current)
+1.0.5 (current)
 ---------------
+
+Released: 2017-09-08
+
+  * [W] hotfix - readded __gpg4win__.py
+
+
+1.0.4
+-----
+
+Released: 2017-09-08
+
+  * fixed depreicated link to nowhere in README
+
+  * linted again - fixed lots of things
+
+
+1.0.3
+-----
 
 Released: 2017-09-08
 
@@ -209,27 +227,3 @@ Released: 2017-09-08
   * [W] made lib.system.which windows compatible (hopefully)
 
   * [W] fix for non-generic installed gpg4win installation recovery
-
-
-1.0.1
------
-
-Released: 2017-09-07
-
-  * [W] trying to implement gpg4win installation on windows systems
-
-  * removed depricated installation desclaimer/links
-
-
-1.0.0
------
-
-Released: 2017-08-27
-
-  * final version bumper
-
-
-Documentation
-=============
-
-http://packages.python.org/pwclip/

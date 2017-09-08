@@ -183,9 +183,3 @@ feature/bug requests: <d0n@janeiskla.de>
 
 
 {ChangeLog}
-
-
-Documentation
-=============
-
-http://packages.python.org/pwclip/

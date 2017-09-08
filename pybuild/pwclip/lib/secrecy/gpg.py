@@ -5,7 +5,7 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import X_OK, access, path, name as osname
+from os import path, name as osname
 
 from getpass import getpass
 
@@ -79,7 +79,7 @@ class GPGTool(object):
 	@binary.setter
 	def binary(self, val):
 		"""binary path setter"""
-		self._binary = path.join(self.__bindir, val)
+		self._binary = val
 
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):

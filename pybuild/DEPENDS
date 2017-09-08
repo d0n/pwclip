@@ -1,8 +1,8 @@
 xsel
 gpgsm
 gnupg2
+python-yubico
 python3-gnupg
-python3-yubico
 python3-tk
 python3-gi
 python3-usb
