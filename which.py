@@ -1,8 +1,10 @@
 """which module to find executables"""
-from os import X_OK, access, environ
+from os import X_OK, access, environ, name as osname
+from os.path import join as pjoin
 
-def which(prog):
+def which(prog, delim=':'):
 	"""which function like the linux 'which' program"""
-	for path in environ['PATH'].split(':'):
-		if access('%s/%s'%(path, prog), X_OK):
-			return '%s/%s'%(path, prog)
+	delim = delim if osname != 'nt' else ';'
+	for path in environ['PATH'].split(delim):
+		if access(pjoin(path, prog), X_OK):
+			return pjoin(path, prog)
