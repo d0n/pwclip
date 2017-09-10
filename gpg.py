@@ -5,7 +5,7 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import X_OK, access, path, name as osname
+from os import path, name as osname
 
 from getpass import getpass
 
@@ -16,7 +16,7 @@ from gnupg import GPG
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
-from system import xinput, xyesno, xmsgok
+from system import xinput, xyesno, xmsgok, which
 
 class GPGTool(object):
 	"""
@@ -30,18 +30,12 @@ class GPGTool(object):
 	__c = 0
 	__ppw = None
 	homedir = path.join(path.expanduser('~'), '.gnupg')
-	__bindir = '/usr/bin'
-	__gpgbin = 'gpg2'
+	__bin = 'gpg2'
 	if osname == 'nt':
 		homedir = path.join(
             path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
-		__bindir = r'C:\Program Files (x86)\GNU\GnuPG'
-		__gpgbin = 'gpg2.exe'
-		if not path.exists(path.join(__bindir, __gpgbin)):
-			__gpgbin = 'gpg.exe'
-	_binary = path.join(__bindir, __gpgbin)
-	if not path.isfile(_binary) or not access(_binary, X_OK):
-		raise RuntimeError('%s needs to be executable'%_binary)
+		__bin = 'gpg2.exe'
+	_binary = which(__bin)
 	_keyserver = ''
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
@@ -59,7 +53,6 @@ class GPGTool(object):
 			print(bgre(tabd(GPGTool.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
-
 
 	@property                # keyring <str>
 	def keyring(self):
@@ -86,7 +79,7 @@ class GPGTool(object):
 	@binary.setter
 	def binary(self, val):
 		"""binary path setter"""
-		self._binary = path.join(self.__bindir, val)
+		self._binary = val
 
 	@property                # _gpg_ <GPG>
 	def _gpg_(self):
