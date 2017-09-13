@@ -4,6 +4,7 @@
 #global imports"""
 import os
 import sys
+import time
 from shutil import copy2
 from socket import \
     gaierror as NameResolveError, timeout as sockettimeout
