@@ -34,11 +34,6 @@ class PassCrypt(GPGTool, SecureSHell):
 	recvs = []
 	remote = ''
 	reuser = user
-	if 'GPGKEYS' in environ.keys():
-		recvs = environ['GPGKEYS'].split(' ')
-	elif 'GPGKEY' in environ.keys():
-		recvs = recvs + [
-            environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
 	def __init__(self, *args, **kwargs):
 		"""passcrypt init function"""
 		for arg in args:

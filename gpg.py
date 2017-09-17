@@ -5,7 +5,7 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import path, name as osname
+from os import path, environ, name as osname
 
 from getpass import getpass
 
@@ -30,23 +30,28 @@ class GPGTool(object):
 	__c = 0
 	__ppw = None
 	homedir = path.join(path.expanduser('~'), '.gnupg')
-	__bin = 'gpg2'
+	_bin = 'gpg'
 	if osname == 'nt':
 		homedir = path.join(
             path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
-		__bin = 'gpg2.exe'
-	_binary = which(__bin)
+		_bin = 'gpg2.exe'
+	_binary = _bin
 	_keyserver = ''
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
 	recvs = []
+	if 'GPGKEYS' in environ.keys():
+		recvs = environ['GPGKEYS'].split(' ')
+	elif 'GPGKEY' in environ.keys():
+		recvs = recvs + [
+            environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
 	def __init__(self, *args, **kwargs):
 		"""gpgtool init function"""
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			if hasattr(self, key) and not isinstance(val, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
@@ -75,7 +80,7 @@ class GPGTool(object):
 	@property                # binary <str>
 	def binary(self):
 		"""binary path getter"""
-		return self._binary
+		return which(self._binary)
 	@binary.setter
 	def binary(self, val):
 		"""binary path setter"""
@@ -202,11 +207,12 @@ class GPGTool(object):
 		fingers = list(self.export())
 		if self.recvs:
 			fingers = list(self.export(*self.recvs, **{'typ': 'e'}))
-		if 'recipients' in kwargs.keys():
+		elif 'recipients' in kwargs.keys():
 			fingers = list(self.export(*kwargs['recipients'], **{'typ': 'e'}))
 		if 'keystr' in kwargs.keys():
 			res = self._gpg_.import_keys(kwargs['keystr']).results[0]
 			fingers = [res['fingerprint']]
+		print(fingers)
 		output = None if 'output' not in kwargs.keys() else kwargs['output']
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=output)
