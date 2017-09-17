@@ -159,9 +159,9 @@ def cli():
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
-        '-2',
-        dest='gv2', action='store_true',
-        help='force usage of gpg in version 2.x')
+        '-1',
+        dest='gpv', action='store_const', const='1',
+        help='force usage of gpg in version 1.x')
 	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
@@ -236,9 +236,9 @@ def cli():
         'dbg' if args.dbg else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
+	__bin = 'gpg2' if not args.gpv else 'gpg'
 	__pkwargs = {}
-	if args.gv2:
-		__pkwargs['binary'] = 'gpg2' if osname != 'nt' else 'gpg2.exe'
+	__pkwargs['binary'] = __bin if osname != 'nt' else '%s.exe'%__bin
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
@@ -274,8 +274,6 @@ def cli():
 	else:
 		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
-		if args.gv2:
-			pcm.binary = 'gpg2' if osname != 'nt' else 'gpg2.exe'
 		if args.add:
 			if not pcm.adpw(args.add):
 				fatal('could not add entry ', args.add)
