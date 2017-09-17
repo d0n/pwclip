@@ -237,10 +237,12 @@ def cli():
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
 	__pkwargs = {}
+	if args.gv2:
+		__pkwargs['binary'] = 'gpg2' if osname != 'nt' else 'gpg2.exe'
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
-		__pkwargs['recvs'] = args.rcp
+		__pkwargs['recvs'] = list(args.rcp.split(' '))
 	if args.usr:
 		__pkwargs['user'] = args.usr
 	if args.yml:
