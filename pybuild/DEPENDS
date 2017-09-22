@@ -1,6 +1,7 @@
 xsel
 gpgsm
 gnupg2
+libreadline6
 python-yubico
 python3-gnupg
 python3-tk
