@@ -68,7 +68,17 @@ def jconfdats(*confs):
 				confdats[key] = val
 	return confdats
 
-def filesiter(folder):
+def unsorted(folder):
+	rands = []
+	files = listdir(folder)
+	for i in range(0, len(files)):
+		newrand = randin(len(files))
+		if newrand in rands:
+			continue
+		yield files[newrand]
+
+def filesiter(folder, random=False):
 	for (d, _, fs) in walk(absrelpath(folder)):
-		for f in fs:
+		orderd = sorted if not random else unsorted
+		for f in orderd(fs):
 			yield pathjoin(d, f)
