@@ -1,8 +1,17 @@
 Changelog
 =========
 
-1.0.5 (current)
+1.1.0 (current)
 ---------------
+
+Released: 2017-09-28
+
+  * replaced the gpg4win binary hack include by wget and internet connectivity
+    dependency
+
+
+1.0.5
+-----
 
 Released: 2017-09-08
 

@@ -42,12 +42,16 @@ from system import copy, paste, xinput, xnotify, xyesno, which
 if osname == 'nt' and not which('gpg2.exe'):
 	if not xyesno('gpg4win is mandatory! Install it?'):
 		exit(1)
-	g4w = path.join(path.dirname(__file__), '__gpg4win__.py')
+	import wget
+	src = 'https://files.gpg4win.org/gpg4win-latest.exe'
 	trg = path.join(environ['TEMP'], 'gpg4win.exe')
-	with open(g4w, 'rb') as gfh, open(trg, 'wb+') as tfh:
-		tfh.write(gfh.read())
-	call(trg)
-	remove(trg)
+	wget.download(src, out=trg)
+	try:
+		call(trg)
+	except TimeoutError:
+		exit(1)
+	finally:
+		remove(trg)
 
 from secrecy import GPGTool, PassCrypt, ykchalres
 
