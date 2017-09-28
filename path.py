@@ -1,9 +1,11 @@
-from os import getcwd, chdir, walk, readlink
+from os import getcwd, chdir, walk, readlink, listdir
 from os.path import expanduser, islink, isfile, abspath, join as pathjoin
 import inspect
 from stat import S_ISSOCK as _ISSOCK
 from configparser import ConfigParser as _ConfPars
 from json import load as _jsonload
+
+from system.random import randin
 
 def absrelpath(path, base=None):
 	base = base if base else getcwd()
@@ -68,9 +70,8 @@ def jconfdats(*confs):
 				confdats[key] = val
 	return confdats
 
-def unsorted(folder):
+def unsorted(files):
 	rands = []
-	files = listdir(folder)
 	for i in range(0, len(files)):
 		newrand = randin(len(files))
 		if newrand in rands:
