@@ -108,7 +108,7 @@ def _guiikeygendialog_(gpg):
 
 def _keycheck_(mode, **kwargs):
 	gpg = GPGTool(_bin=kwargs['binary'])
-	if gpg.export(secret=True):
+	if gpg.findkey(typ='E', secret=True):
 		return
 	if mode == 'cli':
 		_clikeygendialog_(gpg)
