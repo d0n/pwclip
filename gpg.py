@@ -5,7 +5,7 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import path, name as osname
+from os import path, environ, name as osname
 
 from getpass import getpass
 
@@ -40,6 +40,11 @@ class GPGTool(object):
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
 	recvs = []
+	if 'GPGKEYS' in environ.keys():
+		recvs = environ['GPGKEYS'].split(' ')
+	elif 'GPGKEY' in environ.keys():
+		recvs = recvs + [
+            environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
 	def __init__(self, *args, **kwargs):
 		"""gpgtool init function"""
 		for arg in args:
