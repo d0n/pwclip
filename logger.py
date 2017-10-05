@@ -2,7 +2,7 @@
 
 import sys
 import logging
-from rainbow_logging_handler import RainbowLoggingHandler
+#from rainbow_logging_handler import RainbowLoggingHandler
 
 def logger(name, lvl='info'):
 	# 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
