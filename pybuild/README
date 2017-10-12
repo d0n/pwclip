@@ -188,10 +188,12 @@ Changelog
 1.1.0 (current)
 ---------------
 
-Released: 2017-09-28
+Released: 2017-10-12
 
-  * replaced the gpg4win binary hack include by wget and internet connectivity
-    dependency
+  * replaced the gpg4win binary hack by wget (with internet connectivity) as
+    dependencies
+
+  * IMHO this is no micro change so directly bumping to next minor version
 
 
 1.0.5
