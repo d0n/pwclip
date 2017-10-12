@@ -15,27 +15,45 @@
 #
 """pwclip main program"""
 # global & stdlib imports
-import sys
-
 try:
 	from os import fork
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, devnull, name as osname
+from os import environ, path, remove, name as osname
+
+from subprocess import call
 
 from argparse import ArgumentParser
+
+from socket import gethostname as hostname
 
 from time import sleep
 
 from yaml import load
 
+import readline
+
 # local relative imports
-from colortext import bgre, tabd, error, fatal
+from colortext import blu, bgre, tabd, error, fatal
 
-from system import copy, paste, xinput, xnotify
+from system import copy, paste, xinput, xnotify, xyesno, which
+# first if on windows and gpg.exe cannot be found in PATH install gpg4win
+if osname == 'nt' and not which('gpg2.exe'):
+	if not xyesno('gpg4win is mandatory! Install it?'):
+		exit(1)
+	import wget
+	src = 'https://files.gpg4win.org/gpg4win-latest.exe'
+	trg = path.join(environ['TEMP'], 'gpg4win.exe')
+	wget.download(src, out=trg)
+	try:
+		call(trg)
+	except TimeoutError:
+		exit(1)
+	finally:
+		remove(trg)
 
-from secrecy import PassCrypt, ykchalres
+from secrecy import GPGTool, PassCrypt, ykchalres
 
 from pwclip.__pkginfo__ import version
 
@@ -51,6 +69,51 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 	exit(0)
+
+def __gendefaults():
+	_user = environ['USER'] if osname != 'nt' else environ['USERNAME']
+	return {
+        'key_type': 'RSA',
+        'key_length': 4096,
+        'name_real': _user,
+        'name_comment': '',
+        'name_email': '%s@%s'%(_user, hostname())}
+
+
+def __editdialog(defs):
+	print('editing options - on enter the current ' \
+          'value is used\nfor the "name_comment" option a ' \
+          'single "_" set that option to ""\n')
+	for (k, v) in sorted(defs.items()):
+		msg = 'enter value for option'
+		v = input('enter value for option %s (%s): '%(k, v))
+		defs[k] = v if v else defs[k]
+	return defs
+
+def _clikeygendialog_(gpg):
+	yesno = input('gpg-secret-key could not be ound, create one? [Y/n]')
+	if yesno.lower() in ('y', ''):
+		print('creating gpg-keys using the follogin options:\n')
+		defs = __gendefaults()
+		while True:
+			print(tabd(defs, 2))
+			yesno = input('\nuse that options? [Y/n]')
+			if yesno.lower() in ('y', ''):
+				break
+			defs = __editdialog(defs)
+	exit()
+
+def _guiikeygendialog_(gpg):
+	pass
+
+def _keycheck_(mode, **kwargs):
+	gpg = GPGTool(_bin=kwargs['binary'])
+	if gpg.findkey(typ='E', secret=True):
+		return
+	if mode == 'cli':
+		_clikeygendialog_(gpg)
+	else:
+		_guikeygendialog_(gpg)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -149,9 +212,9 @@ def cli():
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
-        '-2',
-        dest='gv2', action='store_true',
-        help='force usage of gpg in version 2.x')
+        '-1',
+        dest='gpv', action='store_const', const='1',
+        help='force usage of gpg in version 1.x')
 	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
@@ -226,11 +289,13 @@ def cli():
         'dbg' if args.dbg else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
+	__bin = 'gpg2' if not args.gpv else 'gpg'
 	__pkwargs = {}
+	__pkwargs['binary'] = __bin if osname != 'nt' else '%s.exe'%__bin
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
-		__pkwargs['recvs'] = args.rcp
+		__pkwargs['recvs'] = list(args.rcp.split(' '))
 	if args.usr:
 		__pkwargs['user'] = args.usr
 	if args.yml:
@@ -260,10 +325,8 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
-		pcm = PassCrypt(*__pargs, **__pkwargs)
+		_keycheck_('cli', **__pkwargs)
 		__ent = None
-		if args.gv2:
-			pcm.binary = 'gpg2' if osname != 'nt' else 'gpg2.exe'
 		if args.add:
 			if not pcm.adpw(args.add):
 				fatal('could not add entry ', args.add)
