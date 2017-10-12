@@ -1,5 +1,6 @@
 from os import getcwd, chdir, walk, readlink, listdir
-from os.path import expanduser, islink, isfile, abspath, join as pathjoin
+from os.path import expanduser, islink, \
+    isfile, isdir, abspath, join as pathjoin
 import inspect
 from stat import S_ISSOCK as _ISSOCK
 from configparser import ConfigParser as _ConfPars
@@ -83,3 +84,10 @@ def filesiter(folder, random=False):
 		orderd = sorted if not random else unsorted
 		for f in orderd(fs):
 			yield pathjoin(d, f)
+
+def findlowerdir(path, name):
+	while len(path.split('/')) > 1:
+		trg = '%s/%s'%(path, name)
+		if isdir(trg):
+			return trg
+		return findlowerdir('/'.join(p for p in path.split('/')[:-1]), name)
