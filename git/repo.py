@@ -8,7 +8,7 @@ import sys
 
 # local relative imports
 from executor import Command
-from system import absrelpath, which
+from system import absrelpath, which, findlowerdir
 from colortext import blu, yel, tabd, bgre, error
 
 # default vars
@@ -63,21 +63,7 @@ class GitRepo(Command):
 
 	@staticmethod
 	def __gitdir_(repodir):
-		def __file(git):
-			with open(git, 'r') as gitf:
-				return os.path.abspath(gitf.read().split('gitdir:')[1].strip())
-		repodir = repodir.rstrip('/')
-		gitdir = '%s/.git'%(repodir)
-		if os.path.isfile(gitdir):
-			return __file(gitdir)
-		else:
-			c = len(repodir.split('/'))
-			while c > 0:
-				if os.path.isdir(gitdir):
-					return gitdir
-				gitdir = '%s/.git'%'/'.join(d for d in repodir.split('/')[:c])
-				c-=1
-		raise FileNotFoundError('no .git directory present in %s'%repodir)
+		return findlowerdir(repodir, '.git')
 
 	def _fetch_(self, fetchall=False):
 		if self.dbg:
