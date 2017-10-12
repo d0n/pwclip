@@ -1,5 +1,13 @@
 # ignore python compiled files #
 ##############
+<<<<<<< HEAD
+__pycache__
+<<<<<<< HEAD
+=======
+pybuild
+>>>>>>> build
+=======
+>>>>>>> build
 *.pyc
 *.swp
 *.tar.gz
