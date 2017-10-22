@@ -229,7 +229,7 @@ class TimeSatan(Cmd, Satan):
 				except ValueError:
 					return False
 		try:
-			return ((h <= 23) and (m <= 59 ))
+			return ((h <= 720) and (m <= 59))
 		except TypeError:
 			return False
 
