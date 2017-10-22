@@ -1,130 +1,72 @@
 #!/usr/bin/env python3
-#
-# This file is free software by d0n <d0n@janeiskla.de>
-#
-# You can redistribute it and/or modify it under the terms of the GNU -
-# Lesser General Public License as published by the Free Software Foundation
-#
-# This is distributed in the hope that it will be useful somehow.
-# !WITHOUT ANY WARRANTY!
-#
-# Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-# A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-# details.
-#
-"""block device information gathering module"""
-
-# global & stdlib imports
-import re
-import os
-import sys
-
-from stat import S_ISBLK as isblk
-
+"""blkid wrapper tool for reading block devices"""
+# global imports
+from os.path import isfile, ismount
+from psutil import disk_partitions
 # local relative imports
+from executor import Command
+from system import absrelpath, which
 from colortext import bgre, tabd
-from system.sysfs import SysFs
-from system import absrelpath
+# default vars
+__version__ = '0.1'
 
-# global default variables
-__version__ = '0.0'
-
-class BlockDevice(object):
-	dbg = False
-	d = []
-	s = []
-	f = []
-	devs = [(d, s, f) for (d, s, f) in os.walk('/dev')]
+# os.statvfs(tst)
+class BlockDevice(Command):
+	sh_ = True
+	sieves=['DEVNO', 'PRI', 'TIME']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			if hasattr(self, key) and not type(val) in (None, bool):
+			if hasattr(self, key) and not isinstance(val, bool):
 				setattr(self, key, val)
 		if self.dbg:
-			print(bgre(BlockDevice.__mro__))
+			print(bgre(BlockDevices.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 
-	def devlinks(self):
-		devlnks = {}
-		for (dirs, subs, files) in self.devs:
-			for dat in files:
-				device = '%s/%s'%(dirs, dat)
-				if (isblk(os.stat(device).st_mode) and \
-				      os.path.islink(device) and not device.startswith('/dev/block')):
-					__dev = absrelpath(
-                        os.readlink(device), base=os.path.dirname(device))
-					if not __dev in devlnks.keys():
-						devlnks[__dev] = [device]
-					devlnks[__dev] = list(set(devlnks[__dev] + [device]))
-		return devlnks
+	# ro properties
+	@property               # tab <dict>
+	def tab(self):
+		__tabs = {}
+		for t in self.stdo('blkid').split('\n'):
+			if not t: continue
+			disk, ats = t.split(':')
+			attrs = {}
+			for a in ats.split('" '):
+				attrs[a.split('="')[0].strip().lower()] = \
+                    a.split('=')[1].strip('"')
+			__tabs[disk] = attrs
+		return  __tabs
 
-	def linkdevs(self):
-		devlnks = {}
-		for (dirs, subs, files) in self.devs:
-			for dat in files:
-				device = '%s/%s'%(dirs, dat)
-				try:
-					if (isblk(os.stat(device).st_mode) and \
-                          os.path.islink(device)):
-						devlnks[device] = absrelpath(
-                            os.readlink(device), base=os.path.dirname(device))
-				except FileNotFoundError:
-					pass
-		return devlnks
+	@property
+	def mounts(self):
+		__mnts = {}
+		__psps = disk_partitions()
+		for mnt in __psps:
+			__mnts[mnt[0]] = {
+                'path': mnt[1],
+                'type': mnt[2],
+                'opts': mnt[3]}
+		return __mnts
 
-	def devices(self):
-		blkdevs = []
-		for (dirs, subs, files) in self.devs:
-			for dat in files:
-				device = '%s/%s'%(dirs, dat)
-				try:
-					if (isblk(os.stat(device).st_mode) and not \
-                          os.path.islink(device)):
-						blkdevs.append(device)
-				except FileNotFoundError:
-					pass
-		return sorted(blkdevs)
+	def trgtype(self, trg):
+		# dsk, mnt, img
+		if trg in self.tab.keys():
+			return 'dsk'
+		elif ismount(absrelpath(trg)):
+			return 'mnt'
+		elif isfile(absrelpath(trg)):
+			return 'img'
 
-	
-
-
-"""
-	def hddsize(self, hdd, magic=1000.0):
-		device = re.sub(r'\d$', '', hdd.split('/')[-1])
-		sysfs = SysFs(os.path.realpath('/sys/block/%s'%device))
-		print([f for f in sysfs.__iter__()])
-		exit()
-		sfs = self.sfs(os.path.realpath('/sys/block/%s'%device))
-		ss = sfs.queue.hw_sector_size
-		if device != hdd:
-			sfs = SysFs('/sys/block/%s/%s'%(device, hdd))
-		ns = sfs.size
-		magic = float(magic)
-		return (float(ns)*float(ss))/(magic*magic*magic)
-
-	def fsusage(self, hdd, magic=1000.0):
-		if not hdd.startswith('/dev'):
-			if os.path.exists('/dev/%s'%hdd):
-				hdd = '/dev/%s'%hdd
-			elif os.path.exists('/dev/mapper/%s'%hdd):
-				hdd = os.readlink('/dev/mapper/%s'%hdd)
-			elif os.path.exists('/dev/mapper/'):
-				for mapped in os.listdir('/dev/mapper'):
-					if (hdd in mapped or 
-					      hdd == os.path.basename(os.readlink(mapped))):
-						hdd = os.readlink('/dev/mapper/%s'%mapped)
-		return float(os.statvfs(hdd).f_bfree)/(magic*magic*magic)
-"""
-
+	def dsksearch(self, pattern, mode='name'):
+		hits = []
+		for (dsk, attrs) in self.tab.items():
+			pass
 
 
 
 
 
 if __name__ == '__main__':
-	# module debugging area
-	print('\n'.join(d for d in dir()))
-	blkid = BlockDevices()
-	print(blkid.hddsize('/dev/sda2'))
+	exit(1)

@@ -27,8 +27,6 @@ from system.power import SystemPower
 
 from system.uefi import UEFITool
 
-from system.blkid import BLocKIDs
-
 from system.user import userfind, whoami
 
 from system.xlib import xinput, xnotify, xyesno, xmsgok
