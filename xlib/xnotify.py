@@ -20,7 +20,7 @@ try:
 	import gi
 	gi.require_version('Notify', '0.7')
 	from gi.repository import Notify as xnote
-except (AttributeError, ImportError) as err:
+except (AttributeError, ImportError, ValueError) as err:
 	#print(err, file=stderr)
 	def xnotify(*_): """xnotify faker function""" ;return
 else:
