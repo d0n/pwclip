@@ -7,8 +7,8 @@ numversion = (1, 1, 1)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
-    'pyusb', 'PyYAML', 'argcomplete', 'netaddr',
-    'psutil', 'python-gnupg', 'python-yubico', 'paramiko']
+    'pyusb', 'PyYAML', 'argcomplete', 'netaddr', 'psutil',
+    'python-gnupg', 'python-yubico', 'paramiko', 'wget']
 lic = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
 mailinglist = ""

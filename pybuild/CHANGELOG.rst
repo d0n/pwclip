@@ -1,8 +1,15 @@
 Changelog
 =========
 
-1.1.1 (current)
+1.1.2 (current)
 ---------------
+
+Released: 2017-10-
+
+  [W] added missing wget dependency for gpg4win installation
+
+1.1.1
+-----
 
 Released: 2017-10-24
 
