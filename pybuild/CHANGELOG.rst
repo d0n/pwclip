@@ -1,8 +1,15 @@
 Changelog
 =========
 
-1.1.0 (current)
+1.1.1 (current)
 ---------------
+
+Released: 2017-10-24
+
+  [W] fix for readline import not working on windows
+
+1.1.0
+-----
 
 Released: 2017-10-12
 

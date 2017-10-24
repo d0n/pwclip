@@ -32,7 +32,10 @@ from time import sleep
 
 from yaml import load
 
-import readline
+try:
+	import readline
+except ImportError:
+	pass
 
 # local relative imports
 from colortext import blu, bgre, tabd, error, fatal

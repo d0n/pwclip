@@ -3,11 +3,11 @@
 from os import getcwd, path
 
 name = distname = modname = 'pwclip'
-numversion = (1, 1, 0)
+numversion = (1, 1, 1)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
-    'pyusb', 'PyYAML', 'argcomplete', 'netaddr', 'readline',
+    'pyusb', 'PyYAML', 'argcomplete', 'netaddr',
     'psutil', 'python-gnupg', 'python-yubico', 'paramiko']
 lic = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
