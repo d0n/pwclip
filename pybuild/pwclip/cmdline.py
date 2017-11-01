@@ -42,7 +42,7 @@ from colortext import blu, bgre, tabd, error, fatal
 
 from system import copy, paste, xinput, xnotify, xyesno, which
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
-if osname == 'nt' and not which('gpg2.exe'):
+if osname == 'nt' and not which('gpg.exe'):
 	if not xyesno('gpg4win is mandatory! Install it?'):
 		exit(1)
 	import wget

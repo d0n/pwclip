@@ -8,12 +8,24 @@ Released: 2017-10-
 
   [W] added missing wget dependency for gpg4win installation
 
+  [W] fix download & install gpg4win in gui mode
+
+  [W] fixed gpg2.exe was used in some cases (gpg2 does not work on windows)
+
+  added changelog entry for the last release
+
+  implemented key-gen dialog if no gpg-keys are found (incomplete)
+
+
 1.1.1
 -----
 
 Released: 2017-10-24
 
   [W] fix for readline import not working on windows
+
+  made input readline compatible if on linux
+
 
 1.1.0
 -----

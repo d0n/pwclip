@@ -34,7 +34,7 @@ class GPGTool(object):
 	if osname == 'nt':
 		homedir = path.join(
             path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
-		__bin = 'gpg2.exe'
+		__bin = 'gpg.exe'
 	_binary = which(__bin)
 	_keyserver = ''
 	agentinfo = path.join(homedir, 'S.gpg-agent')
