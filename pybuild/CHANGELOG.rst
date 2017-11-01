@@ -14,7 +14,7 @@ Released: 2017-10-
 
   added changelog entry for the last release
 
-  implemented key-gen dialog if no gpg-keys are found (incomplete & unapplied)
+  implemented key-gen dialog if no secret-keys found (incomplete & unapplied)
 
 
 1.1.1
