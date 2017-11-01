@@ -1,0 +1,1 @@
+pybuild/pwclip/__main__.py
