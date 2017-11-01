@@ -1,13 +1,5 @@
 # ignore python compiled files #
 ##############
-<<<<<<< HEAD
-__pycache__
-<<<<<<< HEAD
-=======
-pybuild
->>>>>>> build
-=======
->>>>>>> build
 *.pyc
 *.swp
 *.tar.gz
@@ -16,3 +8,4 @@ pybuild/build
 pybuild/deb_dist
 pybuild/dist
 pybuild/*.egg-info
+pybuild/README
