@@ -1,8 +1,9 @@
-pyusb
-PyYAML
 argcomplete
 netaddr
+paramiko
 psutil
 python-gnupg
 python-yubico
-paramiko
+pyusb
+PyYAML
+wget
