@@ -4,6 +4,14 @@ Changelog
 1.1.3 (current)
 ---------------
 
+Released: 2017-11-06
+
+  * hotfix release for failed last upload
+
+
+1.1.3 (current)
+---------------
+
 Released: 2017-11-05
 
   * fixed some changelog entrys and release date of last release in changelog
