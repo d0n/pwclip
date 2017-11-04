@@ -328,7 +328,7 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
-		_keycheck_('cli', **__pkwargs)
+		#_keycheck_('cli', **__pkwargs)
 		__ent = None
 		if args.add:
 			if not pcm.adpw(args.add):
