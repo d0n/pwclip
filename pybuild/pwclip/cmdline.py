@@ -104,14 +104,14 @@ def _clikeygendialog_(gpg):
 			if yesno.lower() in ('y', ''):
 				break
 			defs = __editdialog(defs)
-	exit()
 
 def _guiikeygendialog_(gpg):
 	pass
 
 def _keycheck_(mode, **kwargs):
 	gpg = GPGTool(_bin=kwargs['binary'])
-	if gpg.findkey(typ='E', secret=True):
+	ser = path.join(gpg.homedir, 'secring.gpg')
+	if path.exists(ser):
 		return
 	if mode == 'cli':
 		_clikeygendialog_(gpg)
@@ -292,7 +292,11 @@ def cli():
         'dbg' if args.dbg else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
-	__bin = 'gpg2' if not args.gpv else 'gpg'
+	__bin = 'gpg2'
+	if args.gpv:
+		__bin = args.gpv
+	elif osname == 'nt':
+		__bin = 'gpg'
 	__pkwargs = {}
 	__pkwargs['binary'] = __bin if osname != 'nt' else '%s.exe'%__bin
 	if args.pcr:
@@ -328,7 +332,8 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
-		_keycheck_('cli', **__pkwargs)
+		#_keycheck_('cli', **__pkwargs)
+		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:
 			if not pcm.adpw(args.add):
