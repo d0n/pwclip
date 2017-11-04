@@ -1,20 +1,31 @@
 Changelog
 =========
 
-1.1.2 (current)
+1.1.3 (current)
 ---------------
 
-Released: 2017-10-
+Released: 2017-11-05
 
-  [W] added missing wget dependency for gpg4win installation
+  * fixed some changelog entrys and release date of last release in changelog
 
-  [W] fix download & install gpg4win in gui mode
+  * fixed which function to return only absolute paths
 
-  [W] fixed gpg2.exe was used in some cases (gpg2 does not work on windows)
 
-  added changelog entry for the last release
+1.1.2
+-----
 
-  implementing key-gen dialog if no secret-keys found (incomplete & unapplied)
+Released: 2017-11-01
+
+  * [W] added missing wget dependency for gpg4win installation
+
+  * [W] fix download & install gpg4win in gui mode
+
+  * [W] fixed gpg2.exe was used in some cases (gpg2 does not work on windows)
+
+  * added changelog entry for the last release
+
+  * implementing key-gen dialog if no secret-keys found
+    (incomplete & unapplied)
 
 
 1.1.1
@@ -22,9 +33,9 @@ Released: 2017-10-
 
 Released: 2017-10-24
 
-  [W] fix for readline import not working on windows
+  * [W] fix for readline import not working on windows
 
-  made input readline compatible if on linux
+  * made input readline compatible if on linux
 
 
 1.1.0
