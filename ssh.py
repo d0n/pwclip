@@ -4,7 +4,6 @@
 #global imports"""
 import os
 import sys
-import time
 from shutil import copy2
 from socket import \
     gaierror as NameResolveError, timeout as sockettimeout
@@ -259,13 +258,6 @@ class SecureSHell(object):
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
-	def _settime_(self, lfile, rfile, remote, reuser, stamp=None):
-		if self.dbg:
-			print(bgre(self._settime_))
-		stamp = stamp if stamp else int(time.time())
-		self._setlstamp(lfile, stamp, stamp)
-		self._setrstamp(rfile, stamp, stamp, remote, reuser)
-
 	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
 		"""
 		remote/local file compare method copying and
@@ -289,8 +281,6 @@ class SecureSHell(object):
 				self._setlstamp(rfile, lat, lmt)
 		except SSHException as err:
 			error(err)
-		else:
-			self._settime_(lfile, rfile, remote, reuser)
 		return True
 
 
