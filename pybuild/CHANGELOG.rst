@@ -16,7 +16,7 @@ Released: 2017-11-05
 1.1.4
 -----
 
-Released: 2017-11-05
+Released: 2017-11-04
 
   * hotfix release for failed last upload
 
