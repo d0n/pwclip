@@ -160,10 +160,10 @@ class GPGTool(object):
 	def findkey(self, pattern='', **kwargs):
 		"""key finder method"""
 		typ = 'A' if 'typ' not in kwargs.keys() else kwargs['typ']
-		secret = False if 'secret' not in kwargs.keys() else kwargs['secret']
+		sec = False if 'secret' not in kwargs.keys() else kwargs['secret']
 		keys = {}
 		pattern = pattern if not pattern.startswith('0x') else pattern[2:]
-		for key in self._gpg_.list_keys():
+		for key in self._gpg_.list_keys(secret=sec):
 			if pattern and not self.__find(pattern, *key.values()):
 				continue
 			for (k, _) in key.items():
@@ -177,10 +177,7 @@ class GPGTool(object):
 						if typ == 'A' or (typ in typs):
 							si = key[k].index(sub)
 							ki = key[k][si].index(finger)
-							kstr = self._gpg_.export_keys(
-                                key[k][si][ki], secret=secret)
-							#print(kstr)
-							keys[finger] = {typs: kstr}
+							keys[finger] = typ
 		return keys
 
 	def export(self, *patterns, **kwargs):
