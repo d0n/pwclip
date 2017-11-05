@@ -5,7 +5,7 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import path, environ, name as osname
+from os import path, name as osname
 
 from getpass import getpass
 
@@ -34,17 +34,12 @@ class GPGTool(object):
 	if osname == 'nt':
 		homedir = path.join(
             path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
-		__bin = 'gpg2.exe'
+		__bin = 'gpg.exe'
 	_binary = which(__bin)
 	_keyserver = ''
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
 	recvs = []
-	if 'GPGKEYS' in environ.keys():
-		recvs = environ['GPGKEYS'].split(' ')
-	elif 'GPGKEY' in environ.keys():
-		recvs = recvs + [
-            environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
 	def __init__(self, *args, **kwargs):
 		"""gpgtool init function"""
 		for arg in args:
@@ -122,27 +117,12 @@ class GPGTool(object):
 	def genkeys(self, **kginput):
 		"""key-pair generator method"""
 		if self.dbg:
-			print(bgre(self.genkeys))
-		kginput = kginput if kginput != {} else self.kginput
-		if not kginput:
-			error('no key-gen input received')
-			return
-		print(
-            blu('generating new keys using:\n '),
-            '\n  '.join('%s%s=  %s'%(blu(k),
-                ' '*int(max(len(s) for s in kginput.keys())-len(k)+2),
-                yel(v)
-            ) for (k, v) in kginput.items()))
+			print(bgre('%s %s'%(self.genkeys, kginput))
+		print('%s\n%s'%(
+            blu('generating keys using:'), yel(tabd(kginput, 2))))
 		if 'passphrase' in kginput.keys():
-			if kginput['passphrase'] == 'nopw':
-				del kginput['passphrase']
-			elif kginput['passphrase'] == 'stdin':
-				kginput['passphrase'] = self._passwd(rpt=True)
-		print(red('generating %s-bit keys - this WILL take some time'%(
-            kginput['key_length'])))
+			kginput['passphrase'] = self._passwd(rpt=True)
 		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
-		if self.dbg:
-			print('key has been generated:\n%s'%str(key))
 		return key
 
 	@staticmethod
