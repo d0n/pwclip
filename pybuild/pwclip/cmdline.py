@@ -104,14 +104,14 @@ def _clikeygendialog_(gpg):
 			if yesno.lower() in ('y', ''):
 				break
 			defs = __editdialog(defs)
+		gpg.genkeys(**defs)
 
 def _guiikeygendialog_(gpg):
 	pass
 
 def _keycheck_(mode, **kwargs):
 	gpg = GPGTool(_bin=kwargs['binary'])
-	ser = path.join(gpg.homedir, 'secring.gpg')
-	if path.exists(ser):
+	if not gpg.findkey('', secret=True):
 		return
 	if mode == 'cli':
 		_clikeygendialog_(gpg)

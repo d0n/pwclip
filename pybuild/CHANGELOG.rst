@@ -1,18 +1,30 @@
 Changelog
 =========
 
-1.1.3 (current)
+1.1.5 (current)
 ---------------
 
-Released: 2017-11-06
+Released: 2017-11-05
+
+  * fixed date in changelog and other documentation fails from last release
+
+  * fixed secret key listing requires password
+
+  * still working on generating gpg-key functionality (slomo)
+
+
+1.1.4
+-----
+
+Released: 2017-11-05
 
   * hotfix release for failed last upload
 
 
-1.1.3 (current)
----------------
+1.1.3
+-----
 
-Released: 2017-11-05
+Released: 2017-11-04
 
   * fixed some changelog entrys and release date of last release in changelog
 
