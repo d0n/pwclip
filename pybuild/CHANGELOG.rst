@@ -8,6 +8,8 @@ Released: 2017-11-06
 
   * fixed issue where existing gpg-keys would not be recognised
 
+  * fixed some message typos
+
   * continued implementing key-gen function when secret-key is missing
 
 
