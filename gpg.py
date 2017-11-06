@@ -114,17 +114,6 @@ class GPGTool(object):
 			except KeyboardInterrupt:
 				abort()
 
-	def genkeys(self, **kginput):
-		"""key-pair generator method"""
-		if self.dbg:
-			print(bgre('%s %s'%(self.genkeys, kginput)))
-		print('%s\n%s'%(
-            blu('generating keys using:'), yel(tabd(kginput, 2))))
-		if 'passphrase' in kginput.keys():
-			kginput['passphrase'] = self._passwd(rpt=True)
-		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
-		return key
-
 	@staticmethod
 	def __find(pattern, *vals):
 		"""pattern matching method"""
@@ -137,6 +126,17 @@ class GPGTool(object):
 				#print(val, pattern)
 				return True
 
+	def genkeys(self, **kginput):
+		"""key-pair generator method"""
+		if self.dbg:
+			print(bgre('%s %s'%(self.genkeys, kginput)))
+		print('%s\n%s'%(
+            blu('generating keys using:'), yel(tabd(kginput, 2))))
+		if 'passphrase' in kginput.keys():
+			kginput['passphrase'] = self._passwd(rpt=True)
+		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
+		return key
+
 	def findkey(self, pattern='', **kwargs):
 		"""key finder method"""
 		typ = 'A' if 'typ' not in kwargs.keys() else kwargs['typ']
@@ -146,16 +146,15 @@ class GPGTool(object):
 		for key in self._gpg_.list_keys(secret=sec):
 			if pattern and not self.__find(pattern, *key.values()):
 				continue
-			#print(key)
-			for (k, v) in key.items():
+			for (k, _) in key.items():
 				#print(k, v)
 				if k == 'subkeys':
 					#print(k)
 					for sub in key[k]:
 						#print(sub)
 						_, typs, finger = sub
-						#print(sub)
-						if typ == 'A' or (typs and typ in typs):
+						print(finger, typs)
+						if typ == 'A' or (typ in typs):
 							si = key[k].index(sub)
 							ki = key[k][si].index(finger)
 							keys[finger] = typ
@@ -176,7 +175,7 @@ class GPGTool(object):
 		fingers = [
             r['fingerprint'] for r in self._gpg_.import_keys(keystr).results]
 		return self._gpg_.encrypt(
-            message, fingers, always_trust=True, output=output)
+            message, fingers, output=output)
 
 	def encrypt(self, message, **kwargs):
 		"""text encrypting function method"""
