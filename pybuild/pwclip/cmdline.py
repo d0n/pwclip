@@ -82,38 +82,27 @@ def __gendefaults():
         'name_comment': '',
         'name_email': '%s@%s'%(_user, hostname())}
 
-
-def __editdialog(defs):
-	print('editing options - on enter the current ' \
+def __editdialog(yni, eni, defs):
+	yni('editing options - on enter the current ' \
           'value is used\nfor the "name_comment" option a ' \
           'single "_" set that option to ""\n')
 	for (k, v) in sorted(defs.items()):
-		msg = 'enter value for option'
-		v = input('enter value for option %s (%s): '%(k, v))
+		v = eni('enter value for option %s (%s): '%(k, v))
 		defs[k] = v if v else defs[k]
 	return defs
 
-def _clikeygendialog_(gpg):
-	yesno = input('gpg-secret-key could not be ound, create one? [Y/n]')
-	if yesno.lower() in ('y', ''):
-		print('creating gpg-keys using the following options:\n')
-		defs = __gendefaults()
-		while True:
-			print(tabd(defs, 2))
-			yesno = input('\nuse that options? [Y/n]')
-			if yesno.lower() in ('y', ''):
-				break
-			defs = __editdialog(defs)
-		gpg.genkeys(**defs)
-
 def _keycheck_(mode, kwargs):
 	gpg = GPGTool(_bin=kwargs['binary'])
+	if not gpg.findkey('', secret=True):
+		return
 	yni = input
+	eni = input
 	if gpg.findkey(secret=True):
 		return
 	if mode == 'gui':
 		yni = xyesno
-	yesno = xyesno('gpg-secret-key could not be ound, create one? [Y/n]')
+		eni = xinput
+	yesno = yni('gpg-secret-key could not be ound, create one? [Y/n]')
 	if yesno is True or str(yesno).lower() in ('y', ''):
 		defs = __gendefaults()
 		while True:
@@ -123,14 +112,8 @@ def _keycheck_(mode, kwargs):
                 %tabd(defs, 2))
 			if yesno is True or str(yesno).lower() in ('y', ''):
 				break
-			defs = __editdialog(defs)
+			defs = __editdialog(yni, eni, defs)
 		gpg.genkeys(**defs)
-	if not gpg.findkey('', secret=True):
-		return
-	if mode == 'cli':
-		_clikeygendialog_(gpg)
-	else:
-		_guikeygendialog_(gpg)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -183,7 +166,7 @@ def __confcfgs():
 		cfgs['binary']
 	except KeyError:
 		cfgs['binary'] = 'gpg2'
-		if oname == 'nt':
+		if osname == 'nt':
 			cfgs['binary'] = 'gpg'
 	try:
 		cfgs['user'] = environ['USER']
@@ -209,7 +192,6 @@ def gui(typ='pw'):
 		if not __res:
 			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	
 	_keycheck_('gui', cfgs)
 	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
 	__in = xinput()
