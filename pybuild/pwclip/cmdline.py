@@ -92,15 +92,15 @@ def __editdialog(yni, eni, defs):
 	return defs
 
 def _keycheck_(mode, kwargs):
-	gpg = GPGTool(_bin=kwargs['binary'])
+	gpg = GPGTool('dbg', _bin=kwargs['binary'])
 	if not gpg.findkey('', secret=True):
 		return
 	yni, eni = input, input
 	if gpg.findkey(secret=True):
 		return
-	elif mode == 'gui':
+	if mode == 'gui':
 		yni, eni = xyesno,  xinput
-	yesno = yni('gpg-secret-key could not be ound, create one? [Y/n]')
+	yesno = yni('gpg-secret-key could not be found, create one? [Y/n]')
 	if yesno is True or str(yesno).lower() in ('y', ''):
 		defs = __gendefaults()
 		while True:
@@ -111,6 +111,12 @@ def _keycheck_(mode, kwargs):
 			if yesno is True or str(yesno).lower() in ('y', ''):
 				break
 			defs = __editdialog(yni, eni, defs)
+		while True:
+			__p = eni('enter password for new key')
+			if __p == eni('repeat that password'):
+				defs['passphrase'] = __p
+				break
+			yni('passwords do not match, repeating...')
 		gpg.genkeys(**defs)
 
 def __passreplace(pwlist):
