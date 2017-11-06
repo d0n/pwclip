@@ -96,7 +96,7 @@ def __editdialog(defs):
 def _clikeygendialog_(gpg):
 	yesno = input('gpg-secret-key could not be ound, create one? [Y/n]')
 	if yesno.lower() in ('y', ''):
-		print('creating gpg-keys using the follogin options:\n')
+		print('creating gpg-keys using the following options:\n')
 		defs = __gendefaults()
 		while True:
 			print(tabd(defs, 2))
@@ -107,10 +107,26 @@ def _clikeygendialog_(gpg):
 		gpg.genkeys(**defs)
 
 def _guiikeygendialog_(gpg):
-	pass
+	if xyesno('gpg-secret-key could not be ound, create one? [Y/n]'):
+		
 
-def _keycheck_(mode, **kwargs):
+def _keycheck_(mode, kwargs):
 	gpg = GPGTool(_bin=kwargs['binary'])
+	yni = input
+	if mode == 'gui':
+		yni = xyesno
+	yesno = xyesno('gpg-secret-key could not be ound, create one? [Y/n]')
+	if yesno is True or str(yesno).lower() in ('y', ''):
+		defs = __gendefaults()
+		while True:
+			yesno = yni(
+                'creating gpg-keys using the following '
+                'options:\n%s\nuse that options? [Y/n]' \
+                %tabd(defs, 2))
+			if yesno is True or str(yesno).lower() in ('y', ''):
+				break
+			defs = __editdialog(defs)
+		gpg.genkeys(**defs)
 	if not gpg.findkey('', secret=True):
 		return
 	if mode == 'cli':
@@ -332,6 +348,7 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
+		_keycheck_('cli', pkwargs)
 		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:
