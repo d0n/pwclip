@@ -146,14 +146,15 @@ class GPGTool(object):
 		for key in self._gpg_.list_keys(secret=sec):
 			if pattern and not self.__find(pattern, *key.values()):
 				continue
-			for (k, _) in key.items():
+			#print(key)
+			for (k, v) in key.items():
 				#print(k, v)
 				if k == 'subkeys':
 					#print(k)
 					for sub in key[k]:
 						#print(sub)
 						_, typs, finger = sub
-						#print(finger, typs)
+						#print(sub)
 						if typ == 'A' or (typs and typ in typs):
 							si = key[k].index(sub)
 							ki = key[k][si].index(finger)
