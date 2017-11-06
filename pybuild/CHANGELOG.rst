@@ -1,8 +1,18 @@
 Changelog
 =========
 
-1.1.5 (current)
+1.1.6 (current)
 ---------------
+
+Released: 2017-11-06
+
+  * fixed issue where existing gpg-keys would not be recognised
+
+  * continued implementing key-gen function when secret-key is missing
+
+
+1.1.5
+-----
 
 Released: 2017-11-05
 
