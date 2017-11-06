@@ -95,13 +95,11 @@ def _keycheck_(mode, kwargs):
 	gpg = GPGTool(_bin=kwargs['binary'])
 	if not gpg.findkey('', secret=True):
 		return
-	yni = input
-	eni = input
+	yni, eni = input, input
 	if gpg.findkey(secret=True):
 		return
-	if mode == 'gui':
-		yni = xyesno
-		eni = xinput
+	elif mode == 'gui':
+		yni, eni = xyesno,  xinput
 	yesno = yni('gpg-secret-key could not be ound, create one? [Y/n]')
 	if yesno is True or str(yesno).lower() in ('y', ''):
 		defs = __gendefaults()
