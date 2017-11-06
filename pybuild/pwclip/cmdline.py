@@ -106,13 +106,11 @@ def _clikeygendialog_(gpg):
 			defs = __editdialog(defs)
 		gpg.genkeys(**defs)
 
-def _guiikeygendialog_(gpg):
-	if xyesno('gpg-secret-key could not be ound, create one? [Y/n]'):
-		
-
 def _keycheck_(mode, kwargs):
 	gpg = GPGTool(_bin=kwargs['binary'])
 	yni = input
+	if gpg.findkey(secret=True):
+		return
 	if mode == 'gui':
 		yni = xyesno
 	yesno = xyesno('gpg-secret-key could not be ound, create one? [Y/n]')
@@ -182,6 +180,12 @@ def __confcfgs():
 	except KeyError:
 		cfgs['ykser'] = None
 	try:
+		cfgs['binary']
+	except KeyError:
+		cfgs['binary'] = 'gpg2'
+		if oname == 'nt':
+			cfgs['binary'] = 'gpg'
+	try:
 		cfgs['user'] = environ['USER']
 	except KeyError:
 		cfgs['user'] = environ['USERNAME']
@@ -205,6 +209,8 @@ def gui(typ='pw'):
 		if not __res:
 			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	
+	_keycheck_('gui', cfgs)
 	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
 	__in = xinput()
 	if not __in: exit(1)
@@ -348,7 +354,7 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
-		_keycheck_('cli', pkwargs)
+		_keycheck_('cli', __pkwargs)
 		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:
