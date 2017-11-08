@@ -30,6 +30,8 @@ from socket import gethostname as hostname
 
 from time import sleep
 
+from getpass import getpass
+
 from yaml import load
 
 try:
@@ -40,7 +42,8 @@ except ImportError:
 # local relative imports
 from colortext import blu, bgre, tabd, error, fatal
 
-from system import copy, paste, xinput, xnotify, xyesno, which
+from system import copy, paste, xinput, xgetpass, xyesno, which
+
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
 	if not xyesno('gpg4win is mandatory! Install it?'):
@@ -82,41 +85,41 @@ def __gendefaults():
         'name_comment': '',
         'name_email': '%s@%s'%(_user, hostname())}
 
-def __editdialog(yni, eni, defs):
-	yni('editing options - on enter the current ' \
+def __editdialog(ynq, uin, defs):
+	ynq('editing options - on enter the current ' \
           'value is used\nfor the "name_comment" option a ' \
           'single "_" set that option to ""\n')
 	for (k, v) in sorted(defs.items()):
-		v = eni('enter value for option %s (%s): '%(k, v))
+		v = uin('enter value for option %s (%s): '%(k, v))
 		defs[k] = v if v else defs[k]
 	return defs
 
 def _keycheck_(mode, kwargs):
-	gpg = GPGTool('dbg', _bin=kwargs['binary'])
-	if not gpg.findkey('', secret=True):
+	gpg = GPGTool(**kwargs)
+	if gpg.findkey('', secret=True):
 		return
-	yni, eni = input, input
+	ynq, uin, sin = input, input, getpass
 	if gpg.findkey(secret=True):
 		return
 	if mode == 'gui':
-		yni, eni = xyesno,  xinput
-	yesno = yni('gpg-secret-key could not be found, create one? [Y/n]')
+		ynq, uin, sin = xyesno,  xinput, xgetpass
+	yesno = ynq('gpg-secret-key could not be found, create one? [Y/n]')
 	if yesno is True or str(yesno).lower() in ('y', ''):
 		defs = __gendefaults()
 		while True:
-			yesno = yni(
-                'creating gpg-keys using the following '
+			yesno = ynq(
+                'generating gpg-keys using the following '
                 'options:\n%s\nuse that options? [Y/n]' \
                 %tabd(defs, 2))
 			if yesno is True or str(yesno).lower() in ('y', ''):
 				break
-			defs = __editdialog(yni, eni, defs)
+			defs = __editdialog(ynq, uin, defs)
 		while True:
-			__p = eni('enter password for new key')
-			if __p == eni('repeat that password'):
+			__p = sin('enter passphrase:\n')
+			if __p == sin('repeat that passphrase:\n'):
 				defs['passphrase'] = __p
 				break
-			yni('passwords do not match, repeating...')
+			ynq('passwords do not match, repeating...')
 		gpg.genkeys(**defs)
 
 def __passreplace(pwlist):
