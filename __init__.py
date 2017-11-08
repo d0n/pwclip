@@ -29,7 +29,7 @@ from system.uefi import UEFITool
 
 from system.user import userfind, whoami
 
-from system.xlib import xinput, xnotify, xyesno, xmsgok
+from system.xlib import xinput, xnotify, xyesno, xmsgok, xgetpass
 
 from system.doom import Daemon
 

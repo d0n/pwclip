@@ -19,7 +19,7 @@ try:
 except ImportError:
 	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
-def xinput(message="input will not be displayed"):
+def xgetpass(message="input will not be displayed"):
 	"""gui representing function"""
 	class XInput(Frame):
 		"""class to capture user input for x environments"""
@@ -40,7 +40,7 @@ def xinput(message="input will not be displayed"):
 			"""input window creator"""
 			self.lbl = Label(self, text=message)
 			self.lbl.pack()
-			self.entry = Entry(self)
+			self.entry = Entry(self, show="*")
 			self.entry.bind("<Return>", self._enterexit)
 			self.entry.bind("<Control-c>", self._exit)
 			self.entry.bind("<Escape>", self._exit)
