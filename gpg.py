@@ -130,9 +130,9 @@ class GPGTool(object):
 		"""key-pair generator method"""
 		if self.dbg:
 			print(bgre('%s %s'%(self.genkeys, kginput)))
-		print('%s\n%s'%(
-            blu('generating keys using:'), yel(tabd(kginput, 2))))
-		if 'passphrase' in kginput.keys():
+		print('%s\n%s'%(blu('generating keys using:'), yel(tabd(dict(
+            (k, v) for (k, v) in kginput.items() if k != 'passphrase'), 2))))
+		if 'passphrase' not in kginput.keys():
 			kginput['passphrase'] = self._passwd(rpt=True)
 		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 		return key
