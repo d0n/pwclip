@@ -80,8 +80,7 @@ def _keycheck_(mode, kwargs):
 	gpg = GPGTool(**kwargs)
 	if gpg.findkey('', secret=True):
 		return
-	kwargs['mode'] = mode
-	gpg.genkeys(**kwargs)
+	gpg.genkeys(mode)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""

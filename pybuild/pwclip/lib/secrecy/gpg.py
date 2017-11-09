@@ -153,7 +153,7 @@ class GPGTool(object):
 					for sub in key[k]:
 						#print(sub)
 						_, typs, finger = sub
-						print(finger, typs)
+						#print(finger, typs)
 						if typ == 'A' or (typ in typs):
 							si = key[k].index(sub)
 							ki = key[k][si].index(finger)
