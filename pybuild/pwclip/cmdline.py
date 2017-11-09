@@ -76,51 +76,12 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 			copy(boclp, mode='b')
 	exit(0)
 
-def __gendefaults():
-	_user = environ['USER'] if osname != 'nt' else environ['USERNAME']
-	return {
-        'key_type': 'RSA',
-        'key_length': 4096,
-        'name_real': _user,
-        'name_comment': '',
-        'name_email': '%s@%s'%(_user, hostname())}
-
-def __editdialog(ynq, uin, defs):
-	ynq('editing options - on enter the current ' \
-          'value is used\nfor the "name_comment" option a ' \
-          'single "_" set that option to ""\n')
-	for (k, v) in sorted(defs.items()):
-		v = uin('enter value for option %s (%s): '%(k, v))
-		defs[k] = v if v else defs[k]
-	return defs
-
 def _keycheck_(mode, kwargs):
 	gpg = GPGTool(**kwargs)
 	if gpg.findkey('', secret=True):
 		return
-	ynq, uin, sin = input, input, getpass
-	if gpg.findkey(secret=True):
-		return
-	if mode == 'gui':
-		ynq, uin, sin = xyesno,  xinput, xgetpass
-	yesno = ynq('gpg-secret-key could not be found, create one? [Y/n]')
-	if yesno is True or str(yesno).lower() in ('y', ''):
-		defs = __gendefaults()
-		while True:
-			yesno = ynq(
-                'generating gpg-keys using the following '
-                'options:\n%s\nuse that options? [Y/n]' \
-                %tabd(defs, 2))
-			if yesno is True or str(yesno).lower() in ('y', ''):
-				break
-			defs = __editdialog(ynq, uin, defs)
-		while True:
-			__p = sin('enter passphrase:\n')
-			if __p == sin('repeat that passphrase:\n'):
-				defs['passphrase'] = __p
-				break
-			ynq('passwords do not match, repeating...')
-		gpg.genkeys(**defs)
+	kwargs['mode'] = mode
+	gpg.genkeys(**kwargs)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
