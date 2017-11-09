@@ -5,7 +5,9 @@ gpgtool module
 """
 
 # (std)lib imports
-from os import path, name as osname
+from os import path, environ, name as osname
+
+from platform import node
 
 from getpass import getpass
 
@@ -16,7 +18,7 @@ from gnupg import GPG
 # local imports
 from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
-from system import xinput, xyesno, xmsgok, which
+from system import xinput, xyesno, xgetpass, xmsgok, userfind, which
 
 class GPGTool(object):
 	"""
@@ -99,18 +101,23 @@ class GPGTool(object):
 		return __g
 
 	@staticmethod
-	def _passwd(rpt=False):
+	def _passwd(rpt=False, mode='cli'):
 		"""password questioning method"""
+		pas = getpass
+		err = error
+		if mode == 'gui':
+			pas = xgetpass
+			err = xmsgok
 		msg = 'enter passphrase: '
 		tru = 'repeat that passphrase: '
 		while True:
 			try:
 				if not rpt:
-					return getpass(msg)
-				__pwd = getpass(msg)
-				if __pwd == getpass(tru):
+					return pas(msg)
+				__pwd = pas(msg)
+				if __pwd == pas(tru):
 					return __pwd
-				error('passwords did not match')
+				err('passwords did not match')
 			except KeyboardInterrupt:
 				abort()
 
@@ -126,14 +133,34 @@ class GPGTool(object):
 				#print(val, pattern)
 				return True
 
-	def genkeys(self, **kginput):
+	@staticmethod
+	def __gendefs():
+		user = environ['USERNAME'] if osname == 'nt' else userfind('1000')
+		return {
+            'name_real': user,
+            'name_comment': '',
+            'name_email': '%s@%s'%(user, node()),
+            'expire_date': 0,
+            'key_type': 'RSA',
+            'key_length': 4096,
+            'subkey_type': 'RSA',
+            'subkey_length': 4096}
+
+	def genkeys(self, mode, **kginput):
 		"""key-pair generator method"""
 		if self.dbg:
 			print(bgre(self.genkeys))
-		print('%s\n%s'%(blu('generating keys using:'), yel(tabd(dict(
-            (k, v) for (k, v) in kginput.items() if k != 'passphrase'), 2))))
+		kginput = kginput if kginput else self.__gendefs()
+		pkginput = dict(
+            (k, v) for (k, v) in kginput.items() if k != 'passphrase')
+		echo = print
+		msg = '%s\n%s'%(blu('generating keys using:'), yel(tabd(pkginput, 2)))
+		if mode == 'gui':
+			echo = xmsgok
+			msg = 'generating keys using:\n%s'%tabd(pkginput, 2)
+		echo(msg)
 		if 'passphrase' not in kginput.keys():
-			kginput['passphrase'] = self._passwd(rpt=True)
+			kginput['passphrase'] = self._passwd(True, mode)
 		key = self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 		return key
 
@@ -153,7 +180,7 @@ class GPGTool(object):
 					for sub in key[k]:
 						#print(sub)
 						_, typs, finger = sub
-						print(finger, typs)
+						#print(finger, typs)
 						if typ == 'A' or (typ in typs):
 							si = key[k].index(sub)
 							ki = key[k][si].index(finger)
