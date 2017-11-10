@@ -249,7 +249,4 @@ class GPGTool(object):
 			if not yesno:
 				raise RuntimeError('%s cannot decrypt'%self.decrypt)
 			self.__c += 1
-			try:
-				self.__ppw = xinput('enter passphrase')
-			except TclError:
-				self.__ppw = self._passwd()
+			self.__ppw = self._passwd()
