@@ -1,0 +1,4 @@
+[submodule "pybuild/pwclip/lib"]
+	path = pybuild/pwclip/lib
+	url = d0n@janeiskla.de:rpo/libd0n.git
+	branch = pwclip
