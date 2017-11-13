@@ -1,8 +1,22 @@
 Changelog
 =========
 
-1.1.6 (current)
+1.1.7 (current)
 ---------------
+
+Released: 2017-11-13
+
+  * fixed key-gen dialog in cli and gui mode
+
+  * fixed gpg-findkey function in secret-key-mode to not ask for password
+
+  * added xgetpass module and removed character hiding in xinput module
+
+  * rearranged build environment with git-submodules
+
+
+1.1.6
+-----
 
 Released: 2017-11-06
 
