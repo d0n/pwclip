@@ -13,7 +13,7 @@
 # Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
-
+"""x input window module"""
 try:
 	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
 except ImportError:
@@ -21,25 +21,26 @@ except ImportError:
 
 def xinput(message="input will not be displayed"):
 	"""gui representing function"""
-	class PassClip(Frame):
-		"""password clipping class for tkinter.Frame"""
+	class XInput(Frame):
+		"""class to capture user input for x environments"""
 		inp = None
 		def __init__(self, master):
+			"""xinput init function"""
 			Frame.__init__(self, master)
 			self.pack()
 			self.inputwindow()
 		def _enterexit(self, _=None):
-			"""exit by saving challenge-response for input"""
+			"""exit by saving input"""
 			self.inp = self.input.get()
 			self.quit()
 		def _exit(self, _=None):
 			"""just exit (for ESC mainly)"""
 			self.quit()
 		def inputwindow(self):
-			"""password input window creator"""
+			"""input window creator"""
 			self.lbl = Label(self, text=message)
 			self.lbl.pack()
-			self.entry = Entry(self, show="*")
+			self.entry = Entry(self)
 			self.entry.bind("<Return>", self._enterexit)
 			self.entry.bind("<Control-c>", self._exit)
 			self.entry.bind("<Escape>", self._exit)
@@ -57,11 +58,14 @@ def xinput(message="input will not be displayed"):
 			self.cl.pack(side="right")
 	# instanciate Tk and create window
 	root = Tk()
-	try:
-		pwc = PassClip(root)
-	except KeyboardInterrupt:
-		root.destroy()
-	pwc.lift()
-	pwc.mainloop()
+	root.after(1, lambda: root.focus_force())
+	win = XInput(root)
+	win.lift()
+	win.mainloop()
 	root.destroy()
-	return pwc.inp
+	return win.inp
+
+
+
+if __name__ == '__main__':
+	exit(1)

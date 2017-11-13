@@ -1,25 +1,14 @@
+"""system.user.find module"""
 from sys import \
-    stderr as _stderr
-__puke = _stderr.write
+    stderr as stderr
+__puke = stderr.write
 
 def userfind(pattern='1000', mode='user'):
-	"""
-        >>> 0 = user
-        >>> 1 = x
-        >>> 2 = uid
-        >>> 3 = gid
-        >>> 4 = comment
-        >>> 5 = home
-        >>> 6 = shell
-	"""
-	user = 0
-	x = 1
-	uid = 2
-	gid = 3
-	comment = 4
-	home = 5
-	shell = 6
-	mode = int(eval(mode))
+	"""find any type of entry a user has in passwd by a given pattern"""
+	idmap = {
+        'user': 0, 'x': 1, 'uid': 2,
+        'gid': 3, 'comment': 4, 'home': 5, 'shell': 6}
+	mode = int(idmap[mode])
 	pstr = str(pattern)
 	try:
 		with open('/etc/passwd', 'r') as pwd:

@@ -13,41 +13,58 @@
 # Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
-"""display x message without options and OK button"""
+"""x input window module"""
 try:
-	from tkinter import Button, Frame, Label, Tk
+	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
 except ImportError:
-	from Tkinter import Button, Frame, Label, Tk
+	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
-def xmsgok(message="press any key to continue"):
+def xinput(message="input will not be displayed"):
 	"""gui representing function"""
-	class XMessage(Frame):
-		"""password clipping class for tkinter.Frame"""
+	class XInput(Frame):
+		"""class to capture user input for x environments"""
+		inp = None
 		def __init__(self, master):
+			"""xinput init function"""
 			Frame.__init__(self, master)
 			self.pack()
 			self.inputwindow()
+		def _enterexit(self, _=None):
+			"""exit by saving input"""
+			self.inp = self.input.get()
+			self.quit()
 		def _exit(self, _=None):
 			"""just exit (for ESC mainly)"""
 			self.quit()
 		def inputwindow(self):
-			"""password input window creator"""
+			"""input window creator"""
 			self.lbl = Label(self, text=message)
 			self.lbl.pack()
-			self.bind("<Key>", self._exit)
-			self.pack()
-			self.focus_set()
+			self.entry = Entry(self, show="*")
+			self.entry.bind("<Return>", self._enterexit)
+			self.entry.bind("<Control-c>", self._exit)
+			self.entry.bind("<Escape>", self._exit)
+			self.entry.pack()
+			self.entry.focus_set()
+			self.input = StringVar()
+			self.entry["textvariable"] = self.input
 			self.ok = Button(self)
 			self.ok["text"] = "ok"
-			self.ok["command"] = self._exit
-			self.ok.pack()
+			self.ok["command"] = self._enterexit
+			self.ok.pack(side="left")
+			self.cl = Button(self)
+			self.cl["text"] = "cancel"
+			self.cl["command"] = self.quit
+			self.cl.pack(side="right")
 	# instanciate Tk and create window
 	root = Tk()
 	root.after(1, lambda: root.focus_force())
-	xms = XMessage(root)
-	xms.lift()
-	xms.mainloop()
+	win = XInput(root)
+	win.lift()
+	win.mainloop()
 	root.destroy()
+	return win.inp
+
 
 
 if __name__ == '__main__':
