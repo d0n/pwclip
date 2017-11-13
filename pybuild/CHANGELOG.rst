@@ -10,6 +10,10 @@ Released: 2017-11-13
 
   * fixed gpg-findkey function in secret-key-mode to not ask for password
 
+  * fixed lotz of stuff in gpg wrapper for correctly collecting user input
+
+  * merged almost all modules back into master
+
   * added xgetpass module and removed character hiding in xinput module
 
   * rearranged build environment with git-submodules
