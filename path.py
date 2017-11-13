@@ -85,9 +85,9 @@ def filesiter(folder, random=False):
 		for f in orderd(fs):
 			yield pathjoin(d, f)
 
-def findlowerdir(path, name):
+def findupperdir(path, name):
 	while len(path.split('/')) > 1:
 		trg = '%s/%s'%(path, name)
 		if isdir(trg):
 			return trg
-		return findlowerdir('/'.join(p for p in path.split('/')[:-1]), name)
+		return findupperdir('/'.join(p for p in path.split('/')[:-1]), name)

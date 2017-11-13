@@ -3,7 +3,7 @@ from system.stamp import stamp
 from system.fileage import fileage
 
 from system.path import absrelpath, realpaths, \
-    confpaths, confdats, jconfdats, filesiter, findlowerdir
+    confpaths, confdats, jconfdats, filesiter, findupperdir
 
 from system.blockdevice import BlockDevice
 
