@@ -42,7 +42,7 @@ except ImportError:
 # local relative imports
 from colortext import blu, bgre, tabd, error, fatal
 
-from system import copy, paste, xinput, xgetpass, xyesno, which
+from system import copy, paste, xinput, xgetpass, xyesno, xnotify, which
 
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
