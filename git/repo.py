@@ -8,7 +8,7 @@ import sys
 
 # local relative imports
 from executor import Command
-from system import absrelpath, which, findlowerdir
+from system import absrelpath, which, findupperdir
 from colortext import blu, yel, tabd, bgre, error
 
 # default vars
@@ -63,7 +63,7 @@ class GitRepo(Command):
 
 	@staticmethod
 	def __gitdir_(repodir):
-		return findlowerdir(repodir, '.git')
+		return findupperdir(repodir, '.git')
 
 	def _fetch_(self, fetchall=False):
 		if self.dbg:
