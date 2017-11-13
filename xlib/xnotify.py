@@ -15,6 +15,7 @@
 # details.
 #
 """linux x-notification library"""
+from sys import stderr
 from inspect import stack
 try:
 	import gi
