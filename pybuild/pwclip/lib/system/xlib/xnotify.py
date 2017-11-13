@@ -22,7 +22,6 @@ try:
 	gi.require_version('Notify', '0.7')
 	from gi.repository import Notify as xnote
 except (AttributeError, ImportError) as err:
-<<<<<<< HEAD
 	print(err, file=stderr)
 	def xnotify(*args): return
 
@@ -35,25 +34,3 @@ def xnotify(msg, name=stack()[1][3], wait=3):
 		note.show()
 	except RuntimeError:
 		pass
-=======
-	#print(err, file=stderr)
-	def xnotify(*_): """xnotify faker function""" ;return
-else:
-	def xnotify(msg, name=stack()[1][3], wait=3):
-		"""
-		disply x notification usually in the upper right corner of the display
-		"""
-		try:
-			xnote.init(str(name))
-			note = xnote.Notification.new(msg)
-			wait = int(wait)*600
-			note.set_timeout(wait)
-			note.show()
-		except (NameError, RuntimeError):
-			pass
-
-
-
-if __name__ == '__main__':
-	exit(1)
->>>>>>> 41e8fa9d61bd5fd45a201f066462e9f9985732f5

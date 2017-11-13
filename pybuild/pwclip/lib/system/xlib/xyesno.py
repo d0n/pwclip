@@ -13,16 +13,15 @@
 # Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
-"""x yes/no message/answer window module"""
 
 try:
-	from tkinter import Button, Frame, Label, Tk
+	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
 except ImportError:
-	from Tkinter import Button, Frame, Label, Tk
+	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
 def xyesno(message="do you accept that?"):
 	"""gui representing function"""
-	class XYesNo(Frame):
+	class YesNo(Frame):
 		"""password clipping class for tkinter.Frame"""
 		yesno = False
 		def __init__(self, master):
@@ -54,14 +53,8 @@ def xyesno(message="do you accept that?"):
 			self.cl.pack(side="right")
 	# instanciate Tk and create window
 	root = Tk()
-	root.after(1, lambda: root.focus_force())
-	xyn = XYesNo(root)
+	xyn = YesNo(root)
 	xyn.lift()
 	xyn.mainloop()
 	root.destroy()
 	return xyn.yesno
-
-
-
-if __name__ == '__main__':
-	exit(1)
