@@ -12,7 +12,7 @@ Released: 2017-11-13
 
   * fixed lotz of stuff in gpg wrapper for correctly collecting user input
 
-  * merged almost all modules back into master
+  * merged almost all modules back into master and cleaned up pwclip branch
 
   * added xgetpass module and removed character hiding in xinput module
 
