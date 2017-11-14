@@ -18,6 +18,7 @@
 from os.path import expanduser
 import sys
 from socket import getfqdn as fqdn
+from paramiko.ssh_exception import AuthenticationException
 
 # local relative imports
 from colortext import bgre, tabd
@@ -30,7 +31,7 @@ class Puppet(SSH):
 	dbg = False
 	vrb = False
 	bgr = False
-	reuser = 'root'
+	reuser = 'coreinstaller'
 	remote = ''
 	puptenv = 'accmo_master'
 	puptmpl = '~/.config/amt/puppet.tmpl'
@@ -49,14 +50,17 @@ class Puppet(SSH):
 			elif hasattr(self, '%s_'%key):
 				setattr(self, '%s_'%key, val)
 		self.remote = fqdn(self.remote)
-		if self._debversion() < '8':
-			self.pupvers = 2
-			self.puptmpl = '~/.config/amt/puppet2.tmpl'
-			self.pupconf = '/etc/puppet/puppet.conf'
-			self.pupdpkg = 'puppet'
-			self.puptenv = 'itoacclive'
-			self.ppcasrv = 'puppetca.dlan.cinetic.de'
-			self.ppsysrv = 'puppetsync.server.lan'
+		try:
+			if self._debversion() < '8':
+				self.pupvers = 2
+				self.puptmpl = '~/.config/amt/puppet2.tmpl'
+				self.pupconf = '/etc/puppet/puppet.conf'
+				self.pupdpkg = 'puppet'
+				self.puptenv = 'itoacclive'
+				self.ppcasrv = 'puppetca.dlan.cinetic.de'
+				self.ppsysrv = 'puppetsync.server.lan'
+		except AuthenticationException:
+			pass
 		if self.dbg:
 			print(bgre(Puppet.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
@@ -79,9 +83,10 @@ class Puppet(SSH):
 		"""remove puppet ssl certificates on puppetca"""
 		if self.dbg:
 			print(self.pupcrt)
-		msg = 'cert clean %s'%self.remote if self.pupvers == 4 else self.remote
+		cmd = 'certclean' if self.pupvers == 4 else 'cert clean'
+		msg = '%s %s'%(cmd, self.remote)
 		print(self.ppcasrv, msg)
-		return nc(self.ppcasrv, '18140', self.remote)
+		return nc(self.ppcasrv, '8140', self.remote)
 
 	def pupssl(self):
 		"""remove puppet ssl certificates remotely"""
@@ -113,9 +118,8 @@ class Puppet(SSH):
             'apt-get install -y lsb-release %s'%self.pupdpkg]
 		for cmd in cmds:
 			xec(cmd, remote=fqdn(self.remote))
-		self.put(
-            expanduser(self.puptmpl), self.pupconf,
-            remote=fqdn(self.remote), reuser='root')
+		self.put(expanduser(self.puptmpl), self.pupconf,
+            remote=self.remote, reuser=self.reuser)
 
 	def puprun(self, bgr=None):
 		"""run puppet agent remotely"""
