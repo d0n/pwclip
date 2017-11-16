@@ -1,8 +1,18 @@
 Changelog
 =========
 
-1.1.7 (current)
+1.1.8 (current)
 ---------------
+
+Released: 2017-11-16
+
+  * fixed TypeError if password is an integer
+
+  * fixed alot of stuff in gpg and passcrypt module for key-gen function
+    to comply to gui mode as well
+
+1.1.7
+-----
 
 Released: 2017-11-13
 
