@@ -31,14 +31,14 @@ class PassCrypt(GPGTool, SecureSHell):
 		home = path.join(environ['HOMEDRIVE'], environ['HOMEPATH'])
 	plain = path.join(home, '.pwd.yaml')
 	crypt = path.join(home, '.passcrypt')
-	recvs = []
 	remote = ''
 	reuser = user
+	recvs = []
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
-	elif 'GPGKEY' in environ.keys():
-		recvs = recvs + [
-            environ['GPGKEY']] if not environ['GPGKEY'] in recvs else []
+	if 'GPGKEY' in environ.keys():
+		recvs = [environ['GPGKEY']] + [
+            k for k in recvs if k != environ['GPGKEY']]
 	def __init__(self, *args, **kwargs):
 		"""passcrypt init function"""
 		for arg in args:
