@@ -85,7 +85,6 @@ def __keycheck(mode, kwargs):
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
-	print(pwlist)
 	__pwcom = ['*'*len(str(pwlist[0]))]
 	if len(pwlist) > 1:
 		__pwcom.append(pwlist[1])
