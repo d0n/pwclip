@@ -11,6 +11,8 @@ Released: 2017-11-16
   * fixed alot of stuff in gpg and passcrypt module for key-gen function
     to comply to gui mode as well
 
+  * cleaned up remains of submodule merges
+
 
 1.1.7
 -----
