@@ -143,7 +143,7 @@ def clips():
 			if mode == 'b':
 				return
 			with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
-				prc.communicate(input=text.encode('utf-8'))
+				prc.communicate(input=str(text).encode('utf-8'))
 		def _paste(_=None):
 			"""osx paste function"""
 			with Popen(['pbpaste'], stdout=PIPE, close_fds=True) as prc:
@@ -161,7 +161,7 @@ def clips():
 			for m in mode:
 				with Popen(
                       _xsel + ['-%s'%m], stdin=PIPE, stderr=DEVNULL) as prc:
-					prc.communicate(input=text.encode('utf-8'))
+					prc.communicate(input=str(text).encode('utf-8'))
 		def _paste(mode='p'):
 			"""linux paste function"""
 			_xsel = xsel + ['-o']
