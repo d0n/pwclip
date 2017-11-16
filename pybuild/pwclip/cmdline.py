@@ -76,15 +76,17 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 			copy(boclp, mode='b')
 	exit(0)
 
-def _keycheck_(mode, kwargs):
+def __keycheck(mode, kwargs):
 	gpg = GPGTool(**kwargs)
 	if gpg.findkey('', secret=True):
 		return
-	gpg.genkeys(mode)
+	environ['GPGKEY'] = gpg.genkeys(mode)
+	return environ['GPGKEY']
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
-	__pwcom = ['*'*len(pwlist[0])]
+	print(pwlist)
+	__pwcom = ['*'*len(str(pwlist[0]))]
 	if len(pwlist) > 1:
 		__pwcom.append(pwlist[1])
 	return __pwcom
@@ -159,7 +161,9 @@ def gui(typ='pw'):
 		if not __res:
 			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	_keycheck_('gui', cfgs)
+	key = __keycheck('gui', cfgs)
+	if key:
+		cfgs['recvs'] = key
 	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
 	__in = xinput()
 	if not __in: exit(1)
@@ -303,7 +307,9 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
-		_keycheck_('cli', __pkwargs)
+		key = __keycheck('cli', __pkwargs)
+		if key:
+			__pkwargs['recvs'] = key
 		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:
