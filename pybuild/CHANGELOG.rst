@@ -6,7 +6,7 @@ Changelog
 
 Released: 2017-11-16
 
-  * reverted system.user.whoami model to last commit
+  * reverted system.user.whoami module to last commit *hotfix release*
 
 
 1.1.8
