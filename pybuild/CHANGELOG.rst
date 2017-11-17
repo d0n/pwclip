@@ -1,10 +1,20 @@
 Changelog
 =========
 
-1.1.9 (current)
----------------
+1.1.10 (current)
+----------------
 
-Released: 2017-11-16
+Released: 2017-11-17
+
+  * correcture on last release date :P
+
+  * reverted which and gpg module *yet another hotfix release*
+
+
+1.1.9
+-----
+
+Released: 2017-11-17
 
   * reverted system.user.whoami module to last commit *hotfix release*
 
