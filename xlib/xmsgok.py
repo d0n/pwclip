@@ -13,11 +13,11 @@
 # Without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
-"""display x message without options and OK button"""
+
 try:
-	from tkinter import Button, Frame, Label, Tk
+	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
 except ImportError:
-	from Tkinter import Button, Frame, Label, Tk
+	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
 
 def xmsgok(message="press any key to continue"):
 	"""gui representing function"""
@@ -43,12 +43,7 @@ def xmsgok(message="press any key to continue"):
 			self.ok.pack()
 	# instanciate Tk and create window
 	root = Tk()
-	root.after(1, lambda: root.focus_force())
 	xms = XMessage(root)
 	xms.lift()
 	xms.mainloop()
 	root.destroy()
-
-
-if __name__ == '__main__':
-	exit(1)
