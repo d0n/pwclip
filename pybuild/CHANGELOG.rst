@@ -1,8 +1,16 @@
 Changelog
 =========
 
-1.1.8 (current)
+1.1.9 (current)
 ---------------
+
+Released: 2017-11-16
+
+  * reverted system.user.whoami model to last commit
+
+
+1.1.8
+-----
 
 Released: 2017-11-16
 
