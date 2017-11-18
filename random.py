@@ -35,7 +35,9 @@ def lowerrand(num):
 		if g > 1 and g < int(num):
 			return g
 
-def randin(top, low=-1):
+def randin(top, low=0):
+	if low:
+		low, top = top, low
 	while True:
 		try:
 			g = int(random(int(len(str(top))), regex='[0-9]*'))
