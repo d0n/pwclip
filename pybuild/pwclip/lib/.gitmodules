@@ -1,0 +1,16 @@
+[submodule "colortext"]
+	path = colortext
+	url = d0n@janeiskla.de:rpo/python/colortext.git
+	branch = master
+[submodule "net"]
+	path = net
+	url = d0n@janeiskla.de:rpo/python/net.git
+	branch = master
+[submodule "secrecy"]
+	path = secrecy
+	url = d0n@janeiskla.de:rpo/python/secrecy.git
+	branch = master
+[submodule "system"]
+	path = system
+	url = d0n@janeiskla.de:rpo/python/system.git
+	branch = master
