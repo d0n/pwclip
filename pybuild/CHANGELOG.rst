@@ -1,8 +1,19 @@
 Changelog
 =========
 
-1.1.10 (current)
+1.1.11 (current)
 ----------------
+
+Released: 2017-12-11
+
+  * fix gpg.exe not found by system.which function
+
+  * 
+
+
+
+1.1.10
+------
 
 Released: 2017-11-17
 
