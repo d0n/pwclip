@@ -94,7 +94,7 @@ class GPGTool(object):
 		opts = ['--batch', '--always-trust']
 		if osname != 'nt' and self.binary.rstrip('.exe').endswith('2'):
 			opts.append('--pinentry-mode=loopback')
-		elif osname == 'nt' and self.__c >= 1:
+		elif self.__c >= 1:
 			opts.append('--passphrase="%s"'%self.__ppw)
 		__g = GPG(
             keyring=self.keyring, secret_keyring=self.secring,
