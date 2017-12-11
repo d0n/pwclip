@@ -6,10 +6,11 @@ Changelog
 
 Released: 2017-12-11
 
-  * fix gpg.exe not found by system.which function
+  * [W] fix gpg.exe not found by system.which function
 
-  * 
+  * trying to fix some password input - gpg related issues
 
+  ** still some work todo for implementing gpg-key generating functionality **
 
 
 1.1.10
