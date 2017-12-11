@@ -10,6 +10,8 @@ Released: 2017-12-11
 
   * trying to fix some password input - gpg related issues
 
+  * changed README file a bit for windows installation
+
   ** still some work todo for implementing gpg-key generating functionality **
 
 

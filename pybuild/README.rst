@@ -80,9 +80,12 @@ copy/paste buffers.
 Installing via pip3
 --------------------
 
-You can install this package from the Python Package Index (pyPI) by running:
+On Windows you need to install Python3 from http://python.org/ first. On most
+Linux distributions python will be part of the system. With Python installed,
+you can install the pwclip package from the Python-Package-Index (pyPI) by
+running:
 
-* ``pip3 install pwclip``
+``pip3 install pwclip``
 
 and installing the dependencies (not managed by pip) manually.
 
@@ -105,6 +108,7 @@ packed which might be executed like the following examples will show:
 
 GPG-Mode
 --------
+
 ``pwclip``
 
 If there is an environment variable called GPGKEYS it will use those keys to
