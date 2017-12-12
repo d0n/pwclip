@@ -2,8 +2,8 @@
 """git wrapping module"""
 # global imports
 import re
-from os import getcwd
-from os.path import isfile, isdir, join as pjoin
+from os import getcwd, listdir
+from os.path import isfile, isdir, join as pjoin, exists
 import sys
 
 # local relative imports
@@ -81,17 +81,17 @@ class GitRepo(Command):
 	def _heads(self):
 		if self.dbg:
 			print(bgre(self._heads))
-		if not os.path.exists('%s/refs/heads'%(self.gitdir)):
+		if not exists('%s/refs/heads'%(self.gitdir)):
 			errmsg = 'no basedir was set and current one is no git repo %s'%(
                 self.gitdir)
 			raise RuntimeError(errmsg)
-		head, heads = self._head(), os.listdir('%s/refs/heads'%(self.gitdir))
+		head, heads = self._head(), listdir('%s/refs/heads'%(self.gitdir))
 		return [h for h in heads if h != head] + [head]
 
 	def _remotes(self):
 		if self.dbg:
 			print(bgre(self._remotes))
-		return [rem for rem in os.listdir(
+		return [rem for rem in listdir(
             '%s/refs/remotes/origin/'%(self.gitdir)) if rem != 'HEAD']
 
 	def checkout(self, branch, *files):
