@@ -1,8 +1,16 @@
 Changelog
 =========
 
-1.1.11 (current)
+1.1.12 (current)
 ----------------
+
+Released: 2017-12-12
+
+  * fixed typo in system.which function changed to comply for windows
+
+
+1.1.11
+------
 
 Released: 2017-12-11
 
