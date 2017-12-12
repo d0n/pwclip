@@ -2,8 +2,8 @@
 """git wrapping module"""
 # global imports
 import re
-import os
-from os.path import isfile
+from os import getcwd
+from os.path import isfile, isdir, join as pjoin
 import sys
 
 # local relative imports
@@ -25,7 +25,6 @@ class GitRepo(Command):
 	vrb = None
 	lwd = None
 	gitremote = ''
-	_gitdir = None
 	_gitbin = which('git')
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -44,26 +43,24 @@ class GitRepo(Command):
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
 
-	@property                # gitdir <str>
-	def gitdir(self):
-		cwd = os.getcwd()
-		if not self._gitdir or cwd != self.lwd:
-			return self.__gitdir_(cwd)
-		return self._gitdir
-	@gitdir.setter
-	def gitdir(self, val):
-		if os.path.isdir(val):
-			self._gitdir = self.__gitdir_(val)
-		else:
-			raise ValueError('directory %s does not exist'%val)
-
 	@property               # gitbin <str>
 	def gitbin(self):
 		return self._gitbin
 
+	@property
+	def gitdir(self):
+		return self._gitdir()
+
 	@staticmethod
-	def __gitdir_(repodir):
-		return findupperdir(repodir, '.git')
+	def _gitdir(repodir=None):
+		repodir = repodir if repodir else getcwd()
+		gitdir = pjoin(repodir, '.git')
+		if isfile(gitdir):
+			with open(gitdir, 'r') as gfh:
+				gitdir = str(gfh.read()).split(': ')[1].strip()
+		elif not isdir(gitdir):
+			gitdir = findupperdir(repodir, '.git')
+		return gitdir
 
 	def _fetch_(self, fetchall=False):
 		if self.dbg:
@@ -77,7 +74,7 @@ class GitRepo(Command):
 	def _head(self):
 		if self.dbg:
 			print(bgre(self._head))
-		#print(self.gitdir)
+		print(self.gitdir)
 		with open('%s/HEAD'%(self.gitdir), 'r') as f:
 			return f.read().split('/')[-1].strip()
 

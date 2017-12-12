@@ -41,6 +41,7 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
+		print(self._head())
 		if branch != self._head(): self.checkout(branch)
 		if [m for m in self.syncmodes if m in ('sync', 'pull')]:
 			self.pull()
@@ -54,7 +55,7 @@ class GitSync(GitRepo):
 				self.commit('%s %s'%(status, branch))
 		_, ahead, _ = self.gitstatus()
 		if [m for m in self.syncmodes if m in ('sync', 'push')]:
-			if ahead: self.push(branch)
+			if ahead: self.push(branch, branch)
 		if status:
 			return {branch: status}
 
