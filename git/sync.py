@@ -41,7 +41,6 @@ class GitSync(GitRepo):
 		if self.dbg:
 			print(bgre(self.gitsync))
 		branch = branch if branch else self._head()
-		print(self._head())
 		if branch != self._head(): self.checkout(branch)
 		if [m for m in self.syncmodes if m in ('sync', 'pull')]:
 			self.pull()
