@@ -74,7 +74,6 @@ class GitRepo(Command):
 	def _head(self):
 		if self.dbg:
 			print(bgre(self._head))
-		print(self.gitdir)
 		with open('%s/HEAD'%(self.gitdir), 'r') as f:
 			return f.read().split('/')[-1].strip()
 
