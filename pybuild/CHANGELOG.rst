@@ -8,6 +8,8 @@ Released: 2017-12-12
 
   * fixed typo in system.which function changed to comply for windows
 
+  ** hotfix release **
+
 
 1.1.11
 ------
