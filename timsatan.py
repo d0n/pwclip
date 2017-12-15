@@ -164,11 +164,12 @@ class Satan(object):
 		_effort = self.browser.open(self.url, code)
 		response = _effort.read()
 		if response.find('Success'.encode()) == -1:
-			raise Exception(
-                'Enter effort failed - ' \
-                'string "Success" not found.\nPOSTed:\n' \
-                '---%s---\n\nResponse:\n---%s---\n\n'%(
-                code.decode(), response.decode()))
+			if self.dbg:
+				print(
+                    'Enter effort failed - ' \
+                    'string "Success" not found.\nPOSTed:\n' \
+                    '---%s---\n\nResponse:\n---%s---\n\n'%(
+                    code, response))
 			return True
 
 	def weekefforts(self, week=0):
