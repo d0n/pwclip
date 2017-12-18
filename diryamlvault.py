@@ -20,7 +20,7 @@ from sys import stderr
 from os import \
     symlink, getcwd, listdir, \
     makedirs, walk, uname, chdir, \
-    remove, readlink, environ, chmod
+    remove, readlink, environ, chmod, utime
 
 from os.path import \
     isdir, islink, isfile, \
@@ -32,7 +32,7 @@ from yaml import load, dump
 
 from colortext import blu, yel, bgre, tabd, error
 
-from system import absrelpath
+from system import absrelpath, fileage
 
 from secrecy import GPGTool
 
@@ -47,6 +47,7 @@ class DirYamlVault(GPGTool):
 		recvs = environ['GPGKEYS'].split(' ')
 	elif 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']]
+	vaultage = 0
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -56,6 +57,10 @@ class DirYamlVault(GPGTool):
 				setattr(self, key, val)
 		if not self.vault or not self.plain:
 			raise RuntimeError('setting a file and directory is mandatory')
+		try:
+			setattr(self, 'vaultage', fileage(self.vault))
+		except FileNotFoundError:
+			pass
 		if self.dbg:
 			print(bgre(DirYamlVault.__mro__))
 			print(bgre(tabd(DirYamlVault.__dict__, 2)))
@@ -155,6 +160,7 @@ class DirYamlVault(GPGTool):
 				try:
 					copyfile(self.vault, '%s.1'%self.vault)
 					chmod('%s.1'%self.vault, 0o600)
+					utime('%s.1'%self.vault, self.vaultage)
 				except FileNotFoundError:
 					pass
 				self.encrypt(
