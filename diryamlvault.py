@@ -20,7 +20,7 @@ from sys import stderr
 from os import \
     symlink, getcwd, listdir, \
     makedirs, walk, uname, chdir, \
-    remove, readlink, environ, chmod, utime
+    remove, readlink, environ, chmod, stat, utime
 
 from os.path import \
     isdir, islink, isfile, \
@@ -58,7 +58,7 @@ class DirYamlVault(GPGTool):
 		if not self.vault or not self.plain:
 			raise RuntimeError('setting a file and directory is mandatory')
 		try:
-			setattr(self, 'vaultage', fileage(self.vault))
+			setattr(self, 'vaultage', stat(self.vault).st_mtime)
 		except FileNotFoundError:
 			pass
 		if self.dbg:
@@ -152,26 +152,23 @@ class DirYamlVault(GPGTool):
 		if self.dbg:
 			print('%s\n%s\n%s'%(
                 bgre(self.envault), bgre(self.plain), bgre(self.vault)))
-		changed = False
-		try:
-			chdir(dirname(self.plain))
-			if self.diffvault():
-				changed = True
-				try:
-					copyfile(self.vault, '%s.1'%self.vault)
-					chmod('%s.1'%self.vault, 0o600)
-					utime('%s.1'%self.vault, self.vaultage)
-				except FileNotFoundError:
-					pass
-				self.encrypt(
-                    str(dump(self._pathdict(basename(self.plain)))),
-                    output=self.vault, recipients=self.recvs)
-				chmod(self.vault, 0o600)
-			if self.rmp:
-				rmtree(self.plain)
-		finally:
-			chdir(self._pwd)
-			return changed
+		chdir(dirname(self.plain))
+		if self.diffvault():
+			changed = True
+			try:
+				copyfile(self.vault, '%s.1'%self.vault)
+				chmod('%s.1'%self.vault, 0o600)
+				utime('%s.1'%self.vault, (
+                    int(self.vaultage), int(self.vaultage)))
+			except FileNotFoundError:
+				pass
+			self.encrypt(
+                str(dump(self._pathdict(basename(self.plain)))),
+                output=self.vault, recipients=self.recvs)
+			chmod(self.vault, 0o600)
+		if self.rmp:
+			rmtree(self.plain)
+		chdir(self._pwd)
 
 	def unvault(self):
 		if self.dbg:
