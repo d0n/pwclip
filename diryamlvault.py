@@ -187,3 +187,4 @@ class DirYamlVault(GPGTool):
 			error('%s '%err,  self.vault, ' does not exist or is inaccessable')
 		finally:
 			chdir(self._pwd)
+
