@@ -348,7 +348,6 @@ class TimeSatan(Cmd, Satan):
 					__e['project'] = 'ACC.%s'%__p
 				elif __p and __p.lower().startswith('acc.'):
 					__e['project'] = __p.upper()
-
 		return self.default(' '.join(frags[1:]), __e)
 	def do_p(self, line):
 		self.do_project(line)
