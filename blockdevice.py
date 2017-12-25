@@ -13,7 +13,7 @@ __version__ = '0.1'
 # os.statvfs(tst)
 class BlockDevice(Command):
 	sh_ = True
-	sieves=['DEVNO', 'PRI', 'TIME']
+	sieves = ['DEVNO', 'PRI', 'TIME']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -42,12 +42,15 @@ class BlockDevice(Command):
 	@property
 	def mounts(self):
 		__mnts = {}
-		__psps = disk_partitions()
-		for mnt in __psps:
-			__mnts[mnt[0]] = {
-                'path': mnt[1],
-                'type': mnt[2],
-                'opts': mnt[3]}
+		with open('/proc/mounts', 'r') as mfh:
+			for mln in mfh.readlines():
+				dsk, mnt, typ, opt, dmp, pas = mln.strip().split(' ')
+				__mnts[mnt] = {
+                    'disk': dsk,
+                    'type': typ,
+                    'opts': opt,
+                    'dump': dmp,
+                    'pass': pas}
 		return __mnts
 
 	def trgtype(self, trg):
@@ -59,10 +62,18 @@ class BlockDevice(Command):
 		elif isfile(absrelpath(trg)):
 			return 'img'
 
-	def dsksearch(self, pattern, mode='name'):
+	def dsksearch(self, pattern):
 		hits = []
 		for (dsk, attrs) in self.tab.items():
-			pass
+			if pattern in dsk:
+				hits.append({dsk: attrs})
+		return hits
+
+	def partsearch(self, pattern):
+		hits = []
+		for dskattrs in self.dsksearch(''):
+			dsk, attrs = dskattrs.items()
+
 
 
 
