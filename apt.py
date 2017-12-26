@@ -21,6 +21,7 @@ class Apytude(DePyKG):
 	vrb = None
 	opts = []
 	aptbin = which('apt')
+	_distname = ''
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -31,6 +32,19 @@ class Apytude(DePyKG):
 		if self.dbg:
 			print(bgre(Apytude.__mro__))
 			print(bgre(tabd(Apytude.__dict__, 2)))
+
+	@property                # distname <str>
+	def distname(self):
+		if not self._distname:
+			with open('/etc/lsb-release', 'r') as lfh:
+				self._distname = [
+                    l.split('=')[1].strip() for l in lfh.readlines() \
+                        if l.startswith('DISTRIB_CODENAME')][0]
+		return self._distname
+
+	def srcupdate(self, url, key, dist=None):
+		if self.dbg:
+			print(self.srcupdate)
 
 	def search(self, pattern=''):
 		if self.dbg:
@@ -66,7 +80,7 @@ class Apytude(DePyKG):
 		packages = ' '.join(p for p in packages if not self.isinstalled(p))
 		if not packages and not 'f' in opts:
 			return
-		print(packages)
+		#print(packages)
 		command = '%s %s install %s' %(self.aptbin, opts, packages)
 		erno = sudo.call(command)
 		if int(erno) == 0:
@@ -108,7 +122,6 @@ class Apytude(DePyKG):
 
 
 
+
 if __name__ == '__main__':
-	print('\n'.join(m for m in dir()))
-	apt = AptSource('dbg')
-	print(apt.srces)
+	exit(1)
