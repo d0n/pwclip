@@ -190,7 +190,7 @@ def cli():
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
         '-1',
-        dest='gpv', action='store_const', const='1',
+        dest='gpv', action='store_const', const='gpg',
         help='force usage of gpg in version 1.x')
 	pars.add_argument(
         '-A', '--all',
