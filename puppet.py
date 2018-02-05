@@ -31,7 +31,7 @@ class Puppet(SSH):
 	dbg = False
 	vrb = False
 	bgr = False
-	reuser = 'coreinstaller'
+	reuser = 'root'
 	remote = ''
 	puptenv = 'accmo_master'
 	puptmpl = '~/.config/amt/puppet.tmpl'
