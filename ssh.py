@@ -43,6 +43,7 @@ class SecureSHell(object):
                 self._ssh_, remote, reuser, port)))
 		ssh = SSHClient()
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
+		#print(askdns(remote), int(port), reuser)
 		try:
 			ssh.connect(
                 askdns(remote), int(port), username=reuser)
