@@ -33,7 +33,7 @@ class Puppet(SSH):
 	bgr = False
 	reuser = 'root'
 	remote = ''
-	puptenv = 'accmo_master'
+	branch = ''
 	puptmpl = '~/.config/amt/puppet.tmpl'
 	pupconf = '/etc/puppetlabs/puppet/puppet.conf'
 	pupdpkg = 'puppet-agent'
@@ -52,6 +52,7 @@ class Puppet(SSH):
 		self.remote = fqdn(self.remote)
 		try:
 			if self._debversion() < '8':
+				self.branch  = ''
 				self.pupvers = 2
 				self.puptmpl = '~/.config/amt/puppet2.tmpl'
 				self.pupconf = '/etc/puppet/puppet.conf'
@@ -130,9 +131,12 @@ class Puppet(SSH):
 		xec = self.rcall
 		if bgr:
 			xec = self.rrun
-		cmd = 'PATH=$PATH:/opt/puppetlabs/bin puppet agent -vot'
+		pupenv = ''
+		if self.pupvers == 4 and self.branch:
+			pupenv = ' --environment=accmo_%s'%self.branch
+		cmd = 'PATH=$PATH:/opt/puppetlabs/bin puppet agent -vot %s'%pupenv
 		if self.dbg:
-			cmd = 'PATH=$PATH:/opt/puppetlabs/bin puppet agent -vot --debug'
+			cmd = 'PATH=$PATH:/opt/puppetlabs/bin puppet agent -vot --debug %s'%pupenv
 		xec(cmd, remote=fqdn(self.remote))
 
 
