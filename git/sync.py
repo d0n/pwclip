@@ -17,6 +17,7 @@ class GitSync(GitRepo):
 	dbg = None
 	abr = None
 	tsy = None
+	branch = ''
 	remote = ''
 	rpodir = ''
 	subtree = ''
@@ -57,6 +58,8 @@ class GitSync(GitRepo):
 			if ahead: self.push(branch)
 		if status:
 			return {branch: status}
+		if self.branch:
+			self.checkout(self.branch)
 
 	def treesync(self):
 		if self.dbg:
