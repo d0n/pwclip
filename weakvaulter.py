@@ -77,21 +77,21 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if self.dbg:
 			print(bgre(self._fixmod_))
 		fixmes = self.__dirs + [self.weakz]
-		for p in fixmes:
-			for (d, _, fs) in walk(expanduser(p)):
-				for f in fs:
-					if f.startswith('S.'):
-						continue
-					f = pjoin(d, f)
-					#print(f)
-					chmod(f, 0o600)
-				#print(d)
-				chmod(d, 0o700)
-		for d in self.__dirs:
-			try:
+		try:
+			for p in fixmes:
+				for (d, _, fs) in walk(expanduser(p)):
+					for f in fs:
+						if f.startswith('S.'):
+							continue
+						f = pjoin(d, f)
+						#print(f)
+						chmod(f, 0o600)
+					#print(d)
+					chmod(d, 0o700)
+			for d in self.__dirs:
 				chown(pjoin(self.home, d), 1000, 1000)
-			except FileNotFoundError:
-				pass
+		except FileNotFoundError:
+			pass
 
 	def _mvrtfiles_(self, src, trg):
 		if self.dbg:
