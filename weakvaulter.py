@@ -90,7 +90,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 					chmod(d, 0o700)
 			for d in self.__dirs:
 				chown(pjoin(self.home, d), 1000, 1000)
-		except FileNotFoundError:
+		except (FileNotFoundError, PermissionError):
 			pass
 
 	def _mvrtfiles_(self, src, trg):
