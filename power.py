@@ -60,12 +60,12 @@ class SystemPower(UEFITool):
 	def reboot(self):
 		if self.dbg:
 			print(bgre(self.reboot))
-		self.run(which('shutdown -r now'))
+		self.run(which('reboot'))
 
 	def shutdown(self):
 		if self.dbg:
 			print(bgre(self.shutdown))
-		self.run(which('shutdown -h now'))
+		self.run(which('poweroff'))
 
 	def suspend(self):
 		if self.dbg:
