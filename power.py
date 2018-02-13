@@ -60,22 +60,22 @@ class SystemPower(UEFITool):
 	def reboot(self):
 		if self.dbg:
 			print(bgre(self.reboot))
-		self.run(which('reboot'))
+		self.run(which('shutdown -r now'))
 
 	def shutdown(self):
 		if self.dbg:
 			print(bgre(self.shutdown))
-		self.run(which('shutdown'), '-P', 'now')
+		self.run(which('shutdown -h now'))
 
 	def suspend(self):
 		if self.dbg:
 			print(bgre(self.suspend))
 		self.su_ = False
 		self.run(
-		    which('dbus-send'), '--print-reply', '--system', \
-		    '--dest="org.freedesktop.login1"', '/org/freedesktop/login1', \
-		    'org.freedesktop.login1.Manager.Suspend', 'boolean:true'
-		    )
+            which('dbus-send'), '--print-reply', '--system', \
+            '--dest="org.freedesktop.login1"', '/org/freedesktop/login1', \
+            'org.freedesktop.login1.Manager.Suspend', 'boolean:true'
+            )
 
 
 
