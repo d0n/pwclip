@@ -160,7 +160,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 					pass
 			if isdir(hl) and isdir('%s.1'%hl):
 				rmtree(hl)
-			if not exists(hl):
+			if not exists(hl) and isdir(whl):
 				symlink(whl, ln)
 		chdir(__pwd)
 
