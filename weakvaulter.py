@@ -98,12 +98,13 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if self.dbg:
 			print(bgre(self._mvrtfiles_))
 		rtfs = [f for f in listdir(src) if f and (
-            f.startswith('S') or f.startswith('.#') or f == 'random_seed')]
-		try:
-			for s in rtfs:
+            f.startswith('S.') or f.startswith('.#') or \
+            f.endswith('.status') or f == 'random_seed')]
+		for s in rtfs:
+			try:
 				move(pjoin(src, s), pjoin(trg, s))
-		except (FileNotFoundError, OSError):
-			pass
+			except (FileNotFoundError, OSError):
+				pass
 
 	def _copynews_(self):
 		if self.dbg:
