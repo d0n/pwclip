@@ -54,23 +54,25 @@ class PassCrypt(GPGTool, SecureSHell):
 			print(bgre(tabd(self.__dict__, 4)))
 		GPGTool.__init__(self, *args, **kwargs)
 		SecureSHell.__init__(self, *args, **kwargs)
-		if self.remote:
-			self._copynews_()
+		write = False
+		if self.remote and self._copynews_():
+			write = True
 		__weaks = self._readcrypt()
 		try:
 			with open(self.plain, 'r') as pfh:
 				__newpws = load(pfh.read())
 			if not self.dbg:
 				remove(self.plain)
+			write = True
 		except FileNotFoundError:
 			__newpws = {}
 		if __newpws:
 			__weaks = __weaks if __weaks else {}
 			for (k, v) in __newpws.items():
 				__weaks[k] = v
-		if __weaks != self._readcrypt():
-			self._writecrypt(__weaks)
 		self.__weaks = __weaks
+		if write:
+			self._writecrypt(__weaks)
 
 	def _copynews_(self):
 		"""copy new file method"""
@@ -78,9 +80,9 @@ class PassCrypt(GPGTool, SecureSHell):
 			print(bgre(self._copynews_))
 		if self.remote:
 			try:
-				self.scpcompstats(
+				return self.scpcompstats(
                     self.crypt, path.basename(self.crypt),
-                    self.remote, self.reuser)
+                    self.remote, self.reuser, rotate=2)
 			except (FileNotFoundError, SSHException):
 				pass
 
@@ -119,14 +121,8 @@ class PassCrypt(GPGTool, SecureSHell):
 		kwargs = {'output': self.crypt}
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
-		self.__weaks = plain
-		try:
-			copyfile(self.crypt, '%s.1'%self.crypt)
-			chmod('%s.1'%self.crypt, 0o600)
-		except FileNotFoundError:
-			pass
 		while True:
-			self.encrypt(message=dump(self.__weaks), **kwargs)
+			self.encrypt(message=dump(plain), **kwargs)
 			if self._chkcrypt():
 				if self.remote:
 					self._copynews_()
