@@ -87,13 +87,17 @@ class Command(object):
 		return Popen(
             commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
-	def call(self, *commands):
+	def call(self, *commands, stdout=True, stderr=True):
 		"""
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
 		"""
+		stderr = stderr if stderr else DEVNULL
+		stdout = stdout if stdout else DEVNULL
 		commands = self.__cmdprep(commands, self.call)
-		return int(call(commands, shell=self.sh_))
+		return int(call(
+            commands, shell=self.sh_, stdout=stdout,
+            stderr=stderr, timeout=self.timeout))
 
 	def stdx(self, *commands):
 		"""command execution which returns STDERR and/or STDOUT"""
