@@ -4,7 +4,7 @@
 #global imports"""
 import os
 import sys
-from shutil import copy2
+from shutil import copy2, copyfile
 from socket import \
     gaierror as NameResolveError, timeout as sockettimeout
 from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
@@ -235,10 +235,8 @@ class SecureSHell(object):
 		"""remote file-timestamp method"""
 		if self.dbg:
 			print(bgre(self._remotestamp))
-		tat = self.rstdo(
-            'stat -c %%X %s'%trg, remote, reuser).strip()
-		tmt = self.rstdo(
-            'stat -c %%Y %s'%trg, remote, reuser).strip()
+		tat, tmt = str(self.rstdo(
+            'stat -c "%%X %%Y" %s'%trg, remote, reuser).strip()).split(' ')
 		#print(tat)
 		if tat and tmt: return int(tat), int(tmt)
 		return None, None
@@ -258,7 +256,23 @@ class SecureSHell(object):
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
-	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
+	def _rotate(self, lfile, count=1):
+		for i in range(0, count):
+			try:
+				ns1 = '.%d'%i if i > 0 else ''
+				ns2 = '.%d'%int(i+1)
+				fat1, fmt1 = self._localstamp('%s%s'%(lfile, ns1))
+				fat2, fmt2 = self._localstamp('%s%s'%(lfile, ns2))
+				#print('%s%s'%(lfile, ns1), fat1, fmt1, '%s%s'%(lfile, ns2), fat2, fmt2)
+				#continue
+				copyfile('%s%s'%(lfile, ns1), '%s%s'%(lfile, ns2))
+				os.chmod('%s%s'%(lfile, ns2), 0o600)
+				self._setlstamp('%s%s'%(lfile, ns2), fat, fmt)
+			except FileNotFoundError:
+				pass
+
+	def scpcompstats(self, lfile, rfile,
+          remote=None, reuser=None, rotate=0):
 		"""
 		remote/local file compare method copying and
 		setting the file/timestamp of the neweer one
@@ -272,7 +286,9 @@ class SecureSHell(object):
 			rat, rmt = self._remotestamp(rfile, remote, reuser)
 			if rmt == lmt:
 				return
-			elif rmt and rmt > lmt:
+			if rotate > 0:
+				self._rotate(lfile, rotate)
+			if rmt and rmt > lmt:
 				copy2(lfile, '%s.1'%lfile)
 				self.get(rfile, lfile, remote, reuser)
 				self._setlstamp(lfile, rat, rmt)
