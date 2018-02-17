@@ -113,7 +113,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 			try:
 				self.scpcompstats(
                       self.vault, basename(self.vault),
-                      self.remote, self.reuser)
+                      self.remote, self.reuser, rotate=2)
 			except FileNotFoundError:
 				pass
 
