@@ -237,7 +237,6 @@ class SecureSHell(object):
 			print(bgre(self._remotestamp))
 		tat, tmt = str(self.rstdo(
             'stat -c "%%X %%Y" %s'%trg, remote, reuser).strip()).split(' ')
-		#print(tat)
 		if tat and tmt: return int(tat), int(tmt)
 		return None, None
 
@@ -257,19 +256,18 @@ class SecureSHell(object):
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
 	def _rotate(self, lfile, count=1):
-		for i in range(0, count):
+		if self.dbg:
+			print(bgre(self._rotate))
+		for i in reversed(range(0, count)):
+			old = lfile if i == 0 else '%s.%d'%(lfile, i)
+			new = '%s.%d'%(lfile, int(i+1))
 			try:
-				ns1 = '.%d'%i if i > 0 else ''
-				ns2 = '.%d'%int(i+1)
-				fat1, fmt1 = self._localstamp('%s%s'%(lfile, ns1))
-				fat2, fmt2 = self._localstamp('%s%s'%(lfile, ns2))
-				#print('%s%s'%(lfile, ns1), fat1, fmt1, '%s%s'%(lfile, ns2), fat2, fmt2)
-				#continue
-				copyfile('%s%s'%(lfile, ns1), '%s%s'%(lfile, ns2))
-				os.chmod('%s%s'%(lfile, ns2), 0o600)
-				self._setlstamp('%s%s'%(lfile, ns2), fat, fmt)
+				at, mt = self._localstamp(old)
 			except FileNotFoundError:
-				pass
+				continue
+			copyfile(old, new)
+			os.chmod(new, 0o600)
+			self._setlstamp(new, at, mt)
 
 	def scpcompstats(self, lfile, rfile,
           remote=None, reuser=None, rotate=0):
