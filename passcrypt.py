@@ -83,22 +83,23 @@ class PassCrypt(GPGTool, SecureSHell):
 				return self.scpcompstats(
                     self.crypt, path.basename(self.crypt),
                     self.remote, self.reuser, rotate=2)
-			except (FileNotFoundError, SSHException):
+			except FileNotFoundError:
 				pass
+			except SSHException as err:
+				error(err)
 
-	def _chkcrypt(self):
+	def _chkcrypt(self, __weak):
 		"""crypt file checker method"""
 		if self.dbg:
 			print(bgre(self._chkcrypt))
-		if self._readcrypt() == self.__weaks:
+		if self._readcrypt() == __weak:
 			return True
 
-	def _findentry(self, pattern, weakz=None):
+	def _findentry(self, pattern, __weak):
 		"""entry finder method"""
 		if self.dbg:
 			print(bgre(tabd({self._findentry: {'pattern': pattern}})))
-		__weakz = weakz if weakz else self.__weaks
-		for (u, p) in __weakz.items():
+		for (u, p) in __weak.items():
 			if pattern == u or (
                   len(p) == 2 and len(pattern) > 1 and pattern in p[1]):
 				return p
@@ -114,19 +115,19 @@ class PassCrypt(GPGTool, SecureSHell):
 			return None
 		return load(str(self.decrypt(crypt)))
 
-	def _writecrypt(self, plain):
+	def _writecrypt(self, __weak):
 		"""crypt file writing method"""
 		if self.dbg:
-			print(bgre(tabd({self._writecrypt: {'plain': plain}})))
+			print(bgre(self._writecrypt))
 		kwargs = {'output': self.crypt}
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
 		while True:
-			self.encrypt(message=dump(plain), **kwargs)
-			if self._chkcrypt():
+			self.encrypt(message=dump(__weak), **kwargs)
+			if self._chkcrypt(__weak):
+				chmod(self.crypt, 0o600)
 				if self.remote:
 					self._copynews_()
-				chmod(self.crypt, 0o600)
 				break
 		return True
 
