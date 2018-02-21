@@ -18,12 +18,23 @@ blogger module - provides breitlogger class which writes
 """
 import os
 import sys
-from cmd2 import Cmd
+#from cmd2 import Cmd
 
 from system import stamp
 from executor import command as c
+from colortext import bgre, tabd
+from colortext import bgre, tabd
 
-class BreitLogger(Cmd):
+class BreitLogger(object):
+	dbg = False
+	def __init__(self):
+		if self.dbg:
+			print(bgre(BreitLogger.__mro__))
+			print(bgre(tabd(BreitLogger.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
+'''
+class BreitLogger(): #Cmd):
 	"""breitlogger main class"""
 	__me = os.uname()[1]
 	intro = 'BreitLogger - write timestamped text to file\n'
@@ -91,7 +102,7 @@ class BreitLogger(Cmd):
 		    self, 'prompt',
 		    '%s %s>> '%(__me__.split('.')[0], stamp().split('.')[1]))
 		return stop
-
+'''
 
 
 
