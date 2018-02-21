@@ -264,8 +264,6 @@ class SecureSHell(object):
 			try:
 				at, mt = self._localstamp(old)
 			except FileNotFoundError:
-				print(old)
-				print(new)
 				continue
 			copyfile(old, new)
 			os.chmod(new, 0o600)
