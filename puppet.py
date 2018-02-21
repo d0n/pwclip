@@ -31,7 +31,7 @@ class Puppet(SSH):
 	dbg = False
 	vrb = False
 	bgr = False
-	reuser = ''
+	reuser = 'root'
 	remote = ''
 	branch = ''
 	puptmpl = '~/.config/amt/puppet.tmpl'

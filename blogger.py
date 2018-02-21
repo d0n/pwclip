@@ -23,7 +23,6 @@ import sys
 from system import stamp
 from executor import command as c
 from colortext import bgre, tabd
-from colortext import bgre, tabd
 
 class BreitLogger(object):
 	dbg = False
@@ -34,7 +33,7 @@ class BreitLogger(object):
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
 '''
-class BreitLogger(): #Cmd):
+class BreitLogger():
 	"""breitlogger main class"""
 	__me = os.uname()[1]
 	intro = 'BreitLogger - write timestamped text to file\n'

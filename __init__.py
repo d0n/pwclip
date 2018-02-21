@@ -1,5 +1,5 @@
 from work.csr import csrgen
-from work.blogger import BreitLogger
+#from work.blogger import BreitLogger
 from work.misc import listhosts, listclusters, jolofix
 from work.puppet import Puppet
 from work.keyverteiler import kvntool
