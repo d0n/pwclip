@@ -258,12 +258,14 @@ class SecureSHell(object):
 	def _rotate(self, lfile, count=1):
 		if self.dbg:
 			print(bgre(self._rotate))
-		for i in reversed(range(0, count)):
+		for i in reversed(range(0, int(count+1))):
 			old = lfile if i == 0 else '%s.%d'%(lfile, i)
 			new = '%s.%d'%(lfile, int(i+1))
 			try:
 				at, mt = self._localstamp(old)
 			except FileNotFoundError:
+				print(old)
+				print(new)
 				continue
 			copyfile(old, new)
 			os.chmod(new, 0o600)
