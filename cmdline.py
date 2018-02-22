@@ -201,6 +201,10 @@ def cli():
         dest='rem', action='store_true',
         help='use remote backup given by --remote-host')
 	pars.add_argument(
+        '-o', '--stdout',
+        dest='out', action='store_true',
+        help='print received password to stdout (insecure & unrecommended)')
+	pars.add_argument(
         '--remote-host',
         dest='rehost', metavar='HOST',
         help='use HOST for connections')
@@ -334,10 +338,16 @@ def cli():
                     args.lst, ' in ', __pkwargs['crypt'])
 			elif args.lst and __ent:
 				__pc = __ent[args.lst]
-				if __pc:
+				if __pc and args.out:
+					print(__pc[0], end='')
 					if len(__pc) == 2:
-						xnotify(
-                            '%s: %s'%(args.lst, __pc[1]), wait=args.time)
+						xnotify('%s: %s'%(
+                            args.lst, ' '.join(__pc[1:])), args.time)
+					exit(0)
+				elif __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(
+                            args.lst, ' '.join(__pc[1])), wait=args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
 			__in = xinput()
@@ -351,7 +361,7 @@ def cli():
 				__pc = __ent[__in]
 				if __pc:
 					if len(__pc) == 2:
-						xnotify('%s: %s'%(__in, __pc[1]), args.time)
+						xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent: _printpws_(__ent, args.sho)
 
