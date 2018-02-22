@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """passcrypt module"""
 
-from os import path, remove, environ, chmod
+from os import path, remove, environ, chmod, stat, utime
 
 from shutil import copyfile
 
@@ -10,9 +10,11 @@ from yaml import load, dump
 
 from paramiko.ssh_exception import SSHException
 
+from time import time
+
 from colortext import bgre, tabd
 
-from system import userfind
+from system import userfind, fileage
 
 from net.ssh import SecureSHell
 
@@ -39,6 +41,8 @@ class PassCrypt(GPGTool, SecureSHell):
 	if 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']] + [
             k for k in recvs if k != environ['GPGKEY']]
+	__weaks = {}
+	__oldweaks = {}
 	def __init__(self, *args, **kwargs):
 		"""passcrypt init function"""
 		for arg in args:
@@ -58,17 +62,18 @@ class PassCrypt(GPGTool, SecureSHell):
 		if self.remote and self._copynews_():
 			write = True
 		__weaks = self._readcrypt()
+		self.__oldweaks = __weaks
 		try:
 			with open(self.plain, 'r') as pfh:
-				__newpws = load(pfh.read())
+				__newweaks = load(pfh.read())
 			if not self.dbg:
 				remove(self.plain)
 			write = True
 		except FileNotFoundError:
-			__newpws = {}
-		if __newpws:
+			__newweaks = {}
+		if __newweaks:
 			__weaks = __weaks if __weaks else {}
-			for (k, v) in __newpws.items():
+			for (k, v) in __newweaks.items():
 				__weaks[k] = v
 		self.__weaks = __weaks
 		if write:
@@ -78,7 +83,15 @@ class PassCrypt(GPGTool, SecureSHell):
 		"""copy new file method"""
 		if self.dbg:
 			print(bgre(self._copynews_))
-		if self.remote:
+		now = int(time())
+		tf = '/tmp/time.file'
+		try:
+			age = fileage(tf)
+		except FileNotFoundError:
+			with open(tf, 'w+') as tfh:
+				tfh.write(now)
+			age = 14401
+		if age > 14400 and self.remote:
 			try:
 				return self.scpcompstats(
                     self.crypt, path.basename(self.crypt),
@@ -87,12 +100,14 @@ class PassCrypt(GPGTool, SecureSHell):
 				pass
 			except SSHException as err:
 				error(err)
+			with open(tf, 'w+') as tfh:
+				tfh.write(now)
 
 	def _chkcrypt(self, __weak):
 		"""crypt file checker method"""
 		if self.dbg:
 			print(bgre(self._chkcrypt))
-		if self._readcrypt() == __weak:
+		if self.__oldweaks == __weak:
 			return True
 
 	def _findentry(self, pattern, __weak):
