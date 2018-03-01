@@ -57,10 +57,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	reuser = user
 	vault = pjoin(home, '.vault')
 	weaks = pjoin(home, '.weaknez')
-<<<<<<< HEAD
-=======
 	plain = weaks
->>>>>>> f1b39e18b0aa9794f80441a43dca729cdf3174f1
 	__dirs = ['.gnupg', '.ssh', '.vpn']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -81,20 +78,6 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if self.dbg:
 			print(bgre(self._fixmod_))
 		fixmes = self.__dirs + [self.weaks]
-<<<<<<< HEAD
-		for p in fixmes:
-			for (d, _, fs) in walk(expanduser(p)):
-				for f in fs:
-					if f.startswith('S.'):
-						continue
-					f = pjoin(d, f)
-					#print(f)
-					chmod(f, 0o600)
-				#print(d)
-				chmod(d, 0o700)
-		for d in self.__dirs:
-			try:
-=======
 		try:
 			for p in fixmes:
 				for (d, _, fs) in walk(expanduser(p)):
@@ -107,7 +90,6 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 					#print(d)
 					chmod(d, 0o700)
 			for d in self.__dirs:
->>>>>>> f1b39e18b0aa9794f80441a43dca729cdf3174f1
 				chown(pjoin(self.home, d), 1000, 1000)
 		except (FileNotFoundError, PermissionError):
 			pass
