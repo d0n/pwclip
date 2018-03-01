@@ -4,7 +4,7 @@
 #global imports"""
 import os
 import sys
-from shutil import copy2
+from shutil import copy2, copyfile
 from socket import \
     gaierror as NameResolveError, timeout as sockettimeout
 from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
@@ -43,10 +43,15 @@ class SecureSHell(object):
                 self._ssh_, remote, reuser, port)))
 		ssh = SSHClient()
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
+		#print(askdns(remote), int(port), reuser)
 		try:
 			ssh.connect(
+<<<<<<< HEAD
                 askdns(remote), int(port),
                 username=reuser, allow_agent=True) #, look_for_keys=True)
+=======
+                askdns(remote), int(port), username=reuser)
+>>>>>>> 6221a95e735cfc28d37c021a9f39137975b61690
 		except (ssh_exception.SSHException, NameResolveError) as err:
 			error(self._ssh_, err)
 			raise err
@@ -235,11 +240,8 @@ class SecureSHell(object):
 		"""remote file-timestamp method"""
 		if self.dbg:
 			print(bgre(self._remotestamp))
-		tat = self.rstdo(
-            'stat -c %%X %s'%trg, remote, reuser).strip()
-		tmt = self.rstdo(
-            'stat -c %%Y %s'%trg, remote, reuser).strip()
-		#print(tat)
+		tat, tmt = str(self.rstdo(
+            'stat -c "%%X %%Y" %s'%trg, remote, reuser).strip()).split(' ')
 		if tat and tmt: return int(tat), int(tmt)
 		return None, None
 
@@ -258,7 +260,22 @@ class SecureSHell(object):
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 
-	def scpcompstats(self, lfile, rfile, remote=None, reuser=None):
+	def _rotate(self, lfile, count=1):
+		if self.dbg:
+			print(bgre(self._rotate))
+		for i in reversed(range(0, int(count))):
+			old = lfile if i == 0 else '%s.%d'%(lfile, i)
+			new = '%s.%d'%(lfile, int(i+1))
+			try:
+				at, mt = self._localstamp(old)
+			except FileNotFoundError:
+				continue
+			copyfile(old, new)
+			os.chmod(new, 0o600)
+			self._setlstamp(new, at, mt)
+
+	def scpcompstats(self, lfile, rfile,
+          remote=None, reuser=None, rotate=0):
 		"""
 		remote/local file compare method copying and
 		setting the file/timestamp of the neweer one
@@ -272,7 +289,9 @@ class SecureSHell(object):
 			rat, rmt = self._remotestamp(rfile, remote, reuser)
 			if rmt == lmt:
 				return
-			elif rmt and rmt > lmt:
+			if rotate > 0:
+				self._rotate(lfile, rotate)
+			if rmt and rmt > lmt:
 				copy2(lfile, '%s.1'%lfile)
 				self.get(rfile, lfile, remote, reuser)
 				self._setlstamp(lfile, rat, rmt)

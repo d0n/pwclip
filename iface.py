@@ -88,7 +88,7 @@ def _xbytes(iface):
 
 def ifthrough(ifaces):
 	print(blu('monitoring network throughput...'))
-	sleep(1.5)
+	sleep(0.9)
 	stdio = curses.initscr()
 	stdio.nodelay(1)
 	curses.noecho()
