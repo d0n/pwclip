@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """passcrypt module"""
 
-from os import path, remove, environ, chmod
+from os import path, remove, environ, chmod, stat, utime
 
 from shutil import copyfile
 
@@ -10,9 +10,11 @@ from yaml import load, dump
 
 from paramiko.ssh_exception import SSHException
 
+from time import time
+
 from colortext import bgre, tabd
 
-from system import userfind
+from system import userfind, fileage
 
 from net.ssh import SecureSHell
 
@@ -39,6 +41,8 @@ class PassCrypt(GPGTool, SecureSHell):
 	if 'GPGKEY' in environ.keys():
 		recvs = [environ['GPGKEY']] + [
             k for k in recvs if k != environ['GPGKEY']]
+	__weaks = {}
+	__oldweaks = {}
 	def __init__(self, *args, **kwargs):
 		"""passcrypt init function"""
 		for arg in args:
@@ -54,49 +58,63 @@ class PassCrypt(GPGTool, SecureSHell):
 			print(bgre(tabd(self.__dict__, 4)))
 		GPGTool.__init__(self, *args, **kwargs)
 		SecureSHell.__init__(self, *args, **kwargs)
-		if self.remote:
-			self._copynews_()
+		write = False
+		if self.remote and self._copynews_():
+			write = True
 		__weaks = self._readcrypt()
+		self.__oldweaks = __weaks
 		try:
 			with open(self.plain, 'r') as pfh:
-				__newpws = load(pfh.read())
+				__newweaks = load(pfh.read())
 			if not self.dbg:
 				remove(self.plain)
+			write = True
 		except FileNotFoundError:
-			__newpws = {}
-		if __newpws:
+			__newweaks = {}
+		if __newweaks:
 			__weaks = __weaks if __weaks else {}
-			for (k, v) in __newpws.items():
+			for (k, v) in __newweaks.items():
 				__weaks[k] = v
-		if __weaks != self._readcrypt():
-			self._writecrypt(__weaks)
 		self.__weaks = __weaks
+		if write:
+			self._writecrypt(__weaks)
 
 	def _copynews_(self):
 		"""copy new file method"""
 		if self.dbg:
 			print(bgre(self._copynews_))
-		if self.remote:
+		now = int(time())
+		tf = '/tmp/time.file'
+		try:
+			age = fileage(tf)
+		except FileNotFoundError:
+			with open(tf, 'w+') as tfh:
+				tfh.write(now)
+			age = 14401
+		if age > 14400 and self.remote:
 			try:
-				self.scpcompstats(
+				return self.scpcompstats(
                     self.crypt, path.basename(self.crypt),
-                    self.remote, self.reuser)
-			except (FileNotFoundError, SSHException):
+                    self.remote, self.reuser, rotate=2)
+			except FileNotFoundError:
 				pass
+			except SSHException as err:
+				error(err)
+			with open(tf, 'w+') as tfh:
+				tfh.write(now)
 
-	def _chkcrypt(self):
+	def _chkcrypt(self, __weak):
 		"""crypt file checker method"""
 		if self.dbg:
 			print(bgre(self._chkcrypt))
-		if self._readcrypt() == self.__weaks:
+		if self.__oldweaks == __weak:
 			return True
 
-	def _findentry(self, pattern, weakz=None):
+	def _findentry(self, pattern, __weak):
 		"""entry finder method"""
 		if self.dbg:
 			print(bgre(tabd({self._findentry: {'pattern': pattern}})))
-		__weakz = weakz if weakz else self.__weaks
-		for (u, p) in __weakz.items():
+		for (u, p) in __weak.items():
 			if pattern == u or (
                   len(p) == 2 and len(pattern) > 1 and pattern in p[1]):
 				return p
@@ -112,25 +130,19 @@ class PassCrypt(GPGTool, SecureSHell):
 			return None
 		return load(str(self.decrypt(crypt)))
 
-	def _writecrypt(self, plain):
+	def _writecrypt(self, __weak):
 		"""crypt file writing method"""
 		if self.dbg:
-			print(bgre(tabd({self._writecrypt: {'plain': plain}})))
+			print(bgre(self._writecrypt))
 		kwargs = {'output': self.crypt}
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
-		self.__weaks = plain
-		try:
-			copyfile(self.crypt, '%s.1'%self.crypt)
-			chmod('%s.1'%self.crypt, 0o600)
-		except FileNotFoundError:
-			pass
 		while True:
-			self.encrypt(message=dump(self.__weaks), **kwargs)
-			if self._chkcrypt():
+			self.encrypt(message=dump(__weak), **kwargs)
+			if self._chkcrypt(__weak):
+				chmod(self.crypt, 0o600)
 				if self.remote:
 					self._copynews_()
-				chmod(self.crypt, 0o600)
 				break
 		return True
 
