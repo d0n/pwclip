@@ -56,7 +56,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	remote = ''
 	reuser = user
 	vault = pjoin(home, '.vault')
-	weakz = pjoin(home, '.weaknez')
+	weaks = pjoin(home, '.weaknez')
 	__dirs = ['.gnupg', '.ssh', '.vpn']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -69,14 +69,14 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-		kwargs['plain'] = kwargs['weakz']
+		kwargs['plain'] = kwargs['weaks']
 		SecureSHell.__init__(self, *args, **kwargs)
 		DirYamlVault.__init__(self, *args, **kwargs)
 
 	def _fixmod_(self):
 		if self.dbg:
 			print(bgre(self._fixmod_))
-		fixmes = self.__dirs + [self.weakz]
+		fixmes = self.__dirs + [self.weaks]
 		for p in fixmes:
 			for (d, _, fs) in walk(expanduser(p)):
 				for f in fs:
@@ -118,9 +118,9 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	def _clean_(self):
 		if self.dbg:
 			print(bgre(self._clean_))
-		if not isdir(self.weakz):
+		if not isdir(self.weaks):
 			self._rmlns_()
-		elif isdir(pjoin(self.weakz, self.host)):
+		elif isdir(pjoin(self.weaks, self.host)):
 			self._mklns_()
 		self._fixmod_()
 		if self.rem:
@@ -145,7 +145,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 			print(bgre(self._mklns_))
 		__pwd = getcwd()
 		chdir(self.home)
-		whh = pjoin(basename(self.weakz), uname()[1])
+		whh = pjoin(basename(self.weaks), uname()[1])
 		for ln in self.__dirs:
 			hl = pjoin(self.home, ln)
 			whl = pjoin(whh, ln)
@@ -165,17 +165,17 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	def vaultweak(self):
 		if self.dbg:
 			print(bgre(self.vaultweak))
-		if not exists(self.weakz):
+		if not exists(self.weaks):
 			return
 		try:
 			self.envault()
 		except ValueError as err:
 			print(err)
 		self._mvrtfiles_(
-            pjoin(self.weakz, uname()[1], '.gnupg'),
+            pjoin(self.weaks, uname()[1], '.gnupg'),
             pjoin(self.home, '.gnupg.1'))
 		try:
-			rmtree(self.weakz)
+			rmtree(self.weaks)
 		except FileNotFoundError:
 			pass
 		self._clean_()
@@ -186,11 +186,11 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if not isfile(self.vault):
 			return error(
                 'vault ', self.vault, ' does not exist or is inaccessable')
-		elif exists(self.weakz) and not force:
+		elif exists(self.weaks) and not force:
 			return
-		setattr(self, 'plain', dirname(self.weakz))
+		setattr(self, 'plain', dirname(self.weaks))
 		self.unvault()
 		self._mvrtfiles_(
             pjoin(self.home, '.gnupg'),
-            pjoin(self.weakz, uname()[1], '.gnupg'))
+            pjoin(self.weaks, uname()[1], '.gnupg'))
 		self._clean_()
