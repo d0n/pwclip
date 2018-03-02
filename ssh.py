@@ -46,12 +46,8 @@ class SecureSHell(object):
 		#print(askdns(remote), int(port), reuser)
 		try:
 			ssh.connect(
-<<<<<<< HEAD
                 askdns(remote), int(port),
                 username=reuser, allow_agent=True) #, look_for_keys=True)
-=======
-                askdns(remote), int(port), username=reuser)
->>>>>>> 6221a95e735cfc28d37c021a9f39137975b61690
 		except (ssh_exception.SSHException, NameResolveError) as err:
 			error(self._ssh_, err)
 			raise err
