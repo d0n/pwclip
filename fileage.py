@@ -1,10 +1,7 @@
-from os import stat, remove
+from os import stat
+from time import time
 
 def fileage(trgfile):
-	timefile = '/tmp/thetime'
-	trgtime = stat(trgfile).st_mtime
-	with open(timefile, 'w+'):
-		thetime = stat(timefile).st_mtime
-	remove(timefile)
-	return int(str(((thetime-trgtime))).split('.')[0])
-
+	trgtime = int(stat(trgfile).st_mtime)
+	thetime = int(time())
+	return int(thetime-trgtime)
