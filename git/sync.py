@@ -62,6 +62,8 @@ class GitSync(GitRepo):
 			if self.branch and self.branch != branch:
 				self.gitsync(self.branch)
 			return {branch: status}
+		if self.branch:
+			self.checkout(self.branch)
 
 	def treesync(self):
 		if self.dbg:
