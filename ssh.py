@@ -236,10 +236,14 @@ class SecureSHell(object):
 		"""remote file-timestamp method"""
 		if self.dbg:
 			print(bgre(self._remotestamp))
-		tat, tmt = str(self.rstdo(
-            'stat -c "%%X %%Y" %s'%trg, remote, reuser).strip()).split(' ')
-		if tat and tmt: return int(tat), int(tmt)
-		return None, None
+		tamt = str(self.rstdo(
+            'stat -c "%%X %%Y" %s'%trg, remote, reuser).strip())
+		tat = 0
+		tmt = 0
+		if tamt:
+			print(tamt)
+			tat, tmt = tamt.split(' ')
+		return int(tat), int(tmt)
 
 	def _setlstamp(self, trg, atime, mtime):
 		"""local file-timestamp set method"""
