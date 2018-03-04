@@ -49,7 +49,15 @@ class UEFITool(Command):
 
 	def _efihex(self, pattern):
 		for line in self._efiout_:
-			if '|' in pattern:
+			if '|' in pattern and '&' in pattern:
+				fpat = pattern.split('&')[0]
+				opats = [pattern.split('&')[1]]
+				if '(' in opats[0]:
+					opats = opats[0].strip('()').split('|')
+				if fpat.lower() in line.lower() and [
+                      h for h in opats if h.lower() in line.lower()]:
+					return str(line.split(' ')[0])[:8][4:]
+			elif '|' in pattern:
 				fpat = pattern.split('|')[0]
 				spat = pattern.split('|')[1]
 				if (fpat.lower() in line.lower() or \
