@@ -19,7 +19,7 @@ from system.random import random
 
 from system.string2bool import string2bool
 
-from system.gpgagent import agentinfo
+from system.agentinfo import gpgagentinfo
 
 from system.clips import clips, copy, paste
 
