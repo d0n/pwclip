@@ -113,7 +113,7 @@ class GitRepo(Command):
 		branch = branch if branch else self._head()
 		o, e, n = self.oerc('%s pull %s %s'%(self.gitbin, origin, branch))
 		o, e = o.strip(), e.strip()
-		if o and o != 'Already up-to-date.':
+		if o and o != 'Already up to date.':
 			print(o)
 		elif verbose and e:
 			print('%s\n%s'%(o, e))
