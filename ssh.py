@@ -241,7 +241,7 @@ class SecureSHell(object):
 		tat = 0
 		tmt = 0
 		if tamt:
-			print(tamt)
+			#print(tamt)
 			tat, tmt = tamt.split(' ')
 		return int(tat), int(tmt)
 
