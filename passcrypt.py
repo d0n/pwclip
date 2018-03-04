@@ -84,12 +84,9 @@ class PassCrypt(GPGTool, SecureSHell):
 		if self.dbg:
 			print(bgre(self._copynews_))
 		now = int(time())
-		tf = '/tmp/time.file'
 		try:
-			age = fileage(tf)
+			age = fileage(self.crypt)
 		except FileNotFoundError:
-			with open(tf, 'w+') as tfh:
-				tfh.write(now)
 			age = 14401
 		if age > 14400 and self.remote:
 			try:
@@ -137,7 +134,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		kwargs = {'output': self.crypt}
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
-		while True:
+		for i in range(0, 4):
 			self.encrypt(message=dump(__weak), **kwargs)
 			if self._chkcrypt(__weak):
 				chmod(self.crypt, 0o600)
