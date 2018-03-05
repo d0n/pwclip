@@ -57,7 +57,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	reuser = user
 	vault = pjoin(home, '.vault')
 	weaks = pjoin(home, '.weaknez')
-	plain = weaks
+	plain = ''
 	__dirs = ['.gnupg', '.ssh', '.vpn']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -77,7 +77,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	def _fixmod_(self):
 		if self.dbg:
 			print(bgre(self._fixmod_))
-		fixmes = self.__dirs + [self.weaks]
+		fixmes = self.__dirs + [self.weaks, self.vault]
 		try:
 			for p in fixmes:
 				for (d, _, fs) in walk(expanduser(p)):
@@ -109,13 +109,12 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	def _copynews_(self):
 		if self.dbg:
 			print(bgre(self._copynews_))
-		if self.rem and self.remote:
-			try:
-				self.scpcompstats(
-                      self.vault, basename(self.vault),
-                      self.remote, self.reuser, rotate=2)
-			except FileNotFoundError:
-				pass
+		try:
+			self.scpcompstats(
+                self.vault, basename(self.vault),
+                self.remote, self.reuser, rotate=2)
+		except FileNotFoundError:
+			pass
 
 	def _clean_(self):
 		if self.dbg:
