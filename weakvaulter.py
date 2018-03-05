@@ -124,8 +124,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		elif isdir(pjoin(self.weaks, self.host)):
 			self._mklns_()
 		self._fixmod_()
-		if self.rem:
-			self._copynews_()
+		self._copynews_()
 
 	def _rmlns_(self):
 		if self.dbg:

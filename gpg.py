@@ -228,7 +228,7 @@ class GPGTool(object):
 	def decrypt(self, message, output=None):
 		"""text decrypting function method"""
 		if self.dbg:
-			print(bgre('%s\n  trying to decrypt:\n%s'%(self.decrypt, message)))
+			print(bgre(self.decrypt))
 		while self.__c < 5:
 			__plain = self._gpg_.decrypt(
                 message.strip(), always_trust=True,
