@@ -57,7 +57,6 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	reuser = user
 	vault = pjoin(home, '.vault')
 	weaks = pjoin(home, '.weaknez')
-	plain = ''
 	__dirs = ['.gnupg', '.ssh', '.vpn']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
@@ -77,44 +76,44 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	def _fixmod_(self):
 		if self.dbg:
 			print(bgre(self._fixmod_))
-		fixmes = self.__dirs + [self.weaks, self.vault]
-		try:
-			for p in fixmes:
-				for (d, _, fs) in walk(expanduser(p)):
-					for f in fs:
-						if f.startswith('S.'):
-							continue
-						f = pjoin(d, f)
-						#print(f)
-						chmod(f, 0o600)
-					#print(d)
-					chmod(d, 0o700)
-			for d in self.__dirs:
+		fixmes = self.__dirs + [self.weaks]
+		for p in fixmes:
+			for (d, _, fs) in walk(expanduser(p)):
+				for f in fs:
+					if f.startswith('S.'):
+						continue
+					f = pjoin(d, f)
+					#print(f)
+					chmod(f, 0o600)
+				#print(d)
+				chmod(d, 0o700)
+		for d in self.__dirs:
+			try:
 				chown(pjoin(self.home, d), 1000, 1000)
-		except (FileNotFoundError, PermissionError):
-			pass
+			except FileNotFoundError:
+				pass
 
 	def _mvrtfiles_(self, src, trg):
 		if self.dbg:
 			print(bgre(self._mvrtfiles_))
 		rtfs = [f for f in listdir(src) if f and (
-            f.startswith('S.') or f.startswith('.#') or \
-            f.endswith('.status') or f == 'random_seed')]
-		for s in rtfs:
-			try:
+            f.startswith('S') or f.startswith('.#') or f == 'random_seed')]
+		try:
+			for s in rtfs:
 				move(pjoin(src, s), pjoin(trg, s))
-			except (FileNotFoundError, OSError):
-				pass
+		except (FileNotFoundError, OSError):
+			pass
 
 	def _copynews_(self):
 		if self.dbg:
 			print(bgre(self._copynews_))
-		try:
-			self.scpcompstats(
-                self.vault, basename(self.vault),
-                self.remote, self.reuser, rotate=2)
-		except FileNotFoundError:
-			pass
+		if self.rem and self.remote:
+			try:
+				self.scpcompstats(
+                      self.vault, basename(self.vault),
+                      self.remote, self.reuser)
+			except FileNotFoundError:
+				pass
 
 	def _clean_(self):
 		if self.dbg:
@@ -124,7 +123,8 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		elif isdir(pjoin(self.weaks, self.host)):
 			self._mklns_()
 		self._fixmod_()
-		self._copynews_()
+		if self.rem:
+			self._copynews_()
 
 	def _rmlns_(self):
 		if self.dbg:
@@ -158,7 +158,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 					pass
 			if isdir(hl) and isdir('%s.1'%hl):
 				rmtree(hl)
-			if not exists(hl) and isdir(whl):
+			if not exists(hl):
 				symlink(whl, ln)
 		chdir(__pwd)
 

@@ -40,8 +40,7 @@ class DirYamlVault(GPGTool):
 	dbg = None
 	rmp = None
 	recvs = []
-	_vault = ''
-	_plain = ''
+	vault = ''
 	_pwd = getcwd()
 	if 'GPGKEYS' in environ.keys():
 		recvs = environ['GPGKEYS'].split(' ')
@@ -57,10 +56,17 @@ class DirYamlVault(GPGTool):
 				setattr(self, key, val)
 		if not self.vault or not self.plain:
 			raise RuntimeError('setting a file and directory is mandatory')
+		setattr(self, 'vaultage', int(stat(self.vault).st_mtime))
 		try:
-			setattr(self, 'vaultage', stat(self.vault).st_mtime)
-		except FileNotFoundError:
-			pass
+			if not isdir(self.plain):
+				makedirs(self.plain)
+			chdir(self.plain)
+			with open(self.vault, 'r') as cfh:
+				self.__dic = load(str(self.decrypt(cfh.read())))
+		except (OSError, FileNotFoundError) as err:
+			error('%s '%err,  self.vault, ' does not exist or is inaccessable')
+		finally:
+			chdir(self._pwd)
 		if self.dbg:
 			print(bgre(DirYamlVault.__mro__))
 			print(bgre(tabd(DirYamlVault.__dict__, 2)))
@@ -68,19 +74,9 @@ class DirYamlVault(GPGTool):
 			print(bgre(tabd(self.__dict__, 4)))
 		GPGTool.__init__(self, *args, **kwargs)
 
-	@property                # plain <str>
-	def plain(self):
-		return self._plain
-	@plain.setter
-	def plain(self, val):
-		self._plain = absrelpath(val, getcwd())
-
-	@property                # vault <str>
-	def vault(self):
-		return self._vault
-	@vault.setter
-	def vault(self, val):
-		self._vault = absrelpath(val, getcwd())
+	@staticmethod
+	def vaultdiff(odict, ndict):
+		return (odict != ndict)
 
 	def _pathdict(self, path):
 		if self.dbg:
@@ -113,28 +109,6 @@ class DirYamlVault(GPGTool):
 			except PermissionError:
 				pass
 
-	def diffvault(self):
-		if self.dbg:
-			print(bgre(self.diffvault))
-		nvlt = self._pathdict(basename(self.plain))
-		try:
-			with open(self.vault, 'r') as cfh:
-				plain = self.decrypt(cfh.read())
-				recvs = [
-                    l.split('[GNUPG:] ENC_TO ')[1].split(' ')[0] \
-                    for l in str(plain.stderr).split('\n') \
-                    if l.startswith('[GNUPG:] ENC_TO')]
-				srecvs = [
-                    r.split('0x')[1] for r in self.recvs \
-                    if r.startswith('0x')]
-				if srecvs != recvs:
-					return True
-				ovlt = load(str(plain))
-		except FileNotFoundError:
-			return True
-		if ovlt != nvlt:
-			return True
-
 	def checkvault(self, vault):
 		if self.dbg:
 			print(bgre(self.checkvault))
@@ -153,19 +127,15 @@ class DirYamlVault(GPGTool):
 			print('%s\n%s\n%s'%(
                 bgre(self.envault), bgre(self.plain), bgre(self.vault)))
 		chdir(dirname(self.plain))
-		if self.diffvault():
-			changed = True
-			try:
-				copyfile(self.vault, '%s.1'%self.vault)
-				chmod('%s.1'%self.vault, 0o600)
-				utime('%s.1'%self.vault, (
-                    int(self.vaultage), int(self.vaultage)))
-			except FileNotFoundError:
-				pass
+		ndic = self._pathdict(basename(self.plain))
+		print(self.vaultdiff(self.__dic, ndic))
+		exit()
+		if self.vaultdiff(self.__dic, self._pathdict(basename(self.plain))):
 			self.encrypt(
                 str(dump(self._pathdict(basename(self.plain)))),
                 output=self.vault, recipients=self.recvs)
 			chmod(self.vault, 0o600)
+			self._copynews_()
 		if self.rmp:
 			rmtree(self.plain)
 		chdir(self._pwd)
@@ -174,6 +144,7 @@ class DirYamlVault(GPGTool):
 		if self.dbg:
 			print('%s\n%s\n%s'%(
                 bgre(self.unvault), bgre(self.vault), bgre(self.plain)))
+		
 		try:
 			if not isdir(self.plain):
 				makedirs(self.plain)
