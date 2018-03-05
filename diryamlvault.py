@@ -154,12 +154,8 @@ class DirYamlVault(GPGTool):
                 bgre(self.envault), bgre(self.plain), bgre(self.vault)))
 		chdir(dirname(self.plain))
 		if self.diffvault():
-			changed = True
 			try:
-				copyfile(self.vault, '%s.1'%self.vault)
-				chmod('%s.1'%self.vault, 0o600)
-				utime('%s.1'%self.vault, (
-                    int(self.vaultage), int(self.vaultage)))
+				move(self.vault, '%s.1'%self.vault)
 			except FileNotFoundError:
 				pass
 			self.encrypt(
