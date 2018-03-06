@@ -23,7 +23,7 @@ from os import \
     remove, readlink, environ, chmod, stat, utime
 
 from os.path import \
-    isdir, islink, isfile, \
+    abspath, isdir, islink, isfile, \
     dirname, expanduser, exists, basename
 
 from shutil import rmtree, move, copyfile
@@ -86,26 +86,21 @@ class DirYamlVault(GPGTool):
 		if self.dbg:
 			print(bgre(self._pathdict))
 		frbs = {}
-		for (d, _, fs) in walk(path):
-			if islink(d):
-				print(d)
-				frbs['<link>'] = [d, readlink(d)]
-				continue
+		for (d, ss, fs) in walk(abspath(path)):
+			ls = ['%s/%s'%(d, l) for l in ss if islink('%s/%s'%(d, l))]
+			if ls:
+				for l in ls:
+					frbs['<%s>'%l] = readlink(l)
 			for f in fs:
 				if f == 'random_seed':
 					continue
 				f = '%s/%s'%(d, f)
-				if islink(f):
-					print(f)
-					frbs['<link>'] = [f, readlink(f)]
-					continue
 				try:
 					with open(f, 'rb') as rbf:
 						rb = rbf.read()
 					frbs[f] = rb
-				except OSError:
-					print(f)
-		
+				except OSError as err:
+				    error(err)
 		return frbs
 
 	def _dictpath(self, dic):
@@ -114,17 +109,22 @@ class DirYamlVault(GPGTool):
 		if not dic:
 			return error('cannot decrypt')
 		for (f, b) in dic.items():
+			if f.startswith('<') and f.endswith('>'):
+				f = f.strip('<>')
+				_pwd = getcwd()
+				if not isdir(dirname(f)):
+					makedirs(dirname(f))
+				chdir(dirname(f))
+				symlink(b, basename(f))
+				chdir(_pwd)
+				continue
 			if not isdir(dirname(f)):
 				makedirs(dirname(f))
-			if f == '<link>':
-				print(b)
-				symlink(b[0], b[1])
-				continue
 			try:
 				with open(f, 'wb+') as fwh:
 					fwh.write(b)
-			except PermissionError:
-				pass
+			except OSError as err:
+				error(err)
 
 	def diffvault(self):
 		if self.dbg:
