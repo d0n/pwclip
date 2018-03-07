@@ -212,8 +212,6 @@ class SecureSHell(object):
 		"""remote file-stats compare """
 		if self.dbg:
 			print(bgre(self.rcompstats))
-		remote = remote if remote else self.remote
-		reuser = reuser if reuser else self.reuser
 		smt = int(str(int(os.stat(src).st_mtime))[:6])
 		rmt = self.rstdo(
             'stat -c %%Y %s'%trg, remote=remote, reuser=reuser)
@@ -226,78 +224,48 @@ class SecureSHell(object):
 			srctrg = '%s@%s:%s'%(reuser, remote, trg), src
 		return srctrg
 
-	def _localstamp(self, trg):
-		"""local file-timestamp method"""
-		if self.dbg:
-			print(bgre(self._localstamp))
-		return int(os.stat(trg).st_atime), int(os.stat(trg).st_mtime)
-
-	def _remotestamp(self, trg, remote, reuser):
+	def rfiletime(self, trg, remote=None, reuser=None):
 		"""remote file-timestamp method"""
 		if self.dbg:
-			print(bgre(self._remotestamp))
+			print(bgre(self.rfiletime))
 		tamt = str(self.rstdo(
             'stat -c "%%X %%Y" %s'%trg, remote, reuser).strip())
 		tat = 0
 		tmt = 0
 		if tamt:
-			#print(tamt)
 			tat, tmt = tamt.split(' ')
-		return int(tat), int(tmt)
+		return int(tmt), int(tat)
 
-	def _setlstamp(self, trg, atime, mtime):
-		"""local file-timestamp set method"""
-		if self.dbg:
-			print(bgre(self._setlstamp))
-		os.utime(trg, (atime, mtime))
-
-	def _setrstamp(self, trg, atime, mtime, remote, reuser):
+	def rsetfiletime(self, trg, mtime, atime, remote=None, reuser=None):
 		"""remote file-timestamp set method"""
 		if self.dbg:
-			print(bgre(self._setrstamp))
-		self.rstdo(
-            'touch -a --date=@%s %s'%(atime, trg), remote, reuser)
+			print(bgre(self.rsetfiletime))
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
+		self.rstdo(
+            'touch -a --date=@%s %s'%(atime, trg), remote, reuser)
 
-	def _rotate(self, lfile, count=1):
-		if self.dbg:
-			print(bgre(self._rotate))
-		for i in reversed(range(0, int(count))):
-			old = lfile if i == 0 else '%s.%d'%(lfile, i)
-			new = '%s.%d'%(lfile, int(i+1))
-			try:
-				at, mt = self._localstamp(old)
-			except FileNotFoundError:
-				continue
-			copyfile(old, new)
-			os.chmod(new, 0o600)
-			self._setlstamp(new, at, mt)
-
-	def scpcompstats(self, lfile, rfile,
-          remote=None, reuser=None, rotate=0):
+	def scpcompstats(self, lfile, rfile, rotate=0, remote=None, reuser=None):
 		"""
 		remote/local file compare method copying and
 		setting the file/timestamp of the neweer one
 		"""
 		if self.dbg:
 			print(bgre(self.scpcompstats))
-		reuser = reuser if reuser else self.reuser
-		remote = remote if remote else self.remote
 		try:
-			lat, lmt = self._localstamp(lfile)
-			rat, rmt = self._remotestamp(rfile, remote, reuser)
+			lmt, lat = filetime(lfile)
+			rmt, rat = self.rfiletime(rfile)
 			if rmt == lmt:
 				return
 			if rotate > 0:
-				self._rotate(lfile, rotate)
+				rotate(lfile, rotate)
 			if rmt and rmt > lmt:
 				copy2(lfile, '%s.1'%lfile)
-				self.get(rfile, lfile, remote, reuser)
-				self._setlstamp(lfile, rat, rmt)
+				self.get(rfile, lfile)
+				setfiletime(lfile, rmt, rat)
 			else:
-				self.put(lfile, rfile, remote, reuser)
-				self._setlstamp(rfile, lat, lmt)
+				self.put(lfile, rfile)
+				self.rsetfiletime(rfile, lmt, lat)
 		except SSHException as err:
 			error(err)
 		return True
