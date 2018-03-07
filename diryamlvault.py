@@ -97,13 +97,10 @@ class DirYamlVault(GPGTool):
 				f = '%s/%s'%(d, f)
 				if islink(f):
 					frbs['<%s>'%f] = readlink(f)
-					continue
-				try:
+				else:
 					with open(f, 'rb') as rbf:
 						rb = rbf.read()
 					frbs[f] = rb
-				except OSError as err:
-				    error(err)
 		return frbs
 
 	def dict2path(self, dic):

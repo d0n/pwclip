@@ -61,7 +61,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	vault = pjoin(home, '.vault')
 	weaks = pjoin(home, '.weaknez')
 	uweak = pjoin(weaks, host, user)
-	__dirs = ['.gnupg', '.ssh']
+	__dirs = ['.gnupg', '.ssh', '.vpn']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
