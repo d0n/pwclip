@@ -214,7 +214,7 @@ class GPGTool(object):
 		elif 'GPGKEY' in environ.keys():
 			recvs = [environ['GPGKEY']] + [
                 k for k in recvs if k != environ['GPGKEY']]
-		print(recvs)
+		#print(recvs)
 		if self.recvs:
 			recvs = self.recvs
 		if 'recipients' in kwargs.keys():
