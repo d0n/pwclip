@@ -262,7 +262,7 @@ class SecureSHell(object):
 		reuser = reuser if reuser else self.reuser
 		try:
 			lmt, lat = filetime(lfile)
-			rmt, rat = self.rfiletime(rfile)
+			rmt, rat = self.rfiletime(rfile, remote, reuser)
 			if rmt == lmt:
 				return
 			if rotate > 0:
@@ -270,12 +270,12 @@ class SecureSHell(object):
 			if rmt and rmt > lmt:
 				copy2(lfile, '%s.1'%lfile)
 				self.get(rfile, lfile, remote, reuser)
-				setfiletime(lfile, rmt, rat, remote, reuser)
+				setfiletime(lfile, rmt, rat)
 			else:
 				self.put(lfile, rfile, remote, reuser)
 				self.rsetfiletime(rfile, lmt, lat, remote, reuser)
 		except SSHException as err:
-			print(err)
+			#print(err)
 			error(err)
 		return True
 
