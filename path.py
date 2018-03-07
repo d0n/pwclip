@@ -1,6 +1,8 @@
-from os import getcwd, chdir, walk, readlink, listdir
+from os import getcwd, chdir, chmod, walk, \
+    readlink, listdir, utime, stat as osstat
 from os.path import expanduser, islink, \
     isfile, isdir, abspath, join as pathjoin
+from shutil import copy2
 import inspect
 from stat import S_ISSOCK as _ISSOCK
 from configparser import ConfigParser as _ConfPars
@@ -78,6 +80,30 @@ def unsorted(files):
 		if newrand in rands:
 			continue
 		yield files[newrand]
+
+def filetime(trg):
+	"""local file-timestamp method"""
+	return int(osstat(trg).st_mtime), int(osstat(trg).st_atime)
+
+def setfiletime(trg, mtime=None, atime=None):
+	"""local file-timestamp set method"""
+	mt, at = filetime()
+	if mtime and not atime:
+		atime = at
+	elif atime and not mtime:
+		mtime = mt
+	utime(trg, (at, mt))
+
+def filerotate(lfile, count=1):
+	for i in reversed(range(0, int(count))):
+		old = lfile if i == 0 else '%s.%d'%(lfile, i)
+		new = '%s.%d'%(lfile, int(i+1))
+		try:
+			mt, at = filetime(old)
+		except FileNotFoundError:
+			continue
+		copy2(old, new)
+		self.setfiletime(new, mt, at)
 
 def filesiter(folder, random=False):
 	for (d, _, fs) in walk(absrelpath(folder)):
