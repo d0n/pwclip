@@ -50,11 +50,12 @@ def ifaddrs(iface, ipv4=True, ipv6=True):
 def _rxtx(iface):
 	out = cmd.stdo('/sbin/ifconfig %s'%iface)
 	if not out: raise RuntimeError('could not get ifconfig output')
-	ln = [l for l in out.split('\n'
-        ) if 'RX bytes:' and 'TX bytes:' in l][0]
-	rb, tb = ln.strip().split('  ')
-	return int(rb.split('RX bytes:')[1].split(' ')[0]), \
-        int(tb.split('TX bytes:')[1].split(' ')[0])
+	for l in out.split('\n'):
+		if 'RX packets ' in l:
+			rb = l.strip().split('bytes ')[1].split(' ')[0]
+		elif 'TX packets ' in l:
+			tb = l.strip().split('bytes ')[1].split(' ')[0]
+	return int(rb), int(tb)
 
 def _xbytes(iface):
 	ru, tu = ' b/s', ' b/s'
