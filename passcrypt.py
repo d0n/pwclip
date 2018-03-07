@@ -92,7 +92,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			try:
 				return self.scpcompstats(
                     self.crypt, path.basename(self.crypt),
-                    self.remote, self.reuser, rotate=2)
+                    remote=self.remote, reuser=self.reuser, rotate=2)
 			except FileNotFoundError:
 				pass
 			except SSHException as err:

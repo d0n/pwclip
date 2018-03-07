@@ -42,18 +42,13 @@ class GPGTool(object):
 	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
 	recvs = []
-	if 'GPGKEYS' in environ.keys():
-		recvs = [k for k in environ['GPGKEYS'].split(' ') if k ]
-	if 'GPGKEY' in environ.keys():
-		recvs = [environ['GPGKEY']] + [
-            k for k in recvs if k != environ['GPGKEY']]
 	def __init__(self, *args, **kwargs):
 		"""gpgtool init function"""
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
 		for (key, val) in kwargs.items():
-			if hasattr(self, key) and not isinstance(val, bool):
+			if hasattr(self, key):
 				setattr(self, key, val)
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
@@ -214,16 +209,24 @@ class GPGTool(object):
 		if self.dbg:
 			print(bgre(self.encrypt))
 		fingers = list(self.export())
+		if 'GPGKEYS' in environ.keys():
+			recvs = [k for k in environ['GPGKEYS'].split(' ') if k ]
+		elif 'GPGKEY' in environ.keys():
+			recvs = [environ['GPGKEY']] + [
+                k for k in recvs if k != environ['GPGKEY']]
+		print(recvs)
 		if self.recvs:
-			fingers = list(self.export(*self.recvs, **{'typ': 'e'}))
+			recvs = self.recvs
 		if 'recipients' in kwargs.keys():
-			fingers = list(self.export(*kwargs['recipients'], **{'typ': 'e'}))
-		if 'keystr' in kwargs.keys():
-			res = self._gpg_.import_keys(kwargs['keystr']).results[0]
-			fingers = [res['fingerprint']]
-		output = None if 'output' not in kwargs.keys() else kwargs['output']
+			recvs = kwargs['recipients']
+		fingers = list(self.export(*recvs, **{'typ': 'e'}))
+		#print(fingers)
+		#if 'keystr' in kwargs.keys():
+		#	res = self._gpg_.import_keys(kwargs['keystr']).results[0]
+		#	fingers = [res['fingerprint']]
+		out = None if 'output' not in kwargs.keys() else kwargs['output']
 		return self._gpg_.encrypt(
-            message, fingers, always_trust=True, output=output)
+            message, fingers, always_trust=True, output=out)
 
 	def decrypt(self, message, output=None):
 		"""text decrypting function method"""

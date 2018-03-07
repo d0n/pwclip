@@ -71,6 +71,8 @@ class DirYamlVault(GPGTool):
                 if l.startswith('[GNUPG:] ENC_TO')]
 			if recvs != self.recvs:
 				self.force = True
+			#print(plain)
+			#print(dir(plain))
 			self.__dic = load(str(plain))
 		except FileNotFoundError:
 			pass
@@ -97,10 +99,13 @@ class DirYamlVault(GPGTool):
 				f = '%s/%s'%(d, f)
 				if islink(f):
 					frbs['<%s>'%f] = readlink(f)
-				else:
+					continue
+				try:
 					with open(f, 'rb') as rbf:
 						rb = rbf.read()
 					frbs[f] = rb
+				except OSError:
+					pass
 		return frbs
 
 	def dict2path(self, dic):
@@ -145,15 +150,12 @@ class DirYamlVault(GPGTool):
                 bgre(self.envault), bgre(self.path), bgre(self.vault)))
 		nvlt = self.path2dict(self.path)
 		isnew = False
-		if self.force or self.__dic != nvlt:
+		vltdiff = (nvlt == self.__dic)
+		if self.force or (nvlt and not vltdiff):
+			#print(dump(nvlt))
 			filerotate(self.vault, 2)
-			while True:
-				isnew = self.encrypt(
-                    str(dump(self.path2dict(basename(self.path)))),
-                    output=self.vault, recipients=self.recvs).ok
-				if isnew:
-					chmod(self.vault, 0o600)
-					break
+			isnew = self.encrypt(str(dump(nvlt)), output=self.vault).ok
+			chmod(self.vault, 0o600)
 		if self.rmp:
 			rmtree(self.path)
 		return isnew

@@ -61,7 +61,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	vault = pjoin(home, '.vault')
 	weaks = pjoin(home, '.weaknez')
 	uweak = pjoin(weaks, host, user)
-	__dirs = ['.gnupg', '.ssh', '.vpn']
+	__dirs = ['.gnupg', '.ssh']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -107,7 +107,8 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if self.rem and self.remote:
 			try:
 				self.scpcompstats(
-                      self.vault, basename(self.vault), rotate=2)
+                      self.vault, basename(self.vault),
+                      remote=self.remote, reuser=self.reuser, rotate=2)
 			except FileNotFoundError:
 				pass
 
