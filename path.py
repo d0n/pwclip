@@ -87,7 +87,7 @@ def filetime(trg):
 
 def setfiletime(trg, mtime=None, atime=None):
 	"""local file-timestamp set method"""
-	mt, at = filetime()
+	mt, at = filetime(trg)
 	if mtime and not atime:
 		atime = at
 	elif atime and not mtime:
@@ -103,7 +103,7 @@ def filerotate(lfile, count=1):
 		except FileNotFoundError:
 			continue
 		copy2(old, new)
-		self.setfiletime(new, mt, at)
+		setfiletime(new, mt, at)
 
 def filesiter(folder, random=False):
 	for (d, _, fs) in walk(absrelpath(folder)):
