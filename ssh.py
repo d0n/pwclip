@@ -10,7 +10,7 @@ from socket import \
 from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
 
 from colortext import bgre, tabd, abort, error
-from system import whoami
+from system import whoami, filetime, setfiletime, filerotate
 from net import askdns
 
 # default vars
@@ -154,7 +154,6 @@ class SecureSHell(object):
 	def rerno(self, cmd, remote=None, reuser=None):
 		"""remote error code  method"""
 		remote = remote if remote else self.remote
-		#print(remote)
 		reuser = reuser if reuser else self.reuser
 		if self.dbg:
 			print(bgre(self.rerno))
@@ -171,6 +170,7 @@ class SecureSHell(object):
 		"""remote stdout/stderr/errorcode method"""
 		remote = remote if remote else self.remote
 		#print(remote)
+		remote = remote if remote else self.remote
 		reuser = reuser if reuser else self.reuser
 		if self.dbg:
 			print(bgre(self.rstdo))
@@ -215,6 +215,8 @@ class SecureSHell(object):
 		smt = int(str(int(os.stat(src).st_mtime))[:6])
 		rmt = self.rstdo(
             'stat -c %%Y %s'%trg, remote=remote, reuser=reuser)
+		remote = remote if remote else self.remote
+		reuser = reuser if reuser else self.reuser
 		if rmt:
 			rmt = int(str(rmt)[:6])
 		if rmt == smt:
@@ -228,6 +230,8 @@ class SecureSHell(object):
 		"""remote file-timestamp method"""
 		if self.dbg:
 			print(bgre(self.rfiletime))
+		remote = remote if remote else self.remote
+		reuser = reuser if reuser else self.reuser
 		tamt = str(self.rstdo(
             'stat -c "%%X %%Y" %s'%trg, remote, reuser).strip())
 		tat = 0
@@ -240,6 +244,8 @@ class SecureSHell(object):
 		"""remote file-timestamp set method"""
 		if self.dbg:
 			print(bgre(self.rsetfiletime))
+		remote = remote if remote else self.remote
+		reuser = reuser if reuser else self.reuser
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 		self.rstdo(
@@ -252,21 +258,24 @@ class SecureSHell(object):
 		"""
 		if self.dbg:
 			print(bgre(self.scpcompstats))
+		remote = remote if remote else self.remote
+		reuser = reuser if reuser else self.reuser
 		try:
 			lmt, lat = filetime(lfile)
 			rmt, rat = self.rfiletime(rfile)
 			if rmt == lmt:
 				return
 			if rotate > 0:
-				rotate(lfile, rotate)
+				filerotate(lfile, rotate)
 			if rmt and rmt > lmt:
 				copy2(lfile, '%s.1'%lfile)
-				self.get(rfile, lfile)
-				setfiletime(lfile, rmt, rat)
+				self.get(rfile, lfile, remote, reuser)
+				setfiletime(lfile, rmt, rat, remote, reuser)
 			else:
-				self.put(lfile, rfile)
-				self.rsetfiletime(rfile, lmt, lat)
+				self.put(lfile, rfile, remote, reuser)
+				self.rsetfiletime(rfile, lmt, lat, remote, reuser)
 		except SSHException as err:
+			print(err)
 			error(err)
 		return True
 
