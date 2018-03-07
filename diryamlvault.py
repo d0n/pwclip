@@ -149,28 +149,22 @@ class DirYamlVault(GPGTool):
 		nvlt = self.path2dict(self.path)
 		isnew = False
 		if self.force or self.__dic != nvlt:
-			filerotate(self.path, 2)
+			filerotate(self.vault, 2)
 			while True:
 				isnew = self.encrypt(
                     str(dump(self.path2dict(basename(self.path)))),
                     output=self.vault, recipients=self.recvs).ok
 				if isnew:
 					chmod(self.vault, 0o600)
-		try:
-			if self.rmp:
-				rmtree(self.path)
-		finally:
-			return isnew
+					break
+		if self.rmp:
+			rmtree(self.path)
+		return isnew
 
 	def unvault(self):
 		if self.dbg:
 			print('%s\n%s\n%s'%(
                 bgre(self.unvault), bgre(self.vault), bgre(self.path)))
-		try:
-			if not isdir(self.path):
-				makedirs(self.path)
-			
-		except (OSError, FileNotFoundError) as err:
-			error('%s '%err,  self.vault, ' does not exist or is inaccessable')
-		finally:
-			chdir(self._pwd)
+		if not isdir(self.path):
+			makedirs(self.path)
+		self.dict2path(self.__dic)
