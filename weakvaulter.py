@@ -69,7 +69,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if self.dbg:
 			print(bgre(WeakVaulter.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
-		kwargs['plain'] = kwargs['weaks']
+		kwargs['path'] = kwargs['weaks']
 		SecureSHell.__init__(self, *args, **kwargs)
 		DirYamlVault.__init__(self, *args, **kwargs)
 

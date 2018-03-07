@@ -26,28 +26,25 @@ from os.path import \
     abspath, isdir, islink, isfile, \
     dirname, expanduser, exists, basename
 
-from shutil import rmtree, move, copyfile
+from shutil import rmtree, move
 
 from yaml import load, dump
 
 from colortext import blu, yel, bgre, tabd, error
 
-from system import absrelpath, fileage
+from system import absrelpath, fileage, filerotate
 
 from secrecy import GPGTool
 
 class DirYamlVault(GPGTool):
 	dbg = None
 	rmp = None
+	age = 0
+	path = ''
+	vault = ''
+	__dic = {}
 	recvs = []
-	_vault = ''
-	_plain = ''
-	_pwd = getcwd()
-	if 'GPGKEYS' in environ.keys():
-		recvs = environ['GPGKEYS'].split(' ')
-	elif 'GPGKEY' in environ.keys():
-		recvs = [environ['GPGKEY']]
-	vaultage = 0
+	force = False
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
@@ -55,10 +52,26 @@ class DirYamlVault(GPGTool):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		if not self.vault or not self.plain:
+		if not self.vault or not self.path:
 			raise RuntimeError('setting a file and directory is mandatory')
+		if not self.recvs:
+			if 'GPGKEYS' in environ.keys():
+				self.recvs = environ['GPGKEYS'].split(' ')
+			elif 'GPGKEY' in environ.keys():
+				self.recvs = [environ['GPGKEY']]
+		self.path = absrelpath(self.path)
+		self.vault = absrelpath(self.vault)
+		self.age = stat(self.vault).st_atime
 		try:
-			setattr(self, 'vaultage', stat(self.vault).st_mtime)
+			with open(self.vault, 'r') as vfh:
+				plain = self.decrypt(vfh.read())
+			recvs = [
+                '0x%s'%l.split('[GNUPG:] ENC_TO ')[1].split(' ')[0] \
+                for l in str(plain.stderr).split('\n') \
+                if l.startswith('[GNUPG:] ENC_TO')]
+			if recvs != self.recvs:
+				self.force = True
+			self.__dic = load(str(plain))
 		except FileNotFoundError:
 			pass
 		if self.dbg:
@@ -68,33 +81,23 @@ class DirYamlVault(GPGTool):
 			print(bgre(tabd(self.__dict__, 4)))
 		GPGTool.__init__(self, *args, **kwargs)
 
-	@property                # plain <str>
-	def plain(self):
-		return self._plain
-	@plain.setter
-	def plain(self, val):
-		self._plain = absrelpath(val, getcwd())
-
-	@property                # vault <str>
-	def vault(self):
-		return self._vault
-	@vault.setter
-	def vault(self, val):
-		self._vault = absrelpath(val, getcwd())
-
-	def _pathdict(self, path):
+	def path2dict(self, path):
 		if self.dbg:
-			print(bgre(self._pathdict))
+			print(bgre(self.path2dict))
 		frbs = {}
-		for (d, ss, fs) in walk(abspath(path)):
-			ls = ['%s/%s'%(d, l) for l in ss if islink('%s/%s'%(d, l))]
-			if ls:
-				for l in ls:
+		if not isdir(path): return
+		for (d, ss, fs) in walk(path):
+			for l in ss:
+				l  = '%s/%s'%(d, l)
+				if islink(l):
 					frbs['<%s>'%l] = readlink(l)
 			for f in fs:
 				if f == 'random_seed':
 					continue
 				f = '%s/%s'%(d, f)
+				if islink(f):
+					frbs['<%s>'%f] = readlink(f)
+					continue
 				try:
 					with open(f, 'rb') as rbf:
 						rb = rbf.read()
@@ -103,20 +106,19 @@ class DirYamlVault(GPGTool):
 				    error(err)
 		return frbs
 
-	def _dictpath(self, dic):
+	def dict2path(self, dic):
 		if self.dbg:
-			print(bgre(self._dictpath))
+			print(bgre(self.dict2path))
 		if not dic:
 			return error('cannot decrypt')
+		_pwd = getcwd()
 		for (f, b) in dic.items():
 			if f.startswith('<') and f.endswith('>'):
 				f = f.strip('<>')
-				_pwd = getcwd()
 				if not isdir(dirname(f)):
 					makedirs(dirname(f))
 				chdir(dirname(f))
 				symlink(b, basename(f))
-				chdir(_pwd)
 				continue
 			if not isdir(dirname(f)):
 				makedirs(dirname(f))
@@ -125,28 +127,7 @@ class DirYamlVault(GPGTool):
 					fwh.write(b)
 			except OSError as err:
 				error(err)
-
-	def diffvault(self):
-		if self.dbg:
-			print(bgre(self.diffvault))
-		nvlt = self._pathdict(basename(self.plain))
-		try:
-			with open(self.vault, 'r') as cfh:
-				plain = self.decrypt(cfh.read())
-				recvs = [
-                    l.split('[GNUPG:] ENC_TO ')[1].split(' ')[0] \
-                    for l in str(plain.stderr).split('\n') \
-                    if l.startswith('[GNUPG:] ENC_TO')]
-				srecvs = [
-                    r.split('0x')[1] for r in self.recvs \
-                    if r.startswith('0x')]
-				if srecvs != recvs:
-					return True
-				ovlt = load(str(plain))
-		except FileNotFoundError:
-			return True
-		if ovlt != nvlt:
-			return True
+		chdir(_pwd)
 
 	def checkvault(self, vault):
 		if self.dbg:
@@ -164,33 +145,32 @@ class DirYamlVault(GPGTool):
 	def envault(self):
 		if self.dbg:
 			print('%s\n%s\n%s'%(
-                bgre(self.envault), bgre(self.plain), bgre(self.vault)))
-		chdir(dirname(self.plain))
-		if self.diffvault():
-			try:
-				move(self.vault, '%s.1'%self.vault)
-			except FileNotFoundError:
-				pass
-			self.encrypt(
-                str(dump(self._pathdict(basename(self.plain)))),
-                output=self.vault, recipients=self.recvs)
-			chmod(self.vault, 0o600)
-		if self.rmp:
-			rmtree(self.plain)
-		chdir(self._pwd)
+                bgre(self.envault), bgre(self.path), bgre(self.vault)))
+		nvlt = self.path2dict(self.path)
+		isnew = False
+		if self.force or self.__dic != nvlt:
+			filerotate(self.path, 2)
+			while True:
+				isnew = self.encrypt(
+                    str(dump(self.path2dict(basename(self.path)))),
+                    output=self.vault, recipients=self.recvs).ok
+				if isnew:
+					chmod(self.vault, 0o600)
+		try:
+			if self.rmp:
+				rmtree(self.path)
+		finally:
+			return isnew
 
 	def unvault(self):
 		if self.dbg:
 			print('%s\n%s\n%s'%(
-                bgre(self.unvault), bgre(self.vault), bgre(self.plain)))
+                bgre(self.unvault), bgre(self.vault), bgre(self.path)))
 		try:
-			if not isdir(self.plain):
-				makedirs(self.plain)
-			chdir(self.plain)
-			with open(self.vault, 'r') as cfh:
-				self._dictpath(load(str(self.decrypt(cfh.read()))))
+			if not isdir(self.path):
+				makedirs(self.path)
+			
 		except (OSError, FileNotFoundError) as err:
 			error('%s '%err,  self.vault, ' does not exist or is inaccessable')
 		finally:
 			chdir(self._pwd)
-
