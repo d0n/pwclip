@@ -39,7 +39,6 @@ class GPGTool(object):
 		__bin = 'gpg.exe'
 	_binary = which(__bin)
 	_keyserver = ''
-	agentinfo = path.join(homedir, 'S.gpg-agent')
 	kginput = {}
 	recvs = []
 	def __init__(self, *args, **kwargs):
