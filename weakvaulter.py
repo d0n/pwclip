@@ -167,9 +167,9 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 			self.envault()
 		except ValueError as err:
 			print(err)
-		self._mvrtfiles_(
-            pjoin(self.uweak, '.gnupg'),
-            pjoin(self.home, '.gnupg.1'))
+		#self._mvrtfiles_(
+		#    pjoin(self.uweak, '.gnupg'),
+		#    pjoin(self.home, '.gnupg.1'))
 		try:
 			rmtree(self.weaks)
 		except FileNotFoundError:
@@ -185,9 +185,9 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		elif exists(self.weaks) and not force:
 			return
 		self.unvault()
-		self._mvrtfiles_(
-            pjoin(self.home, '.gnupg'),
-            pjoin(self.uweak, '.gnupg'))
+		#self._mvrtfiles_(
+		#    pjoin(self.home, '.gnupg'),
+		#    pjoin(self.uweak, '.gnupg'))
 		self._fixmod_()
 		self._mklns_()
 
