@@ -24,15 +24,14 @@ try:
 except (AttributeError, ImportError) as err:
 	def xnotify(*_): """xnotify faker function""" ;return
 else:
-	def xnotify(msg, name=stack()[1][3], wait=3):
+	def xnotify(msg, name=stack()[1][3], wait=5):
 		"""
 		disply x notification usually in the upper right corner of the display
 		"""
 		try:
 			xnote.init(str(name))
 			note = xnote.Notification.new(msg)
-			wait = int(wait)*600
-			note.set_timeout(wait)
+			note.set_timeout(int(wait*600))
 			note.show()
 		except (NameError, RuntimeError):
 			pass
