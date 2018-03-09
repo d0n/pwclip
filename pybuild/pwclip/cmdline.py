@@ -190,7 +190,7 @@ def cli():
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
         '-1',
-        dest='gpv', action='store_const', const='gpg',
+        dest='gpv', action='store_const', const='1',
         help='force usage of gpg in version 1.x')
 	pars.add_argument(
         '-A', '--all',
@@ -200,6 +200,10 @@ def cli():
         '-R',
         dest='rem', action='store_true',
         help='use remote backup given by --remote-host')
+	pars.add_argument(
+        '-o', '--stdout',
+        dest='out', action='store_true',
+        help='print received password to stdout (insecure & unrecommended)')
 	pars.add_argument(
         '--remote-host',
         dest='rehost', metavar='HOST',
@@ -279,6 +283,8 @@ def cli():
 		__pkwargs['recvs'] = list(args.rcp.split(' '))
 	if args.usr:
 		__pkwargs['user'] = args.usr
+	if args.time:
+		__pkwargs['time'] = args.time
 	if args.yml:
 		__pkwargs['plain'] = args.yml
 	if hasattr(args, 'remote'):
@@ -334,10 +340,16 @@ def cli():
                     args.lst, ' in ', __pkwargs['crypt'])
 			elif args.lst and __ent:
 				__pc = __ent[args.lst]
-				if __pc:
+				if __pc and args.out:
+					print(__pc[0], end='')
 					if len(__pc) == 2:
-						xnotify(
-                            '%s: %s'%(args.lst, __pc[1]), wait=args.time)
+						xnotify('%s: %s'%(
+                            args.lst, ' '.join(__pc[1:])), args.time)
+					exit(0)
+				elif __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(
+                            args.lst, __pc[1]), wait=args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
 			__in = xinput()
@@ -351,7 +363,7 @@ def cli():
 				__pc = __ent[__in]
 				if __pc:
 					if len(__pc) == 2:
-						xnotify('%s: %s'%(__in, __pc[1]), args.time)
+						xnotify('%s: %s'%(__in, __pc[1:]), args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent: _printpws_(__ent, args.sho)
 
