@@ -1,6 +1,7 @@
 xsel
 gpgsm
 gnupg2
+openssl
 libreadline6
 python-yubico
 python3-tk
