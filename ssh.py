@@ -7,10 +7,14 @@ import sys
 from shutil import copy2, copyfile
 from socket import \
     gaierror as NameResolveError, timeout as sockettimeout
-from paramiko import ssh_exception, SSHClient, AutoAddPolicy, SSHException
+from psutil import Process
+
+from paramiko import \
+    ssh_exception, SSHClient, \
+    AutoAddPolicy, SSHException
 
 from colortext import bgre, tabd, abort, error
-from system import whoami, filetime, setfiletime, filerotate
+from system import whoami, userfind, filetime, setfiletime, filerotate
 from net import askdns
 
 # default vars
@@ -42,8 +46,13 @@ class SecureSHell(object):
 		if '@' in remote:
 			reuser, remote = remote.split('@')
 		reuser = whoami() if not reuser else reuser
+		prc = Process(os.getppid()).name()
+		if prc == 'sudo':
+			uuid = userfind(userfind(), 'uid')
+			os.environ['GPG_AGENT_INFO'] = \
+                '/run/user/%s/gnupg/S.gpg-agent.ssh'%uuid
 		if self.dbg:
-			print(bgre('%s\n  %s@%s '%(
+			print(bgre('%s\n  %s@%s:%s '%(
                 self._ssh, reuser, remote, port)))
 		self.__ssh = SSHClient()
 		self.__ssh.set_missing_host_key_policy(AutoAddPolicy())
@@ -166,25 +175,31 @@ class SecureSHell(object):
 
 	def get(self, src, trg, remote=None, reuser=None):
 		"""sftp get method"""
+		ssh = self._ssh(remote, reuser)
 		if self.dbg:
 			print(bgre(self.get))
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
 		if not (os.path.isfile(src) or os.path.isfile(trg)):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
-		ssh = self._ssh(remote, reuser)
 		scp = ssh.open_sftp()
-		return scp.get(src, trg)
+		try:
+			return scp.get(src, trg)
+		finally:
+			scp.close()
 
 	def put(self, src, trg, remote=None, reuser=None):
 		"""sftp put method"""
+		ssh = self._ssh(remote, reuser)
 		if self.dbg:
 			print(bgre(self.put))
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
 		if not (os.path.isfile(src) or os.path.isfile(trg)):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
-		ssh = self._ssh(remote, reuser)
 		scp = ssh.open_sftp()
-		return scp.put(src, trg)
+		try:
+			return scp.put(src, trg)
+		finally:
+			scp.close()
 
 	def rcompstats(self, src, trg, remote=None, reuser=None):
 		"""remote file-stats compare """
@@ -220,7 +235,7 @@ class SecureSHell(object):
 		"""remote file-timestamp set method"""
 		if self.dbg:
 			print(bgre(self.rsetfiletime))
-			print(bgre('  %s@%s %s %d %d'%(remote, reuser, trg, mtime, atime)))
+			print(bgre('  %s@%s %s %s %d'%(remote, reuser, trg, mtime, atime)))
 		self.rstdo(
             'touch -m --date=@%s %s'%(mtime, trg), remote, reuser)
 		self.rstdo(
