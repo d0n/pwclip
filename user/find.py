@@ -1,7 +1,3 @@
-from sys import \
-    stderr as _stderr
-__puke = _stderr.write
-
 def userfind(pattern='1000', mode='user'):
 	"""
         >>> 0 = user
@@ -26,10 +22,10 @@ def userfind(pattern='1000', mode='user'):
 			try:
 				hits = [f.split(':') for f in [l for l in pwd.readlines() if pstr in l] if pstr in f][0]
 			except IndexError as err:
-				__puke(str(err))
+				print(err, file=sys.stderr)
 				hits = []
 	except PermissionError as err:
-		__puke(str(err))
+		print(err, file=sys.stderr)
 		return err
 	if hits:
 		return list(hits)[mode]
