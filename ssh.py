@@ -49,8 +49,11 @@ class SecureSHell(object):
 		prc = Process(os.getppid()).name()
 		if prc == 'sudo':
 			uuid = userfind(userfind(), 'uid')
-			os.environ['GPG_AGENT_INFO'] = \
-                '/run/user/%s/gnupg/S.gpg-agent.ssh'%uuid
+			sshsock = '/run/user/%s/gnupg/S.gpg-agent.ssh'%uuid
+			os.environ['GNUPGHOME'] = os.path.dirname(sshsock)
+			os.environ['GPG_AGENT_INFO'] = sshsock
+		print(os.getenv('GNUPGHOME'))
+		print(os.getenv('GPG_AGENT_INFO'))
 		if self.dbg:
 			print(bgre('%s\n  %s@%s:%s '%(
                 self._ssh, reuser, remote, port)))
