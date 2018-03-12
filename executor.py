@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """command module of executor"""
-from os import access, environ, getuid, X_OK
+from os import access, environ, getuid, getresuid, X_OK
 
 from sys import stdout, stderr
 _echo_ = stdout.write
@@ -63,6 +63,7 @@ class Command(object):
 		"""privilege checking function"""
 		sudo = self.__which('sudo')
 		if not commands:
+			if getuid() == 0: return True
 			if int(call([sudo, '-v'])) == 0:
 				return True
 			sucmds = None
@@ -140,8 +141,8 @@ command = Command('sh')
 sucommand = Command('sh', 'su')
 
 def sudofork(*args):
+	if not [i for i in getresuid() if i != 0]: return
 	try:
-		#print(args)
 		eno = int(sucommand.call(args))
 	except KeyboardInterrupt:
 		_echo_('\033[34maborted by keystroke\033[0m\n')
