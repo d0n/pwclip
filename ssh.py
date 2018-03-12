@@ -23,7 +23,7 @@ __version__ = '0.1'
 class SecureSHell(object):
 	"""paramiko wrapper class"""
 	dbg = None
-	reuser = ''
+	reuser = whoami()
 	remote = ''
 	__ssh = None
 	def __init__(self, *args, **kwargs):
