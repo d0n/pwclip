@@ -21,6 +21,7 @@ class SecureSHell(object):
 	dbg = None
 	reuser = ''
 	remote = ''
+	__sshcon = None
 	def __init__(self, *args, **kwargs):
 		"""ssh init function"""
 		for arg in args:
@@ -32,6 +33,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(SecureSHell.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+	
 
 	def _ssh_(self, remote, reuser=None, port=22):
 		"""ssh connector method"""
@@ -43,11 +45,12 @@ class SecureSHell(object):
                 self._ssh_, remote, reuser, port)))
 		ssh = SSHClient()
 		ssh.set_missing_host_key_policy(AutoAddPolicy())
+		setattr(self, '__sshcon', ssh)
 		#print(askdns(remote), int(port), reuser)
 		try:
 			ssh.connect(
                 askdns(remote), int(port),
-                username=reuser, allow_agent=True) #, look_for_keys=True)
+                username=reuser, allow_agent=True, look_for_keys=True)
 		except (ssh_exception.SSHException, NameResolveError) as err:
 			error(self._ssh_, err)
 			raise err
@@ -61,7 +64,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
-		ssh = self._ssh_(remote, reuser)
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		try:
 			ssh.exec_command(cmd)
 		except (AttributeError, ssh_exception.SSHException) as err:
@@ -77,6 +80,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self.rcall))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		try:
 			chn = ssh.get_transport().open_session()
@@ -110,6 +114,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		try:
 			_, out, err = ssh.exec_command(cmd)
@@ -127,6 +132,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		try:
 			_, out, _ = ssh.exec_command(cmd)
@@ -143,6 +149,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		try:
 			_, _, err = ssh.exec_command(cmd)
@@ -158,6 +165,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self.rerno))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		try:
 			_, out, _ = ssh.exec_command(cmd)
@@ -175,6 +183,7 @@ class SecureSHell(object):
 		if self.dbg:
 			print(bgre(self.rstdo))
 			print(bgre('  %s %s %s'%(reuser, remote, cmd)))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		try:
 			_, out, err = ssh.exec_command(cmd)
@@ -192,6 +201,7 @@ class SecureSHell(object):
 		remote = remote if remote else self.remote
 		if not (os.path.isfile(src) or os.path.isfile(trg)):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		scp = ssh.open_sftp()
 		return scp.get(src, trg)
@@ -204,6 +214,7 @@ class SecureSHell(object):
 		remote = remote if remote else self.remote
 		if not (os.path.isfile(src) or os.path.isfile(trg)):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
 		ssh = self._ssh_(remote, reuser)
 		scp = ssh.open_sftp()
 		return scp.put(src, trg)
@@ -212,17 +223,18 @@ class SecureSHell(object):
 		"""remote file-stats compare """
 		if self.dbg:
 			print(bgre(self.rcompstats))
-		smt = int(str(int(os.stat(src).st_mtime))[:6])
-		rmt = self.rstdo(
-            'stat -c %%Y %s'%trg, remote=remote, reuser=reuser)
+		smt = int(os.stat(src).st_mtime)
 		remote = remote if remote else self.remote
 		reuser = reuser if reuser else self.reuser
+		ssh = self.__sshcon if self.__sshcon else self._ssh_(remote, reuser)
+		rmt = self.rstdo(
+            'stat -c %%Y %s'%trg, remote=remote, reuser=reuser)
 		if rmt:
-			rmt = int(str(rmt)[:6])
+			rmt = int(str(rmt))
+		srctrg = src, '%s@%s:%s'%(reuser, remote, trg)
 		if rmt == smt:
 			return
-		srctrg = src, '%s@%s:%s'%(reuser, remote, trg)
-		if rmt and int(rmt) > int(smt):
+		elif rmt and int(rmt) > int(smt):
 			srctrg = '%s@%s:%s'%(reuser, remote, trg), src
 		return srctrg
 
