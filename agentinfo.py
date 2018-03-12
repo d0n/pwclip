@@ -1,7 +1,5 @@
 from os import environ, stat as osstat
 
-from stat import S_ISSOCK as issock
-
 from system.user import userfind
 
 def gpgagentinfo(user=None):
@@ -15,6 +13,6 @@ def gpgagentinfo(user=None):
 		rundir = '/run/user/%d/gnupg'%uid
 		gpgsock = '%s/S.gpg-agent'%rundir
 		sshsock = '%s/S.gpg-agent.ssh'%rundir
-	environ['GPG_AGENT_INFO'] = '%s:0:1'%gpgsock
+	environ['GPG_AGENT_INFO'] = gpgsock
 	environ['SSH_AUTH_SOCK'] = sshsock
 	return gpgsock, sshsock
