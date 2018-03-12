@@ -1,5 +1,7 @@
 from os import environ, stat as osstat
 
+from stat import S_ISSOCK as issock
+
 from system.user import userfind
 
 def gpgagentinfo(user=None):
