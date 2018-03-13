@@ -189,5 +189,6 @@ class WeakVaulter(DirYamlVault, SecureSHell):
             pjoin(self.home, '.gnupg'),
             pjoin(self.uweak, '.gnupg'))
 		self._fixmod_()
+		environ['GNUPGHOME'] = pjoin(self.uweak, '.gnupg')
 		self._mklns_()
 

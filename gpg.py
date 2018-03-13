@@ -49,6 +49,11 @@ class GPGTool(object):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
+		if not self.recvs:
+			if 'GPGKEYS' in environ.keys():
+				self.recvs = environ['GPGKEYS'].split(' ')
+			elif 'GPGKEY' in environ.keys():
+				self.recvs = [environ['GPGKEY']]
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
 			print(bgre(tabd(GPGTool.__dict__, 2)))
