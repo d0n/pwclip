@@ -60,7 +60,8 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	reuser = user
 	vault = pjoin(home, '.vault')
 	weaks = pjoin(home, '.weaknez')
-	uweak = pjoin(weaks, host, user)
+	uweak = pjoin(weaks, host)
+	#uweak = pjoin(weaks, host, user)
 	__dirs = ['.gnupg', '.ssh']
 	def __init__(self, *args, **kwargs):
 		for arg in args:
