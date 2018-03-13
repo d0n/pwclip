@@ -182,7 +182,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		if not isfile(self.vault):
 			return error(
                 'vault ', self.vault, ' does not exist or is inaccessable')
-		elif exists(self.weaks) and not force:
+		elif not force and exists(self.uweak):
 			return
 		self.unvault()
 		self._mvrtfiles_(

@@ -42,7 +42,6 @@ class DirYamlVault(GPGTool):
 	age = 0
 	path = ''
 	vault = ''
-	__dic = {}
 	recvs = []
 	force = False
 	def __init__(self, *args, **kwargs):
@@ -62,6 +61,14 @@ class DirYamlVault(GPGTool):
 		self.path = absrelpath(self.path)
 		self.vault = absrelpath(self.vault)
 		self.age = stat(self.vault).st_atime
+		if self.dbg:
+			print(bgre(DirYamlVault.__mro__))
+			print(bgre(tabd(DirYamlVault.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
+		GPGTool.__init__(self, *args, **kwargs)
+
+	def _readvault(self):
 		try:
 			with open(self.vault, 'r') as vfh:
 				plain = self.decrypt(vfh.read())
@@ -73,16 +80,9 @@ class DirYamlVault(GPGTool):
 				self.force = True
 			#print(plain)
 			#print(dir(plain))
-			self.__dic = load(str(plain))
+			return load(str(plain))
 		except FileNotFoundError:
 			pass
-		if self.dbg:
-			print(bgre(DirYamlVault.__mro__))
-			print(bgre(tabd(DirYamlVault.__dict__, 2)))
-			print(' ', bgre(self.__init__))
-			print(bgre(tabd(self.__dict__, 4)))
-		GPGTool.__init__(self, *args, **kwargs)
-
 	def path2dict(self, path):
 		if self.dbg:
 			print(bgre(self.path2dict))
@@ -131,26 +131,14 @@ class DirYamlVault(GPGTool):
 				error(err)
 		chdir(_pwd)
 
-	def checkvault(self, vault):
-		if self.dbg:
-			print(bgre(self.checkvault))
-		try:
-			with open(vault, 'r') as vfh:
-				vlt = vfh.readlines()
-			if (
-                  vlt[0] == '-----BEGIN PGP MESSAGE-----\n' and \
-                  vlt[-1] == '-----END PGP MESSAGE-----\n'):
-				return True
-		except FileNotFoundError:
-			return False
-
 	def envault(self):
 		if self.dbg:
 			print('%s\n%s\n%s'%(
                 bgre(self.envault), bgre(self.path), bgre(self.vault)))
 		nvlt = self.path2dict(self.path)
+		ovlt = self._readvault()
 		isnew = False
-		vltdiff = (nvlt == self.__dic)
+		vltdiff = (nvlt == ovlt)
 		if self.force or (nvlt and not vltdiff):
 			#print(dump(nvlt))
 			filerotate(self.vault, 2)
@@ -166,4 +154,4 @@ class DirYamlVault(GPGTool):
                 bgre(self.unvault), bgre(self.vault), bgre(self.path)))
 		if not isdir(self.path):
 			makedirs(self.path)
-		self.dict2path(self.__dic)
+		self.dict2path(self._readvault())
