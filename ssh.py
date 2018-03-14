@@ -178,31 +178,36 @@ class SecureSHell(object):
 
 	def get(self, src, trg, remote=None, reuser=None):
 		"""sftp get method"""
-		ssh = self._ssh(remote, reuser)
+		#ssh = self._ssh(remote, reuser)
 		if self.dbg:
 			print(bgre(self.get))
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
-		if not (os.path.isfile(src) or os.path.isfile(trg)):
+		if not os.path.isfile(src):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
-		scp = ssh.open_sftp()
-		try:
-			return scp.get(src, trg)
-		finally:
-			scp.close()
+		if not self.erno('scp -l %s %s:%s %s'%(reuser, remote, src, trg)):
+			return True
+		#scp = ssh.open_sftp()
+		#try:
+		#	return scp.get(src, trg)
+		#finally:
+		#	scp.close()
 
 	def put(self, src, trg, remote=None, reuser=None):
 		"""sftp put method"""
-		ssh = self._ssh(remote, reuser)
+
+		#ssh = self._ssh(remote, reuser)
 		if self.dbg:
 			print(bgre(self.put))
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
-		if not (os.path.isfile(src) or os.path.isfile(trg)):
-			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
-		scp = ssh.open_sftp()
-		try:
-			return scp.put(src, trg)
-		finally:
-			scp.close()
+		if not os.path.isfile(src):
+			raise FileNotFoundError('connot find file %s'%src)
+		if not self.erno('scp -l %s %s %s:%s'%(reuser, src, remote, trg)):
+			return True
+		#scp = ssh.open_sftp()
+		#try:
+		#	return scp.put(src, trg)
+		#finally:
+		#	scp.close()
 
 	def rcompstats(self, src, trg, remote=None, reuser=None):
 		"""remote file-stats compare """
