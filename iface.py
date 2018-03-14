@@ -50,11 +50,12 @@ def ifaddrs(iface, ipv4=True, ipv6=True):
 def _rxtx(iface):
 	out = cmd.stdo('/sbin/ifconfig %s'%iface)
 	if not out: raise RuntimeError('could not get ifconfig output')
-	ln = [l for l in out.split('\n'
-        ) if 'RX bytes:' and 'TX bytes:' in l][0]
-	rb, tb = ln.strip().split('  ')
-	return int(rb.split('RX bytes:')[1].split(' ')[0]), \
-        int(tb.split('TX bytes:')[1].split(' ')[0])
+	for l in out.split('\n'):
+		if 'RX packets ' in l:
+			rb = l.strip().split('bytes ')[1].split(' ')[0]
+		elif 'TX packets ' in l:
+			tb = l.strip().split('bytes ')[1].split(' ')[0]
+	return int(rb), int(tb)
 
 def _xbytes(iface):
 	ru, tu = ' b/s', ' b/s'
@@ -88,7 +89,7 @@ def _xbytes(iface):
 
 def ifthrough(ifaces):
 	print(blu('monitoring network throughput...'))
-	sleep(0.9)
+	sleep(1.5)
 	stdio = curses.initscr()
 	stdio.nodelay(1)
 	curses.noecho()
@@ -96,9 +97,8 @@ def ifthrough(ifaces):
 		while True:
 			print('\033c\n\r%s\r%s'%(
                 '\r\n\n'.join(_xbytes(i) for i in ifaces if i),
-                blu('\n\n        ( press ESC to exit )\r')))
-			c1 = stdio.getch()
-			if c1 == 27 and stdio.getch() == -1:
+                blu('\n\n     ( press any key to exit )\r')))
+			if stdio.getch() != -1:
 				break
 	except KeyboardInterrupt:
 		pass
