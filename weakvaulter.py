@@ -171,11 +171,11 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		self._mvrtfiles_(
             pjoin(self.uweak, '.gnupg'),
             pjoin(self.home, '.gnupg.1'))
+		self._clean_()
 		try:
 			rmtree(self.weaks)
 		except FileNotFoundError:
 			pass
-		self._clean_()
 
 	def weakvault(self, force=False):
 		if self.dbg:
@@ -192,4 +192,3 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 		self._fixmod_()
 		environ['GNUPGHOME'] = pjoin(self.uweak, '.gnupg')
 		self._mklns_()
-
