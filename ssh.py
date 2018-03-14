@@ -60,9 +60,9 @@ class SecureSHell(object):
 		self.__ssh = SSHClient()
 		self.__ssh.set_missing_host_key_policy(AutoAddPolicy())
 		try:
-			ssh.connect(
+			self.__ssh.connect(
                 askdns(remote), int(port),
-                username=reuser, allow_agent=True) #, look_for_keys=True)
+                username=reuser, allow_agent=True, look_for_keys=True)
 		except (ssh_exception.SSHException, NameResolveError) as err:
 			error(self._ssh, err)
 			raise err
