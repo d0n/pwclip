@@ -4,8 +4,4 @@
 *.swp
 *.tar.gz
 __pycache__
-pybuild/build
-pybuild/deb_dist
-pybuild/dist
-pybuild/*.egg-info
-pybuild/README
+pybuild*
