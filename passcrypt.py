@@ -25,6 +25,7 @@ class PassCrypt(GPGTool, SecureSHell):
 	dbg = None
 	aal = None
 	sho = None
+	gsm = None
 	try:
 		user = userfind()
 		home = userfind(user, 'home')
@@ -36,11 +37,6 @@ class PassCrypt(GPGTool, SecureSHell):
 	remote = ''
 	reuser = user
 	recvs = []
-	if 'GPGKEYS' in environ.keys():
-		recvs = environ['GPGKEYS'].split(' ')
-	if 'GPGKEY' in environ.keys():
-		recvs = [environ['GPGKEY']] + [
-            k for k in recvs if k != environ['GPGKEY']]
 	__weaks = {}
 	__oldweaks = {}
 	def __init__(self, *args, **kwargs):

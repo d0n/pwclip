@@ -20,6 +20,26 @@ from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
 from system import xinput, xyesno, xgetpass, xmsgok, userfind, which
 
+
+from colortext import bgre, tabd
+
+class GPGSM(object):
+	dbg = False
+	
+	def __init__(self, *args, **kwargs):
+		for arg in args:
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.itmes():
+			if hasattr(self, key):
+				setattr(self, key, val)
+		if self.dbg:
+			print(bgre(GPGSM.__mro__))
+			print(bgre(tabd(GPGSM.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
+	
+
 class GPGTool(object):
 	"""
 	gnupg wrapper-wrapper :P
@@ -28,6 +48,7 @@ class GPGTool(object):
 	main code more easy to understand by wrapping multiple gnupg functions to
 	one - also i can prepare some program related stuff in here
 	"""
+	gsm = None
 	dbg = None
 	__c = 0
 	__ppw = None
@@ -54,6 +75,8 @@ class GPGTool(object):
 				self.recvs = environ['GPGKEYS'].split(' ')
 			elif 'GPGKEY' in environ.keys():
 				self.recvs = [environ['GPGKEY']]
+		if self.gsm:
+			self._binary = which('gpgsm')
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
 			print(bgre(tabd(GPGTool.__dict__, 2)))
@@ -191,10 +214,15 @@ class GPGTool(object):
 							keys[finger] = typ
 		return keys
 
-	def export(self, *patterns, **kwargs):
+	def keyimport(self, key):
+		if self.dbg:
+			print(bgre('%s %s'%(self.keyimport, key)))
+		return self._gpg_.import_keys(key)
+
+	def keyexport(self, *patterns, **kwargs):
 		"""key-export method"""
 		if self.dbg:
-			print(bgre(self.export))
+			print(bgre('%s %s'%(self.keyexport, patterns)))
 		keys = dict((k, v) for (k, v) in self.findkey(**kwargs).items())
 		if patterns:
 			keys = dict((k, v) for p in list(patterns) \
@@ -212,7 +240,7 @@ class GPGTool(object):
 		"""text encrypting function method"""
 		if self.dbg:
 			print(bgre(self.encrypt))
-		fingers = list(self.export())
+		fingers = list(self.keyexport())
 		if 'GPGKEYS' in environ.keys():
 			recvs = [k for k in environ['GPGKEYS'].split(' ') if k ]
 		elif 'GPGKEY' in environ.keys():
@@ -223,7 +251,7 @@ class GPGTool(object):
 			recvs = self.recvs
 		if 'recipients' in kwargs.keys():
 			recvs = kwargs['recipients']
-		fingers = list(self.export(*recvs, **{'typ': 'e'}))
+		fingers = list(self.keyexport(*recvs, **{'typ': 'e'}))
 		#print(fingers)
 		#if 'keystr' in kwargs.keys():
 		#	res = self._gpg_.import_keys(kwargs['keystr']).results[0]
