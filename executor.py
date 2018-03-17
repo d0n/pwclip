@@ -85,7 +85,6 @@ class Command(object):
 	def run(self, *commands, inputs=None):
 		"""just run the command and return the processes PID"""
 		commands = self.__cmdprep(commands, self.run)
-		inputs = inputs if not inputs else inputs.encode()
 		return Popen(
             commands, input=inputs,
             stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
@@ -95,7 +94,6 @@ class Command(object):
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
 		"""
-		inputs = inputs if not inputs else inputs.encode()
 		stderr = stderr if stderr else DEVNULL
 		stdout = stdout if stdout else DEVNULL
 		commands = self.__cmdprep(commands, self.call)
@@ -106,7 +104,6 @@ class Command(object):
 	def stdx(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDERR and/or STDOUT"""
 		commands = self.__cmdprep(commands, self.stdx)
-		inputs = inputs if not inputs else inputs.encode()
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate(timeout=self.timeout, input=inputs)
 		if b2s and out:
@@ -117,7 +114,6 @@ class Command(object):
 
 	def stdo(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDOUT only"""
-		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.stdo)
 		prc = Popen(commands, stdin=PIPE, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
 		out, _ = prc.communicate(input=inputs, timeout=self.timeout)
@@ -127,7 +123,6 @@ class Command(object):
 
 	def stde(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDERR only"""
-		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.stde)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		_, err = prc.communicate(timeout=self.timeout, input=inputs)
@@ -137,7 +132,6 @@ class Command(object):
 
 	def erno(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns the exitcode only"""
-		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.erno)
 		prc = Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
 		prc.communicate(timeout=self.timeout, input=inputs)
@@ -145,7 +139,6 @@ class Command(object):
 
 	def oerc(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDERR only"""
-		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.oerc)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
 		out, err = prc.communicate(timeout=self.timeout, input=inputs)
