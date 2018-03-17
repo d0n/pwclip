@@ -6,7 +6,7 @@ from sys import stdout, stderr
 _echo_ = stdout.write
 _puke_ = stderr.write
 
-from subprocess import call, Popen, PIPE
+from subprocess import run, Popen, PIPE
 # for legacy subprocess compatibility while DEVNULL is new in subprocess
 try:
 	from subprocess import DEVNULL
@@ -82,63 +82,78 @@ class Command(object):
                 func, commands, self.sh_, self.su_))
 		return commands
 
-	def run(self, *commands):
+	def run(self, *commands, inputs=None):
 		"""just run the command and return the processes PID"""
 		commands = self.__cmdprep(commands, self.run)
+		inputs = inputs if not inputs else inputs.encode()
 		return Popen(
-            commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
+            commands, input=inputs,
+            stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
-	def call(self, *commands, stdout=True, stderr=True):
+	def call(self, *commands, stdout=True, stderr=True, inputs=None):
 		"""
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
 		"""
+		inputs = inputs if not inputs else inputs.encode()
 		stderr = stderr if stderr else DEVNULL
 		stdout = stdout if stdout else DEVNULL
 		commands = self.__cmdprep(commands, self.call)
-		return int(call(
+		return int(run(
             commands, shell=self.sh_, stdout=stdout,
-            stderr=stderr, timeout=self.timeout))
+            stderr=stderr, timeout=self.timeout, input=inputs).returncode)
 
-	def stdx(self, *commands):
+	def stdx(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDERR and/or STDOUT"""
 		commands = self.__cmdprep(commands, self.stdx)
+		inputs = inputs if not inputs else inputs.encode()
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
-		out, err = prc.communicate(timeout=self.timeout)
-		if out:
-			return out.decode()
-		if err:
-			return err.decode()
+		out, err = prc.communicate(timeout=self.timeout, input=inputs)
+		if b2s and out:
+			out = out.decode()
+		if b2s and err:
+			err = err.decode()
+		return out, err
 
-	def stdo(self, *commands):
+	def stdo(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDOUT only"""
+		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.stdo)
-		prc = Popen(commands, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
-		out, _ = prc.communicate(timeout=self.timeout)
-		if out:
-			return out.decode()
+		prc = Popen(commands, stdin=PIPE, stdout=PIPE, stderr=DEVNULL, shell=self.sh_)
+		out, _ = prc.communicate(input=inputs, timeout=self.timeout)
+		if b2s and out:
+			out = out.decode()
+		return out
 
-	def stde(self, *commands):
+	def stde(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDERR only"""
+		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.stde)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
-		_, err = prc.communicate(timeout=self.timeout)
-		if err:
-			return err.decode()
+		_, err = prc.communicate(timeout=self.timeout, input=inputs)
+		if b2s and err:
+			err = err.decode()
+		return err
 
-	def erno(self, *commands):
+	def erno(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns the exitcode only"""
+		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.erno)
 		prc = Popen(commands, stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_)
-		prc.communicate(timeout=self.timeout)
+		prc.communicate(timeout=self.timeout, input=inputs)
 		return int(prc.returncode)
 
-	def oerc(self, *commands):
+	def oerc(self, *commands, inputs=None, b2s=True):
 		"""command execution which returns STDERR only"""
+		inputs = inputs if not inputs else inputs.encode()
 		commands = self.__cmdprep(commands, self.oerc)
 		prc = Popen(commands, stdout=PIPE, stderr=PIPE, shell=self.sh_)
-		out, err = prc.communicate(timeout=self.timeout)
-		return out.decode(), err.decode(), int(prc.returncode)
+		out, err = prc.communicate(timeout=self.timeout, input=inputs)
+		if b2s and out:
+			out = out.decode()
+		if b2s and err:
+			err = err.decode()
+		return out, err, int(prc.returncode)
 
 
 command = Command('sh')
