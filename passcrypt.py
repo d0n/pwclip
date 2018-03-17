@@ -20,7 +20,7 @@ from net.ssh import SecureSHell
 
 from secrecy.gpg import GPGTool
 
-class PassCrypt(GPGTool, SecureSHell):
+class PassCrypt(object):
 	"""passcrypt main class"""
 	dbg = None
 	aal = None
@@ -37,6 +37,8 @@ class PassCrypt(GPGTool, SecureSHell):
 	remote = ''
 	reuser = user
 	recvs = []
+	sslcrt = ''
+	sslkey = ''
 	__weaks = {}
 	__oldweaks = {}
 	def __init__(self, *args, **kwargs):
@@ -52,8 +54,10 @@ class PassCrypt(GPGTool, SecureSHell):
 			print(bgre(tabd(PassCrypt.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
-		GPGTool.__init__(self, *args, **kwargs)
-		SecureSHell.__init__(self, *args, **kwargs)
+		self.gpg = GPGTool(*args, **kwargs)
+		if self.gsm:
+			self.gpg = GPGSMTool(*args, **kwargs)
+		self.ssh = SecureSHell(*args, **kwargs)
 		write = False
 		if self.remote and self._copynews_():
 			write = True
@@ -86,7 +90,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			age = 14401
 		if age > 14400 and self.remote:
 			try:
-				return self.scpcompstats(
+				return self.ssh.scpcompstats(
                     self.crypt, path.basename(self.crypt),
                     remote=self.remote, reuser=self.reuser, rotate=2)
 			except FileNotFoundError:
@@ -121,7 +125,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				crypt = vlt.read()
 		except FileNotFoundError:
 			return None
-		return load(str(self.decrypt(crypt)))
+		return load(str(self.gpg.decrypt(crypt)))
 
 	def _writecrypt(self, __weak):
 		"""crypt file writing method"""
@@ -131,7 +135,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
 		for i in range(0, 4):
-			self.encrypt(message=dump(__weak), **kwargs)
+			self.gpg.encrypt(message=dump(__weak), **kwargs)
 			if self._chkcrypt(__weak):
 				chmod(self.crypt, 0o600)
 				if self.remote:

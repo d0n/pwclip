@@ -20,25 +20,91 @@ from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
 from system import xinput, xyesno, xgetpass, xmsgok, userfind, which
 
+from executor import Command
 
-from colortext import bgre, tabd
-
-class GPGSM(object):
+cmd = Command('dbg')
+class GPGSMTool(object):
 	dbg = False
-	
+	homedir = path.join(path.expanduser('~'), '.gnupg')
+	__gsm = 'gpgsm'
+	__ssl = 'openssl'
+	if osname == 'nt':
+		homedir = path.join(
+            path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
+		__gsm = 'gpgsm.exe'
+		__ssl = 'openssl.exe'
+	_gsmbin = which(__gsm)
+	_sslbin = which(__ssl)
+	sslcrt = ''
+	sslkey = ''
+	sslca = ''
+	recvs = []
 	def __init__(self, *args, **kwargs):
 		for arg in args:
 			if hasattr(self, arg):
 				setattr(self, arg, True)
-		for (key, val) in kwargs.itmes():
+		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
+		if not self.recvs:
+			if 'GPGKEYS' in environ.keys():
+				self.recvs = environ['GPGKEYS'].split(' ')
+			elif 'GPGKEY' in environ.keys():
+				self.recvs = [environ['GPGKEY']]
+		if self.sslcrt and self.sslkey:
+			if osname == 'nt':
+				# TODO
+				# windows implementations
+				# http://slproweb.com/download/Win32OpenSSL-1_1_0g.exe
+				raise RuntimeError(
+                    'ssl import is currently not available for windows')
+			self.sslimport(self.sslkey, self.sslcrt, self.sslca)
 		if self.dbg:
-			print(bgre(GPGSM.__mro__))
-			print(bgre(tabd(GPGSM.__dict__, 2)))
+			print(bgre(GPGSMTool.__mro__))
+			print(bgre(tabd(GPGSMTool.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
+
+	def sslimport(self, key, crt, ca):
+		# openssl pkcs12 -export -chain \
+		#    -CAfile .weaknez/knolle/crt/knolle.pem \
+		#    -in client.crt -inkey client.key -out client.p12
+		if self.dbg:
+			print(bgre('%s key=%s crt=%s'%(self.sslimport, key, crt)))
+		p12 = '%s/%s.p12'%(self.homedir, path.basename(crt).split('.')[0])
+		cmd.stdo('%s --import'%self._gsmbin, inputs=cmd.stdo(
+            '%s pkcs12 -export -chain -CAfile %s -in %s -inkey %s'%(
+                self._sslbin, ca, crt, key), b2s=False), b2s=False)
+
+	def encrypt(self, message, **kwargs):
+		"""text encrypting function method"""
+		if self.dbg:
+			print(bgre(self.encrypt))
+		if self.recvs:
+			recvs = self.recvs
+		if 'recipients' in kwargs.keys():
+			recvs = kwargs['recipients']
+		recvs = ''.join(['-r %s'%r for r in recvs])
+		out = '' if 'output' not in kwargs.keys() else '-o %s'%kwargs['output']
+		gsc = '%s -e --armor --disable-policy-checks --disable-crl-checks ' \
+            '%s %s'%(self._gsmbin, out, recvs)
+		__crypt = cmd.stdo(gsc, inputs=message.encode())
+		if __crypt:
+			return __crypt.decode()
+
+	def decrypt(self, message, output=None):
+		"""text decrypting function method"""
+		if self.dbg:
+			print(bgre(self.decrypt))
+		out = '' if not output else '-o %s'%'output'
+		gsc = '%s -d %s'%(self._gsmbin, out)
+		__plain = cmd.stdo(gsc, inputs=message)
+		if __plain:
+			return __plain
+
 	
+
+
 
 class GPGTool(object):
 	"""
@@ -48,7 +114,6 @@ class GPGTool(object):
 	main code more easy to understand by wrapping multiple gnupg functions to
 	one - also i can prepare some program related stuff in here
 	"""
-	gsm = None
 	dbg = None
 	__c = 0
 	__ppw = None
@@ -75,8 +140,6 @@ class GPGTool(object):
 				self.recvs = environ['GPGKEYS'].split(' ')
 			elif 'GPGKEY' in environ.keys():
 				self.recvs = [environ['GPGKEY']]
-		if self.gsm:
-			self._binary = which('gpgsm')
 		if self.dbg:
 			print(bgre(GPGTool.__mro__))
 			print(bgre(tabd(GPGTool.__dict__, 2)))
