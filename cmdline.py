@@ -271,10 +271,14 @@ def cli():
 	pars.add_argument(
         '--key', dest='sslkey', metavar='SSL-Private-Key',
         help='one-shot setting of SSL-Private-Key')
+	pars.add_argument(
+        '--ca-cert', dest='sslca', metavar='SSL-CA-Certificate',
+        help='one-shot setting of SSL-CA-Certificate')
 	args = pars.parse_args()
 	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
+        'gsm' if args.gpv else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
@@ -284,6 +288,8 @@ def cli():
 		__bin = 'gpgsm.exe' if args.gpv else 'gpg.exe'
 	__pkwargs = {}
 	__pkwargs['binary'] = __bin
+	__pkwargs['sslcrt'] = args.sslcrt
+	__pkwargs['sslkey'] = args.sslkey
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
@@ -302,12 +308,10 @@ def cli():
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(__pkwargs))
-
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
-
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
