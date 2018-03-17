@@ -189,10 +189,6 @@ def cli():
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
-        '-1',
-        dest='gpv', action='store_const', const='1',
-        help='force usage of gpg in version 1.x')
-	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
         help='switch to all users entrys (instead of current user only)')
@@ -264,19 +260,36 @@ def cli():
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
+	pars.add_argument(
+        '-x', '--x509',
+        dest='gpv', action='store_const', const='gpgsm',
+        help='force usage of gpgsm to be SSL compliant ' \
+            '(use --cert --key for imports)')
+	pars.add_argument(
+        '--cert', dest='sslcrt', metavar='SSL-Certificate',
+        help='one-shot setting of SSL-Certificate')
+	pars.add_argument(
+        '--key', dest='sslkey', metavar='SSL-Private-Key',
+        help='one-shot setting of SSL-Private-Key')
+	pars.add_argument(
+        '--ca-cert', dest='sslca', metavar='SSL-CA-Certificate',
+        help='one-shot setting of SSL-CA-Certificate')
 	args = pars.parse_args()
 	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
+        'gsm' if args.gpv else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
 		__bin = args.gpv
-	elif osname == 'nt':
-		__bin = 'gpg'
+	if osname == 'nt':
+		__bin = 'gpgsm.exe' if args.gpv else 'gpg.exe'
 	__pkwargs = {}
-	__pkwargs['binary'] = __bin if osname != 'nt' else '%s.exe'%__bin
+	__pkwargs['binary'] = __bin
+	__pkwargs['sslcrt'] = args.sslcrt
+	__pkwargs['sslkey'] = args.sslkey
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
@@ -295,12 +308,10 @@ def cli():
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(__pkwargs))
-
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
-
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
