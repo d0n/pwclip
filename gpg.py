@@ -3,8 +3,6 @@
 """
 gpgtool module
 """
-
-# (std)lib imports
 from os import path, environ, name as osname
 
 from platform import node
@@ -64,7 +62,6 @@ class GPGSMTool(object):
 			print(bgre(tabd(GPGSMTool.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
-
 	def sslimport(self, key, crt, ca):
 		# openssl pkcs12 -export -chain \
 		#    -CAfile .weaknez/knolle/crt/knolle.pem \
@@ -76,8 +73,36 @@ class GPGSMTool(object):
             '%s pkcs12 -export -chain -CAfile %s -in %s -inkey %s'%(
                 self._sslbin, ca, crt, key), b2s=False), b2s=False)
 
+	def keyimport(self, pattern=None):
+		if self.dbg:
+			print(bgre(self.keyimport))
+
+	def keyexport(self, pattern=None):
+		if self.dbg:
+			print(bgre(self.keyexport))
+
+	def keylist(self, secret=False):
+		if self.dbg:
+			print(bgre(self.keylist))
+		gsc = 'gpgsm -k'
+		if secret:
+			gsc = 'gpgsm -K'
+		kstrs = cmd.stdo(gsc)
+		keys = []
+		if kstrs:
+			kstrs = str('\n'.join(kstrs.split('\n')[2:])).split('\n\n')
+			for ks in kstrs:
+				if not ks: continue
+				kid = str(ks.split('\n')[0].strip()).split(': ')[1]
+				inf = [i.strip() for i in ks.split('\n')[1:]]
+				key = {kid: {}}
+				for i in inf:
+					key[kid][i.split(': ')[0]] = i.split(': ')[1]
+				keys.append(key)
+		return keys
+
 	def encrypt(self, message, **kwargs):
-		"""text encrypting function method"""
+		"""text encrypting method"""
 		if self.dbg:
 			print(bgre(self.encrypt))
 		if self.recvs:
@@ -93,7 +118,7 @@ class GPGSMTool(object):
 			return __crypt.decode()
 
 	def decrypt(self, message, output=None):
-		"""text decrypting function method"""
+		"""text decrypting method"""
 		if self.dbg:
 			print(bgre(self.decrypt))
 		out = '' if not output else '-o %s'%'output'
@@ -102,7 +127,7 @@ class GPGSMTool(object):
 		if __plain:
 			return __plain
 
-	
+
 
 
 
@@ -300,7 +325,7 @@ class GPGTool(object):
             message, fingers, output=output)
 
 	def encrypt(self, message, **kwargs):
-		"""text encrypting function method"""
+		"""text encrypting method"""
 		if self.dbg:
 			print(bgre(self.encrypt))
 		fingers = list(self.keyexport())
@@ -324,7 +349,7 @@ class GPGTool(object):
             message, fingers, always_trust=True, output=out)
 
 	def decrypt(self, message, output=None):
-		"""text decrypting function method"""
+		"""text decrypting method"""
 		if self.dbg:
 			print(bgre(self.decrypt))
 		while self.__c < 5:
