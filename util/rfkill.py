@@ -6,7 +6,7 @@ def rfklist(devnum=None):
 	devlist = {}
 	devlocks = []
 	if rfkill:
-		rfklist = c.stdo(rfkill+' list')
+		rfklist = c.stdx(rfkill+' list')
 		if rfklist:
 			for line in rfklist.split('\\n'):
 				if line and line[1] == ':':
