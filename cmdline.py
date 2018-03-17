@@ -189,10 +189,6 @@ def cli():
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
 	pars.add_argument(
-        '-1',
-        dest='gpv', action='store_const', const='1',
-        help='force usage of gpg in version 1.x')
-	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
         help='switch to all users entrys (instead of current user only)')
@@ -264,6 +260,17 @@ def cli():
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
+	pars.add_argument(
+        '-x', '--x509',
+        dest='gpv', action='store_const', const='gpgsm',
+        help='force usage of gpgsm to be SSL compliant ' \
+            '(use --cert --key for imports)')
+	pars.add_argument(
+        '--cert', dest='sslcrt', metavar='SSL-Certificate',
+        help='one-shot setting of SSL-Certificate')
+	pars.add_argument(
+        '--key', dest='sslkey', metavar='SSL-Private-Key',
+        help='one-shot setting of SSL-Private-Key')
 	args = pars.parse_args()
 	__pargs = [a for a in [
         'aal' if args.aal else None,
@@ -273,10 +280,10 @@ def cli():
 	__bin = 'gpg2'
 	if args.gpv:
 		__bin = args.gpv
-	elif osname == 'nt':
-		__bin = 'gpg'
+	if osname == 'nt':
+		__bin = 'gpgsm.exe' if args.gpv else 'gpg.exe'
 	__pkwargs = {}
-	__pkwargs['binary'] = __bin if osname != 'nt' else '%s.exe'%__bin
+	__pkwargs['binary'] = __bin
 	if args.pcr:
 		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
