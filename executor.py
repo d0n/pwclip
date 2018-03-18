@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """command module of executor"""
-from os import access, environ, getuid, getresuid, X_OK
+from os import access, environ, getuid, getresuid, X_OK, name as osname
+from os.path import join as pjoin
 
 from sys import stdout, stderr
 _echo_ = stdout.write
@@ -12,6 +13,8 @@ try:
 	from subprocess import DEVNULL
 except ImportError:
 	DEVNULL = open('/dev/null')
+
+#from system.which import which
 
 class Command(object):
 	sh_ = True
@@ -27,23 +30,14 @@ class Command(object):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-
+	
 	@staticmethod
 	def __which(prog):
-		"""pretty much like the `which` command (see `man which`)"""
-		for path in environ['PATH'].split(':'):
-			if access('%s/%s'%(path, prog), X_OK):
-				return '%s/%s'%(path, prog)
-
-	def _list(self, commands):
-		"""
-		commands string to list converter assuming at least one part
-		"""
-		#print(commands)
-		for cmd in list(commands):
-			if cmd and max(len(c) for c in cmd if c) == 1 and len(cmd) >= 1:
-				return list(commands)
-			return self._list(list(cmd))
+		"""which function like the linux 'which' program"""
+		delim = ';' if osname == 'nt' else ':'
+		for path in environ['PATH'].split(delim):
+			if access(pjoin(path, prog), X_OK):
+				return pjoin(abspath(path), prog)
 
 	@staticmethod
 	def _str(commands):
@@ -58,6 +52,16 @@ class Command(object):
 		if int(getuid()) != 0:
 			commands.insert(0, sudobin)
 		return commands
+
+	def _list(self, commands):
+		"""
+		commands string to list converter assuming at least one part
+		"""
+		#print(commands)
+		for cmd in list(commands):
+			if cmd and max(len(c) for c in cmd if c) == 1 and len(cmd) >= 1:
+				return list(commands)
+			return self._list(list(cmd))
 
 	def _sudo(self, commands=None):
 		"""privilege checking function"""
