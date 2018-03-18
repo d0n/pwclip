@@ -183,7 +183,7 @@ class GitRepo(Command):
 		def __modpaths(gitdir):
 			modfile = '%s/.gitmodules'%gitdir
 			if isfile(modfile):
-				return ['%s/%s'%(gitdir, m) for m in __gitmods(modfile)]
+				return [pjoin(gitdir, m) for m in __gitmods(modfile)]
 		for repo in repos:
 			mods = __modpaths(repo)
 			if mods:
