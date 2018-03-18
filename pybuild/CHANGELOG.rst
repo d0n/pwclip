@@ -4,10 +4,15 @@ Changelog
 1.2.0 (current)
 ---------------
 
-Released: 2018-
+Released: 2018-03-18
 
+  * [L] fixed paramiko scp not working any more (replaced by subprocess call)
 
+  * cleanup of unused imports and libraries
 
+  * removed unnecessary read/write actions on passcrypt
+
+  * added GPGSMTool class to interact wit gpgsm for openssl compatibility
 
 
 1.1.12 (current)
