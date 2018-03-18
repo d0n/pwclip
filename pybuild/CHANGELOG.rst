@@ -6,7 +6,11 @@ Changelog
 
 Released: 2018-03-18
 
-  * [W] fixed wrong path concatenation
+  * [W] fixed some wrong path concatenations
+
+  * another few lib fixes merged
+
+  * fixed wrong current version in changelog
 
 
 1.2.0
@@ -25,8 +29,8 @@ Released: 2018-03-18
   * class GPGSMTool added to interact wit gpgsm for openssl compatibility
 
 
-1.1.12 (current)
-----------------
+1.1.12
+------
 
 Released: 2017-12-12
 
