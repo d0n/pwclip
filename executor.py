@@ -89,7 +89,6 @@ class Command(object):
 	def run(self, *commands):
 		"""just run the command and return the processes PID"""
 		commands = self.__cmdprep(commands, self.run)
-		inputs = inputs if not inputs else inputs.encode()
 		return Popen(
             commands,
             stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
