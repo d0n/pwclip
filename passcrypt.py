@@ -61,9 +61,10 @@ class PassCrypt(object):
 			elif 'GPGKEY' in environ.keys():
 				recvs = [environ['GPGKEY']]
 		gsks = GPGSMTool().keylist(True)
-		if self.gsm or (recvs and [r for r in recvs if r in gsks]):
+		if self.gsm or (
+              self.gsm is None and recvs and [r for r in recvs if r in gsks]):
 			self.gpg = GPGSMTool(*args, **kwargs)
-		elif not self.gsm:
+		else:
 			self.gpg = GPGTool(*args, **kwargs)
 		self.ssh = SecureSHell(*args, **kwargs)
 		write = False
