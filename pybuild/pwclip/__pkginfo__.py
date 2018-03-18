@@ -3,7 +3,7 @@
 from os import getcwd, path
 
 name = distname = modname = 'pwclip'
-numversion = (1, 2, 0)
+numversion = (1, 2, 1)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
