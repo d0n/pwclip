@@ -68,7 +68,7 @@ class Command(object):
 		sudo = self.__which('sudo')
 		if not commands:
 			if getuid() == 0: return True
-			if int(call([sudo, '-v'])) == 0:
+			if int(run([sudo, '-v'])) == 0:
 				return True
 			sucmds = None
 		else:
