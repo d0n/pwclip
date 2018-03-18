@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """command module of executor"""
 from os import access, environ, getuid, getresuid, X_OK, name as osname
-from os.path import join as pjoin
+from os.path import abspath, join as pjoin
 
 from sys import stdout, stderr
 _echo_ = stdout.write
