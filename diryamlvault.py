@@ -24,7 +24,7 @@ from os import \
 
 from os.path import \
     abspath, isdir, islink, isfile, \
-    dirname, expanduser, exists, basename
+    dirname, expanduser, exists, basename, join as pjoin
 
 from shutil import rmtree, move
 
@@ -90,13 +90,13 @@ class DirYamlVault(GPGTool):
 		if not isdir(path): return
 		for (d, ss, fs) in walk(path):
 			for l in ss:
-				l  = '%s/%s'%(d, l)
+				l  = pjoin(d, l)
 				if islink(l):
 					frbs['<%s>'%l] = readlink(l)
 			for f in fs:
 				if f == 'random_seed':
 					continue
-				f = '%s/%s'%(d, f)
+				f = pjoin(d, f)
 				if islink(f):
 					frbs['<%s>'%f] = readlink(f)
 					continue

@@ -5,6 +5,8 @@ gpgtool module
 """
 from os import path, environ, name as osname
 
+from os.path import join as pjoin
+
 from platform import node
 
 from getpass import getpass
@@ -68,7 +70,7 @@ class GPGSMTool(object):
 		#    -in client.crt -inkey client.key -out client.p12
 		if self.dbg:
 			print(bgre('%s key=%s crt=%s'%(self.sslimport, key, crt)))
-		p12 = '%s/%s.p12'%(self.homedir, path.basename(crt).split('.')[0])
+		p12 = pjoin(self.homedir, '%s.p12'%path.basename(crt).split('.')[0])
 		cmd.stdo('%s --import'%self._gsmbin, inputs=cmd.stdo(
             '%s pkcs12 -export -chain -CAfile %s -in %s -inkey %s'%(
                 self._sslbin, ca, crt, key), b2s=False), b2s=False)
