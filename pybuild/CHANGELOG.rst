@@ -8,11 +8,13 @@ Released: 2018-03-18
 
   * [L] fixed paramiko scp not working any more (replaced by subprocess call)
 
+  * added file rotation for passcrypt file
+
   * cleanup of unused imports and libraries
 
   * removed unnecessary read/write actions on passcrypt
 
-  * added GPGSMTool class to interact wit gpgsm for openssl compatibility
+  * class GPGSMTool added to interact wit gpgsm for openssl compatibility
 
 
 1.1.12 (current)
