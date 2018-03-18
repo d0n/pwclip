@@ -18,9 +18,8 @@ from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
 
 from system import xinput, xyesno, xgetpass, xmsgok, userfind, which
 
-from executor import Command
+from executor import command as cmd
 
-cmd = Command('dbg')
 class GPGSMTool(object):
 	dbg = False
 	homedir = path.join(path.expanduser('~'), '.gnupg')
@@ -62,6 +61,7 @@ class GPGSMTool(object):
 			print(bgre(tabd(GPGSMTool.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
+
 	def sslimport(self, key, crt, ca):
 		# openssl pkcs12 -export -chain \
 		#    -CAfile .weaknez/knolle/crt/knolle.pem \
