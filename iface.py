@@ -4,7 +4,7 @@ from re import sub
 
 from os import listdir
 
-from os.path import isfile
+from os.path import isfile, join as pjoin
 
 import sys
 
@@ -154,7 +154,7 @@ def isup(iface, netdir='/sys/class/net'):
 
 
 def iftype(iface, netdir='/sys/class/net'):
-	infofile = '%s/%s/uevent'%(netdir, iface)
+	infofile = pjoin(netdir, iface, 'uevent')
 	if isfile(infofile):
 		with open(infofile, 'r') as f:
 			ifinfo = f.readlines()
@@ -173,4 +173,4 @@ def currentnets():
 				if 'addr' in ips:
 					netaddress, netbits = addrmask(
                         ips['addr'], ips['netmask'])
-					yield '%s/%s'%(netaddress, netbits)
+					yield pjoin(netaddress, netbits)

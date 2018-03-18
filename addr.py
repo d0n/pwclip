@@ -48,7 +48,7 @@ def gateway(network=None, ipv4=True, ipv6=False):
 			if not addrs:
 				continue
 			for ipv in addrs:
-				net = '%s/%s' %(addrs[ipv]['addr'], addrs[ipv]['netmask'])
+				net = pjoin(addrs[ipv]['addr'], addrs[ipv]['netmask'])
 				ip = IPNetwork(net)
 				if ip.network:
 					nets.append(str(ip.network))

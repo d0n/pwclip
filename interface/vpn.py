@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """module disclaimer"""
 from os import readlink, path, uname, remove, getuid
+from os.path import join as pjoin
 import psutil
 from time import sleep
 
@@ -42,7 +43,7 @@ class VPNConfig(ResolvConfParser):
 		if not val.startswith('/'):
 			__piddir = '/var/run'
 			if getuid() != 0:
-				__piddir = '%s/user/%s'%(__piddir, getuid())
+				__piddir = pjoin(__piddir, 'user', getuid())
 			val = '%s/%s'%(__piddir, val)
 		self._pidfile = val
 
