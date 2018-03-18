@@ -37,7 +37,7 @@ from colortext import blu, yel, bgre, tabd, error
 
 from system import absrelpath, fileage, filerotate
 
-class Yamlazar():
+class Yamlazar(object):
 	""""Yamlazar"""
 	dbg = None
 	rmp = None
