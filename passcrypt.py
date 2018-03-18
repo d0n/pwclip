@@ -18,7 +18,7 @@ from system import userfind, fileage
 
 from net.ssh import SecureSHell
 
-from secrecy.gpg import GPGTool
+from secrecy.gpg import GPGTool, GPGSMTool
 
 class PassCrypt(object):
 	"""passcrypt main class"""
@@ -54,9 +54,17 @@ class PassCrypt(object):
 			print(bgre(tabd(PassCrypt.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
-		self.gpg = GPGTool(*args, **kwargs)
-		if self.gsm:
+		recvs = self.recvs
+		if not self.recvs:
+			if 'GPGKEYS' in environ.keys():
+				recvs = environ['GPGKEYS'].split(' ')
+			elif 'GPGKEY' in environ.keys():
+				recvs = [environ['GPGKEY']]
+		gsks = GPGSMTool().keylist(True)
+		if self.gsm or (recvs and [r for r in recvs if r in gsks]):
 			self.gpg = GPGSMTool(*args, **kwargs)
+		elif not self.gsm:
+			self.gpg = GPGTool(*args, **kwargs)
 		self.ssh = SecureSHell(*args, **kwargs)
 		write = False
 		if self.remote and self._copynews_():
