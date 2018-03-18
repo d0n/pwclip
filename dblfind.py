@@ -15,6 +15,7 @@
 """"dblfind iterates over files in a folder searing for equal files"""
 # global imports
 import os
+from os.path import join as pjoin
 import sys
 import filecmp
 # local relative imports
@@ -48,10 +49,9 @@ def iterfiles(folder):
 						continue
 					try:
 						if filecmp.cmp(
-                              '%s/%s'%(sdirs, s), '%s/%s'%(tdirs, t)):
+                              pjoin(sdirs, s), pjoin(tdirs, t)):
 							dels.append(
-                                deldialog('%s/%s'%(
-                                    sdirs, s), '%s/%s'%(tdirs, t)))
+                                deldialog(pjoin(sdirs, s), pjoin(tdirs, t)))
 					except FileNotFoundError as err:
 						erf = str(err).split(' ')[-1].strip('\'')
 						if erf in dels:

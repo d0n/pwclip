@@ -1,7 +1,7 @@
 from os import getcwd, chdir, chmod, walk, \
     readlink, listdir, utime, stat as osstat
 from os.path import expanduser, islink, \
-    isfile, isdir, abspath, join as pathjoin
+    isfile, isdir, abspath, join as pjoin
 from shutil import copy2
 import inspect
 from stat import S_ISSOCK as _ISSOCK
@@ -44,17 +44,17 @@ def realpaths(pathlist, base=None):
 	return paths
 
 def confpaths(paths, conf, base=''):
-	return list(set(['%s/%s/%s' %(expanduser('~'), path[2:], conf) \
+	return list(set([pjoin(expanduser('~'), path[2:], conf) \
         for path in paths if path.startswith('~/') and \
-        isfile('%s/%s/%s'%(expanduser('~'), path[2:], conf))] + \
-        ['%s/%s/%s' %(base, path[2:], conf) for path in \
+        isfile(pjoin(expanduser('~'), path[2:], conf))] + \
+        [pjoin(base, path[2:], conf) for path in \
         paths if path.startswith('./') and \
-        isfile('%s/%s/%s'%(base, path[2:], conf))] + \
-        ['%s/%s/%s' %(base, path, conf) for path in paths if not \
+        isfile(pjoin(base, path[2:], conf))] + \
+        [pjoin(base, path, conf) for path in paths if not \
         path.startswith('/') and not path.startswith('.') and \
-        isfile('%s/%s/%s' %(base, path, conf))] + \
-        ['%s/%s' %(path, conf) for path in paths if path.startswith('/') and \
-        isfile('%s/%s' %(path, conf))]))
+        isfile(pjoin(base, path, conf))] + \
+        [pjoin(path, conf) for path in paths if path.startswith('/') and \
+        isfile(pjoin(path, conf))]))
 
 def confdats(*confs):
 	cfg = _ConfPars()
@@ -109,11 +109,11 @@ def filesiter(folder, random=False):
 	for (d, _, fs) in walk(absrelpath(folder)):
 		orderd = sorted if not random else unsorted
 		for f in orderd(fs):
-			yield pathjoin(d, f)
+			yield pjoin(d, f)
 
 def findupperdir(path, name):
 	while len(path.split('/')) > 1:
-		trg = '%s/%s'%(path, name)
+		trg = pjoin(path, name)
 		if isdir(trg):
 			return trg
 		return findupperdir('/'.join(p for p in path.split('/')[:-1]), name)
