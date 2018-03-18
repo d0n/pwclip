@@ -1,8 +1,16 @@
 Changelog
 =========
 
-1.2.0 (current)
+1.2.1 (current)
 ---------------
+
+Released: 2018-03-18
+
+  * [W] fixed wrong path concatenation
+
+
+1.2.0
+-----
 
 Released: 2018-03-18
 
