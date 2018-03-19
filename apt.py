@@ -76,17 +76,14 @@ class Apytude(DePyKG):
 		if opts:
 			opts = '-%s'%' -'.join(opts)
 		opts = '' if not opts else opts
-		packages = self._list(packages)
-		packages = ' '.join(p for p in packages if not self.isinstalled(p))
+		packages = ' '.join([p for p in packages if not self.isinstalled(p)])
 		if not packages and not 'f' in opts:
 			return
-		#print(packages)
 		command = '%s %s install %s' %(self.aptbin, opts, packages)
 		erno = sudo.call(command)
 		if int(erno) == 0:
 			return packages
-		else:
-			return erno
+		return erno
 
 	def purge(self, packages, *opts):
 		if self.dbg:
@@ -95,17 +92,16 @@ class Apytude(DePyKG):
 		if opts:
 			opts = '-%s'%' -'.join(opts)
 		opts = '' if not opts else opts
-		if packages:
-			packages = ' '.join(
-                pkg for pkg in packages if self.isinstalled(pkg))
+		if not packages: return
+		packages = ' '.join(
+            p for p in packages if self.isinstalled(p))
 		if not packages and not 'f' in opts:
 			return
 		command = '%s %s purge %s' %(self.aptbin, opts, packages)
 		erno = sudo.call(command)
 		if int(erno) == 0:
 			return packages
-		else:
-			return erno
+		return erno
 
 	def autoclean(self, *opts):
 		if self.dbg:
