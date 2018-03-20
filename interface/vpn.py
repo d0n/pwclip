@@ -118,7 +118,7 @@ class VPNConfig(ResolvConfParser):
 			with open('/var/run/%s'%(self.vpncfgs['pidfile']), 'r') as f:
 				ocpid = str(f.read()).strip()
 		if not ocpid:
-			ocpid = self.stdx('pidof '+self.ocbin).strip()
+			ocpid = self.stdo('pidof '+self.ocbin).strip()
 		try:
 			return (self.erno('kill -SIGINT %s'%ocpid) == 0)
 		except KeyboardInterrupt:
