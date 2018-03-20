@@ -52,7 +52,7 @@ class SubVersion(Command):
 			return diffout
 		def __revs(svnfile):
 			revs = []
-			output = self.stdx(
+			output = self.stdo(
                 '%s log %s -q --stop-on-copy'%(self.svnbin, svnfile))
 			for line in output.split('\n'):
 				if line.startswith('r'):
@@ -64,7 +64,7 @@ class SubVersion(Command):
 				print(
 	                blu('comparing revision'),
 	                yel(lastrev), blu('and'), yel(rev))
-			diff = self.stdx(
+			diff = self.stdo(
                 '%s diff --old=%s@%s --new=%s@%s'%(
 	                self.svnbin, path, lastrev, path, rev
                 ))
@@ -73,7 +73,7 @@ class SubVersion(Command):
 			yield diff
 
 	def svnstatus(self):
-		status = self.stdx('%s status'%(self.svnbin))
+		status = self.stdo('%s status'%(self.svnbin))
 		if status:
 			return status.split('\n')
 
