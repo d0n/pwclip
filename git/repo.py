@@ -112,12 +112,14 @@ class GitRepo(Command):
 			print(bgre(self.pull))
 		branch = branch if branch else self._head()
 		o, e, n = self.oerc('%s pull %s %s'%(self.gitbin, origin, branch))
-		o, e = o.strip(), e.strip()
-		if o and o != 'Already up to date.':
+		if int(n) != 0:
+			error(e, 'exited with', n)
+		elif o and o.strip() not in (
+              'Already up-to-date.', 'Already up to date.'):
 			print(o)
-		elif verbose and e:
-			print('%s\n%s'%(o, e))
-		return n
+		elif verbose:
+			print('out: %s ;errr: %s'%(o, e))
+		return int(n)
 
 	def push(self, remote=None, origin='origin', setup=None):
 		if self.dbg:
