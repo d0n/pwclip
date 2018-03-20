@@ -114,7 +114,7 @@ class GitRepo(Command):
 		o, e, n = self.oerc('%s pull %s %s'%(self.gitbin, origin, branch))
 		if int(n) != 0:
 			error(e, 'exited with', n)
-		elif o and o.strip() not in (
+		if o and o.strip() not in (
               'Already up-to-date.', 'Already up to date.'):
 			print(o)
 		elif verbose:
