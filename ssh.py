@@ -15,6 +15,7 @@ from paramiko import \
 
 from colortext import bgre, tabd, abort, error
 from system import whoami, userfind, filetime, setfiletime, filerotate
+from executor import command as cmd
 from net import askdns
 
 # default vars
@@ -184,7 +185,7 @@ class SecureSHell(object):
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
 		if not os.path.isfile(src):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
-		if not self.erno('scp -l %s %s:%s %s'%(reuser, remote, src, trg)):
+		if not cmd.erno('scp -l %s %s:%s %s'%(reuser, remote, src, trg)):
 			return True
 		#scp = ssh.open_sftp()
 		#try:
@@ -201,7 +202,7 @@ class SecureSHell(object):
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
 		if not os.path.isfile(src):
 			raise FileNotFoundError('connot find file %s'%src)
-		if not self.erno('scp -l %s %s %s:%s'%(reuser, src, remote, trg)):
+		if not cmd.erno('scp -l %s %s %s:%s'%(reuser, src, remote, trg)):
 			return True
 		#scp = ssh.open_sftp()
 		#try:
