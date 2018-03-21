@@ -116,7 +116,7 @@ class GitRepo(Command):
 			error(e, 'exited with', n)
 		if o and o.strip() not in (
               'Already up-to-date.', 'Already up to date.'):
-			print(o)
+			print(o.strip())
 		elif verbose:
 			print('out: %s ;errr: %s'%(o, e))
 		return int(n)
