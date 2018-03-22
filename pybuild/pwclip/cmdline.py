@@ -177,8 +177,6 @@ def gui(typ='pw'):
 			poclp, boclp = paste('pb')
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
-def pwcli(*args, **kwargs):
-	return PassCrypt(*args, **kwargs)
 
 def cli():
 	"""pwclip command line opt/arg parsing function"""
@@ -295,13 +293,8 @@ def cli():
         help='search entry matching PATTERN if given otherwise list all')
 
 	args = pars.parse_args()
-
-	if [a for a in [
-          'y' if args.yks else None,
-          'a' if args.add else None,
-          'c' if args.chg else None,
-          'r' if args.rms else None,
-          'l' if args.lst else None] if a]:
+	if args.yks is False and args.lst is False and args.add is None\
+	      and args.chg is None and args.rms is None:
 		pars.print_help()
 		exit(1)
 
@@ -356,7 +349,7 @@ def cli():
 		key = __keycheck('cli', __pkwargs)
 		if key:
 			__pkwargs['recvs'] = key
-		pcm = pwcli(*__pargs, **__pkwargs)
+		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:
 			if not pcm.adpw(args.add):
@@ -406,7 +399,8 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(__in, __pc[1:]), args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
-		if __ent: _printpws_(__ent, args.sho)
+		if __ent:
+			_printpws_(__ent, args.sho)
 
 
 
