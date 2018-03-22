@@ -275,6 +275,7 @@ def cli():
         '--ca-cert', dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
 	args = pars.parse_args()
+	#print(args)
 	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
