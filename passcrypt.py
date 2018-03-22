@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """passcrypt module"""
 
-from os import path, remove, environ, chmod, stat, utime
+from os import path, remove, environ, chmod, stat, utime, makedirs
 
 from shutil import copyfile
 
@@ -14,7 +14,7 @@ from time import time
 
 from colortext import bgre, tabd
 
-from system import userfind, fileage
+from system import userfind, setfiletime
 
 from net.ssh import SecureSHell
 
@@ -24,6 +24,7 @@ class PassCrypt(object):
 	"""passcrypt main class"""
 	dbg = None
 	aal = None
+	fsy = None
 	sho = None
 	gsm = None
 	try:
@@ -60,8 +61,18 @@ class PassCrypt(object):
 				recvs = environ['GPGKEYS'].split(' ')
 			elif 'GPGKEY' in environ.keys():
 				recvs = [environ['GPGKEY']]
-		gsks = list(GPGSMTool().keylist(True))
-		print(gsks)
+		now = int(time())
+		cache = '%s/.cache'%self.home
+		timefile = '%s/pwclip.time'%cache
+		if not path.exists(cache):
+			makedirs(cache)
+		age = None
+		if not path.exists(timefile):
+			with open(timefile, 'w+') as tfh:
+				tfh.write(str(now))
+			age = 14401
+		self.age = int(now-int(stat(timefile).st_mtime)) if not age else age
+		gsks = GPGSMTool().keylist(True)
 		if self.gsm or (
               self.gsm is None and recvs and [r for r in recvs if r in gsks]):
 			self.gpg = GPGSMTool(*args, **kwargs)
@@ -93,12 +104,7 @@ class PassCrypt(object):
 		"""copy new file method"""
 		if self.dbg:
 			print(bgre(self._copynews_))
-		now = int(time())
-		try:
-			age = fileage(self.crypt)
-		except FileNotFoundError:
-			age = 14401
-		if age > 14400 and self.remote:
+		if int(self.age) > 14400 and self.remote:
 			try:
 				return self.ssh.scpcompstats(
                     self.crypt, path.basename(self.crypt),
@@ -156,7 +162,7 @@ class PassCrypt(object):
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
-		pwdcom = [pwd if pwd else self._passwd()]
+		pwdcom = [pwd if pwd else self.gpg._passwd()]
 		com = input('enter a comment: ')
 		if com:
 			pwdcom.append(com)
@@ -174,7 +180,7 @@ class PassCrypt(object):
 		if self.dbg:
 			print(bgre(tabd({
                 self.chpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
-		pwdcom = [pwd if pwd else self._passwd()]
+		pwdcom = [pwd if pwd else self.gpg._passwd()]
 		com = input('enter a comment: ')
 		if com:
 			pwdcom.append(com)
