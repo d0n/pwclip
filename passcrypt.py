@@ -60,7 +60,8 @@ class PassCrypt(object):
 				recvs = environ['GPGKEYS'].split(' ')
 			elif 'GPGKEY' in environ.keys():
 				recvs = [environ['GPGKEY']]
-		gsks = GPGSMTool().keylist(True)
+		gsks = list(GPGSMTool().keylist(True))
+		print(gsks)
 		if self.gsm or (
               self.gsm is None and recvs and [r for r in recvs if r in gsks]):
 			self.gpg = GPGSMTool(*args, **kwargs)
@@ -106,8 +107,6 @@ class PassCrypt(object):
 				pass
 			except SSHException as err:
 				error(err)
-			with open(tf, 'w+') as tfh:
-				tfh.write(now)
 
 	def _chkcrypt(self, __weak):
 		"""crypt file checker method"""

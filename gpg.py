@@ -90,17 +90,16 @@ class GPGSMTool(object):
 		if secret:
 			gsc = 'gpgsm -K'
 		kstrs = cmd.stdo(gsc)
-		keys = []
+		keys = {}
 		if kstrs:
 			kstrs = str('\n'.join(kstrs.split('\n')[2:])).split('\n\n')
 			for ks in kstrs:
 				if not ks: continue
 				kid = str(ks.split('\n')[0].strip()).split(': ')[1]
 				inf = [i.strip() for i in ks.split('\n')[1:]]
-				key = {kid: {}}
+				keys[kid] = {}
 				for i in inf:
-					key[kid][i.split(': ')[0]] = i.split(': ')[1]
-				keys.append(key)
+					keys[kid][i.split(': ')[0]] = i.split(': ')[1]
 		return keys
 
 	def encrypt(self, message, **kwargs):
@@ -115,9 +114,9 @@ class GPGSMTool(object):
 		out = '' if 'output' not in kwargs.keys() else '-o %s'%kwargs['output']
 		gsc = '%s -e --armor --disable-policy-checks --disable-crl-checks ' \
             '%s %s'%(self._gsmbin, out, recvs)
-		__crypt = cmd.stdo(gsc, inputs=message.encode())
+		__crypt = cmd.stdo(gsc, inputs=message.encode(), b2s=False)
 		if __crypt:
-			return __crypt.decode()
+			return __crypt
 
 	def decrypt(self, message, output=None):
 		"""text decrypting method"""
