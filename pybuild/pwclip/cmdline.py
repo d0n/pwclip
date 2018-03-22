@@ -177,29 +177,43 @@ def gui(typ='pw'):
 			poclp, boclp = paste('pb')
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
+def pwcli(*args, **kwargs):
+	return PassCrypt(*args, **kwargs)
+
 def cli():
 	"""pwclip command line opt/arg parsing function"""
 	cfgs = __confcfgs()
 	pars = ArgumentParser() #add_help=False)
 	pars.set_defaults(**cfgs)
-	pars.add_argument(
+	bpars = pars.add_argument_group('behaviour')
+	bars.add_argument(
         '--version',
         action='version', version='%(prog)s-v'+version)
-	pars.add_argument(
+	bars.add_argument(
         '-D', '--debug',
         dest='dbg', action='store_true', help='debugging mode')
-	pars.add_argument(
+	bars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
         help='switch to all users entrys (instead of current user only)')
+	bars.add_argument(
+        '-o', '--stdout',
+        dest='out', action='store_true',
+        help='print received password to stdout (insecure & unrecommended)')
+	bars.add_argument(
+        '-s', '--show-passwords',
+        dest='sho', action='store_true',
+        help='switch to display passwords (replaced with * by default)')
+	bars.add_argument(
+        '-t',
+        dest='time', default=3, metavar='seconds', type=int,
+        help='time to wait before resetting clip (default is 3 max 3600)')
+
+	bpars = pars.add_argument_group('remote')
 	pars.add_argument(
         '-R',
         dest='rem', action='store_true',
         help='use remote backup given by --remote-host')
-	pars.add_argument(
-        '-o', '--stdout',
-        dest='out', action='store_true',
-        help='print received password to stdout (insecure & unrecommended)')
 	pars.add_argument(
         '--remote-host',
         dest='rehost', metavar='HOST',
@@ -207,11 +221,8 @@ def cli():
 	pars.add_argument(
         '--remote-user',
         dest='reuser', metavar='USER',
-        help='use USER for connections to HOST')
-	pars.add_argument(
-        '-s', '--show-passwords',
-        dest='sho', action='store_true',
-        help='switch to display passwords (replaced with * by default)')
+
+	bpars = pars.add_argument_group('gnupg')
 	pars.add_argument(
         '-a', '--add',
         dest='add', metavar='ENTRY',
@@ -229,16 +240,6 @@ def cli():
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
 	pars.add_argument(
-        '--yaml',
-        dest='yml', metavar='YAMLFILE',
-        default=path.expanduser('~/.pwd.yaml'),
-        help='set location of one-time password YAMLFILE to read & delete')
-	pars.add_argument(
-        '-p', '--passcrypt',
-        dest='pcr', metavar='CRYPTFILE',
-        default=path.expanduser('~/.passcrypt'),
-        help='set location of CRYPTFILE to use for gpg features')
-	pars.add_argument(
         '-r', '--recipients',
         dest='rcp', metavar='ID(s)',
         help='gpg-key ID(s) to use for ' \
@@ -249,18 +250,18 @@ def cli():
         help='query entrys only for USER ' \
              '(defaults to current user, overridden by -A)')
 	pars.add_argument(
-        '-y', '--ykserial',
-        nargs='?', dest='yks', metavar='SERIAL', default=False,
-        help='switch to yubikey mode and optionally set SERIAL of yubikey')
+        '--passcrypt',
+        dest='pcr', metavar='CRYPTFILE',
+        default=path.expanduser('~/.passcrypt'),
+        help='set location of CRYPTFILE to use for gpg features')
 	pars.add_argument(
-        '-S', '--ykslot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
-        help='set one of the two slots on the yubi-key (only useful for -y)')
-	pars.add_argument(
-        '-t',
-        dest='time', default=3, metavar='seconds', type=int,
-        help='time to wait before resetting clip (default is 3 max 3600)')
-	pars.add_argument(
+        '--yaml',
+        dest='yml', metavar='YAMLFILE',
+        default=path.expanduser('~/.pwd.yaml'),
+        help='set location of one-time password YAMLFILE to read & delete')
+
+	bpars = pars.add_argument_group('openssl')
+ 	pars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
         help='force usage of gpgsm to be SSL compliant ' \
@@ -274,8 +275,22 @@ def cli():
 	pars.add_argument(
         '--ca-cert', dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
+       help='use USER for connections to HOST')
+
+	bpars = pars.add_argument_group('yubikey')
+	pars.add_argument(
+        '-y', '--ykserial',
+        nargs='?', dest='yks', metavar='SERIAL', default=False,
+        help='switch to yubikey mode and optionally set SERIAL of yubikey')
+	pars.add_argument(
+        '-S', '--ykslot',
+        dest='ysl', default=2, type=int, choices=(1, 2),
+        help='set one of the two slots on the yubi-key (only useful for -y)')
+
 	args = pars.parse_args()
-	#print(args)
+	if not args:
+		pars.print_help()
+		exit(1)
 	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
@@ -327,7 +342,10 @@ def cli():
 		key = __keycheck('cli', __pkwargs)
 		if key:
 			__pkwargs['recvs'] = key
-		pcm = PassCrypt(*__pargs, **__pkwargs)
+		with open('tmp.log', 'w+') as lfh:
+			print('\n'.join(__pargs), file=lfh)
+			print(tabd(__pkwargs), file=lfh)
+		pcm = pwcli(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:
 			if not pcm.adpw(args.add):
