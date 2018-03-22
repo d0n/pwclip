@@ -1,8 +1,28 @@
 Changelog
 =========
 
-1.2.2 (current)
+1.2.3 (current)
 ---------------
+
+Released: 2018-03-22
+
+  * some minor bugfixes to comply with new executor features (bytes, input)
+
+  * fixed unintended executions when using TAB in a shell
+
+  * some cosmetics for `pwcli --help` message
+
+  * reimplemented the timer for remote access & sync to prevent unnecessary
+    connection delays (if remote is used -R or config file)
+
+  * another fix for executors byte2string feature - the default is to encode
+    input strings and decode output strings what broke gpgsm en/decryption
+
+  * [W] fixed scp put/get for windows (skipped instead of rising exceptions)
+
+
+1.2.2
+-----
 
 Released: 2018-03-22
 
