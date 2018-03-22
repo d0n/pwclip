@@ -1,8 +1,24 @@
 Changelog
 =========
 
-1.2.1 (current)
+1.2.2 (current)
 ---------------
+
+Released: 2018-03-22
+
+  * merged updates for executor subprocess forker to accept input and be able
+    to return stdout as byte-string
+
+  * removed unnecessary library iface from net
+
+  * fixed ssh.put/get function if no scp available
+
+  * fix for gpg socket location changed in newer releases - should also comply
+    with older versions as well
+
+
+1.2.1
+-----
 
 Released: 2018-03-18
 
