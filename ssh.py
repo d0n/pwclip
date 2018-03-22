@@ -185,8 +185,11 @@ class SecureSHell(object):
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
 		if not os.path.isfile(src):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
-		if not cmd.erno('scp -l %s %s:%s %s'%(reuser, remote, src, trg)):
-			return True
+		try:
+			if not cmd.erno('scp -l %s %s:%s %s'%(reuser, remote, src, trg)):
+				return True
+		except FileNotFoundError:
+			return False
 		#scp = ssh.open_sftp()
 		#try:
 		#	return scp.get(src, trg)
@@ -202,7 +205,11 @@ class SecureSHell(object):
 			print(bgre('  %s@%s:%s %s'%(reuser, remote, src, trg)))
 		if not os.path.isfile(src):
 			raise FileNotFoundError('connot find file %s'%src)
-		if not cmd.erno('scp -l %s %s %s:%s'%(reuser, src, remote, trg)):
+		try:
+			cmd.erno('scp -l %s %s %s:%s'%(reuser, src, remote, trg))
+		except FileNotFoundError:
+			return False
+		else:
 			return True
 		#scp = ssh.open_sftp()
 		#try:
