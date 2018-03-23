@@ -180,13 +180,15 @@ def gui(typ='pw'):
 
 def cli():
 	"""pwclip command line opt/arg parsing function"""
+	__me = path.basename(path.dirname(__file__))
 	cfgs = __confcfgs()
-	prol = 'pwclip - multi functional password manager to temporarily ' \
-           'save passphrases  to your copy/paste buffers for easy and ' \
-           'secure accessing your passwords'
+	desc = 'pwclip - Multi functional password manager to temporarily ' \
+           'save passphrases to your copy/paste buffers for easy and ' \
+           'secure accessing your passwords. Most of the following ' \
+		   'arguments mights also be set by the config ~/.config/%s.yaml'%__me
 	epic = 'the yubikey feature is compatible with challenge-response ' \
            'features only'
-	pars = ArgumentParser(epilog=epic) #add_help=False)
+	pars = ArgumentParser(description=desc ,epilog=epic)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -225,7 +227,7 @@ def cli():
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST')
 
-	gpars = pars.add_argument_group('gnupg/ssl')
+	gpars = pars.add_argument_group('gpg/ssl')
 	gpars.add_argument(
         '-r', '--recipients',
         dest='rcp', metavar='ID(s)',
@@ -242,6 +244,20 @@ def cli():
         help='force usage of gpgsm to be SSL compliant ' \
              '(use --cert --key for imports)')
 	gpars.add_argument(
+        '-P', '--passcrypt',
+        dest='pcr', metavar='CRYPTFILE',
+        default=path.expanduser('~/.passcrypt'),
+        help='set location of CRYPTFILE to use for gpg features')
+	gpars.add_argument(
+        '-Y', '--yaml',
+        dest='yml', metavar='YAMLFILE',
+        default=path.expanduser('~/.pwd.yaml'),
+        help='set location of one-time password YAMLFILE to read & delete')
+	gpars.add_argument(
+        '-S', '--slot',
+        dest='ysl', default=2, type=int, choices=(1, 2),
+        help='set the slot on the yubikey (only useful with -y)')
+	gpars.add_argument(
         '--cert',
         dest='sslcrt', metavar='SSL-Certificate',
         help='one-shot setting of SSL-Certificate')
@@ -253,20 +269,6 @@ def cli():
         '--ca-cert',
         dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
-	gpars.add_argument(
-        '--passcrypt',
-        dest='pcr', metavar='CRYPTFILE',
-        default=path.expanduser('~/.passcrypt'),
-        help='set location of CRYPTFILE to use for gpg features')
-	gpars.add_argument(
-        '--yaml',
-        dest='yml', metavar='YAMLFILE',
-        default=path.expanduser('~/.pwd.yaml'),
-        help='set location of one-time password YAMLFILE to read & delete')
-	gpars.add_argument(
-        '--slot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
-        help='set one of the two slots on the yubi-key (only useful for -y)')
 
 	ypars = pars.add_argument_group('yubikey')
 	ypars.add_argument(
@@ -274,7 +276,7 @@ def cli():
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
 
-	gpars = pars.add_argument_group('passcrypt')
+	gpars = pars.add_argument_group('actions')
 	gpars.add_argument(
         '-a', '--add',
         dest='add', metavar='ENTRY',
