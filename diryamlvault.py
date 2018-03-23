@@ -38,7 +38,7 @@ from secrecy import GPGTool
 
 class DirYamlVault(GPGTool):
 	dbg = None
-	rmp = None
+	rmp = True
 	age = 0
 	path = ''
 	vault = ''
@@ -83,6 +83,7 @@ class DirYamlVault(GPGTool):
 			return load(str(plain))
 		except FileNotFoundError:
 			pass
+
 	def path2dict(self, path):
 		if self.dbg:
 			print(bgre(self.path2dict))
@@ -136,14 +137,20 @@ class DirYamlVault(GPGTool):
 			print('%s\n%s\n%s'%(
                 bgre(self.envault), bgre(self.path), bgre(self.vault)))
 		nvlt = self.path2dict(self.path)
-		ovlt = self._readvault()
 		isnew = False
-		vltdiff = (nvlt == ovlt)
-		if self.force or (nvlt and not vltdiff):
-			#print(dump(nvlt))
+		try:
+			ovlt = self._readvault()
+			equalvlt = (nvlt == ovlt)
+		except (KeyboardInterrupt, PermissionError):
+			equalvlt = False
+		#print(vltdiff, self.force, self.rmp)
+		if self.force or (nvlt and not equalvlt):
 			filerotate(self.vault, 2)
-			isnew = self.encrypt(str(dump(nvlt)), output=self.vault).ok
+			#print(self.encrypt(str(dump(nvlt)), output=self.vault))
+			isnew = self.encrypt(str(dump(nvlt)), output=self.vault)
 			chmod(self.vault, 0o600)
+		#print(isnew)
+		#exit()
 		if self.rmp:
 			rmtree(self.path)
 		return isnew
