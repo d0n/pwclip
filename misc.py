@@ -31,9 +31,6 @@ def listhosts(stageha):
 			servers.append(fqdn(stageha+str(0)+str(i)))
 		elif askdns(stageha+str(i)):
 			servers.append(fqdn(stageha+str(i)))
-		elif askdns(stageha):
-			if not servers:
-				servers.append(fqdn(stageha))
 		else:
 			break
 	return servers if servers else [stageha]
