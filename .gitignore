@@ -4,4 +4,4 @@
 *.swp
 *.tar.gz
 __pycache__
-pybuild*
+pybuild
