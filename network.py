@@ -23,41 +23,26 @@ class ResolvConfParser(Command):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-		dnss = []
-		srcs = []
-		with open(self.conf, 'r') as rfh:
-			rcls = [r.strip() for r in rfh.readlines()]
-		for rl in rcls:
-			if rl.startswith('nameserver'):
-				if len(rl.split(' ')) > 1:
-					dnss.append(rl.split(' ')[1])
-			elif rl.startswith('search'):
-				if len(rl.split(' ')) > 1:
-					srcs = srcs + rl.split(' ')[1:]
-		self.resolvconf = {'nameserver': dnss, 'search': srcs}
 		if self.dbg:
 			print(bgre(ResolvConfParser.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
 
 	@property                # resolvconf <dict>
 	def resolvconf(self):
+		__rvc = {}
+		if not self._resolvconf:
+			with open(self.conf, 'r') as rvh:
+				for l in rvh.readlines():
+					if l.startswith('nameserver'):
+						if not 'nameserver' in __rvc.keys():
+							__rvc['nameserver'] = []
+						__rvc['nameserver'].append(l.split()[1])
+					elif l.startswith('search'):
+						__rvc['search'] = l.split()[1:]
+					elif l.startswith('domain'):
+						__rvc['domain'] = l.split()[1]
+			self._resolvconf = __rvc
 		return self._resolvconf
-	@resolvconf.setter
-	def resolvconf(self, val):
-		self._resolvconf = val
-
-	def _dump(self, kwargs={}):
-		rccfg = kwargs if kwargs else self.resolvconf
-		rcstr = ''
-		for typ in ('nameserver', 'search'):
-			if typ in rccfg.keys():
-				if typ == 'nameserver':
-					rcstr = '%snameserver %s\n'%(
-                        rcstr, '\nnameserver '.join(rccfg[typ]))
-				elif typ == 'search':
-					rcstr = '%s%s %s\n'%(rcstr, typ, str(
-                        ' '.join(rccfg[typ])).rstrip())
-		return rcstr
 
 	def _add(self, val):
 		rccfg = self.resolvconf
@@ -76,13 +61,12 @@ class ResolvConfParser(Command):
 		self.resolvconf = rccfg
 
 	def merge(self, kwargs):
-		rccfg = self.resolvconf
 		for typ in ('nameserver', 'search'):
-			if typ in rccfg.keys():
-				rccfg[typ] = kwargs[typ] + rccfg[typ]
+			if typ in self.resolvconf.keys():
+				self.resolvconf[typ] = kwargs[typ] + self.resolvconf[typ]
 			elif typ in kwargs.keys():
-				rccfg[typ] = kwargs[typ]
-		self.resolvconf = rccfg
+				self.resolvconf[typ] = kwargs[typ]
+		return self.resolvconf
 
 	def write(self):
 		try:
