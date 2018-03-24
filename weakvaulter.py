@@ -175,8 +175,7 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 			rmtree(self.weaks)
 		except FileNotFoundError:
 			pass
-		finally:
-			self._rmlns_()
+		self._rmlns_()
 
 	def weakvault(self, force=False):
 		if self.dbg:
