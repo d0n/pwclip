@@ -33,6 +33,7 @@ class VPNConfig(ResolvConfParser):
 		if self.dbg:
 			print(bgre(VPNConfig.__mro__))
 			print(bgre(tabd(self.__dict__, 2)))
+		ResolvConfParser.__init__(self, *args, **kwargs)
 
 	@property               # pidfile <str>
 	def pidfile(self):
@@ -91,17 +92,18 @@ class VPNConfig(ResolvConfParser):
                 self._vpnpath(self.vpncfgs['key'], vpndir),
                 self._vpnpath(self.vpncfgs['office'], vpndir),
                 self.vpncfgs['user'],  self.vpncfgs['gate'])
+		#occmd = 'ls'
 		try:
 			if self.call(occmd) == 0:
-				if 'dns' in self.vpncfgs.keys() or \
-                      'search' in self.vpncfgs.keys():
-					rccfg = {}
-					if 'dns' in self.vpncfgs.keys():
-						rccfg['nameserver'] = self.vpncfgs['dns']
-					if 'search' in self.vpncfgs.keys():
-						rccfg['search'] = self.vpncfgs['search']
-					self.merge(rccfg)
-					self.write()
+				rccfg = {}
+				if 'dns' in self.vpncfgs.keys():
+					rccfg['nameserver'] = self.vpncfgs['dns']
+				if 'search' in self.vpncfgs.keys():
+					rccfg['search'] = self.vpncfgs['search']
+				#print(self.resolvconf)
+				#print(self.merge(rccfg))
+				exit()
+				self.write()
 		except KeyboardInterrupt:
 			try:
 				abort()
