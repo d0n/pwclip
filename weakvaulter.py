@@ -93,8 +93,11 @@ class WeakVaulter(DirYamlVault, SecureSHell):
 	def _mvrtfiles_(self, src, trg):
 		if self.dbg:
 			print(bgre(self._mvrtfiles_))
-		rtfs = [f for f in listdir(src) if f and (
-            f.startswith('S') or f.startswith('.#') or f == 'random_seed')]
+		try:
+			rtfs = [f for f in listdir(src) if f and (
+                f.startswith('S') or f.startswith('.#') or f == 'random_seed')]
+		except (FileNotFoundError, OSError):
+			return
 		try:
 			for s in rtfs:
 				move(pjoin(src, s), pjoin(trg, s))
