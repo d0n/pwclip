@@ -2,6 +2,13 @@
 ##############
 *.pyc
 *.swp
+*.deb
 *.tar.gz
 __pycache__
+<<<<<<< HEAD
 pybuild
+=======
+pybuild/deb-dist
+pybuild/build
+pybuild/pwlip/lib
+>>>>>>> 19773f17b90b6f4c1f0a83d55d366e341729b201
