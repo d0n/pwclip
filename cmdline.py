@@ -213,7 +213,7 @@ def cli():
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
 
-	rpars = pars.add_argument_group('remote')
+	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
         dest='rem', action='store_true',
@@ -227,7 +227,7 @@ def cli():
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST')
 
-	gpars = pars.add_argument_group('gpg/ssl')
+	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-r', '--recipients',
         dest='rcp', metavar='ID(s)',
@@ -270,13 +270,13 @@ def cli():
         dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
 
-	ypars = pars.add_argument_group('yubikey')
+	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
 
-	gpars = pars.add_argument_group('actions')
+	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
         dest='add', metavar='ENTRY',
