@@ -74,5 +74,4 @@ if __name__ == '__main__':
         for (k, v) in sorted(kwargs.items()):
             print(k, '=', v)
         print()
-    kwargs['package_data'] = {'': ['*.rst']}
     setup(**kwargs)

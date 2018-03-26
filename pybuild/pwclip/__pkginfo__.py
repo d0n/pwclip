@@ -3,7 +3,7 @@
 from os import getcwd, path
 
 name = distname = modname = 'pwclip'
-numversion = (1, 2, 3)
+numversion = (1, 2, 4)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
@@ -41,7 +41,9 @@ except OSError:
 	readme = ''
 
 long_desc = (readme)
-
+package_data = {
+    '': ['*.rst'],
+    'example': ['*.*']}
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],

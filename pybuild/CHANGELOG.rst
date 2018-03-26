@@ -1,8 +1,20 @@
 Changelog
 =========
 
-1.2.3 (current)
+1.2.4 (current)
 ---------------
+
+Released: 2018-03-26
+
+  * fixed filerotate not copying file modes as well
+
+  * minor cleanup in gpg module
+
+  * added example files in addition to README and --help
+
+
+1.2.3
+-----
 
 Released: 2018-03-22
 
