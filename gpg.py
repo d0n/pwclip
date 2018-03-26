@@ -342,10 +342,6 @@ class GPGTool(object):
 		if 'recipients' in kwargs.keys():
 			recvs = kwargs['recipients']
 		fingers = list(self.keyexport(*recvs, **{'typ': 'e'}))
-		print(fingers)
-		#if 'keystr' in kwargs.keys():
-		#	res = self._gpg_.import_keys(kwargs['keystr']).results[0]
-		#	fingers = [res['fingerprint']]
 		out = None if 'output' not in kwargs.keys() else kwargs['output']
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=out)
