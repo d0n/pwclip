@@ -242,29 +242,29 @@ def cli():
         help='force usage of gpgsm to be SSL compliant ' \
              '(use --cert --key for imports)')
 	gpars.add_argument(
-        '--cert',
+        '-C', '--cert',
         dest='sslcrt', metavar='SSL-Certificate',
         help='one-shot setting of SSL-Certificate')
 	gpars.add_argument(
-        '--key',
+        '-K', '--key',
         dest='sslkey', metavar='SSL-Private-Key',
         help='one-shot setting of SSL-Private-Key')
 	gpars.add_argument(
-        '--ca-cert',
+        '--ca', '--ca-cert',
         dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
 	gpars.add_argument(
-        '--passcrypt',
+        '-P', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
         default=path.expanduser('~/.passcrypt'),
         help='set location of CRYPTFILE to use for gpg features')
 	gpars.add_argument(
-        '--yaml',
+        '-Y', '--yaml',
         dest='yml', metavar='YAMLFILE',
         default=path.expanduser('~/.pwd.yaml'),
         help='set location of one-time password YAMLFILE to read & delete')
 	gpars.add_argument(
-        '--slot',
+        '-S', '--slot',
         dest='ysl', default=2, type=int, choices=(1, 2),
         help='set one of the two slots on the yubi-key (only useful for -y)')
 
@@ -294,7 +294,7 @@ def cli():
 
 	args = pars.parse_args()
 	if args.yks is False and args.lst is False and args.add is None\
-	      and args.chg is None and args.rms is None:
+	      and args.chg is None and args.rms is None and (args.sslcrt is None and args.sslkey is None):
 		pars.print_help()
 		exit(1)
 

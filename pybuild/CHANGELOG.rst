@@ -4,16 +4,20 @@ Changelog
 1.2.4 (current)
 ---------------
 
-Released: 2018-03-26
+Released: 2018-03-27
 
   * fixed filerotate not copying file modes as well
 
   * fixed encrypt function when setting recipients via user environment
-    variables (GPGKEY/GPGKEYS)
+    variables (GPGKEY/GPGKEYS) only
+
+  * fixed creating a new password crypt file from scratch
 
   * minor cleanup in gpg module
 
   * added example files in addition to README and --help
+
+  * fixed some obsolete info in README
 
 
 1.2.3

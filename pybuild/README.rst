@@ -129,7 +129,6 @@ use:
 
 ``pwcli -A -l $PATTERN``
 
-
 Yubikey-Mode
 ------------
 ``ykclip``
@@ -140,22 +139,26 @@ Likewise it also accepts an option:
 
 ``pwcli -y $YKSERIAL``
 
+To have it wait for a specific time like 60 seconds (bevore resetting the paste
+buffer to the previously copied value) the PWCLIPTIME environment variable is
+used or also the command accepts it as input:
+
+``pwcli -t 60 -l mysavedusername``
+
 Most of the options may be combined. For more information on possible options in
 cli mode please see:
 
 ``pwcli --help``
 
+GUI-Mode
+--------
 
-GUI-Modes
----------
+For the GUI-Mode just use one of the following commands, not accepting any
+options or arguments:
 
-To have it wait for a specific time like 5 seconds (bevore resetting the paste
-buffer to the previously copied value) the PWCLIPTIME environment variable is
-used or also the command accepts that as input:
+``pwclip``
 
-``pwcli -t 10 -A -l``
-
-To set the timer in gui mode 
+``ykclip``
 
 
 Troubleshooting
