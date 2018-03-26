@@ -258,7 +258,7 @@ class GitRepo(Command):
 				adds.append(line.split()[1])
 			elif line.split()[0] == 'D':
 				dels.append(line.split()[1])
-			elif line.split()[0] in ('M', 'MM'):
+			elif line.split()[0] in ('M', 'MM', 'T'):
 				mods.append(line.split()[1])
 			elif line.split()[0] == 'R':
 				rens.append(line.split()[1:])
