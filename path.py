@@ -100,10 +100,12 @@ def filerotate(lfile, count=1):
 		new = '%s.%d'%(lfile, int(i+1))
 		try:
 			mt, at = filetime(old)
+			mode = osstat(old).st_mode
 		except FileNotFoundError:
 			continue
 		copy2(old, new)
 		setfiletime(new, mt, at)
+		chmod(new, mode)
 
 def filesiter(folder, random=False):
 	for (d, _, fs) in walk(absrelpath(folder)):
