@@ -8,6 +8,9 @@ Released: 2018-03-26
 
   * fixed filerotate not copying file modes as well
 
+  * fixed encrypt function when setting recipients via user environment
+    variables (GPGKEY/GPGKEYS)
+
   * minor cleanup in gpg module
 
   * added example files in addition to README and --help
