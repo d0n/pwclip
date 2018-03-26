@@ -40,7 +40,8 @@ def setupkwargs(pinf):
         'description',
         'ext_modules',
         'author_email',
-        'install_requires')
+        'install_requires',
+        'include_package_data')
     unils = (
         'packages',
         'classifiers',
@@ -73,5 +74,5 @@ if __name__ == '__main__':
         print()
         for (k, v) in sorted(kwargs.items()):
             print(k, '=', v)
-        print()
+        input()
     setup(**kwargs)
