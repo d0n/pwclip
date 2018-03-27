@@ -4,7 +4,6 @@
 *.swp
 *.deb
 *.tar.gz
-.*__pycache__.*
-pybuild/deb-dist.*
-pybuild/build.*
-pybuild/pwlip/lib.*
+pybuild/deb-dist
+pybuild/build
+pybuild/pwlip/lib
