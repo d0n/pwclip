@@ -34,7 +34,7 @@ from colortext import blu, yel, bgre, tabd, error
 
 from system import absrelpath, fileage, filerotate
 
-from secrecy import GPGTool
+from secrecy.gpgtools import GPGTool
 
 class DirYamlVault(GPGTool):
 	dbg = None

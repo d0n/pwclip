@@ -18,7 +18,7 @@ from system import userfind, setfiletime
 
 from net.ssh import SecureSHell
 
-from secrecy.gpg import GPGTool, GPGSMTool
+from secrecy.gpgtools import GPGTool, GPGSMTool
 
 class PassCrypt(object):
 	"""passcrypt main class"""
