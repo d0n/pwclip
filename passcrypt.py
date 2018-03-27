@@ -83,6 +83,8 @@ class PassCrypt(object):
 		if self.remote and self._copynews_():
 			write = True
 		__weaks = self._readcrypt()
+		if not __weaks and not path.exists(self.plain):
+			__weaks = {self.user: {}}
 		self.__oldweaks = __weaks
 		try:
 			with open(self.plain, 'r') as pfh:
@@ -138,7 +140,7 @@ class PassCrypt(object):
 			with open(self.crypt, 'r') as vlt:
 				crypt = vlt.read()
 		except FileNotFoundError:
-			return None
+			return False
 		return load(str(self.gpg.decrypt(crypt)))
 
 	def _writecrypt(self, __weak):
@@ -213,6 +215,7 @@ class PassCrypt(object):
 			print(bgre(tabd({self.lspw: {'user': self.user, 'entry': usr}})))
 		aal = True if aal else self.aal
 		if self.__weaks:
+			__ents = {}
 			if aal:
 				__ents = self.__weaks
 				if usr:
@@ -224,7 +227,8 @@ class PassCrypt(object):
 			elif self.user in self.__weaks.keys():
 				__ents = self.__weaks[self.user]
 				if usr:
-					__ents = {usr: self._findentry(usr, __ents)}
+					__ents = {
+                        usr: self._findentry(usr, __ents if __ents else {})}
 			return __ents
 
 def lscrypt(usr, dbg=None):

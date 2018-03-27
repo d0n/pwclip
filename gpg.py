@@ -337,15 +337,12 @@ class GPGTool(object):
 			recvs = [environ['GPGKEY']] + [
                 k for k in recvs if k != environ['GPGKEY']]
 		#print(recvs)
-		if self.recvs:
-			recvs = self.recvs
+		recvs = self.recvs
 		if 'recipients' in kwargs.keys():
 			recvs = kwargs['recipients']
+		elif 'recvs' in kwargs.keys():
+			recvs = kwargs['recvs']
 		fingers = list(self.keyexport(*recvs, **{'typ': 'e'}))
-		#print(fingers)
-		#if 'keystr' in kwargs.keys():
-		#	res = self._gpg_.import_keys(kwargs['keystr']).results[0]
-		#	fingers = [res['fingerprint']]
 		out = None if 'output' not in kwargs.keys() else kwargs['output']
 		return self._gpg_.encrypt(
             message, fingers, always_trust=True, output=out)
@@ -377,6 +374,9 @@ class GPGTool(object):
                         'decryption failed - retry? [Y/n]'
                         )).lower() in ('y', '') else False
 			if not yesno:
-				raise RuntimeError('%s cannot decrypt'%self.decrypt)
+				raise PermissionError('%s cannot decrypt'%self.decrypt)
 			self.__c += 1
-			self.__ppw = self._passwd()
+			try:
+				self.__ppw = self._passwd()
+			except KeyboardInterrupt:
+				return False
