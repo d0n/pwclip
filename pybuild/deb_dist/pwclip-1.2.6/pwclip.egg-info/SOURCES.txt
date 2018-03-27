@@ -2,6 +2,7 @@ CHANGELOG.rst
 MANIFEST.in
 README
 README.rst
+setup.cfg
 setup.py
 example/ca.crt
 example/command.lst

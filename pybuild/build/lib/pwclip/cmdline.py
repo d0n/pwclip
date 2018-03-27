@@ -258,7 +258,7 @@ def cli():
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
 
-	gpars = pars.add_argument_group('actions')
+	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
         dest='add', metavar='ENTRY',
