@@ -1,5 +1,5 @@
 Format: 1.8
-Date: Tue, 27 Mar 2018 08:02:54 +0200
+Date: Tue, 27 Mar 2018 08:05:04 +0200
 Source: pwclip
 Binary: python3-pwclip
 Architecture: source
@@ -15,17 +15,17 @@ Changes:
  .
    * source package automatically created by stdeb 0.8.5
 Checksums-Sha1:
- 1a94aff9811a455a17d3cdf7ae7312845d73eacb 821 pwclip_1.2.6-1.dsc
- bad885f5617cd7bbedee193e62c5ae124f5ebd72 174130 pwclip_1.2.6.orig.tar.gz
- f44836618fe6d51d67229b0acb07173111202d71 1380 pwclip_1.2.6-1.debian.tar.xz
- 4672c4b37563571f652cf957f0dbb073fc98df4f 6094 pwclip_1.2.6-1_source.buildinfo
+ c89ce4274f4ae4d12654a963be4666069d11d745 821 pwclip_1.2.6-1.dsc
+ 8bf45eb8386afdc6c7755d8fda4d74e5dc5dbe63 174132 pwclip_1.2.6.orig.tar.gz
+ c3edc33c9092ba6c9fb764b5d34c07a9fbfe444a 1380 pwclip_1.2.6-1.debian.tar.xz
+ b3a925039ab43443b38a6ec434d7cfed9b5a13a5 6094 pwclip_1.2.6-1_source.buildinfo
 Checksums-Sha256:
- 26751c1e36c153a18440ce46b3ce2a9c260dec5deb2633541443b154019e7057 821 pwclip_1.2.6-1.dsc
- 21173b8c2c6a233e5d08f49d99a87ad98f78a62d8354436adb05ad772dd916de 174130 pwclip_1.2.6.orig.tar.gz
- 8dc234a0e759ea4b012bcc6f6861f9b20bbb16a9ac7de387f9ae89e18f47a2d3 1380 pwclip_1.2.6-1.debian.tar.xz
- c0597897f83ce11af92dcaebeeab28069f175f453e956d5007de0eb28b86dfaf 6094 pwclip_1.2.6-1_source.buildinfo
+ 55fb878ce65330dd60768e6960bae1b9a53a8bc17a64e7b0749803840f1cdb9a 821 pwclip_1.2.6-1.dsc
+ 5461410d85d41ad939238d89728a2b4febbe70e24230f1cb0cb1499a5bb88add 174132 pwclip_1.2.6.orig.tar.gz
+ 1333ad515bd23168e1525904b631cc603a5010ce303ae89a7c8066e3abc687de 1380 pwclip_1.2.6-1.debian.tar.xz
+ 6045448800b4b3ffd646b8d709469232d41cf461c9febd7eeebefdfb039279bf 6094 pwclip_1.2.6-1_source.buildinfo
 Files:
- 65bb4a636ec85dd1da08a711423a2ca8 821 python optional pwclip_1.2.6-1.dsc
- e1a752cda34922081ffcdf813f607ca9 174130 python optional pwclip_1.2.6.orig.tar.gz
- 0b232ae043b4437cdba4f163bac608ef 1380 python optional pwclip_1.2.6-1.debian.tar.xz
- bc2d41720274675d545d85a8a8c1092a 6094 python optional pwclip_1.2.6-1_source.buildinfo
+ e866aaf0cf7e1f20daaab903b8024ab0 821 python optional pwclip_1.2.6-1.dsc
+ ae4570790ad79d1890c8fb1a3444acda 174132 python optional pwclip_1.2.6.orig.tar.gz
+ a0f61b2b9e9f6eac8531cf7c826f7808 1380 python optional pwclip_1.2.6-1.debian.tar.xz
+ 5f303158ca052611a389d8f953f1917d 6094 python optional pwclip_1.2.6-1_source.buildinfo
