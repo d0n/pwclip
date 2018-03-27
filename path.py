@@ -2,7 +2,7 @@ from os import getcwd, chdir, chmod, walk, \
     readlink, listdir, utime, stat as osstat
 from os.path import expanduser, islink, \
     isfile, isdir, abspath, join as pjoin
-from shutil import copy2
+from shutil import copyfile
 import inspect
 from stat import S_ISSOCK as _ISSOCK
 from configparser import ConfigParser as _ConfPars
@@ -103,7 +103,7 @@ def filerotate(lfile, count=1):
 			mode = osstat(old).st_mode
 		except FileNotFoundError:
 			continue
-		copy2(old, new)
+		copyfile(old, new)
 		setfiletime(new, mt, at)
 		chmod(new, mode)
 
