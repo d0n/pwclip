@@ -1,5 +1,5 @@
 Format: 1.8
-Date: Tue, 27 Mar 2018 08:05:04 +0200
+Date: Tue, 27 Mar 2018 10:55:21 +0200
 Source: pwclip
 Binary: python3-pwclip
 Architecture: all
@@ -15,11 +15,8 @@ Changes:
  .
    * source package automatically created by stdeb 0.8.5
 Checksums-Sha1:
- 727038f8a7f86094139a3395b307e7b0e19c0037 6133 pwclip_1.2.6-1_amd64.buildinfo
- a79a5883b500115058bbd87df6cc779ff6f90e67 26532 python3-pwclip_1.2.6-1_all.deb
+ 47648a40d11f27be5d1ff538db21aa498135044c 26302 python3-pwclip_1.2.6-1_all.deb
 Checksums-Sha256:
- 1b9e1421d5e7e930c67594402ab030a40e98d2b0b666dafd1eef250ef6eb8e5f 6133 pwclip_1.2.6-1_amd64.buildinfo
- ffd367d8d6da7eb0eb942ed17170d0bd8992eae104aec77d67e69295f38cb712 26532 python3-pwclip_1.2.6-1_all.deb
+ 705b576dab563f6718697a5a106f619b030f8c30d09c56982ed55096be47eaf8 26302 python3-pwclip_1.2.6-1_all.deb
 Files:
- bf83135bb64c570aabe16f922a77bd77 6133 python optional pwclip_1.2.6-1_amd64.buildinfo
- 5a998fb26d59eaf903dff757f8df7de7 26532 python optional python3-pwclip_1.2.6-1_all.deb
+ 1712b46ebf1e626abdfeab6850243c85 26302 python optional python3-pwclip_1.2.6-1_all.deb

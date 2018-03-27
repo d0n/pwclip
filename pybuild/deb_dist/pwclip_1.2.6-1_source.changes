@@ -1,5 +1,5 @@
 Format: 1.8
-Date: Tue, 27 Mar 2018 08:05:04 +0200
+Date: Tue, 27 Mar 2018 10:55:21 +0200
 Source: pwclip
 Binary: python3-pwclip
 Architecture: source
@@ -15,17 +15,14 @@ Changes:
  .
    * source package automatically created by stdeb 0.8.5
 Checksums-Sha1:
- c89ce4274f4ae4d12654a963be4666069d11d745 821 pwclip_1.2.6-1.dsc
- 8bf45eb8386afdc6c7755d8fda4d74e5dc5dbe63 174132 pwclip_1.2.6.orig.tar.gz
- c3edc33c9092ba6c9fb764b5d34c07a9fbfe444a 1380 pwclip_1.2.6-1.debian.tar.xz
- b3a925039ab43443b38a6ec434d7cfed9b5a13a5 6094 pwclip_1.2.6-1_source.buildinfo
+ 0e0715859c390e06260a53542005bdae5bc199a3 821 pwclip_1.2.6-1.dsc
+ 2f6b7f7b595977b4656c970d4e2cf68cd5a0732c 173978 pwclip_1.2.6.orig.tar.gz
+ b9c0d9e387ed60806d13474aaca7faf485cc99cf 1380 pwclip_1.2.6-1.debian.tar.xz
 Checksums-Sha256:
- 55fb878ce65330dd60768e6960bae1b9a53a8bc17a64e7b0749803840f1cdb9a 821 pwclip_1.2.6-1.dsc
- 5461410d85d41ad939238d89728a2b4febbe70e24230f1cb0cb1499a5bb88add 174132 pwclip_1.2.6.orig.tar.gz
- 1333ad515bd23168e1525904b631cc603a5010ce303ae89a7c8066e3abc687de 1380 pwclip_1.2.6-1.debian.tar.xz
- 6045448800b4b3ffd646b8d709469232d41cf461c9febd7eeebefdfb039279bf 6094 pwclip_1.2.6-1_source.buildinfo
+ f988a342edf402a47b9f5eded0e365a7fd0ae74853c8a14efe736e9488c5d77d 821 pwclip_1.2.6-1.dsc
+ 3810ef7162d74ddde181ee7f11c9633474f886cbb133ce6b6cb1db7637b2e8c1 173978 pwclip_1.2.6.orig.tar.gz
+ a9a98ecae787ed6227eff71dadd61506ee5d285b61cc07eab098cbab1ffe19f0 1380 pwclip_1.2.6-1.debian.tar.xz
 Files:
- e866aaf0cf7e1f20daaab903b8024ab0 821 python optional pwclip_1.2.6-1.dsc
- ae4570790ad79d1890c8fb1a3444acda 174132 python optional pwclip_1.2.6.orig.tar.gz
- a0f61b2b9e9f6eac8531cf7c826f7808 1380 python optional pwclip_1.2.6-1.debian.tar.xz
- 5f303158ca052611a389d8f953f1917d 6094 python optional pwclip_1.2.6-1_source.buildinfo
+ c5c40c5d4280259a33e7aec80ef6ea90 821 python optional pwclip_1.2.6-1.dsc
+ 7bd0ff45cd1d9569dc3b26569306a36e 173978 python optional pwclip_1.2.6.orig.tar.gz
+ 39c8e5ee1748acccdb02d45c861c381c 1380 python optional pwclip_1.2.6-1.debian.tar.xz

@@ -9,11 +9,11 @@ Build-Depends: dh-python, python3-setuptools, python3-all, debhelper (>= 9)
 Package-List:
  python3-pwclip deb python optional arch=all
 Checksums-Sha1:
- 8bf45eb8386afdc6c7755d8fda4d74e5dc5dbe63 174132 pwclip_1.2.6.orig.tar.gz
- c3edc33c9092ba6c9fb764b5d34c07a9fbfe444a 1380 pwclip_1.2.6-1.debian.tar.xz
+ 2f6b7f7b595977b4656c970d4e2cf68cd5a0732c 173978 pwclip_1.2.6.orig.tar.gz
+ b9c0d9e387ed60806d13474aaca7faf485cc99cf 1380 pwclip_1.2.6-1.debian.tar.xz
 Checksums-Sha256:
- 5461410d85d41ad939238d89728a2b4febbe70e24230f1cb0cb1499a5bb88add 174132 pwclip_1.2.6.orig.tar.gz
- 1333ad515bd23168e1525904b631cc603a5010ce303ae89a7c8066e3abc687de 1380 pwclip_1.2.6-1.debian.tar.xz
+ 3810ef7162d74ddde181ee7f11c9633474f886cbb133ce6b6cb1db7637b2e8c1 173978 pwclip_1.2.6.orig.tar.gz
+ a9a98ecae787ed6227eff71dadd61506ee5d285b61cc07eab098cbab1ffe19f0 1380 pwclip_1.2.6-1.debian.tar.xz
 Files:
- ae4570790ad79d1890c8fb1a3444acda 174132 pwclip_1.2.6.orig.tar.gz
- a0f61b2b9e9f6eac8531cf7c826f7808 1380 pwclip_1.2.6-1.debian.tar.xz
+ 7bd0ff45cd1d9569dc3b26569306a36e 173978 pwclip_1.2.6.orig.tar.gz
+ 39c8e5ee1748acccdb02d45c861c381c 1380 pwclip_1.2.6-1.debian.tar.xz

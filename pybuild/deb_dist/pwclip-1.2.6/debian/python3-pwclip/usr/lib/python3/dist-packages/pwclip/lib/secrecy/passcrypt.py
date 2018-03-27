@@ -216,8 +216,8 @@ class PassCrypt(object):
 		if self.dbg:
 			print(bgre(tabd({self.lspw: {'user': self.user, 'entry': usr}})))
 		aal = True if aal else self.aal
-		__ents = {}
 		if self.__weaks:
+			__ents = {}
 			if aal:
 				__ents = self.__weaks
 				if usr:
@@ -231,7 +231,8 @@ class PassCrypt(object):
 				if usr:
 					__ents = {
                         usr: self._findentry(usr, __ents if __ents else {})}
-		return __ents
+			return __ents
+		return {}
 
 def lscrypt(usr, dbg=None):
 	"""passlist wrapper function"""

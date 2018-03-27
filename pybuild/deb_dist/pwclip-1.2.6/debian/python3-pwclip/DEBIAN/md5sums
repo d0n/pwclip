@@ -1,7 +1,7 @@
 eb2b09337795e34b90801b8549f5f900  usr/bin/pwcli
 650695728a5aff31859f98204a562636  usr/bin/pwclip
 72e0b1b56ed20d52d4b1bcba75b5cf20  usr/bin/ykclip
-9842533cb7db8eaf2d4e02c8493caf9f  usr/lib/python3/dist-packages/pwclip-1.2.6.egg-info/PKG-INFO
+dab025102f0fbf7659649028045c2eaf  usr/lib/python3/dist-packages/pwclip-1.2.6.egg-info/PKG-INFO
 68b329da9893e34099c7d8ad5cb9c940  usr/lib/python3/dist-packages/pwclip-1.2.6.egg-info/dependency_links.txt
 a97ad6b64f25791209a31d47e17860cb  usr/lib/python3/dist-packages/pwclip-1.2.6.egg-info/entry_points.txt
 434358fdcb6d21bb160c7af91d2d350c  usr/lib/python3/dist-packages/pwclip-1.2.6.egg-info/requires.txt
@@ -20,7 +20,7 @@ fbdc02d14a158ae64f5ba0418f85224b  usr/lib/python3/dist-packages/pwclip/lib/net/_
 3f36f1117348285415fdd5486f189194  usr/lib/python3/dist-packages/pwclip/lib/net/ssh.py
 62fff99eb6100385fd48366a1a35bf21  usr/lib/python3/dist-packages/pwclip/lib/secrecy/__init__.py
 e14e6c5cde49c6fb318e714aca4fe57b  usr/lib/python3/dist-packages/pwclip/lib/secrecy/gpgtools.py
-eb5636d288e3883e9ecc8b45a70117fd  usr/lib/python3/dist-packages/pwclip/lib/secrecy/passcrypt.py
+d87af170700892b1845a0e8b49e92270  usr/lib/python3/dist-packages/pwclip/lib/secrecy/passcrypt.py
 727335d3d84c1a91bf44c3fbe9470243  usr/lib/python3/dist-packages/pwclip/lib/secrecy/yubi.py
 add68245fd46342edb45c8f18f3b0aa1  usr/lib/python3/dist-packages/pwclip/lib/system/__init__.py
 cf84566450e3f658272bc0001398a45a  usr/lib/python3/dist-packages/pwclip/lib/system/agentinfo.py
@@ -37,4 +37,4 @@ ad66ba4fb40b89070efddd9c8b641919  usr/lib/python3/dist-packages/pwclip/lib/syste
 3a5a8e2bab9fd51012a15d31c8561836  usr/lib/python3/dist-packages/pwclip/lib/system/xlib/xmsgok.py
 e8b77d7a3b0a0b4a6df545b5ef5de021  usr/lib/python3/dist-packages/pwclip/lib/system/xlib/xnotify.py
 685187b5ad9dd59513bad38bf22a7ff1  usr/lib/python3/dist-packages/pwclip/lib/system/xlib/xyesno.py
-fb39b7ba8ee059c22da6b2bca281db59  usr/share/doc/python3-pwclip/changelog.Debian.gz
+c7f88ad24bd0f32773e08a3af7c97c50  usr/share/doc/python3-pwclip/changelog.Debian.gz
