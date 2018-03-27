@@ -1,12 +1,12 @@
 Changelog
 =========
 
-1.2.4 (current)
+1.2.5 (current)
 ---------------
 
 Released: 2018-03-27
 
-  * lotz of pytlint linting stuff
+  * lotz of linting - almost everything fixed complying to pylint3
 
   * renamed gpg module to gpgtool due to namespace restrictions
 
