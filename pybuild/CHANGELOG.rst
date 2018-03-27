@@ -6,6 +6,16 @@ Changelog
 
 Released: 2018-03-27
 
+  * lotz of pytlint linting stuff
+
+  * renamed gpg module to gpgtool due to namespace restrictions
+
+
+1.2.4
+-----
+
+Released: 2018-03-27
+
   * fixed filerotate not copying file modes as well
 
   * fixed encrypt function when setting recipients via user environment

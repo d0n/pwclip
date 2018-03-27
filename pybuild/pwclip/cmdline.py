@@ -26,11 +26,7 @@ from subprocess import call
 
 from argparse import ArgumentParser
 
-from socket import gethostname as hostname
-
 from time import sleep
-
-from getpass import getpass
 
 from yaml import load
 
@@ -40,9 +36,9 @@ except ImportError:
 	pass
 
 # local relative imports
-from colortext import blu, bgre, tabd, error, fatal
+from colortext import bgre, tabd, error, fatal
 
-from system import copy, paste, xinput, xgetpass, xyesno, xnotify, which
+from system import copy, paste, xinput, xyesno, xnotify, which
 
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
@@ -59,7 +55,7 @@ if osname == 'nt' and not which('gpg.exe'):
 	finally:
 		remove(trg)
 
-from secrecy import GPGTool, PassCrypt, ykchalres
+from secrecy import PassCrypt, ykchalres
 
 from pwclip.__pkginfo__ import version
 
@@ -75,13 +71,6 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 	exit(0)
-
-def __keycheck(mode, kwargs):
-	gpg = GPGTool(**kwargs)
-	if gpg.findkey('', secret=True):
-		return
-	environ['GPGKEY'] = gpg.genkeys(mode)
-	return environ['GPGKEY']
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -160,9 +149,6 @@ def gui(typ='pw'):
 		if not __res:
 			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	key = __keycheck('gui', cfgs)
-	if key:
-		cfgs['recvs'] = key
 	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
 	__in = xinput()
 	if not __in: exit(1)
@@ -186,7 +172,7 @@ def cli():
            'secure accessing your passwords'
 	epic = 'the yubikey feature is compatible with challenge-response ' \
            'features only'
-	pars = ArgumentParser(epilog=epic) #add_help=False)
+	pars = ArgumentParser(description=prol, epilog=epic) #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -346,9 +332,6 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
-		key = __keycheck('cli', __pkwargs)
-		if key:
-			__pkwargs['recvs'] = key
 		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:

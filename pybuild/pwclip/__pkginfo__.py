@@ -30,17 +30,16 @@ classifiers = ['Environment :: Console',
                'Topic :: Utilities',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
-try:
-    with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
-        changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
-    with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
-        readme = rfh.read().format(ChangeLog=changelog)
-    with open(path.join(getcwd(), 'README'), 'w+') as rfh:
-        rfh.write(readme)
-except OSError:
-    readme = ''
 include_package_data = True
-
+try:
+	with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
+		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
+	with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
+		readme = rfh.read().format(ChangeLog=changelog)
+	with open(path.join(getcwd(), 'README'), 'w+') as rfh:
+		rfh.write(readme)
+except OSError:
+	readme = ''
 long_desc = (readme)
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
