@@ -34,6 +34,4 @@ from system.xlib import xinput, xnotify, xyesno, xmsgok, xgetpass
 
 from system.doom import Daemon
 
-from system.parafun import parafun
-
 from system.yamlazar import Yamlazar
