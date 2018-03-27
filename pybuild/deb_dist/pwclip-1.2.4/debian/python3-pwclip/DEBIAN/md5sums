@@ -9,7 +9,7 @@ ddf06c9ad9f608ad7c1794b1797f9dbc  usr/lib/python3/dist-packages/pwclip-1.2.4.egg
 f945794661f130e40589c07ae643316f  usr/lib/python3/dist-packages/pwclip/__init__.py
 5e8e2ff94f880750a0477e3a43d4d907  usr/lib/python3/dist-packages/pwclip/__main__.py
 bb82e26b0f8e8578603da761d65b800f  usr/lib/python3/dist-packages/pwclip/__pkginfo__.py
-0a304c418438a1319d64a926b6ab1cc2  usr/lib/python3/dist-packages/pwclip/cmdline.py
+f483c91623d0d3f107ac8930a09e4426  usr/lib/python3/dist-packages/pwclip/cmdline.py
 d41d8cd98f00b204e9800998ecf8427e  usr/lib/python3/dist-packages/pwclip/lib/__init__.py
 f28af0fd7ca059887c04160799185761  usr/lib/python3/dist-packages/pwclip/lib/colortext/__init__.py
 7c299296f609ae46848f64b9e6ddad9a  usr/lib/python3/dist-packages/pwclip/lib/colortext/colortext.py
@@ -37,4 +37,4 @@ ad66ba4fb40b89070efddd9c8b641919  usr/lib/python3/dist-packages/pwclip/lib/syste
 3a5a8e2bab9fd51012a15d31c8561836  usr/lib/python3/dist-packages/pwclip/lib/system/xlib/xmsgok.py
 e8b77d7a3b0a0b4a6df545b5ef5de021  usr/lib/python3/dist-packages/pwclip/lib/system/xlib/xnotify.py
 685187b5ad9dd59513bad38bf22a7ff1  usr/lib/python3/dist-packages/pwclip/lib/system/xlib/xyesno.py
-dba322efdbeaadb6270b837c67099811  usr/share/doc/python3-pwclip/changelog.Debian.gz
+5ff92fc83a4c880b93eb287687efc4f8  usr/share/doc/python3-pwclip/changelog.Debian.gz

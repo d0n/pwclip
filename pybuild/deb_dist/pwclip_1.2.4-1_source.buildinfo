@@ -4,14 +4,14 @@ Binary: python3-pwclip
 Architecture: source
 Version: 1.2.4-1
 Checksums-Md5:
- bbd7c33ea01eba51681364248e8ed4f1 818 pwclip_1.2.4-1.dsc
+ 2a2d26f846bb530651bc353dfd354025 818 pwclip_1.2.4-1.dsc
 Checksums-Sha1:
- d5ed04bd08c40b5336c7dbc5a522dc0855f637a4 818 pwclip_1.2.4-1.dsc
+ e8df8cc1aaf853adc2bd5366ec2312ccc45abe00 818 pwclip_1.2.4-1.dsc
 Checksums-Sha256:
- 3ba84067e8a0af2d97b87223e5eed335eb52c3329cf7799cc50bdc97d6b0ecc6 818 pwclip_1.2.4-1.dsc
+ c8dfc0eb22994443e39385a2619874bd463621bf6d588a63a7d160745bcf6c08 818 pwclip_1.2.4-1.dsc
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Tue, 27 Mar 2018 07:33:11 +0200
+Build-Date: Tue, 27 Mar 2018 07:42:34 +0200
 Installed-Build-Depends:
  autoconf (= 2.69-11),
  automake (= 1:1.15.1-3ubuntu2),
@@ -201,4 +201,4 @@ Environment:
  LC_PAPER="de_DE.UTF-8"
  LC_TELEPHONE="de_DE.UTF-8"
  LC_TIME="de_DE.UTF-8"
- SOURCE_DATE_EPOCH="1522128790"
+ SOURCE_DATE_EPOCH="1522129352"

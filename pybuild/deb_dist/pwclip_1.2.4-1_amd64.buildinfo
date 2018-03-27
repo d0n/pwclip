@@ -4,14 +4,14 @@ Binary: python3-pwclip
 Architecture: all
 Version: 1.2.4-1
 Checksums-Md5:
- 50b69b261514f8251dca6d17e498a0c7 23244 python3-pwclip_1.2.4-1_all.deb
+ 133f9cbf9a2e326b80d1f01c1fa1a63b 23196 python3-pwclip_1.2.4-1_all.deb
 Checksums-Sha1:
- d2a0548b927551a3b98bc502881946d216778883 23244 python3-pwclip_1.2.4-1_all.deb
+ 87ea4e22ad8713cf4d693a660dc13f7033435110 23196 python3-pwclip_1.2.4-1_all.deb
 Checksums-Sha256:
- 9fc53987ffa4aa510b3d1561416678a9fa75bab1addf0ea1078f7e54e6e3a8cf 23244 python3-pwclip_1.2.4-1_all.deb
+ 7273320f1483e0480a99e0fd2fc434a129f75d062c9dd01b94dfab9d4ba9787f 23196 python3-pwclip_1.2.4-1_all.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Tue, 27 Mar 2018 07:33:17 +0200
+Build-Date: Tue, 27 Mar 2018 07:42:39 +0200
 Installed-Build-Depends:
  autoconf (= 2.69-11),
  automake (= 1:1.15.1-3ubuntu2),
@@ -201,4 +201,4 @@ Environment:
  LC_PAPER="de_DE.UTF-8"
  LC_TELEPHONE="de_DE.UTF-8"
  LC_TIME="de_DE.UTF-8"
- SOURCE_DATE_EPOCH="1522128790"
+ SOURCE_DATE_EPOCH="1522129352"
