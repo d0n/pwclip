@@ -1,0 +1,31 @@
+Format: 1.8
+Date: Tue, 27 Mar 2018 12:13:11 +0200
+Source: pwclip
+Binary: python3-pwclip
+Architecture: source
+Version: 1.2.7-1
+Distribution: unstable
+Urgency: low
+Maintainer: Leon Pelzer <mail@leonpelzer.de>
+Changed-By: Leon Pelzer <mail@leonpelzer.de>
+Description:
+ python3-pwclip - gui to temporarily save passwords to system-clipboard
+Changes:
+ pwclip (1.2.7-1) unstable; urgency=low
+ .
+   * source package automatically created by stdeb 0.8.5
+Checksums-Sha1:
+ f66acb29778343a4929698da9881219968db367b 821 pwclip_1.2.7-1.dsc
+ c54ddc59c523542d51e8dee522ef76bc32f69ee3 173999 pwclip_1.2.7.orig.tar.gz
+ a7273f3b136e185406566eb21e4d54f5eb2d0946 1380 pwclip_1.2.7-1.debian.tar.xz
+ 9e4b81eece19fd83a21a62bb3d5c7eebdb5bd45b 6094 pwclip_1.2.7-1_source.buildinfo
+Checksums-Sha256:
+ b6e2d61450257c15af273587d2e0d83ee1c8a88126bb64b72381f63135456a37 821 pwclip_1.2.7-1.dsc
+ f347d5bfdefc60d61e25589b4a59d44c4567799a8493cfc69f557916047e1d9e 173999 pwclip_1.2.7.orig.tar.gz
+ 1278f3efc943c1c0488fb7774d8bb1fa37e39cc606e6d5b5a36aaa2f7a23d082 1380 pwclip_1.2.7-1.debian.tar.xz
+ f632f479c2b99e21a4af26bae8a382f1476096f9f7400e2e7f93956df0cdc34b 6094 pwclip_1.2.7-1_source.buildinfo
+Files:
+ 22639243f5c3014b3175beaa7941ffe4 821 python optional pwclip_1.2.7-1.dsc
+ ceb1ba21db21c7059fbeb3e29fbb784a 173999 python optional pwclip_1.2.7.orig.tar.gz
+ a560e9b8dd75174a7eb038999d813165 1380 python optional pwclip_1.2.7-1.debian.tar.xz
+ c48c1190400738ae67113f3ab026ade5 6094 python optional pwclip_1.2.7-1_source.buildinfo
