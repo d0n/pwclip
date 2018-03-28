@@ -44,13 +44,16 @@ class GitSync(GitRepo):
 		branch = branch if branch else self._head()
 		if branch != self._head(): self.checkout(branch)
 		if [m for m in self.syncmodes if m in ('sync', 'pull')]:
-			self.pull()
+			if self.pull() == 1:
+				self.push(branch)
+
 		status, ahead, behind = self.gitstatus()
 		if not status and not ahead and not behind:
 			if self.branch and self.branch != branch:
 				self.gitsync(self.branch)
 		if [m for m in self.syncmodes if m in ('sync', 'push')]:
-			if ahead: self.push(branch)
+			if ahead:
+				self.push(branch)
 		if [m for m in self.syncmodes if m in ('sync', 'commit')]:
 			if status:
 				self.add()

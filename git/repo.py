@@ -113,7 +113,8 @@ class GitRepo(Command):
 		branch = branch if branch else self._head()
 		o, e, n = self.oerc('%s pull %s %s'%(self.gitbin, origin, branch))
 		if int(n) != 0:
-			error(e, 'exited with', n)
+			error(' in forked git process by:\n',
+                  '%s\n'%self.pull, n, ': ', e, sep='')
 		if o and o.strip() not in (
               'Already up-to-date.', 'Already up to date.'):
 			print(o.strip())
