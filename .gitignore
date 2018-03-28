@@ -4,6 +4,7 @@
 *.swp
 *.deb
 *.tar.gz
+pybuild/README
 pybuild/deb_dist/*
 pybuild/dist/*
 pybuild/build/*
