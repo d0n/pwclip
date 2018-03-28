@@ -4,6 +4,8 @@
 *.swp
 *.deb
 *.tar.gz
-pybuild/deb-dist
-pybuild/build
-pybuild/pwlip/lib
+pybuild/deb_dist/*
+pybuild/dist/*
+pybuild/build/*
+pybuild/pwlip/lib/*
+pybuild/pwclip.egg-info/*
