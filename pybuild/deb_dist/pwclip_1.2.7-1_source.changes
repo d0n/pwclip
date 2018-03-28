@@ -1,5 +1,5 @@
 Format: 1.8
-Date: Tue, 27 Mar 2018 11:20:29 +0200
+Date: Wed, 28 Mar 2018 11:46:25 +0200
 Source: pwclip
 Binary: python3-pwclip
 Architecture: source
@@ -15,14 +15,14 @@ Changes:
  .
    * source package automatically created by stdeb 0.8.5
 Checksums-Sha1:
- 7af46550939b257cc8e1356d609ffb1c1bb69cdb 821 pwclip_1.2.7-1.dsc
- 883da4cd3f2589380bcd385beb630c976c245f35 173987 pwclip_1.2.7.orig.tar.gz
- 8fa809e490c8b62c87436d04385c2fdc59fb7ff8 1380 pwclip_1.2.7-1.debian.tar.xz
+ f3f83827606d06ff327c48254428ee6c31d23a30 821 pwclip_1.2.7-1.dsc
+ 6e3dc0cc02a51322b7d96a2daa71d526f1ed71a4 174185 pwclip_1.2.7.orig.tar.gz
+ 7036ab1fc794586ffe635b9fc5c10f1f906622f3 1380 pwclip_1.2.7-1.debian.tar.xz
 Checksums-Sha256:
- 1cfe8613c469fdfed2ebcaf4bd11b639d9680d1484bc90ee3763a106e09aa2da 821 pwclip_1.2.7-1.dsc
- 8c7ed3e59488f0d52af2a36c9a5c55d3228b4a0f925de878a563a69bb3c7e0b2 173987 pwclip_1.2.7.orig.tar.gz
- d00fec5cf82e66483d9362d798b29e6f331eda811481c49054bb44eee2fda475 1380 pwclip_1.2.7-1.debian.tar.xz
+ d8cd4d0ec2ce51c8d794c76cbe212918a25acded76c504c98c13c90588f3f62d 821 pwclip_1.2.7-1.dsc
+ c92441c242ee5d3bc2d4473156c31323d73b193b8834a9024c46f2b4ada7d744 174185 pwclip_1.2.7.orig.tar.gz
+ 56c42a4426d95b8b13dffa85f0b0955b109c9062c0f811b7e437fdb6606b0e50 1380 pwclip_1.2.7-1.debian.tar.xz
 Files:
- 83c4f98bc541b8c58702c37d29224481 821 python optional pwclip_1.2.7-1.dsc
- a39f35265a1bddd7cfede8a0762eecaa 173987 python optional pwclip_1.2.7.orig.tar.gz
- e4a05f4aaa8b50c7ee8888a380e6c7fc 1380 python optional pwclip_1.2.7-1.debian.tar.xz
+ 803f180ccf9211711fe3380a685184db 821 python optional pwclip_1.2.7-1.dsc
+ 8041a95ae1340684e7f82abf2b4ceb4b 174185 python optional pwclip_1.2.7.orig.tar.gz
+ 74685b1ee3e88da912b19d7a85137082 1380 python optional pwclip_1.2.7-1.debian.tar.xz

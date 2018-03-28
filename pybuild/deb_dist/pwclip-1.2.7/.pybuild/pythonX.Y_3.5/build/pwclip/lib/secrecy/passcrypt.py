@@ -232,7 +232,7 @@ class PassCrypt(object):
 					__ents = {
                         usr: self._findentry(usr, __ents if __ents else {})}
 			return __ents
-		return {}
+		return False
 
 def lscrypt(usr, dbg=None):
 	"""passlist wrapper function"""

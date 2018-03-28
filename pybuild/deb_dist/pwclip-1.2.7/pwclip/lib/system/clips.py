@@ -137,10 +137,9 @@ def clips():
 		def _copy(text, mode=None):
 			"""osx copy function"""
 			text = text if text else ''
-			if mode == 'b':
-				return
-			with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
-				prc.communicate(input=str(text).encode('utf-8'))
+			if mode != 'b':
+				with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
+					prc.communicate(input=str(text).encode('utf-8'))
 		def _paste(_=None):
 			"""osx paste function"""
 			with Popen(['pbpaste'], stdout=PIPE, close_fds=True) as prc:

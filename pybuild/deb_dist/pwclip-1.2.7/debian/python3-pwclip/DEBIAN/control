@@ -3,7 +3,7 @@ Source: pwclip
 Version: 1.2.7-1
 Architecture: all
 Maintainer: Leon Pelzer <mail@leonpelzer.de>
-Installed-Size: 133
+Installed-Size: 134
 Depends: python3-argcomplete, python3-gnupg, python3-netaddr, python3-paramiko, python3-psutil, python3-usb, python3-wget, python3-yaml, python3:any (>= 3.3.2-2~)
 Section: python
 Priority: optional

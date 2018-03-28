@@ -205,9 +205,9 @@ Description: pwclip
         
         Released: 2018-03-27
         
-          * fixed incorrect passwords are returned
+          * fix for passwords are returned incorectly
         
-          * hotfix release
+          ** hotfix release **
         
         
         1.2.6
