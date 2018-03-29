@@ -1,0 +1,25 @@
+Format: 1.8
+Date: Thu, 29 Mar 2018 13:56:04 +0200
+Source: pwclip
+Binary: python3-pwclip
+Architecture: all
+Version: 1.2.8-1
+Distribution: unstable
+Urgency: low
+Maintainer: Leon Pelzer <mail@leonpelzer.de>
+Changed-By: Leon Pelzer <mail@leonpelzer.de>
+Description:
+ python3-pwclip - gui to temporarily save passwords to system-clipboard
+Changes:
+ pwclip (1.2.8-1) unstable; urgency=low
+ .
+   * source package automatically created by stdeb 0.8.5
+Checksums-Sha1:
+ a86c844c2d06acff0ca0b8a39f6052b29a2aafa6 6133 pwclip_1.2.8-1_amd64.buildinfo
+ 93d5b0c2bf69132bc6249ff5495d85319f6223d1 26304 python3-pwclip_1.2.8-1_all.deb
+Checksums-Sha256:
+ 30284f518ce7d65051cbfe084cd734c0fae77a868ae2eb499b4eed2ca722bbec 6133 pwclip_1.2.8-1_amd64.buildinfo
+ 6a6bb735534204dd299e7e70bc68297a355df5708f4512b76dc424f347958bf1 26304 python3-pwclip_1.2.8-1_all.deb
+Files:
+ 7ce3f739fcd81e25363e1d0a025bb219 6133 python optional pwclip_1.2.8-1_amd64.buildinfo
+ e129aaf9d2f6fa054185f62c113ec5c1 26304 python optional python3-pwclip_1.2.8-1_all.deb
