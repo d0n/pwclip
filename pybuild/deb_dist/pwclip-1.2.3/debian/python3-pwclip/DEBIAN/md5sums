@@ -1,0 +1,13 @@
+9182415bfc9f26b9498216550412527f  usr/bin/pwcli
+b6cbaffae4b546acf83f000e8dcd1406  usr/bin/pwclip
+cefa69541b597474a239bda0ecdac15e  usr/bin/ykclip
+1c2e79e34b1f19e3608365b07f9bfe6b  usr/lib/python3/dist-packages/pwclip-1.2.3.egg-info/PKG-INFO
+68b329da9893e34099c7d8ad5cb9c940  usr/lib/python3/dist-packages/pwclip-1.2.3.egg-info/dependency_links.txt
+a97ad6b64f25791209a31d47e17860cb  usr/lib/python3/dist-packages/pwclip-1.2.3.egg-info/entry_points.txt
+434358fdcb6d21bb160c7af91d2d350c  usr/lib/python3/dist-packages/pwclip-1.2.3.egg-info/requires.txt
+3cea4d3538177497e2e62b107789b3e9  usr/lib/python3/dist-packages/pwclip-1.2.3.egg-info/top_level.txt
+f945794661f130e40589c07ae643316f  usr/lib/python3/dist-packages/pwclip/__init__.py
+5e8e2ff94f880750a0477e3a43d4d907  usr/lib/python3/dist-packages/pwclip/__main__.py
+78a8ed2b6d566ae69f2ca32debfc05fb  usr/lib/python3/dist-packages/pwclip/__pkginfo__.py
+8765cc38a5f9c744b8abdcbd8a3ac989  usr/lib/python3/dist-packages/pwclip/cmdline.py
+519301644186a0e8a8af23ce5770edb9  usr/share/doc/python3-pwclip/changelog.Debian.gz

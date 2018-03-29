@@ -129,10 +129,7 @@ use:
 
 ``pwcli -A -l $PATTERN``
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 78bd673db1ac4cace17af87dd61f5fa8333176b1
 Yubikey-Mode
 ------------
 ``ykclip``
@@ -143,31 +140,11 @@ Likewise it also accepts an option:
 
 ``pwcli -y $YKSERIAL``
 
-<<<<<<< HEAD
-To have it wait for a specific time like 60 seconds (bevore resetting the paste
-buffer to the previously copied value) the PWCLIPTIME environment variable is
-used or also the command accepts it as input:
-
-``pwcli -t 60 -l mysavedusername``
-
-=======
->>>>>>> 78bd673db1ac4cace17af87dd61f5fa8333176b1
 Most of the options may be combined. For more information on possible options in
 cli mode please see:
 
 ``pwcli --help``
 
-<<<<<<< HEAD
-GUI-Mode
---------
-
-For the GUI-Mode just use one of the following commands, not accepting any
-options or arguments:
-
-``pwclip``
-
-``ykclip``
-=======
 
 GUI-Modes
 ---------
@@ -179,7 +156,6 @@ used or also the command accepts that as input:
 ``pwcli -t 10 -A -l``
 
 To set the timer in gui mode 
->>>>>>> 78bd673db1ac4cace17af87dd61f5fa8333176b1
 
 
 Troubleshooting
@@ -213,55 +189,6 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-<<<<<<< HEAD
-1.2.7 (current)
----------------
-
-Released: 2018-03-27
-
-  * fix for passwords are returned incorectly
-
-  ** hotfix release **
-
-
-1.2.6
------
-
-Released: 2018-03-27
-
-  * example include fixed
-
-  * stylistic updates and code cleanup
-
-
-1.2.5
------
-
-Released: 2018-03-27
-
-  * lotz of linting - almost everything fixed complying to pylint3
-
-  * renamed gpg module to gpgtool due to namespace restrictions
-
-
-1.2.4
------
-
-Released: 2018-03-27
-
-  * fixed filerotate not copying file modes as well
-
-  * fixed encrypt function when setting recipients via user environment
-    variables (GPGKEY/GPGKEYS) only
-
-  * fixed creating a new password crypt file from scratch
-
-  * minor cleanup in gpg module
-
-  * added example files in addition to README and --help
-
-  * fixed some obsolete info in README
-=======
 1.2.3 (current)
 ---------------
 
@@ -324,4 +251,3 @@ Released: 2018-03-18
   * removed unnecessary read/write actions on passcrypt
 
   * class GPGSMTool added to interact wit gpgsm for openssl compatibility
->>>>>>> 78bd673db1ac4cace17af87dd61f5fa8333176b1

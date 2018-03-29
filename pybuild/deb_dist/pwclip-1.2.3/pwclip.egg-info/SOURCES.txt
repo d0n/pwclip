@@ -1,0 +1,13 @@
+README
+setup.cfg
+setup.py
+pwclip/__init__.py
+pwclip/__main__.py
+pwclip/__pkginfo__.py
+pwclip/cmdline.py
+pwclip.egg-info/PKG-INFO
+pwclip.egg-info/SOURCES.txt
+pwclip.egg-info/dependency_links.txt
+pwclip.egg-info/entry_points.txt
+pwclip.egg-info/requires.txt
+pwclip.egg-info/top_level.txt
