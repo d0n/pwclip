@@ -107,19 +107,22 @@ class GitRepo(Command):
 			command = '%s checkout %s'%(self.gitbin, branch)
 		return self.erno(command)
 
-	def pull(self, branch=None, origin='origin', verbose=False):
+	def pull(self, branch=None, origin='origin', verbose=False, silent=False):
 		if self.dbg:
 			print(bgre(self.pull))
 		branch = branch if branch else self._head()
-		o, e, n = self.oerc('%s pull %s %s'%(self.gitbin, origin, branch))
-		if int(n) != 0:
-			error(' in forked git process by:\n',
-                  '%s\n'%self.pull, n, ': ', e, sep='')
-		if o and o.strip() not in (
-              'Already up-to-date.', 'Already up to date.'):
-			print(o.strip())
-		elif verbose:
-			print('out: %s ;errr: %s'%(o, e))
+		cmd = '%s pull --all'%self.gitbin
+		if branch:
+			cmd ='%s pull %s %s'%(self.gitbin, origin, branch)
+		o, e, n = self.oerc(cmd)
+		if not silent:
+			if verbose:
+				print(o)
+			elif o and o.strip() not in (
+                  'Already up-to-date.', 'Already up to date.'):
+				print(o)
+			elif int(n) != 0:
+				error('command', e, 'returned %s'%n)
 		return int(n)
 
 	def push(self, remote=None, origin='origin', setup=None):
