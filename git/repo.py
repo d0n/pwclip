@@ -122,7 +122,9 @@ class GitRepo(Command):
                   'Already up-to-date.', 'Already up to date.'):
 				print(o)
 			elif int(n) != 0:
-				error('command', e, 'returned %s'%n)
+				error(
+                    ' command ', cmd, ' returned ',
+                    n, '\nand message:\n', e, sep='')
 		return int(n)
 
 	def push(self, remote=None, origin='origin', setup=None):
