@@ -1,8 +1,22 @@
 Changelog
 =========
 
-1.2.7 (current)
+1.2.8 (current)
 ---------------
+
+Released: 2018-03-29
+
+  * fixed a few bugs implemented while linting in 1.2.5
+
+  * made GPGSMTool parent to GPGTool for common methods
+
+  * fixed wrong filerotate if no changes where made
+
+  * fixed bug in class import name
+
+
+1.2.7
+-----
 
 Released: 2018-03-27
 
