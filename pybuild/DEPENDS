@@ -6,6 +6,7 @@ libreadline6
 python-yubico
 python3-tk
 python3-gi
+python3-usb
 python3-wget
 python3-gnupg
 python3-argparse
