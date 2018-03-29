@@ -153,7 +153,7 @@ def clips():
 
 	def linclips():
 		"""linux clipboards"""
-		xsel = ['xsel', '-l', '/dev/null']
+		xsel = ['xsel', '-l', '/dev/null', '-n']
 		def _copy(text, mode='p'):
 			"""linux copy function"""
 			_xsel = xsel + ['-i']
