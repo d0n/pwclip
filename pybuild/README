@@ -194,10 +194,28 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-1.2.7 (current)
+1.2.8 (current)
 ---------------
 
+<<<<<<< HEAD
 Released: 2018-03-28
+=======
+Released: 2018-03-29
+
+  * fixed a few bugs implemented while linting in 1.2.5
+
+  * made GPGSMTool parent to GPGTool for common methods
+
+  * fixed wrong filerotate if no changes where made
+
+  * fixed bug in class import name
+
+
+1.2.7
+-----
+
+Released: 2018-03-27
+>>>>>>> f3695041a48f1da5383ec98c2c30ad553339172a
 
   * fix for passwords are returned incorectly
 
@@ -222,22 +240,3 @@ Released: 2018-03-27
   * lotz of linting - almost everything fixed complying to pylint3
 
   * renamed gpg module to gpgtool due to namespace restrictions
-
-
-1.2.4
------
-
-Released: 2018-03-27
-
-  * fixed filerotate not copying file modes as well
-
-  * fixed encrypt function when setting recipients via user environment
-    variables (GPGKEY/GPGKEYS) only
-
-  * fixed creating a new password crypt file from scratch
-
-  * minor cleanup in gpg module
-
-  * added example files in addition to README and --help
-
-  * fixed some obsolete info in README
