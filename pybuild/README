@@ -197,10 +197,6 @@ Changelog
 1.2.8 (current)
 ---------------
 
-<<<<<<< HEAD
-Released: 2018-
-
-=======
 Released: 2018-03-29
 
   * fixed a few bugs implemented while linting in 1.2.5
@@ -210,17 +206,12 @@ Released: 2018-03-29
   * fixed wrong filerotate if no changes where made
 
   * fixed bug in class import name
->>>>>>> f3695041a48f1da5383ec98c2c30ad553339172a
 
 
 1.2.7
 -----
 
-<<<<<<< HEAD
 Released: 2018-03-28
-=======
-Released: 2018-03-27
->>>>>>> f3695041a48f1da5383ec98c2c30ad553339172a
 
   * fix for passwords are returned incorrectly
 

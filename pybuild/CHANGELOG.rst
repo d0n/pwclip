@@ -1,8 +1,19 @@
 Changelog
 =========
 
-1.2.8 (current)
----------------
+1.2.9
+-----
+
+Released: 2018-03-29
+
+  * fixed xsel stays running in background (it's options are nasty)
+
+  * lots of merges but it's too fuzzy to take them apart to see what has
+    changed - mostly no functionallity changes though
+
+
+1.2.8
+-----
 
 Released: 2018-03-29
 
