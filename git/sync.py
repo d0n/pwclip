@@ -45,8 +45,7 @@ class GitSync(GitRepo):
 		if branch != self._head(): self.checkout(branch)
 		if [m for m in self.syncmodes if m in ('sync', 'pull')]:
 			if self.pull() == 1:
-				self.push(branch)
-
+				self.push(branch, setup=True)
 		status, ahead, behind = self.gitstatus()
 		if not status and not ahead and not behind:
 			if self.branch and self.branch != branch:
