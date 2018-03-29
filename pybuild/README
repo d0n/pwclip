@@ -168,11 +168,13 @@ When using the yubikey challenge-response mode there is a bug in the usb_hid
 interface. This is because of python2 => 3 transition, most likely and can be
 fixed easily (having root privileges) by executing the following commands:
 ``sudo su -`` # only needed if current user isn't root already
-``ykfile=/usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py``
-``sudo vi +':107s/\(.* =\).*/\1 response[0]/' +':wq' $ykfile``
-Explained in short the line
+``sudo vi +':107s/\(.* =\).*/\1 response[0]/' +':wq' /usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py``
+Explained:
+In line 107 of the file
+/usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py
+the ord() coversion of the response
 `r_len = ord(response[0])`
-is replaced by
+needs to be removed, like:
 `r_len = response[0]`
 
 
@@ -195,7 +197,7 @@ Changelog
 1.2.7 (current)
 ---------------
 
-Released: 2018-03-27
+Released: 2018-03-28
 
   * fix for passwords are returned incorectly
 

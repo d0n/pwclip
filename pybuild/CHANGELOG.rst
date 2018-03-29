@@ -1,12 +1,19 @@
 Changelog
 =========
 
-1.2.7 (current)
+1.2.8 (current)
 ---------------
 
-Released: 2018-03-27
+Released: 2018-
 
-  * fix for passwords are returned incorectly
+
+
+1.2.7
+-----
+
+Released: 2018-03-28
+
+  * fix for passwords are returned incorrectly
 
   ** hotfix release **
 
