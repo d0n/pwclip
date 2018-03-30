@@ -34,7 +34,7 @@ def askdns(host):
 	try:
 		dnsinfo = gethostbyaddr(host)
 	except (gaierror, herror, TypeError):
-		return
+		return host
 	if isip(host):
 		return dnsinfo[0]
 	if len(dnsinfo[2]) == 1:
@@ -43,8 +43,9 @@ def askdns(host):
 
 def raflookup(host):
 	"""reverse and forward lookup function"""
+	lookup, reverse = '', ''
 	if host:
 		lookup = askdns(host)
 		if lookup:
 			reverse = askdns(lookup)
-			return lookup, reverse
+	return lookup, reverse

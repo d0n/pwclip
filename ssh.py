@@ -4,7 +4,7 @@
 #global imports"""
 import os
 import sys
-from shutil import copy2, copyfile
+from shutil import copy2
 from socket import \
     gaierror as NameResolveError, timeout as sockettimeout
 from psutil import Process
@@ -15,7 +15,7 @@ from paramiko import \
 
 from colortext import bgre, tabd, abort, error
 from system import whoami, userfind, filetime, setfiletime, filerotate
-from executor import command as cmd
+from executor import command as exe
 from net import askdns
 
 # default vars
@@ -186,10 +186,11 @@ class SecureSHell(object):
 		if not os.path.isfile(src):
 			raise FileNotFoundError('connot find either %s nor %s'%(src, trg))
 		try:
-			if not cmd.erno('scp -l %s %s:%s %s'%(reuser, remote, src, trg)):
-				return True
+			exe.erno('scp -l %s %s:%s %s'%(reuser, remote, src, trg)) == 0
 		except FileNotFoundError:
 			return False
+		else:
+			return True
 		#scp = ssh.open_sftp()
 		#try:
 		#	return scp.get(src, trg)
@@ -206,7 +207,7 @@ class SecureSHell(object):
 		if not os.path.isfile(src):
 			raise FileNotFoundError('connot find file %s'%src)
 		try:
-			cmd.erno('scp -l %s %s %s:%s'%(reuser, src, remote, trg))
+			exe.erno('scp -l %s %s %s:%s'%(reuser, src, remote, trg)) == 0
 		except FileNotFoundError:
 			return False
 		else:
@@ -229,7 +230,7 @@ class SecureSHell(object):
 			rmt = int(str(rmt))
 		srctrg = src, '%s@%s:%s'%(reuser, remote, trg)
 		if rmt == smt:
-			return
+			srctrg = False
 		elif rmt and int(rmt) > int(smt):
 			srctrg = '%s@%s:%s'%(reuser, remote, trg), src
 		return srctrg
@@ -269,7 +270,7 @@ class SecureSHell(object):
 			lmt, lat = filetime(lfile)
 			rmt, rat = self.rfiletime(rfile, remote, reuser)
 			if rmt == lmt:
-				return
+				return False
 			if rotate > 0:
 				filerotate(lfile, rotate)
 			if rmt and rmt > lmt:
@@ -287,6 +288,4 @@ class SecureSHell(object):
 
 
 if __name__ == '__main__':
-	"""module debugging area"""
-	#ssh = SecureSHell(**{'remote':'bigbox.janeiskla.de'})
-	#print(ssh.command('cat /etc/debian_version'))
+	exit(1)
