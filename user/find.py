@@ -1,5 +1,9 @@
+"""userfind"""
+import sys
+
 def userfind(pattern='1000', mode='user'):
 	"""
+	userfind function:
         >>> 0 = user
         >>> 1 = x
         >>> 2 = uid
@@ -8,14 +12,16 @@ def userfind(pattern='1000', mode='user'):
         >>> 5 = home
         >>> 6 = shell
 	"""
-	user = 0
-	x = 1
-	uid = 2
-	gid = 3
-	comment = 4
-	home = 5
-	shell = 6
-	mode = int(eval(mode))
+	pfmap = {
+      'user': 0,
+      'x': 1,
+      'uid': 2,
+      'gid': 3,
+      'comment': 4,
+      'home': 5,
+      'shell': 6,
+    }
+	mode = int(pfmap[mode])
 	pstr = str(pattern)
 	try:
 		with open('/etc/passwd', 'r') as pwd:
@@ -27,5 +33,4 @@ def userfind(pattern='1000', mode='user'):
 	except PermissionError as err:
 		print(err, file=sys.stderr)
 		return err
-	if hits:
-		return list(hits)[mode]
+	return list(hits)[mode]

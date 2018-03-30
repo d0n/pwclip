@@ -8,3 +8,4 @@ def which(prog):
 	for path in environ['PATH'].split(delim):
 		if access(pjoin(path, prog), X_OK):
 			return pjoin(abspath(path), prog)
+	return ''

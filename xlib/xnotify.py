@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+"""x notification function"""
 # -*- encoding: utf-8 -*-
 #
 # This file is free software by d0n <d0n@janeiskla.de>
@@ -14,8 +14,6 @@
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
 #
-"""linux x-notification library"""
-from sys import stderr
 from inspect import stack
 try:
 	import gi

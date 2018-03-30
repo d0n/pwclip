@@ -7,7 +7,7 @@ from stat import S_ISSOCK as issock
 
 from system.user import userfind
 
-def gpgagentinfo(user=None):
+def gpgagentinfo():
 	uid = getenv('SUDO_UID')
 	if not uid:
 		uid = getuid()

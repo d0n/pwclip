@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+"""x ok message display function"""
 # -*- encoding: utf-8 -*-
 #
 # This file is free software by d0n <d0n@janeiskla.de>
@@ -15,9 +15,9 @@
 # details.
 
 try:
-	from tkinter import StringVar, Button, Entry, Frame, Label, Tk
+	from tkinter import Button, Frame, Label, Tk
 except ImportError:
-	from Tkinter import StringVar, Button, Entry, Frame, Label, Tk
+	from Tkinter import Button, Frame, Label, Tk
 
 def xmsgok(message="press any key to continue"):
 	"""gui representing function"""

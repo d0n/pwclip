@@ -41,6 +41,7 @@ def clips():
 		class CheckedCall(object):
 			"""fancy windows callchecker"""
 			def __init__(self, f):
+				self.f = f
 				super(CheckedCall, self).__setattr__("f", f)
 			def __call__(self, *args):
 				ret = self.f(*args)
@@ -93,10 +94,6 @@ def clips():
 		@contextmanager
 		def clipboard(hwnd):
 			"""windows clipboard context manager"""
-			"""
-			Context manager that opens the clipboard and prevents
-			other applications from modifying the clipboard content.
-			"""
 			t = time() + 0.5
 			success = False
 			while time() < t:
@@ -140,20 +137,21 @@ def clips():
 		def _copy(text, mode=None):
 			"""osx copy function"""
 			text = text if text else ''
-			if mode == 'b':
-				return
-			with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
-				prc.communicate(input=str(text).encode('utf-8'))
+			if mode != 'b':
+				with Popen(['pbcopy'], stdin=PIPE, close_fds=True) as prc:
+					prc.communicate(input=str(text).encode('utf-8'))
+			return False
 		def _paste(_=None):
 			"""osx paste function"""
 			with Popen(['pbpaste'], stdout=PIPE, close_fds=True) as prc:
 				out, _ = prc.communicate()
 				return out.decode('utf-8'), None
+			return False
 		return _copy, _paste
 
 	def linclips():
 		"""linux clipboards"""
-		xsel = ['xsel', '-l', '/dev/null', '-n']
+		xsel = ['xsel']
 		def _copy(text, mode='p'):
 			"""linux copy function"""
 			_xsel = xsel + ['-i']
@@ -162,23 +160,25 @@ def clips():
 				with Popen(
                       _xsel + ['-%s'%m], stdin=PIPE, stderr=DEVNULL) as prc:
 					prc.communicate(input=str(text).encode('utf-8'))
+					prc.terminate()
 		def _paste(mode='p'):
 			"""linux paste function"""
 			_xsel = xsel + ['-o']
 			if mode == 'p':
 				out, _ = Popen(
                     _xsel + ['-p'], stdout=PIPE, stderr=DEVNULL).communicate()
-				return out.decode()
+				ret = out.decode()
 			elif mode == 'b':
 				out, _ = Popen(
                     _xsel + ['-b'], stdout=PIPE, stderr=DEVNULL).communicate()
-				return out.decode()
-			elif mode in ('pb', 'bp'):
+				ret = out.decode()
+			else:
 				pout, _ = Popen(
                     _xsel + ['-p'], stdout=PIPE, stderr=DEVNULL).communicate()
 				bout, _ = Popen(
                     _xsel + ['-b'], stdout=PIPE, stderr=DEVNULL).communicate()
-				return pout.decode(), bout.decode()
+				ret = pout.decode(), bout.decode()
+			return ret
 		return _copy, _paste
 	# decide which copy, paste functions to return [windows|mac|linux] mainly
 	if osname == 'nt' or system() == 'Windows':
