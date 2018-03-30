@@ -194,8 +194,19 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-1.2.8 (current)
----------------
+1.2.9
+-----
+
+Released: 2018-03-29
+
+  * fixed xsel stays running in background (it's options are nasty)
+
+  * lots of merges but it's too fuzzy to take them apart to see what has
+    changed - mostly no functionallity changes though
+
+
+1.2.8
+-----
 
 Released: 2018-03-29
 
@@ -226,13 +237,3 @@ Released: 2018-03-27
   * example include fixed
 
   * stylistic updates and code cleanup
-
-
-1.2.5
------
-
-Released: 2018-03-27
-
-  * lotz of linting - almost everything fixed complying to pylint3
-
-  * renamed gpg module to gpgtool due to namespace restrictions
