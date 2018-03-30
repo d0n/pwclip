@@ -1,9 +1,0 @@
-argcomplete
-netaddr
-paramiko
-psutil
-pyusb
-python-gnupg
-python-yubico
-PyYAML
-wget
