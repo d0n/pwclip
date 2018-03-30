@@ -5,8 +5,6 @@ gpgtool module
 """
 from os import path, environ, name as osname
 
-from os.path import join as pjoin
-
 from platform import node
 
 from getpass import getpass
@@ -16,121 +14,11 @@ from tkinter import TclError
 from gnupg import GPG
 
 # local imports
-from colortext import blu, red, yel, bgre, tabd, abort, error, fatal
+from colortext import blu, yel, bgre, tabd, abort, error, fatal
 
-from system import xinput, xyesno, xgetpass, xmsgok, userfind, which
+from system import xyesno, xgetpass, xmsgok, userfind, which
 
 from executor import command as cmd
-
-class GPGSMTool(object):
-	dbg = False
-	homedir = path.join(path.expanduser('~'), '.gnupg')
-	__gsm = 'gpgsm'
-	__ssl = 'openssl'
-	if osname == 'nt':
-		homedir = path.join(
-            path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
-		__gsm = 'gpgsm.exe'
-		__ssl = 'openssl.exe'
-	_gsmbin = which(__gsm)
-	_sslbin = which(__ssl)
-	sslcrt = ''
-	sslkey = ''
-	sslca = ''
-	recvs = []
-	def __init__(self, *args, **kwargs):
-		for arg in args:
-			if hasattr(self, arg):
-				setattr(self, arg, True)
-		for (key, val) in kwargs.items():
-			if hasattr(self, key):
-				setattr(self, key, val)
-		if not self.recvs:
-			if 'GPGKEYS' in environ.keys():
-				self.recvs = environ['GPGKEYS'].split(' ')
-			elif 'GPGKEY' in environ.keys():
-				self.recvs = [environ['GPGKEY']]
-		if self.sslcrt and self.sslkey:
-			if osname == 'nt':
-				# TODO
-				# windows implementations
-				# http://slproweb.com/download/Win32OpenSSL-1_1_0g.exe
-				raise RuntimeError(
-                    'ssl import is currently not available for windows')
-			self.sslimport(self.sslkey, self.sslcrt, self.sslca)
-		if self.dbg:
-			print(bgre(GPGSMTool.__mro__))
-			print(bgre(tabd(GPGSMTool.__dict__, 2)))
-			print(' ', bgre(self.__init__))
-			print(bgre(tabd(self.__dict__, 4)))
-
-	def sslimport(self, key, crt, ca):
-		# openssl pkcs12 -export -chain \
-		#    -CAfile .weaknez/knolle/crt/knolle.pem \
-		#    -in client.crt -inkey client.key -out client.p12
-		if self.dbg:
-			print(bgre('%s key=%s crt=%s'%(self.sslimport, key, crt)))
-		p12 = pjoin(self.homedir, '%s.p12'%path.basename(crt).split('.')[0])
-		cmd.stdo('%s --import'%self._gsmbin, inputs=cmd.stdo(
-            '%s pkcs12 -export -chain -CAfile %s -in %s -inkey %s'%(
-                self._sslbin, ca, crt, key), b2s=False), b2s=False)
-
-	def keyimport(self, pattern=None):
-		if self.dbg:
-			print(bgre(self.keyimport))
-
-	def keyexport(self, pattern=None):
-		if self.dbg:
-			print(bgre(self.keyexport))
-
-	def keylist(self, secret=False):
-		if self.dbg:
-			print(bgre(self.keylist))
-		gsc = 'gpgsm -k'
-		if secret:
-			gsc = 'gpgsm -K'
-		kstrs = cmd.stdo(gsc)
-		keys = []
-		if kstrs:
-			kstrs = str('\n'.join(kstrs.split('\n')[2:])).split('\n\n')
-			for ks in kstrs:
-				if not ks: continue
-				kid = str(ks.split('\n')[0].strip()).split(': ')[1]
-				inf = [i.strip() for i in ks.split('\n')[1:]]
-				key = {kid: {}}
-				for i in inf:
-					key[kid][i.split(': ')[0]] = i.split(': ')[1]
-				keys.append(key)
-		return keys
-
-	def encrypt(self, message, **kwargs):
-		"""text encrypting method"""
-		if self.dbg:
-			print(bgre(self.encrypt))
-		if self.recvs:
-			recvs = self.recvs
-		if 'recipients' in kwargs.keys():
-			recvs = kwargs['recipients']
-		recvs = ''.join(['-r %s'%r for r in recvs])
-		out = '' if 'output' not in kwargs.keys() else '-o %s'%kwargs['output']
-		gsc = '%s -e --armor --disable-policy-checks --disable-crl-checks ' \
-            '%s %s'%(self._gsmbin, out, recvs)
-		__crypt = cmd.stdo(gsc, inputs=message.encode())
-		if __crypt:
-			return __crypt.decode()
-
-	def decrypt(self, message, output=None):
-		"""text decrypting method"""
-		if self.dbg:
-			print(bgre(self.decrypt))
-		out = '' if not output else '-o %s'%'output'
-		gsc = '%s -d %s'%(self._gsmbin, out)
-		__plain = cmd.stdo(gsc, inputs=message)
-		if __plain:
-			return __plain
-
-
-
 
 
 class GPGTool(object):
@@ -218,7 +106,7 @@ class GPGTool(object):
 		return __g
 
 	@staticmethod
-	def _passwd(rpt=False, mode='cli'):
+	def passwd(rpt=False, mode='cli'):
 		"""password questioning method"""
 		pas = getpass
 		err = error
@@ -237,6 +125,7 @@ class GPGTool(object):
 				err('passwords did not match')
 			except KeyboardInterrupt:
 				abort()
+		return False
 
 	@staticmethod
 	def __find(pattern, *vals):
@@ -244,11 +133,10 @@ class GPGTool(object):
 		for val in vals:
 			if isinstance(val, (list, tuple)) and \
                   [v for v in val if pattern in v]:
-				#print(val, pattern)
 				return True
 			elif pattern in val:
-				#print(val, pattern)
 				return True
+		return False
 
 	@staticmethod
 	def __gendefs():
@@ -277,7 +165,7 @@ class GPGTool(object):
 			msg = 'generating keys using:\n%s'%tabd(pkginput, 2)
 		echo(msg)
 		if 'passphrase' not in kginput.keys():
-			kginput['passphrase'] = self._passwd(True, mode)
+			kginput['passphrase'] = self.passwd(True, mode)
 		self._gpg_.gen_key(self._gpg_.gen_key_input(**kginput))
 		return list(self.findkey().keys())[0]
 
@@ -299,18 +187,17 @@ class GPGTool(object):
 						_, typs, finger = sub
 						#print(finger, typs)
 						if typ == 'A' or (typ in typs):
-							si = key[k].index(sub)
-							ki = key[k][si].index(finger)
 							keys[finger] = typ
 		return keys
 
 	def keyimport(self, key):
+		"""key from string import method"""
 		if self.dbg:
 			print(bgre('%s %s'%(self.keyimport, key)))
 		return self._gpg_.import_keys(key)
 
 	def keyexport(self, *patterns, **kwargs):
-		"""key-export method"""
+		"""key to string export method"""
 		if self.dbg:
 			print(bgre('%s %s'%(self.keyexport, patterns)))
 		keys = dict((k, v) for (k, v) in self.findkey(**kwargs).items())
@@ -332,7 +219,7 @@ class GPGTool(object):
 			print(bgre(self.encrypt))
 		fingers = list(self.keyexport())
 		if 'GPGKEYS' in environ.keys():
-			recvs = [k for k in environ['GPGKEYS'].split(' ') if k ]
+			recvs = [k for k in environ['GPGKEYS'].split(' ') if k]
 		elif 'GPGKEY' in environ.keys():
 			recvs = [environ['GPGKEY']] + [
                 k for k in recvs if k != environ['GPGKEY']]
@@ -377,6 +264,105 @@ class GPGTool(object):
 				raise PermissionError('%s cannot decrypt'%self.decrypt)
 			self.__c += 1
 			try:
-				self.__ppw = self._passwd()
+				self.__ppw = self.passwd()
 			except KeyboardInterrupt:
 				return False
+
+
+
+class GPGSMTool(GPGTool):
+	dbg = False
+	homedir = path.join(path.expanduser('~'), '.gnupg')
+	__gsm = 'gpgsm'
+	__ssl = 'openssl'
+	if osname == 'nt':
+		homedir = path.join(
+            path.expanduser('~'), 'AppData', 'Roaming', 'gnupg')
+		__gsm = 'gpgsm.exe'
+		__ssl = 'openssl.exe'
+	_gsmbin = which(__gsm)
+	_sslbin = which(__ssl)
+	sslcrt = ''
+	sslkey = ''
+	sslca = ''
+	recvs = []
+	def __init__(self, *args, **kwargs):
+		for arg in args:
+			if hasattr(self, arg):
+				setattr(self, arg, True)
+		for (key, val) in kwargs.items():
+			if hasattr(self, key):
+				setattr(self, key, val)
+		if not self.recvs:
+			if 'GPGKEYS' in environ.keys():
+				self.recvs = environ['GPGKEYS'].split(' ')
+			elif 'GPGKEY' in environ.keys():
+				self.recvs = [environ['GPGKEY']]
+		if self.sslcrt and self.sslkey:
+			if osname == 'nt':
+				raise RuntimeError(
+                    'ssl import is currently not available for windows')
+			self.sslimport(self.sslkey, self.sslcrt, self.sslca)
+		if self.dbg:
+			print(bgre(GPGSMTool.__mro__))
+			print(bgre(tabd(GPGSMTool.__dict__, 2)))
+			print(' ', bgre(self.__init__))
+			print(bgre(tabd(self.__dict__, 4)))
+		GPGTool.__init__(self, *args, **kwargs)
+
+	def sslimport(self, key, crt, ca):
+		"""ssl key/cert importing method"""
+		if self.dbg:
+			print(bgre('%s key=%s crt=%s'%(self.sslimport, key, crt)))
+		cmd.stdo('%s --import'%self._gsmbin, inputs=cmd.stdo(
+            '%s pkcs12 -export -chain -CAfile %s -in %s -inkey %s'%(
+                self._sslbin, ca, crt, key), b2s=False), b2s=False)
+
+	def keylist(self, secret=False):
+		"""key listing function"""
+		if self.dbg:
+			print(bgre(self.keylist))
+		gsc = 'gpgsm -k'
+		if secret:
+			gsc = 'gpgsm -K'
+		kstrs = cmd.stdo(gsc)
+		keys = []
+		if kstrs:
+			kstrs = str('\n'.join(kstrs.split('\n')[2:])).split('\n\n')
+			for ks in kstrs:
+				if not ks: continue
+				kid = str(ks.split('\n')[0].strip()).split(': ')[1]
+				inf = [i.strip() for i in ks.split('\n')[1:]]
+				key = {kid: {}}
+				for i in inf:
+					key[kid][i.split(': ')[0]] = i.split(': ')[1]
+				keys.append(key)
+		return keys
+
+	def encrypt(self, message, **kwargs):
+		"""text encrypting method"""
+		if self.dbg:
+			print(bgre(self.encrypt))
+		if self.recvs:
+			recvs = self.recvs
+		if 'recipients' in kwargs.keys():
+			recvs = kwargs['recipients']
+		recvs = ''.join(['-r %s'%r for r in recvs])
+		out = '' if 'output' not in kwargs.keys() else '-o %s'%kwargs['output']
+		gsc = '%s -e --armor --disable-policy-checks --disable-crl-checks ' \
+            '%s %s'%(self._gsmbin, out, recvs)
+		__crypt = cmd.stdo(gsc, inputs=message.encode())
+		if __crypt:
+			return __crypt.decode()
+		return False
+
+	def decrypt(self, message, output=None):
+		"""text decrypting method"""
+		if self.dbg:
+			print(bgre(self.decrypt))
+		out = '' if not output else '-o %s'%'output'
+		gsc = '%s -d %s'%(self._gsmbin, out)
+		__plain = cmd.stdo(gsc, inputs=message)
+		if __plain:
+			return __plain
+		return False

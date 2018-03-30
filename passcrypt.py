@@ -2,19 +2,17 @@
 # -*- encoding: utf-8 -*-
 """passcrypt module"""
 
-from os import path, remove, environ, chmod, stat, utime, makedirs
+from os import path, remove, environ, chmod, stat, makedirs
 
-from shutil import copyfile
+from time import time
 
 from yaml import load, dump
 
 from paramiko.ssh_exception import SSHException
 
-from time import time
+from colortext import bgre, tabd, error
 
-from colortext import bgre, tabd
-
-from system import userfind, setfiletime
+from system import userfind, filerotate
 
 from net.ssh import SecureSHell
 
@@ -83,8 +81,6 @@ class PassCrypt(object):
 		if self.remote and self._copynews_():
 			write = True
 		__weaks = self._readcrypt()
-		if not __weaks and not path.exists(self.plain):
-			__weaks = {self.user: {}}
 		self.__oldweaks = __weaks
 		try:
 			with open(self.plain, 'r') as pfh:
@@ -110,11 +106,12 @@ class PassCrypt(object):
 			try:
 				return self.ssh.scpcompstats(
                     self.crypt, path.basename(self.crypt),
-                    remote=self.remote, reuser=self.reuser, rotate=2)
+                    remote=self.remote, reuser=self.reuser)
 			except FileNotFoundError:
 				pass
 			except SSHException as err:
 				error(err)
+		return False
 
 	def _chkcrypt(self, __weak):
 		"""crypt file checker method"""
@@ -122,6 +119,7 @@ class PassCrypt(object):
 			print(bgre(self._chkcrypt))
 		if self.__oldweaks == __weak:
 			return True
+		return False
 
 	def _findentry(self, pattern, __weak):
 		"""entry finder method"""
@@ -131,6 +129,7 @@ class PassCrypt(object):
 			if pattern == u or (
                   len(p) == 2 and len(pattern) > 1 and pattern in p[1]):
 				return p
+		return False
 
 	def _readcrypt(self):
 		"""read crypt file method"""
@@ -150,13 +149,14 @@ class PassCrypt(object):
 		kwargs = {'output': self.crypt}
 		if self.recvs:
 			kwargs['recipients'] = self.recvs
-		for i in range(0, 4):
+		filerotate(self.crypt, 2)
+		for _ in range(0, 2):
 			self.gpg.encrypt(message=dump(__weak), **kwargs)
 			if self._chkcrypt(__weak):
 				chmod(self.crypt, 0o600)
 				if self.remote:
 					self._copynews_()
-				break
+				return True
 		return True
 
 	def adpw(self, usr, pwd=None):
@@ -164,7 +164,7 @@ class PassCrypt(object):
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
-		pwdcom = [pwd if pwd else self.gpg._passwd()]
+		pwdcom = [pwd if pwd else self.gpg.passwd()]
 		com = input('enter a comment: ')
 		if com:
 			pwdcom.append(com)
@@ -176,13 +176,14 @@ class PassCrypt(object):
 			__weak[self.user][usr] = pwdcom
 			self._writecrypt(__weak)
 			return True
+		return False
 
 	def chpw(self, usr, pwd=None):
 		"""change existing password method"""
 		if self.dbg:
 			print(bgre(tabd({
                 self.chpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
-		pwdcom = [pwd if pwd else self.gpg._passwd()]
+		pwdcom = [pwd if pwd else self.gpg.passwd()]
 		com = input('enter a comment: ')
 		if com:
 			pwdcom.append(com)
@@ -195,6 +196,7 @@ class PassCrypt(object):
 			__weak[self.user][usr] = pwdcom
 			self._writecrypt(__weak)
 			return True
+		return False
 
 	def rmpw(self, usr):
 		"""remove password method"""
@@ -208,6 +210,7 @@ class PassCrypt(object):
 				if self.remote:
 					self._copynews_()
 			return True
+		return False
 
 	def lspw(self, usr=None, aal=None):
 		"""password listing method"""
@@ -215,7 +218,6 @@ class PassCrypt(object):
 			print(bgre(tabd({self.lspw: {'user': self.user, 'entry': usr}})))
 		aal = True if aal else self.aal
 		if self.__weaks:
-			__ents = {}
 			if aal:
 				__ents = self.__weaks
 				if usr:
@@ -227,9 +229,10 @@ class PassCrypt(object):
 			elif self.user in self.__weaks.keys():
 				__ents = self.__weaks[self.user]
 				if usr:
-					__ents = {
-                        usr: self._findentry(usr, __ents if __ents else {})}
+					__ents = {usr: self._findentry(usr, __ents)}
 			return __ents
+		return False
+
 
 def lscrypt(usr, dbg=None):
 	"""passlist wrapper function"""
@@ -237,6 +240,7 @@ def lscrypt(usr, dbg=None):
 		print(bgre(lscrypt))
 	if usr:
 		return PassCrypt().lspw(usr)
+	return False
 
 
 

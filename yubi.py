@@ -47,6 +47,7 @@ def ykslotchalres(yk, chal, slot):
             str(chal).ljust(64, '\0').encode(), slot=slot)).decode()
 	except (AttributeError, yubico_exception.YubicoError):
 		pass
+	return False
 
 def ykchalres(chal, slot=2, ykser=None):
 	"""
@@ -56,5 +57,5 @@ def ykchalres(chal, slot=2, ykser=None):
 	keys = yubikeys(ykser)
 	for (_, key) in keys.items():
 		res = ykslotchalres(key, chal, int(slot))
-		if res:
-			return res
+		if res: return res
+	return False
