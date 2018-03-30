@@ -194,15 +194,25 @@ feature/bug requests: <d0n@janeiskla.de>
 Changelog
 =========
 
-1.2.9
------
+1.2.9 (current)
+---------------
 
-Released: 2018-03-29
+Released: 2018-03-30
 
   * fixed xsel stays running in background (it's options are nasty)
 
   * lots of merges but it's too fuzzy to take them apart to see what has
     changed - mostly no functionallity changes though
+
+  * replaced the xinput and xgetpasswd (each continaing the class XInput) by
+    the equal called functions each using the class XInput
+
+  * added message for failed input match or decryption
+
+  * fixed displaying messages for input windows
+
+  * reverted and finally fixed xsel running in background (sometimes?)
+    now explicitly terminating when finished
 
 
 1.2.8

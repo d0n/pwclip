@@ -38,7 +38,7 @@ except ImportError:
 # local relative imports
 from colortext import bgre, tabd, error, fatal
 
-from system import copy, paste, xinput, xyesno, xnotify, which
+from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
@@ -144,17 +144,19 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	cfgs = __confcfgs()
 	if typ == 'yk':
-		__in = xinput()
+		__in = xgetpass()
 		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
 		if not __res:
+			xmsgok('no entry found for %s or decryption failed'%__in)
 			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
 	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
-	__in = xinput()
+	__in = xgetpass()
 	if not __in: exit(1)
 	__ent = pcm.lspw(__in)
 	if __ent and __in:
 		if __in not in __ent.keys() or not __ent[__in]:
+			xmsgok('no entry found for %s'%__in)
 			exit(1)
 		__pc = __ent[__in]
 		if __pc:
@@ -324,7 +326,7 @@ def cli():
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
 		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		__in = xinput()
+		__in = xgetpass()
 		__res = ykchalres(__in, args.ysl, __ykser)
 		if not __res:
 			fatal('could not get valid response on slot ', args.ysl)
@@ -367,7 +369,7 @@ def cli():
                             args.lst, __pc[1]), wait=args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
-			__in = xinput()
+			__in = xgetpass()
 			if not __in: exit(1)
 			__ent = pcm.lspw(__in)
 			if __ent and __in:
