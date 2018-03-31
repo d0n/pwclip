@@ -26,11 +26,7 @@ from subprocess import call
 
 from argparse import ArgumentParser
 
-from socket import gethostname as hostname
-
 from time import sleep
-
-from getpass import getpass
 
 from yaml import load
 
@@ -40,9 +36,9 @@ except ImportError:
 	pass
 
 # local relative imports
-from colortext import blu, bgre, tabd, error, fatal
+from colortext import bgre, tabd, error, fatal
 
-from system import copy, paste, xinput, xgetpass, xyesno, xnotify, which
+from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
@@ -59,7 +55,7 @@ if osname == 'nt' and not which('gpg.exe'):
 	finally:
 		remove(trg)
 
-from secrecy import GPGTool, PassCrypt, ykchalres
+from secrecy import PassCrypt, ykchalres
 
 from pwclip.__pkginfo__ import version
 
@@ -75,13 +71,6 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 	exit(0)
-
-def __keycheck(mode, kwargs):
-	gpg = GPGTool(**kwargs)
-	if gpg.findkey('', secret=True):
-		return
-	environ['GPGKEY'] = gpg.genkeys(mode)
-	return environ['GPGKEY']
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -125,7 +114,7 @@ def __confcfgs():
 	try:
 		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
-		cfgs['ykslot'] = 2 if 'ykslot' not in cfgs.keys() else cfgs['ykslot']
+		cfgs['ykslot'] = None
 	try:
 		cfgs['ykser'] = environ['YKSERIAL']
 	except KeyError:
@@ -155,20 +144,19 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	cfgs = __confcfgs()
 	if typ == 'yk':
-		__in = xinput()
+		__in = xgetpass()
 		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
 		if not __res:
+			xmsgok('no entry found for %s or decryption failed'%__in)
 			exit(1)
 		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	key = __keycheck('gui', cfgs)
-	if key:
-		cfgs['recvs'] = key
 	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
-	__in = xinput()
+	__in = xgetpass()
 	if not __in: exit(1)
 	__ent = pcm.lspw(__in)
 	if __ent and __in:
 		if __in not in __ent.keys() or not __ent[__in]:
+			xmsgok('no entry found for %s'%__in)
 			exit(1)
 		__pc = __ent[__in]
 		if __pc:
@@ -180,15 +168,11 @@ def gui(typ='pw'):
 
 def cli():
 	"""pwclip command line opt/arg parsing function"""
-	__me = path.basename(path.dirname(__file__))
 	cfgs = __confcfgs()
-	desc = 'pwclip - Multi functional password manager to temporarily ' \
-           'save passphrases to your copy/paste buffers for easy and ' \
-           'secure accessing your passwords. Most of the following ' \
-		   'arguments mights also be set by the config ~/.config/%s.yaml'%__me
-	epic = 'the yubikey feature is compatible with challenge-response ' \
-           'features only'
-	pars = ArgumentParser(description=desc ,epilog=epic)
+	prol = 'pwclip - multi functional password manager to temporarily ' \
+           'save passphrases  to your copy/paste buffers for easy and ' \
+           'secure accessing your passwords'
+	pars = ArgumentParser(description=prol) #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -241,8 +225,20 @@ def cli():
 	gpars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
-        help='force usage of gpgsm to be SSL compliant ' \
+        help='force ssl compatible gpgsm mode - usually is autodetected ' \
              '(use --cert --key for imports)')
+	gpars.add_argument(
+        '-C', '--cert',
+        dest='sslcrt', metavar='SSL-Certificate',
+        help='one-shot setting of SSL-Certificate')
+	gpars.add_argument(
+        '-K', '--key',
+        dest='sslkey', metavar='SSL-Private-Key',
+        help='one-shot setting of SSL-Private-Key')
+	gpars.add_argument(
+        '--ca', '--ca-cert',
+        dest='sslca', metavar='SSL-CA-Certificate',
+        help='one-shot setting of SSL-CA-Certificate')
 	gpars.add_argument(
         '-P', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
@@ -255,20 +251,8 @@ def cli():
         help='set location of one-time password YAMLFILE to read & delete')
 	gpars.add_argument(
         '-S', '--slot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
-        help='set the slot on the yubikey (only useful with -y)')
-	gpars.add_argument(
-        '--cert',
-        dest='sslcrt', metavar='SSL-Certificate',
-        help='one-shot setting of SSL-Certificate')
-	gpars.add_argument(
-        '--key',
-        dest='sslkey', metavar='SSL-Private-Key',
-        help='one-shot setting of SSL-Private-Key')
-	gpars.add_argument(
-        '--ca-cert',
-        dest='sslca', metavar='SSL-CA-Certificate',
-        help='one-shot setting of SSL-CA-Certificate')
+        dest='ysl', default=None, type=int, choices=(1, 2),
+        help='set one of the two slots on the yubi-key (only useful for -y)')
 
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
@@ -295,8 +279,9 @@ def cli():
         help='search entry matching PATTERN if given otherwise list all')
 
 	args = pars.parse_args()
-	if args.yks is False and args.lst is False and args.add is None\
-	      and args.chg is None and args.rms is None:
+	if args.yks is False and args.lst is False and \
+	      args.add is None and args.chg is None and \
+	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
 		pars.print_help()
 		exit(1)
 
@@ -342,15 +327,12 @@ def cli():
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
 		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		__in = xinput()
+		__in = xgetpass()
 		__res = ykchalres(__in, args.ysl, __ykser)
 		if not __res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 	else:
-		key = __keycheck('cli', __pkwargs)
-		if key:
-			__pkwargs['recvs'] = key
 		pcm = PassCrypt(*__pargs, **__pkwargs)
 		__ent = None
 		if args.add:
@@ -388,7 +370,7 @@ def cli():
                             args.lst, __pc[1]), wait=args.time)
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
-			__in = xinput()
+			__in = xgetpass()
 			if not __in: exit(1)
 			__ent = pcm.lspw(__in)
 			if __ent and __in:
@@ -403,6 +385,10 @@ def cli():
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent:
 			_printpws_(__ent, args.sho)
+	try:
+		readline.clear_history()
+	except UnboundLocalError:
+		pass
 
 
 

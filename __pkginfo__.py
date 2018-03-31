@@ -3,12 +3,12 @@
 from os import getcwd, path
 
 name = distname = modname = 'pwclip'
-numversion = (1, 2, 3)
+numversion = (1, 2, 10)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil', 'pyusb',
-    'python-gnupg', 'python-yubico', 'pyusb', 'PyYAML', 'wget']
+    'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 lic = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
 mailinglist = ""
@@ -30,6 +30,7 @@ classifiers = ['Environment :: Console',
                'Topic :: Utilities',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
+include_package_data = True
 try:
 	with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
 		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
@@ -39,9 +40,7 @@ try:
 		rfh.write(readme)
 except OSError:
 	readme = ''
-
 long_desc = (readme)
-
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],

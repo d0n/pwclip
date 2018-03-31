@@ -1,7 +1,7 @@
 #/usr/bin/env python3
 """pwclip init module"""
 import sys
-from os import path, devnull, remove, name as osname
+from os import path, devnull, environ, getenv, remove, name as osname
 from subprocess import call
 
 # this only makes sence while i need the lib folder in the PYTHONPATH
