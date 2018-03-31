@@ -117,10 +117,10 @@ class GitRepo(Command):
 		o, e, n = self.oerc(cmd)
 		if not silent:
 			if verbose:
-				print(o)
-			elif o and o.strip() not in (
+				print(o.strip())
+			elif o.strip() and o.strip() not in (
                   'Already up-to-date.', 'Already up to date.'):
-				print(o)
+				print(o.strip())
 			elif int(n) != 0:
 				error(
                     ' command ', cmd, ' returned ',
