@@ -225,7 +225,7 @@ def cli():
 	gpars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
-        help='force usage of gpgsm to be SSL compliant ' \
+        help='force ssl compatible gpgsm mode - usually is autodetected ' \
              '(use --cert --key for imports)')
 	gpars.add_argument(
         '-C', '--cert',
@@ -279,8 +279,9 @@ def cli():
         help='search entry matching PATTERN if given otherwise list all')
 
 	args = pars.parse_args()
-	if args.yks is False and args.lst is False and args.add is None\
-	      and args.chg is None and args.rms is None and (args.sslcrt is None and args.sslkey is None):
+	if args.yks is False and args.lst is False and \
+          args.add is None and args.chg is None and \
+          args.rms is None and (args.sslcrt is None and args.sslkey is None):
 		pars.print_help()
 		exit(1)
 
