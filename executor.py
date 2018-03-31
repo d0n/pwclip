@@ -3,9 +3,7 @@
 from os import access, environ, getuid, getresuid, X_OK, name as osname
 from os.path import abspath, join as pjoin
 
-from sys import stdout, stderr
-_echo_ = stdout.write
-_puke_ = stderr.write
+from sys import stdout as _stdout, stderr as _stderr
 
 from subprocess import run, Popen, PIPE
 # for legacy subprocess compatibility while DEVNULL is new in subprocess
@@ -14,9 +12,13 @@ try:
 except ImportError:
 	DEVNULL = open('/dev/null')
 
+_echo_ = _stdout.write
+_puke_ = _stderr.write
+
 #from system.which import which
 
 class Command(object):
+	"""Command class"""
 	sh_ = True
 	su_ = False
 	dbg = False
@@ -30,14 +32,16 @@ class Command(object):
 		for (key, val) in kwargs.items():
 			if hasattr(self, key):
 				setattr(self, key, val)
-	
+
 	@staticmethod
 	def __which(prog):
 		"""which function like the linux 'which' program"""
 		delim = ';' if osname == 'nt' else ':'
+		__path = ''
 		for path in environ['PATH'].split(delim):
 			if access(pjoin(path, prog), X_OK):
-				return pjoin(abspath(path), prog)
+				__path = pjoin(abspath(path), prog)
+		return __path
 
 	@staticmethod
 	def _str(commands):
@@ -93,7 +97,7 @@ class Command(object):
             commands,
             stdout=DEVNULL, stderr=DEVNULL, shell=self.sh_).pid
 
-	def call(self, *commands, stdout=True, stderr=True, inputs=None):
+	def call(self, *commands, stdout=True, stderr=True, inputs=None, b2s=None):
 		"""
 		default command execution
 		prints STDERR, STDOUT and returns the exitcode
@@ -163,7 +167,8 @@ command = Command('sh')
 sucommand = Command('sh', 'su')
 
 def sudofork(*args):
-	if not [i for i in getresuid() if i != 0]: return
+	"""sudo command fork wrapper function"""
+	if not [i for i in getresuid() if i != 0]: return 1
 	try:
 		eno = int(sucommand.call(args))
 	except KeyboardInterrupt:
