@@ -279,9 +279,12 @@ def cli():
         help='search entry matching PATTERN if given otherwise list all')
 
 	args = pars.parse_args()
-	if args.yks is False and args.lst is False and \
-          args.add is None and args.chg is None and \
-          args.rms is None and (args.sslcrt is None and args.sslkey is None):
+	#if args.yks is False and args.lst is False and \
+	#      args.add is None and args.chg is None and \
+	#     args.rms is None and (args.sslcrt is None and args.sslkey is None):
+	if not [i for i in (args.lst, args.yks) if i is not False] or not \
+          [i for i in (args.add, args.chg, args.rms) if i is not None] or \
+          [i for i in (args.sslcrt, args.sslkey) if i is not None]:
 		pars.print_help()
 		exit(1)
 
@@ -385,6 +388,10 @@ def cli():
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent:
 			_printpws_(__ent, args.sho)
+	try:
+		readline.clear_history()
+	except UnboundLocalError:
+		pass
 
 
 

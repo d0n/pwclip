@@ -1,8 +1,19 @@
 Changelog
 =========
 
-1.2.9 (current)
+1.3.0 (current)
 ---------------
+
+Released: 2018-03-31
+
+  * changed --help for -x option to match its functionality
+
+  * again lotz of code linting (code rated at 9.52/10) disabled checks:
+    bad-continuation,too-many-arguments,too-many-locals,too-many-branches
+
+
+1.2.9
+-----
 
 Released: 2018-03-30
 
