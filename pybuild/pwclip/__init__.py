@@ -8,11 +8,8 @@ from subprocess import call
 # otherwise i need to rewrite lots of code cause i have thus libs in the
 # python environment path at my workstation and do not change that =)
 __lib = path.join(path.dirname(__file__), 'lib')
-if path.exists(__lib):
-	if __lib not in sys.path:
-		sys.path = [__lib] + sys.path
-	if getenv('PYTHONPATH') and __lib not in getenv('PYTHONPATH'):
-		environ['PYTHONPATH'] = __lib
+if path.exists(__lib) and __lib not in sys.path:
+	sys.path = [__lib] + sys.path
 if sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe':
 	sys.stdout = open(devnull, 'w')
 	sys.stderr = open(devnull, 'w')
