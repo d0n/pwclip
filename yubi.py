@@ -55,7 +55,9 @@ def ykchalres(chal, slot=2, ykser=None):
 	or default (2) as wrapping function for yubikeys() and slotchalres()
 	"""
 	keys = yubikeys(ykser)
-	for (_, key) in keys.items():
-		res = ykslotchalres(key, chal, int(slot))
-		if res: return res
+	for (ser, key) in keys.items():
+		for i in (1, 2):
+			res = ykslotchalres(key, chal, i)
+			if res:
+				return res
 	return False
