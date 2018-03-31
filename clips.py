@@ -51,37 +51,37 @@ def clips():
 			def __setattr__(self, key, value):
 				setattr(self.f, key, value)
 		mkwin = CheckedCall(windll.user32.CreateWindowExA)
-		mkwin.argtypes = [
+		setattr('mkwin', 'argtypes', [
             DWORD, LPCSTR, LPCSTR, DWORD, INT, INT,
-            INT, INT, HWND, HMENU, HINSTANCE, LPVOID]
-		mkwin.restype = HWND
+            INT, INT, HWND, HMENU, HINSTANCE, LPVOID])
+		setattr('mkwin', 'restype', HWND)
 		delwin = CheckedCall(windll.user32.DestroyWindow)
-		delwin.argtypes = [HWND]
-		delwin.restype = BOOL
+		setattr('delwin', 'argtypes', [HWND])
+		setattr('delwin', 'restype', BOOL)
 		clip = windll.user32.OpenClipboard
-		clip.argtypes = [HWND]
-		clip.restype = BOOL
+		setattr('clip', 'argtypes', [HWND])
+		setattr('clip', 'restype', BOOL)
 		clsclip = CheckedCall(windll.user32.CloseClipboard)
-		clsclip.argtypes = []
-		clsclip.restype = BOOL
+		setattr('clsclip', 'argtypes', [])
+		setattr('clsclip', 'restype', BOOL)
 		delclip = CheckedCall(windll.user32.EmptyClipboard)
-		delclip.argtypes = []
-		delclip.restype = BOOL
+		setattr('delclip', 'argtypes', [])
+		setattr('delclip', 'restype', BOOL)
 		getclip = CheckedCall(windll.user32.GetClipboardData)
-		getclip.argtypes = [UINT]
-		getclip.restype = HANDLE
+		setattr('getclip', 'argtypes', [UINT])
+		setattr('getclip', 'restype', HANDLE)
 		setclip = CheckedCall(windll.user32.SetClipboardData)
-		setclip.argtypes = [UINT, HANDLE]
-		setclip.restype = HANDLE
+		setattr('setclip', 'argtypes', [UINT, HANDLE])
+		setattr('setclip', 'restype', HANDLE)
 		allock = CheckedCall(windll.kernel32.GlobalAlloc)
-		allock.argtypes = [UINT, c_size_t]
-		allock.restype = HGLOBAL
+		setattr('allock', 'argtypes', [UINT, c_size_t])
+		setattr('setclip', 'restype', HGLOBAL)
 		dolock = CheckedCall(windll.kernel32.GlobalLock)
-		dolock.argtypes = [HGLOBAL]
-		dolock.restype = LPVOID
+		setattr('dolock', 'argtypes', [HGLOBAL])
+		setattr('doclip', 'restype', LPVOID)
 		unlock = CheckedCall(windll.kernel32.GlobalUnlock)
-		unlock.argtypes = [HGLOBAL]
-		unlock.restype = BOOL
+		setattr('unlock', 'argtypes', [HGLOBAL])
+		setattr('unclip', 'restype', BOOL)
 		@contextmanager
 		def window():
 			"""context that provides a valid window (hwnd)"""

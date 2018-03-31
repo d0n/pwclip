@@ -1,3 +1,4 @@
+"""system.agentinfo library"""
 from os import \
     getuid, environ, \
     getenv, stat as osstat
@@ -8,6 +9,7 @@ from stat import S_ISSOCK as issock
 from system.user import userfind
 
 def gpgagentinfo():
+	"""gpg-agent socket finder function"""
 	uid = getenv('SUDO_UID')
 	if not uid:
 		uid = getuid()
