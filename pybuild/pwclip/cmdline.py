@@ -114,7 +114,7 @@ def __confcfgs():
 	try:
 		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
-		cfgs['ykslot'] = 2 if 'ykslot' not in cfgs.keys() else cfgs['ykslot']
+		cfgs['ykslot'] = None
 	try:
 		cfgs['ykser'] = environ['YKSERIAL']
 	except KeyError:
@@ -251,7 +251,7 @@ def cli():
         help='set location of one-time password YAMLFILE to read & delete')
 	gpars.add_argument(
         '-S', '--slot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
+        dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two slots on the yubi-key (only useful for -y)')
 
 	ypars = pars.add_argument_group('yubikey arguments')

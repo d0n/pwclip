@@ -6,7 +6,9 @@ Changelog
 
 Released: 2018-03-31
 
-  * changed --help for -x option to match its functionality
+  * fix ykclip not choosing challenge-response slot automatically
+
+  * changed --help for -x option to better match its sence
 
   * again lots of code linting (code rated at 9.52/10) disabled checks:
     bad-continuation,too-many-arguments,too-many-locals,too-many-branches
