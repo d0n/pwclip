@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """passcrypt module"""
 
-from os import path, remove, environ, chmod, stat, makedirs
+from os import path, remove, environ, chmod, stat, utime, makedirs
 
 from time import time
 
@@ -154,6 +154,8 @@ class PassCrypt(object):
 			self.gpg.encrypt(message=dump(__weak), **kwargs)
 			if self._chkcrypt(__weak):
 				chmod(self.crypt, 0o600)
+				now = int(time())
+				utime(self.crypt, (now, now))
 				if self.remote:
 					self._copynews_()
 				return True
