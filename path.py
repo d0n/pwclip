@@ -90,14 +90,11 @@ def filetime(trg):
 	"""local file-timestamp method"""
 	return int(osstat(trg).st_mtime), int(osstat(trg).st_atime)
 
-def setfiletime(trg, mtime=None, atime=None):
+def setfiletime(trg, mtime, atime=None):
 	"""local file-timestamp set method"""
-	mt, at = filetime(trg)
 	if mtime and not atime:
-		atime = at
-	elif atime and not mtime:
-		mtime = mt
-	utime(trg, (at, mt))
+		atime = mtime
+	utime(trg, (atime, mtime))
 
 def filerotate(lfile, count=1):
 	"""rotate given file by a maximum of count"""
