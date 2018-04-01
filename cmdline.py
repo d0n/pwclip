@@ -101,7 +101,7 @@ def _printpws_(pwdict, insecure=False):
 def __confcfgs():
 	"""config parser function"""
 	_me = path.basename(path.dirname(__file__))
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	cfg = path.expanduser(path.join('~', '.config', '%s.yaml'%_me))
 	try:
 		with open(cfg, 'r') as cfh:
 			cfgs = load(cfh.read())
