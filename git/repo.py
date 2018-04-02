@@ -42,6 +42,7 @@ class GitRepo(Command):
 			print(bgre(tabd(self.__dict__, 2)))
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
+		Command.__init__(self, *args, **kwargs)
 
 	@property               # gitbin <str>
 	def gitbin(self):
