@@ -14,3 +14,7 @@
 	path = pybuild/pwclip/lib/secrecy
 	url = d0n@janeiskla.de:rpo/python/secrecy.git
 	branch = pwclip
+[submodule "pybuild/pwclip/lib/system"]
+	path = pybuild/pwclip/lib/system
+	url = d0n@janeiskla.de:rpo/python/system.git
+	branch = pwclip
