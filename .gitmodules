@@ -1,0 +1,16 @@
+[submodule "pybuild/pwclip/lib/colortext"]
+	path = pybuild/pwclip/lib/colortext
+	url = d0n@janeiskla.de:rpo/python/colortext.git
+	branch = pwclip
+[submodule "pybuild/pwclip/lib/executor"]
+	path = pybuild/pwclip/lib/executor
+	url = d0n@janeiskla.de:rpo/python/executor.git
+	branch = pwclip
+[submodule "pybuild/pwclip/lib/net"]
+	path = pybuild/pwclip/lib/net
+	url = d0n@janeiskla.de:rpo/python/net.git
+	branch = pwclip
+[submodule "pybuild/pwclip/lib/secrecy"]
+	path = pybuild/pwclip/lib/secrecy
+	url = d0n@janeiskla.de:rpo/python/secrecy.git
+	branch = pwclip
