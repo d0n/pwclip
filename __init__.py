@@ -1,1 +1,1 @@
-pybuild/pwclip/__init__.py
+pwclip/__init__.py

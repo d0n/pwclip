@@ -1,1 +1,1 @@
-pybuild/pwclip/__pkginfo__.py
+pwclip/__pkginfo__.py

@@ -1,1 +1,1 @@
-pybuild/pwclip/cmdline.py
+pwclip/cmdline.py

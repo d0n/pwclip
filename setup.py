@@ -40,8 +40,7 @@ def setupkwargs(pinf):
         'description',
         'ext_modules',
         'author_email',
-        'install_requires',
-        'include_package_data')
+        'install_requires')
     unils = (
         'packages',
         'classifiers',
@@ -67,12 +66,13 @@ def setupkwargs(pinf):
 if __name__ == '__main__':
     __pkginfo__ = {}
     __pkginfo__['packages'] = ['pwclip'] + packages('pwclip')
-    with open(path.join('pwclip', '__pkginfo__.py')) as f:
+    with open('pwclip/__pkginfo__.py') as f:
         exec(f.read(), __pkginfo__)
     kwargs = setupkwargs(__pkginfo__)
     if '-v' in argv or '--verbose' in argv:
         print()
         for (k, v) in sorted(kwargs.items()):
             print(k, '=', v)
-        input()
+        print()
+    kwargs['package_data'] = {'': ['*.rst']}
     setup(**kwargs)
