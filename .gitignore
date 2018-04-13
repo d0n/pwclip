@@ -5,4 +5,4 @@
 *.deb
 *.tar.gz
 *__pycache__*
-pybuild
+lib
