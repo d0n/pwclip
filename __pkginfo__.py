@@ -4,7 +4,7 @@ from os import getcwd, path
 
 name = distname = modname = 'pwclip'
 numversion = (1, 2, 10)
-version = '.'.join([str(num) for num in numversion])
+version = __version__ = '.'.join([str(num) for num in numversion])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil', 'pyusb',
