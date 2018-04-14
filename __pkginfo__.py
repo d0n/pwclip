@@ -32,11 +32,11 @@ classifiers = ['Environment :: Console',
                'Topic :: System :: Systems Administration']
 include_package_data = True
 try:
-	with open(path.join(getcwd(), 'CHANGELOG.rst'), 'r') as cfh:
+	with open('pwclip', 'CHANGELOG.rst'), 'r') as cfh:
 		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
-	with open(path.join(getcwd(), 'README.rst'), 'r') as rfh:
+	with open('pwclip', 'README.rst'), 'r') as rfh:
 		readme = rfh.read().format(ChangeLog=changelog)
-	with open(path.join(getcwd(), 'README'), 'w+') as rfh:
+	with open('pwclip', 'README'), 'w+') as rfh:
 		rfh.write(readme)
 except OSError:
 	readme = ''
