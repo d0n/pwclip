@@ -36,8 +36,6 @@ try:
 		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
 	with open(pjoin('pwclip', 'README.rst'), 'r') as rfh:
 		readme = rfh.read().format(ChangeLog=changelog)
-	with open(pjoin('pwclip', 'README'), 'w+') as rfh:
-		rfh.write(readme)
 except OSError:
 	readme = ''
 long_desc = (readme)
