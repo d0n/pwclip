@@ -14,7 +14,7 @@ if sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe':
 	sys.stdout = open(devnull, 'w')
 	sys.stderr = open(devnull, 'w')
 from pwclip.cmdline import cli, gui
-from pwclip.__pkginfo__ import __version__
+from pwclip import __version__
 
 def pwclip():
 	"""pwclip passcrypt gui mode"""

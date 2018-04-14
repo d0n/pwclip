@@ -8,5 +8,6 @@ README
 deb_dist/*
 dist/*
 build/*
+docs/_build/*
 #pwclip/lib/*
 pwclip.egg-info/*
