@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """pwclip packaging information"""
-from os import getcwd, path
+from os.path import join as pjoin
 
 name = distname = modname = 'pwclip'
 numversion = (1, 2, 10)
