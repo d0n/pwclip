@@ -54,8 +54,8 @@ copyright = '2018, Leon Pelzer'
 # built documents.
 #
 # The short X.Y version.
-#from pwclip.__pkginfo__ import __version__
-version = "1.2.10"
+from pwclip.__pkginfo__ import version
+#version = "1.2.10"
 # The full version, including alpha/beta/rc tags.
 release = version
 
