@@ -4,7 +4,7 @@
 *.swp
 *.deb
 *.tar.gz
-README
+#README
 deb_dist/*
 dist/*
 build/*
