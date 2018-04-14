@@ -46,5 +46,5 @@ entry_points = {
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [
-        'pwclip/example/ca.crt', 'pwclip/example/command.lst',
+        'pwclip/example/ca.crt', 'pwclip/example/commands.lst',
         'pwclip/example/ssl.crt', 'pwclip/example/ssl.key'])]
