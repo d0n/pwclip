@@ -43,4 +43,4 @@ entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],
     'console_scripts': ['pwcli = pwclip.__init__:pwcli']}
-data_files=[('docs/pwclip.1', ['docs/pwclip.1'])]
+data_files=[('share/man/man1', ['pwclip/docs/pwclip.1'])]
