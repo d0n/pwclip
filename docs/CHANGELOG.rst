@@ -13,6 +13,8 @@ Released: 2018-04-16
 
   * fixed usage of os.utime instead of system.filetime
 
+  * updated README file
+
 
 1.2.10
 ------
