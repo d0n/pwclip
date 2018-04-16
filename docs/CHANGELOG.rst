@@ -1,8 +1,16 @@
 Changelog
 =========
 
-1.2.10 (current)
+1.2.11 (current)
 ---------------
+
+Released: 2018-04-16
+
+  * added man page
+
+
+1.2.10
+------
 
 Released: 2018-03-31
 
