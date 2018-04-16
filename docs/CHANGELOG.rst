@@ -9,6 +9,8 @@ Released: 2018-04-16
   * added man page and changed whole build environment as well as the
     script i've been using
 
+  * fixed usage of os.utime instead of system.filetime
+
 
 1.2.10
 ------
