@@ -185,10 +185,10 @@ Credits
  * Pyperclip for they excellent Windows & OSX clipboard code
  * Yubico (cheap & solid HW-Security-Modules) & python-yubico developers
  * GNU Privacy Guard (basic kryptography) & python-gnupg developers
- * SonicLux for telling me that a final version cannot and must not be 0.3.3 :D
+ * SonicLux for telling me that a final version must not be 0.3.3 :D
 
 I hope that this might be somewhat of help or at least be inspiring for own
-ideas. You're alway welcome to leave me a message for requests, review or
-feature/bug requests: <d0n@janeiskla.de>
+ideas. You're alway welcome to leave me a message for requests, reviews or
+feature requests as well as bug reports: <mail@leonpelzer.de>
 
 {ChangeLog}
