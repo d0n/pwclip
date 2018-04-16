@@ -9,7 +9,7 @@ provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
-lic = 'GPL'
+license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
 mailinglist = ""
 author = 'Leon Pelzer'
@@ -32,13 +32,16 @@ classifiers = ['Environment :: Console',
                'Topic :: System :: Systems Administration']
 include_package_data = True
 try:
-	with open(pjoin('pwclip', 'docs', 'CHANGELOG.rst'), 'r') as cfh:
+	with open('pwclip/docs/CHANGELOG.rst'), 'r') as cfh:
 		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
-	with open(pjoin('pwclip', 'docs', 'README.rst'), 'r') as rfh:
+except OSError:
+	changelog = ''
+try:
+	with open('pwclip/docs/README.rst'), 'r') as rfh:
 		readme = rfh.read().format(ChangeLog=changelog)
 except OSError:
 	readme = ''
-long_desc = (readme)
+long_description = (readme)
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],
