@@ -6,7 +6,8 @@ Changelog
 
 Released: 2018-04-16
 
-  * added man page
+  * added man page and changed whole build environment as well as the
+    script i've been using
 
 
 1.2.10
