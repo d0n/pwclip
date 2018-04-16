@@ -53,7 +53,8 @@ access, especially root access on linux systems (help on that is very welcome).
 Please be aware of that.
 
 Since version 1.2 openssl keys are supported. For use with pwclip they will be
-converted to gpg-keys (gpgsm) automaticly - openssl is not used for en/decryption.
+converted to gpg-keys (gpgsm) automaticly - openssl is not used for
+en/decryption.
 
 
 YAML-Format
