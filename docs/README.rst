@@ -76,14 +76,6 @@ realsystemuser:
 Installation
 ============
 
-pwclip requires the "xsel" package on Debian-Like Systems to have access to
-copy/paste buffers.
-
-* https://wiki.ubuntuusers.de/xsel/
-
-Installing via pip3
---------------------
-
 On Windows you need to install Python3 from http://python.org/ first. On most
 Linux distributions python will be part of the system. With Python installed,
 you can install the pwclip package from the Python-Package-Index (pyPI) by

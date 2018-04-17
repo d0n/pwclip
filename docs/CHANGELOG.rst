@@ -9,6 +9,8 @@ Released: 2018-04-17
   * made linux clips xsel independent by implementing copy/paste using gi
     gobject-introspection library wich is already used for notifications
 
+  * fixed path related build environment issues
+
 
 1.2.11
 ------
