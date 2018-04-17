@@ -3,7 +3,7 @@
 from os.path import join as pjoin
 
 name = distname = modname = 'pwclip'
-numversion = (1, 2, 12)
+numversion = (1, 3, 0)
 version = '.'.join([str(num) for num in numversion])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
