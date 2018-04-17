@@ -323,6 +323,7 @@ def cli():
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
+	print(poclp, boclp)
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
