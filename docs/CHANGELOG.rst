@@ -1,8 +1,17 @@
 Changelog
 =========
 
-1.2.11 (current)
-----------------
+1.3.0 (current)
+---------------
+
+Released: 2018-04-17
+
+  * made linux clips xsel independent by implementing copy paste using
+    python3-gi
+
+
+1.2.11
+------
 
 Released: 2018-04-16
 
