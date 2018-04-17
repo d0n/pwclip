@@ -1,6 +1,2 @@
-include CHANGELOG.rst
-include README.rst
-include MANIFEST.in
 include example/*
 include doc/*
-include man/*
