@@ -167,7 +167,7 @@ In line 107 of the file
 /usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py
 the ord() coversion of the response
 `r_len = ord(response[0])`
-needs to be removed, like:
+needs to be replaced by:
 `r_len = response[0]`
 
 

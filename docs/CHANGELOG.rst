@@ -4,6 +4,16 @@ Changelog
 1.3.1 (current)
 ---------------
 
+Released: 2018-04
+
+  * fixed typo in README
+
+  * removed print added for debugging purpose
+
+
+1.3.1
+-----
+
 Released: 2018-04-19
 
   * reverted changes from last version while clipboards are not accessible
