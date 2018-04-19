@@ -1,8 +1,18 @@
 Changelog
 =========
 
-1.3.0 (current)
+1.3.1 (current)
 ---------------
+
+Released: 2018-04-19
+
+  * reverted changes from last version while clipboards are not accessible
+    from other processes in python Gtk/Gdk
+
+  * readded xsel dependency
+
+1.3.0
+-----
 
 Released: 2018-04-17
 
