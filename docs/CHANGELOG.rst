@@ -11,6 +11,7 @@ Released: 2018-04-19
 
   * readded xsel dependency
 
+
 1.3.0
 -----
 
