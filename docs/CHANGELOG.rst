@@ -10,6 +10,8 @@ Released: 2018-04
 
   * removed print added for debugging purpose
 
+  * replaced all xinput related libs into one class with functions using it
+
 
 1.3.1
 -----
