@@ -8,6 +8,8 @@ Released: 2018-04-17
 
   * fixed path related build environment issues
 
+  * removed xsel dependency
+
 
 1.2.11
 ------
