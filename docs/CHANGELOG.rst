@@ -11,11 +11,13 @@ Released: 2018-04-19
 
   * readded xsel dependency
 
+  * fixed last release date
+
 
 1.3.0
 -----
 
-Released: 2018-04-17
+Released: 2018-04-19
 
   * fixed path related build environment issues
 
