@@ -369,7 +369,6 @@ def cli():
 						xnotify('%s: %s'%(
                             args.lst, __pc[1]), wait=args.time)
 					copy(__pc[0], 'pb')
-					print(paste('pb'))
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
 			__in = xgetpass()
@@ -385,7 +384,6 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(__in, __pc[1:]), args.time)
 					copy(__pc[0], 'pb')
-					print(paste('pb'))
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent:
 			_printpws_(__ent, args.sho)
