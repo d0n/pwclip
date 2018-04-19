@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.3.1 (current)
+1.3.2 (current)
 ---------------
 
 Released: 2018-04
