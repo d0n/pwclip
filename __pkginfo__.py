@@ -36,7 +36,7 @@ try:
 except OSError:
 	_changes = ''
 try:
-	with open('docs/README.rst', 'r') as rfh:
+	with open('pwclip/docs/README.rst', 'r') as rfh:
 		_readme = rfh.read().format(ChangeLog=_changes)
 except OSError:
 	_readme = ''
