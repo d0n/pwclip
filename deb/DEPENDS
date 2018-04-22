@@ -1,5 +1,4 @@
 xsel
-xvkbd
 gpgsm
 gnupg2
 openssl
@@ -12,3 +11,4 @@ python3-wget
 python3-gnupg
 python3-argparse
 python3-paramiko
+python3-virtkey
