@@ -24,7 +24,7 @@ from os import environ, path, remove, name as osname
 
 from sys import argv
 
-from subprocess import call
+from subprocess import PIPE, Popen, call
 
 from argparse import ArgumentParser
 
@@ -369,13 +369,10 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
-					vkb = virtkey()
-					vkb.lock_mod(1, 2)
-					vkb.press_keycode(50)
-					vkb.press_keycode(118)
-					vkb.release_keycode(118)
-					vkb.release_keycode(50)
-					vkb.lock_mod(1, 2)
+					prc = Popen(
+                        ['xvkbd', '-no-jump-pointer',
+                            '-xsendevent', '-text', __pc[0]], stdout=PIPE)
+					prc.communicate()
 					exit(0)
 				elif __pc:
 					if len(__pc) == 2:
