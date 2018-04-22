@@ -13,16 +13,18 @@ if path.exists(__lib) and __lib not in sys.path:
 if sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe':
 	sys.stdout = open(devnull, 'w')
 	sys.stderr = open(devnull, 'w')
-from pwclip.cmdline import cli, gui
 
 def pwclip():
 	"""pwclip passcrypt gui mode"""
+	from pwclip.pwclip import gui
 	gui()
 
 def ykclip():
 	"""pwclip yubico gui mode"""
+	from pwclip.pwclip import gui
 	gui('yk')
 
 def pwcli():
 	"""pwclip cli mode"""
+	from pwclip.cmdline import cli
 	cli()
