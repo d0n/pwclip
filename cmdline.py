@@ -341,7 +341,7 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
-					call('xvkbd -no-jump-pointer -xsendevent -text %s'%__pc[0], stderr=DEVNULL)
+					call('xvkbd -no-keypad -text %s'%__pc[0], stderr=DEVNULL)
 					exit(0)
 				elif __pc:
 					if len(__pc) == 2:
