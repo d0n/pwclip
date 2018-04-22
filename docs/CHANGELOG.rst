@@ -16,7 +16,7 @@ Released: 2018-04
 
   * rearranged cmdline and seperated gui
 
-
+  * fixed MANIFEST pointing to non-existent doc/ folder
 
 1.3.1
 -----
