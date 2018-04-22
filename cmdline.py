@@ -370,12 +370,12 @@ def cli():
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
 					vkb = virtkey()
-					vkb.lock_mod(1<<2)
+					vkb.lock_mod(1, 2)
 					vkb.press_keycode(50)
 					vkb.press_keycode(118)
 					vkb.release_keycode(118)
 					vkb.release_keycode(50)
-					vkb.lock_mod(1<<2)
+					vkb.lock_mod(1, 2)
 					exit(0)
 				elif __pc:
 					if len(__pc) == 2:
