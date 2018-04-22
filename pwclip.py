@@ -188,17 +188,18 @@ def confpars():
 
 	autocomplete(pars)
 	args = pars.parse_args()
-	if args.yks is False and args.lst is False and \
-	      args.add is None and args.chg is None and \
-	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
-		pars.print_help()
-		exit(1)
-	return args
+	return pars, args
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
-	cfgs = confpars()
+	pars, cfgs = confpars()
+	print(cfgs)
+	if args.yks is False and args.lst is False and \
+	      args.add is None and args.chg is None and \
+	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
+		pars.print_help()
+	exit()
 	if typ == 'yk':
 		__in = xgetpass()
 		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
