@@ -8,6 +8,7 @@ install_requires = [
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
+url = 'https://pypi.org/project/pwclip/%s/'%version
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
 download_url = 'https://pypi.python.org/pypi/pwclip/%s#downloads'%version
