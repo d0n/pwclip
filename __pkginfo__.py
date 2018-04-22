@@ -53,6 +53,3 @@ data_files=[
         'pwclip/example/ca.crt', 'pwclip/example/commands.lst',
         'pwclip/example/ssl.crt', 'pwclip/example/ssl.key',
         'pwclip/example/example_passwords.yaml'])]
-del __readme
-del __changes
-del __builtins__
