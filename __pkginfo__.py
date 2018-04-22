@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 """pwclip packaging information"""
-from os.path import join as pjoin
-
-name = distname = modname = 'pwclip'
-numversion = (1, 3, 1)
-version = '.'.join([str(num) for num in numversion])
+name = 'pwclip'
+version = '.'.join([str(num) for num in (1, 3, 1)])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
-mailinglist = ""
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
 download_url = 'https://pypi.python.org/pypi/pwclip/%s#downloads'%version
@@ -33,15 +29,15 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 try:
 	with open('pwclip/docs/CHANGELOG.rst', 'r') as cfh:
-		changelog = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
+		__changes = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
 except OSError:
-	changelog = ''
+	__changes = ''
 try:
 	with open('pwclip/docs/README.rst', 'r') as rfh:
-		readme = rfh.read().format(ChangeLog=changelog)
+		__readme = rfh.read().format(ChangeLog=__changes)
 except OSError:
-	readme = ''
-long_description = (readme)
+	__readme = ''
+long_description = (__readme)
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],
