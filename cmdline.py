@@ -44,11 +44,6 @@ def _printpws_(pwdict, insecure=False):
 
 def cli():
 	args = confpars()
-	if args.yks is False and args.lst is False and \
-	      args.add is None and args.chg is None and \
-	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
-		pars.print_help()
-		exit(1)
 	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
