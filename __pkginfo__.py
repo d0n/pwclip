@@ -36,7 +36,7 @@ except OSError:
 try:
 	long_description = str(
         open('pwclip/docs/README.rst', 'r').read()
-        ).format(ChangeLog=long_description))
+        ).format(ChangeLog=long_description)
 except OSError:
 	long_description = ''
 entry_points = {
