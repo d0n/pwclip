@@ -26,8 +26,14 @@ from sys import argv
 
 from subprocess import DEVNULL, call
 
+<<<<<<< HEAD
 from argparse import ArgumentParser
 
+||||||| merged common ancestors
+from socket import gethostname as hostname
+
+=======
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 from time import sleep
 
 from yaml import load
@@ -40,9 +46,15 @@ except ImportError:
 # local relative imports
 from colortext import bgre, tabd, error, fatal
 
+<<<<<<< HEAD
 from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
 from virtkey import virtkey
+||||||| merged common ancestors
+from system import copy, paste, xinput, xgetpass, xyesno, xnotify, which
+=======
+from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
@@ -102,13 +114,170 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
+<<<<<<< HEAD
+||||||| merged common ancestors
+def __confcfgs():
+	"""config parser function"""
+	_me = path.basename(path.dirname(__file__))
+	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	try:
+		with open(cfg, 'r') as cfh:
+			cfgs = load(cfh.read())
+	except FileNotFoundError:
+		cfgs = {}
+	try:
+		cfgs['time'] = environ['PWCLIPTIME']
+	except KeyError:
+		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
+	try:
+		cfgs['ykslot'] = environ['YKSLOT']
+	except KeyError:
+		cfgs['ykslot'] = 2 if 'ykslot' not in cfgs.keys() else cfgs['ykslot']
+	try:
+		cfgs['ykser'] = environ['YKSERIAL']
+	except KeyError:
+		cfgs['ykser'] = None
+	try:
+		cfgs['binary']
+	except KeyError:
+		cfgs['binary'] = 'gpg2'
+		if osname == 'nt':
+			cfgs['binary'] = 'gpg'
+	try:
+		cfgs['user'] = environ['USER']
+	except KeyError:
+		cfgs['user'] = environ['USERNAME']
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	return cfgs
+
+def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
+	poclp, boclp = paste('pb')
+	cfgs = __confcfgs()
+	if typ == 'yk':
+		__in = xinput()
+		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
+		if not __res:
+			exit(1)
+		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	key = __keycheck('gui', cfgs)
+	if key:
+		cfgs['recvs'] = key
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	__in = xinput()
+	if not __in: exit(1)
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			exit(1)
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
+			poclp, boclp = paste('pb')
+			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+
+=======
+def __confcfgs():
+	"""config parser function"""
+	_me = path.basename(path.dirname(__file__))
+	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	try:
+		with open(cfg, 'r') as cfh:
+			cfgs = load(cfh.read())
+	except FileNotFoundError:
+		cfgs = {}
+	try:
+		cfgs['time'] = environ['PWCLIPTIME']
+	except KeyError:
+		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
+	try:
+		cfgs['ykslot'] = environ['YKSLOT']
+	except KeyError:
+		cfgs['ykslot'] = None
+	try:
+		cfgs['ykser'] = environ['YKSERIAL']
+	except KeyError:
+		cfgs['ykser'] = None
+	try:
+		cfgs['binary']
+	except KeyError:
+		cfgs['binary'] = 'gpg2'
+		if osname == 'nt':
+			cfgs['binary'] = 'gpg'
+	try:
+		cfgs['user'] = environ['USER']
+	except KeyError:
+		cfgs['user'] = environ['USERNAME']
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	return cfgs
+
+def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
+	poclp, boclp = paste('pb')
+	cfgs = __confcfgs()
+	if typ == 'yk':
+		__in = xgetpass()
+		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
+		if not __res:
+			xmsgok('no entry found for %s or decryption failed'%__in)
+			exit(1)
+		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	__in = xgetpass()
+	if not __in: exit(1)
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			xmsgok('no entry found for %s'%__in)
+			exit(1)
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
+			poclp, boclp = paste('pb')
+			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 
 def confpars(mode='gui'):
 	"""pwclip command line opt/arg parsing function"""
+<<<<<<< HEAD
 	prol = 'pwclip - multi functional password manager to temporarily ' \
            'save passphrases  to your copy/paste buffers for easy and ' \
            'secure accessing your passwords'
 	pars = ArgumentParser(description=prol) #add_help=False)
+||||||| merged common ancestors
+	__me = path.basename(path.dirname(__file__))
+	cfgs = __confcfgs()
+	desc = 'pwclip - Multi functional password manager to temporarily ' \
+           'save passphrases to your copy/paste buffers for easy and ' \
+           'secure accessing your passwords. Most of the following ' \
+		   'arguments mights also be set by the config ~/.config/%s.yaml'%__me
+	epic = 'the yubikey feature is compatible with challenge-response ' \
+           'features only'
+	pars = ArgumentParser(description=desc ,epilog=epic)
+=======
+	cfgs = __confcfgs()
+	prol = 'pwclip - multi functional password manager to temporarily ' \
+           'save passphrases  to your copy/paste buffers for easy and ' \
+           'secure accessing your passwords'
+	pars = ArgumentParser(description=prol) #add_help=False)
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -185,8 +354,30 @@ def confpars(mode='gui'):
         help='set location of one-time password YAMLFILE to read & delete')
 	gpars.add_argument(
         '-S', '--slot',
+<<<<<<< HEAD
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two slots on the yubi-key (only useful for -y)')
+||||||| merged common ancestors
+        dest='ysl', default=2, type=int, choices=(1, 2),
+        help='set the slot on the yubikey (only useful with -y)')
+	gpars.add_argument(
+        '--cert',
+        dest='sslcrt', metavar='SSL-Certificate',
+        help='one-shot setting of SSL-Certificate')
+	gpars.add_argument(
+        '--key',
+        dest='sslkey', metavar='SSL-Private-Key',
+        help='one-shot setting of SSL-Private-Key')
+	gpars.add_argument(
+        '--ca-cert',
+        dest='sslca', metavar='SSL-CA-Certificate',
+        help='one-shot setting of SSL-CA-Certificate')
+
+=======
+        dest='ysl', default=None, type=int, choices=(1, 2),
+        help='set one of the two slots on the yubi-key (only useful for -y)')
+
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
@@ -210,6 +401,7 @@ def confpars(mode='gui'):
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
 	args = pars.parse_args()
+<<<<<<< HEAD
 	if mode == 'gui':
 		_me = path.basename(path.dirname(__file__))
 		cfg = path.expanduser('~/.config/%s.yaml'%_me)
@@ -258,6 +450,14 @@ def confpars(mode='gui'):
 	if args.yks is False and args.lst is False and \
 	      args.add is None and args.chg is None and \
 	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
+||||||| merged common ancestors
+	if args.yks is False and args.lst is False and args.add is None\
+	      and args.chg is None and args.rms is None:
+=======
+	if args.yks is False and args.lst is False and \
+	      args.add is None and args.chg is None and \
+	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 		pars.print_help()
 		exit(1)
 	return args
@@ -370,6 +570,7 @@ def cli():
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent:
 			_printpws_(__ent, args.sho)
+<<<<<<< HEAD
 	try:
 		readline.clear_history()
 	except UnboundLocalError:
@@ -407,6 +608,13 @@ def gui(typ='pw'):
 
 
 
+||||||| merged common ancestors
+=======
+	try:
+		readline.clear_history()
+	except UnboundLocalError:
+		pass
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 
 
 

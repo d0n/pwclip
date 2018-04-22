@@ -1,12 +1,36 @@
 #!/usr/bin/env python3
 """pwclip packaging information"""
+<<<<<<< HEAD
 name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 2)])
+||||||| merged common ancestors
+from os import getcwd, path
+
+name = distname = modname = 'pwclip'
+numversion = (1, 2, 3)
+version = '.'.join([str(num) for num in numversion])
+=======
+from os import getcwd, path
+
+name = distname = modname = 'pwclip'
+numversion = (1, 2, 10)
+version = '.'.join([str(num) for num in numversion])
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
+<<<<<<< HEAD
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
+||||||| merged common ancestors
+    'argcomplete', 'netaddr', 'paramiko', 'psutil', 'pyusb',
+    'python-gnupg', 'python-yubico', 'pyusb', 'PyYAML', 'wget']
+lic = 'GPL'
+=======
+    'argcomplete', 'netaddr', 'paramiko', 'psutil', 'pyusb',
+    'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
+lic = 'GPL'
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 description = "gui to temporarily save passwords to system-clipboard"
 url = 'https://pypi.org/project/pwclip/%s/'%version
 author = 'Leon Pelzer'
@@ -32,6 +56,7 @@ try:
 	long_description = '\n\n\n'.join(
         str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
 except OSError:
+<<<<<<< HEAD
 	long_description = ''
 try:
 	long_description = str(
@@ -39,6 +64,15 @@ try:
         ).format(ChangeLog=long_description)
 except OSError:
 	long_description = ''
+||||||| merged common ancestors
+	readme = ''
+
+long_desc = (readme)
+
+=======
+	readme = ''
+long_desc = (readme)
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],
