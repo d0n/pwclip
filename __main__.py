@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """pwclip main module"""
-from pwclip import cli
+import pwclip
 
 if __name__ == '__main__':
-	cli()
+	pwclip.pwcli()

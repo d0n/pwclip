@@ -60,7 +60,7 @@ if osname == 'nt' and not which('gpg.exe'):
 
 from secrecy import PassCrypt, ykchalres
 
-from pwclip.__pkginfo__ import version
+from __pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3):
 	"""clipboard forking, after time resetting function"""
