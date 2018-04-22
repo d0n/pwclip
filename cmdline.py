@@ -98,75 +98,7 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def __confcfgs():
-	"""config parser function"""
-	_me = path.basename(path.dirname(__file__))
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
-	try:
-		with open(cfg, 'r') as cfh:
-			cfgs = load(cfh.read())
-	except FileNotFoundError:
-		cfgs = {}
-	try:
-		cfgs['time'] = environ['PWCLIPTIME']
-	except KeyError:
-		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
-	try:
-		cfgs['ykslot'] = environ['YKSLOT']
-	except KeyError:
-		cfgs['ykslot'] = None
-	try:
-		cfgs['ykser'] = environ['YKSERIAL']
-	except KeyError:
-		cfgs['ykser'] = None
-	try:
-		cfgs['binary']
-	except KeyError:
-		cfgs['binary'] = 'gpg2'
-		if osname == 'nt':
-			cfgs['binary'] = 'gpg'
-	try:
-		cfgs['user'] = environ['USER']
-	except KeyError:
-		cfgs['user'] = environ['USERNAME']
-	if 'crypt' not in cfgs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if 'plain' not in cfgs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(cfgs['plain'])
-	return cfgs
-
-def gui(typ='pw'):
-	"""gui wrapper function to not run unnecessary code"""
-	poclp, boclp = paste('pb')
-	cfgs = __confcfgs()
-	if typ == 'yk':
-		__in = xgetpass()
-		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
-		if not __res:
-			xmsgok('no entry found for %s or decryption failed'%__in)
-			exit(1)
-		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
-	__in = xgetpass()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			xmsgok('no entry found for %s'%__in)
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
-			poclp, boclp = paste('pb')
-			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
-
-
-def cli():
+def _confpars():
 	"""pwclip command line opt/arg parsing function"""
 	cfgs = __confcfgs()
 	prol = 'pwclip - multi functional password manager to temporarily ' \
@@ -318,6 +250,9 @@ def cli():
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(__pkwargs))
+
+def cli():
+	args = _confpars()
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
@@ -392,6 +327,31 @@ def cli():
 	except UnboundLocalError:
 		pass
 
+def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
+	poclp, boclp = paste('pb')
+	cfgs = _confpars()
+	if typ == 'yk':
+		__in = xgetpass()
+		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
+		if not __res:
+			xmsgok('no entry found for %s or decryption failed'%__in)
+			exit(1)
+		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	__in = xgetpass()
+	if not __in: exit(1)
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			xmsgok('no entry found for %s'%__in)
+			exit(1)
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
+			poclp, boclp = paste('pb')
+			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
 if __name__ == '__main__':
