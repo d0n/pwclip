@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """pwclip packaging information"""
-import os
 name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 2)])
 provides = ['pwcli', 'pwclip', 'ykclip']
@@ -30,13 +29,14 @@ classifiers = ['Environment :: Console',
                'Topic :: System :: Systems Administration']
 include_package_data = True
 try:
-	with open('pwclip/docs/CHANGELOG.rst', 'r') as cfh:
-		long_description = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
+	long_description = '\n\n\n'.join(
+        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
 except OSError:
 	long_description = ''
 try:
-	with open('pwclip/docs/README.rst', 'r') as rfh:
-		long_description = rfh.read().format(ChangeLog=long_description)
+	long_description = str(
+        open('pwclip/docs/README.rst', 'r').read()
+        ).format(ChangeLog=long_description))
 except OSError:
 	long_description = ''
 entry_points = {
