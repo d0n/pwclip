@@ -12,6 +12,11 @@ Released: 2018-04
 
   * replaced all xinput related libs into one class with functions using it
 
+  * added autocompletion for commandline option "tabing" press TAB-TAB ;)
+
+  * rearranged cmdline and seperated gui
+
+
 
 1.3.1
 -----

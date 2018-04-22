@@ -188,6 +188,9 @@ def confpars():
 
 	autocomplete(pars)
 	args = pars.parse_args()
+	if args.hlp:
+		pars.print_help()
+		exit()
 	return pars, args
 
 def gui(typ='pw'):
