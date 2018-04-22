@@ -26,6 +26,9 @@ from subprocess import call
 
 from argparse import ArgumentParser
 
+from argcomplete import autocomplete
+from argcomplete.completers import FilesCompleter, ChoicesCompleter
+
 from time import sleep
 
 from yaml import load
@@ -210,6 +213,7 @@ def _confpars():
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
 
+	autocomplete(pars)
 	args = pars.parse_args()
 	if args.yks is False and args.lst is False and \
 	      args.add is None and args.chg is None and \
