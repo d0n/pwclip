@@ -340,7 +340,7 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
-					prc = Popen(str('xvkbd -no-keypad -delay 1 -text %s'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
+					prc = Popen(str('xvkbd -no-keypad -delay 1 -text "%s"'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
 					prc.communicate()
 					copy(__pc[0], 'pb')
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
@@ -364,10 +364,7 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(__in, __pc[1:]), args.time)
 					if args.out:
-						prc = Popen([
-                            'xvkbd',  '-delay', '1',
-                            '-no-keypad',  '-text',  '%s'%__pc[0]
-                        ], stdout=PIPE, stderr=DEVNULL)
+						prc = Popen(str('xvkbd -no-keypad -delay 1 -text "%s"'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
 						prc.communicate()
 					copy(__pc[0], 'pb')
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
@@ -403,10 +400,7 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
 			poclp, boclp = paste('pb')
 			if 'out' in cfgs.keys():
-				prc = Popen([
-                    'xvkbd',  '-delay', '1',
-                    '-no-keypad',  '-text',  '%s'%__pc[0]
-                    ], stdout=PIPE, stderr=DEVNULL)
+				prc = Popen(str('xvkbd -no-keypad -delay 1 -text "%s"'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
