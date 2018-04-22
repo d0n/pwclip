@@ -188,8 +188,6 @@ def confpars():
 
 	autocomplete(pars)
 	args = pars.parse_args()
-	print(tabd(args.__dict__))
-	exit()
 	if args.hlp or (args.yks is False and args.lst is False and \
 	      args.add is None and args.chg is None and \
 	     args.rms is None and (args.sslcrt is None and args.sslkey is None)):
@@ -201,7 +199,6 @@ def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	pars, cfgs = confpars()
-	print(cfgs)
 	if args.yks is False and args.lst is False and \
 	      args.add is None and args.chg is None and \
 	     args.rms is None and (args.sslcrt is None and args.sslkey is None):

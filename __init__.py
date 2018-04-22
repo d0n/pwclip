@@ -3,6 +3,7 @@
 import sys
 from os import path, devnull
 
+from pwclip.cmdline import cli
 # this only makes sence while i need the lib folder in the PYTHONPATH
 # otherwise i need to rewrite lots of code cause i have thus libs in the
 # python environment path at my workstation and do not change that =)
@@ -15,8 +16,7 @@ if sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe':
 
 def pwcli():
 	"""pwclip cli mode"""
-	from pwclip.cmdline import cli
-	sys.exit(cli())
+	cli()
 
 def pwclip():
 	"""pwclip passcrypt gui mode"""
