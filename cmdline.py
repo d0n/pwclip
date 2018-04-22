@@ -366,6 +366,12 @@ def cli():
 				if __pc:
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(__in, __pc[1:]), args.time)
+					if args.out:
+						prc = Popen([
+                            'xvkbd',  '-delay', '2',
+                            '-no-keypad',  '-text',  '%s'%__pc[0]
+                        ], stdout=PIPE, stderr=DEVNULL)
+						prc.communicate()
 					copy(__pc[0], 'pb')
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent:
