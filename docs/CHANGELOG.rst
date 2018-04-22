@@ -4,7 +4,7 @@ Changelog
 1.3.2 (current)
 ---------------
 
-Released: 2018-04
+Released: 2018-04-22
 
   * fixed typo in README
 
