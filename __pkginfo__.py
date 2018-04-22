@@ -38,9 +38,9 @@ try:
 		__readme = rfh.read().format(ChangeLog=__changes)
 except OSError:
 	__readme = ''
+long_description = (__readme)
 with open('README', 'w+') as wfh:
 	wfh.write(__readme)
-long_description = (__readme)
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],
