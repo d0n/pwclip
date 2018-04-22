@@ -38,7 +38,7 @@ try:
 		__readme = rfh.read().format(ChangeLog=__changes)
 except OSError:
 	__readme = ''
-with open('README.rst', 'w+') as wfh:
+with open('README', 'w+') as wfh:
 	wfh.write(__readme)
 long_description = (__readme)
 entry_points = {
