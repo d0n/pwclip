@@ -24,7 +24,7 @@ from os import environ, path, remove, name as osname
 
 from sys import argv
 
-from subprocess import PIPE, Popen, call
+from subprocess import DEVNULL, call
 
 from argparse import ArgumentParser
 
@@ -369,9 +369,9 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
-					prc = Popen(
-                        ['xvkbd', '-no-jump-pointer',
-                            '-xsendevent', '-text', __pc[0]], stdout=PIPE)
+					call([
+                        'xvkbd', '-no-jump-pointer',
+                        '-xsendevent', '-text', __pc[0]], stderr=DEVNULL)
 					prc.communicate()
 					exit(0)
 				elif __pc:
