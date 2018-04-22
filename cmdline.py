@@ -174,7 +174,6 @@ def confpars():
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
-
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -188,7 +187,6 @@ def confpars():
         '--remote-user',
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST')
-
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-r', '--recipients',
@@ -231,13 +229,11 @@ def confpars():
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two slots on the yubi-key (only useful for -y)')
-
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
-
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
@@ -255,11 +251,10 @@ def confpars():
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
-
 	args = pars.parse_args()
-	if len(argv) == 1:
-		pars.print_help()
-		exit(1)
+	#if len(argv) == 1:
+	#	pars.print_help()
+	#	exit(1)
 	if args.yks is False and args.lst is False and \
 	      args.add is None and args.chg is None and \
 	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
