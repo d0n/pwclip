@@ -105,6 +105,46 @@ def _printpws_(pwdict, insecure=False):
 
 def confpars(mode='gui'):
 	"""pwclip command line opt/arg parsing function"""
+	_me = path.basename(path.dirname(__file__))
+	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	try:
+		with open(cfg, 'r') as cfh:
+			cfgs = load(cfh.read())
+	except FileNotFoundError:
+		cfgs = {}
+	if args.out:
+		cfgs['out'] = True
+	try:
+		cfgs['time'] = environ['PWCLIPTIME']
+	except KeyError:
+		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
+	try:
+		cfgs['ykslot'] = environ['YKSLOT']
+	except KeyError:
+		cfgs['ykslot'] = None
+	try:
+		cfgs['ykser'] = environ['YKSERIAL']
+	except KeyError:
+		cfgs['ykser'] = None
+	try:
+		cfgs['binary']
+	except KeyError:
+		cfgs['binary'] = 'gpg2'
+		if osname == 'nt':
+			cfgs['binary'] = 'gpg'
+	try:
+		cfgs['user'] = environ['USER']
+	except KeyError:
+		cfgs['user'] = environ['USERNAME']
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
+
 	prol = 'pwclip - multi functional password manager to temporarily ' \
            'save passphrases  to your copy/paste buffers for easy and ' \
            'secure accessing your passwords'
@@ -210,47 +250,6 @@ def confpars(mode='gui'):
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
 	args = pars.parse_args()
-	if mode == 'gui':
-		_me = path.basename(path.dirname(__file__))
-		cfg = path.expanduser('~/.config/%s.yaml'%_me)
-		try:
-			with open(cfg, 'r') as cfh:
-				cfgs = load(cfh.read())
-		except FileNotFoundError:
-			cfgs = {}
-		if args.out:
-			cfgs['out'] = True
-		try:
-			cfgs['time'] = environ['PWCLIPTIME']
-		except KeyError:
-			cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
-		try:
-			cfgs['ykslot'] = environ['YKSLOT']
-		except KeyError:
-			cfgs['ykslot'] = None
-		try:
-			cfgs['ykser'] = environ['YKSERIAL']
-		except KeyError:
-			cfgs['ykser'] = None
-		try:
-			cfgs['binary']
-		except KeyError:
-			cfgs['binary'] = 'gpg2'
-			if osname == 'nt':
-				cfgs['binary'] = 'gpg'
-		try:
-			cfgs['user'] = environ['USER']
-		except KeyError:
-			cfgs['user'] = environ['USERNAME']
-		if 'crypt' not in cfgs.keys():
-			cfgs['crypt'] = path.expanduser('~/.passcrypt')
-		elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-			cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-		if 'plain' not in cfgs.keys():
-			cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-		elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-			cfgs['plain'] = path.expanduser(cfgs['plain'])
-		return cfgs
 
 	#if len(argv) == 1:
 	#	pars.print_help()
