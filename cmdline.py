@@ -22,6 +22,8 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
+from sys import argv
+
 from subprocess import call
 
 from argparse import ArgumentParser
@@ -279,8 +281,9 @@ def cli():
         help='search entry matching PATTERN if given otherwise list all')
 
 	args = pars.parse_args()
-	if len(sys.argv) == 1:
-		exit()
+	if len(argv) == 1:
+		pars.print_help()
+		exit(1)
 	if args.yks is False and args.lst is False and \
 	      args.add is None and args.chg is None and \
 	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
