@@ -341,8 +341,12 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
-					call('xvkbd -no-keypad -text %s'%__pc[0], stderr=DEVNULL)
-					exit(0)
+					call([
+                        'xvkbd',  '-delay', '1',
+                        '-no-keypad',  '-text',  '%s'%__pc[0]
+                        ], stderr=DEVNULL)
+					copy(__pc[0], 'pb')
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
 				elif __pc:
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
@@ -395,7 +399,10 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
 			poclp, boclp = paste('pb')
-			call('xvkbd -no-keypad -text %s'%__pc[0], stderr=DEVNULL)
+			call([
+                'xvkbd',  '-delay', '2',
+                '-no-keypad',  '-text',  '"%s"'%__pc[0]
+                ], stderr=DEVNULL)
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
