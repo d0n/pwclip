@@ -19,6 +19,7 @@ Released: 2018-04-22
   * fixed MANIFEST pointing to non-existent doc/ folder and added lots of
     template files for documentation to come
 
+
 1.3.1
 -----
 
