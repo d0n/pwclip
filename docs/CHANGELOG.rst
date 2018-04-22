@@ -6,19 +6,14 @@ Changelog
 
 Released: 2018-04-22
 
-  * fixed typo in README
-
-  * removed print added for debugging purpose
+  * fixed typo in README and removed print added for debugging purpose
 
   * replaced all xinput related libs into one class with functions using it
-
-  * added autocompletion for commandline option "tabing" press TAB-TAB ;)
-
-  * rearranged cmdline and seperated gui
 
   * fixed MANIFEST pointing to non-existent doc/ folder and added lots of
     template files for documentation to come
 
+  * added compatibility for auto-paste into current focused window
 
 1.3.1
 -----

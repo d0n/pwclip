@@ -42,6 +42,8 @@ from colortext import bgre, tabd, error, fatal
 
 from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
+from virtkey import virtkey
+
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
 	if not xyesno('gpg4win is mandatory! Install it?'):
@@ -364,7 +366,11 @@ def cli():
 			elif args.lst and __ent:
 				__pc = __ent[args.lst]
 				if __pc and args.out:
-					print(__pc[0], end='')
+					vkb = virtkey()
+					vkb.press_keycode(50)
+					vkb.press_keycode(118)
+					vkb.release_keycode(118)
+					vkb.release_keycode(50)
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
