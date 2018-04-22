@@ -366,14 +366,16 @@ def cli():
 			elif args.lst and __ent:
 				__pc = __ent[args.lst]
 				if __pc and args.out:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(
+                            args.lst, ' '.join(__pc[1:])), args.time)
 					vkb = virtkey()
+					vkb.lock_mod(1<<2)
 					vkb.press_keycode(50)
 					vkb.press_keycode(118)
 					vkb.release_keycode(118)
 					vkb.release_keycode(50)
-					if len(__pc) == 2:
-						xnotify('%s: %s'%(
-                            args.lst, ' '.join(__pc[1:])), args.time)
+					vkb.lock_mod(1<<2)
 					exit(0)
 				elif __pc:
 					if len(__pc) == 2:
