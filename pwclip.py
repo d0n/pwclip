@@ -188,6 +188,7 @@ def confpars():
 
 	autocomplete(pars)
 	args = pars.parse_args()
+	print(tabd(args.__dict__))
 	if args.hlp:
 		pars.print_help()
 		exit()
