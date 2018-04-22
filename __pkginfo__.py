@@ -2,7 +2,7 @@
 """pwclip packaging information"""
 import os
 name = 'pwclip'
-version = '.'.join([str(num) for num in (1, 3, 1)])
+version = '.'.join([str(num) for num in (1, 3, 2)])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
