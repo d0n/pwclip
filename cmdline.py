@@ -143,34 +143,8 @@ def __confcfgs():
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	return cfgs
 
-def gui(typ='pw'):
-	"""gui wrapper function to not run unnecessary code"""
-	poclp, boclp = paste('pb')
-	cfgs = __confcfgs()
-	if typ == 'yk':
-		__in = xgetpass()
-		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
-		if not __res:
-			xmsgok('no entry found for %s or decryption failed'%__in)
-			exit(1)
-		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
-	__in = xgetpass()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			xmsgok('no entry found for %s'%__in)
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
-			poclp, boclp = paste('pb')
-			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
-
-def cli():
+def confpars():
 	"""pwclip command line opt/arg parsing function"""
 	cfgs = __confcfgs()
 	prol = 'pwclip - multi functional password manager to temporarily ' \
@@ -291,7 +265,10 @@ def cli():
 	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
 		pars.print_help()
 		exit(1)
+	return args
 
+def cli():
+	args = confpars()
 	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
@@ -401,6 +378,35 @@ def cli():
 		readline.clear_history()
 	except UnboundLocalError:
 		pass
+
+def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
+	poclp, boclp = paste('pb')
+	cfgs = __confcfgs()
+	if typ == 'yk':
+		__in = xgetpass()
+		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
+		if not __res:
+			xmsgok('no entry found for %s or decryption failed'%__in)
+			exit(1)
+		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	__in = xgetpass()
+	if not __in: exit(1)
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			xmsgok('no entry found for %s'%__in)
+			exit(1)
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
+			poclp, boclp = paste('pb')
+			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+
+
+
 
 
 
