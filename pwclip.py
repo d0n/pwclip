@@ -27,7 +27,7 @@ from subprocess import call
 from argparse import ArgumentParser
 
 from argcomplete import autocomplete
-from argcomplete.completers import FilesCompleter, ChoicesCompleter
+#from argcomplete.completers import FilesCompleter, ChoicesCompleter
 
 from time import sleep
 
@@ -198,7 +198,7 @@ def confpars():
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
-	cfgs = _confpars()
+	cfgs = confpars()
 	if typ == 'yk':
 		__in = xgetpass()
 		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
