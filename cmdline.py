@@ -397,12 +397,6 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
 			poclp, boclp = paste('pb')
-			#if 'out' in cfgs.keys():
-			prc = Popen([
-                'xvkbd', '-no-jump-pointer',
-                '-xsendevent', '-text', __pc[0]],
-                stdout=PIPE, stderr=DEVNULL)
-			prc.communicate()
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
