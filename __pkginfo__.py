@@ -40,8 +40,6 @@ try:
 except OSError:
 	_readme = ''
 long_description = (_readme)
-with open('README', 'w+') as wfh:
-	wfh.write(_readme)
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],
