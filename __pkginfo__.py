@@ -31,15 +31,14 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 try:
 	with open('pwclip/docs/CHANGELOG.rst', 'r') as cfh:
-		_changes = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
+		long_description = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
 except OSError:
-	_changes = ''
+	long_description = ''
 try:
 	with open('pwclip/docs/README.rst', 'r') as rfh:
-		_readme = rfh.read().format(ChangeLog=_changes)
+		long_description = rfh.read().format(ChangeLog=long_description)
 except OSError:
-	_readme = ''
-long_description = (_readme)
+	long_description = ''
 entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip'],
