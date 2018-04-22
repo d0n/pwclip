@@ -29,7 +29,6 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 include_package_data = True
-print(os.getcwd())
 try:
 	with open('pwclip/docs/CHANGELOG.rst', 'r') as cfh:
 		_changes = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
