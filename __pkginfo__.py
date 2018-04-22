@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """pwclip packaging information"""
+import os
 name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 1)])
 provides = ['pwcli', 'pwclip', 'ykclip']
@@ -28,7 +29,7 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 include_package_data = True
-print(getcwd())
+print(os.getcwd())
 try:
 	with open('pwclip/docs/CHANGELOG.rst', 'r') as cfh:
 		_changes = '\n\n\n'.join(cfh.read().split('\n\n\n')[:4])
