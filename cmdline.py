@@ -24,7 +24,7 @@ from os import environ, path, remove, name as osname
 
 from sys import argv
 
-from subprocess import DEVNULL, call
+from subprocess import DEVNULL, call, Popen
 
 from argparse import ArgumentParser
 
@@ -397,10 +397,12 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
 			poclp, boclp = paste('pb')
-			if 'out' in cfgs.keys():
-				call([
-                    'xvkbd', '-no-jump-pointer',
-                    '-xsendevent', '-text', __pc[0]], stderr=DEVNULL)
+			#if 'out' in cfgs.keys():
+			prc = Popen([
+                'xvkbd', '-no-jump-pointer',
+                '-xsendevent', '-text', __pc[0]],
+                stdout=PIPE, stderr=DEVNULL)
+			prc.communicate()
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
