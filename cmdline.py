@@ -24,7 +24,7 @@ from os import environ, path, remove, name as osname
 
 from sys import argv
 
-from subprocess import DEVNULL, call, Popen
+from subprocess import DEVNULL, call
 
 from argparse import ArgumentParser
 
@@ -341,9 +341,7 @@ def cli():
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
-					call([
-                        'xvkbd', '-no-jump-pointer',
-                        '-xsendevent', '-text', __pc[0]], stderr=DEVNULL)
+					call('xvkbd -no-jump-pointer -xsendevent -text %s'%__pc[0], stderr=DEVNULL)
 					exit(0)
 				elif __pc:
 					if len(__pc) == 2:
