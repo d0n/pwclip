@@ -103,7 +103,6 @@ def _printpws_(pwdict, insecure=False):
 
 def _confpars():
 	"""pwclip command line opt/arg parsing function"""
-	cfgs = __confcfgs()
 	prol = 'pwclip - multi functional password manager to temporarily ' \
            'save passphrases  to your copy/paste buffers for easy and ' \
            'secure accessing your passwords'
