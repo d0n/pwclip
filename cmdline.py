@@ -342,7 +342,7 @@ def cli():
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
 					call([
-                        'xvkbd',  '-delay', '1',
+                        'xvkbd',  '-delay', '2',
                         '-no-keypad',  '-text',  '%s'%__pc[0]
                         ], stderr=DEVNULL)
 					copy(__pc[0], 'pb')
