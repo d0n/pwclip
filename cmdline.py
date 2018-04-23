@@ -24,7 +24,7 @@ from os import environ, path, remove, name as osname
 
 from sys import argv
 
-from subprocess import DEVNULL, PIPE, Popen, call
+from subprocess import DEVNULL, Popen, call
 
 from argparse import ArgumentParser
 
@@ -67,11 +67,15 @@ from secrecy import PassCrypt, ykchalres
 
 from pwclip.__pkginfo__ import version
 
-def forkwaitclip(text, poclp, boclp, wait=3):
+def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
+	if out:
+		Popen(str(
+            'xvkbd -no-keypad -delay 10 -text %s'%text
+            ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+	copy(text, mode='pb')
 	if fork() == 0:
 		try:
-			copy(text, mode='pb')
 			sleep(int(wait))
 		except (KeyboardInterrupt, RuntimeError):
 			exit(1)
@@ -106,39 +110,7 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def gui(typ='pw'):
-	"""gui wrapper function to not run unnecessary code"""
-	poclp, boclp = paste('pb')
-	args, pargs, pkwargs = confcfgs()
-	if typ == 'yk':
-		__in = xgetpass()
-		__res = ykchalres(__in, args.ykslot, args.ykser)
-		if not __res:
-			xmsgok('no entry found for %s or decryption failed'%__in)
-			exit(1)
-		forkwaitclip(__res, poclp, boclp, args.time)
-	pcm = PassCrypt(*pargs, **pkwargs)
-	__in = xgetpass()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			xmsgok('no entry found for %s'%__in)
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
-			poclp, boclp = paste('pb')
-			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
-			if '-o' in sys.argv:
-				prc = Popen(str('xvkbd -no-keypad -xsendevent' \
-                        '-delay 10 -text %s'%__pc[0]
-                        ).split(' '), stdout=PIPE, stderr=DEVNULL)
-				prc.communicate()
-
-
-def confpars(mode='gui'):
+def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
@@ -287,11 +259,6 @@ def confpars(mode='gui'):
         help='search entry matching PATTERN if given otherwise list all')
 	autocomplete(pars)
 	args = pars.parse_args()
-	if args.yks is False and args.lst is False and \
-          args.add is None and args.chg is None and \
-          args.rms is None and (args.sslcrt is None and args.sslkey is None):
-		pars.print_help()
-		exit(1)
 	pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
@@ -325,10 +292,18 @@ def confpars(mode='gui'):
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
+	if mode == 'gui':
+		return args, pargs, pkwargs
+	#print(tabd(args.__dict__))
+	if args.yks is False and args.lst is False and \
+          args.add is None and args.chg is None and \
+          args.rms is None and (args.sslcrt is None and args.sslkey is None):
+		pars.print_help()
+		exit(1)
 	return args, pargs, pkwargs
 
 def cli():
-	args, pargs, pkwargs = confpars()
+	args, pargs, pkwargs = confpars('cli')
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
@@ -349,16 +324,16 @@ def cli():
 	if args.add:
 		if not pcm.adpw(args.add):
 			fatal('could not add entry ', args.add)
-		_printpws_(pcm.lspw(args.add), args.sho)
+		__ent = pcm.lspw(args.add)
 	elif args.chg:
 		if not pcm.chpw(args.chg):
 			fatal('could not change entry ', args.chg)
-		_printpws_(pcm.lspw(args.chg), args.sho)
+		__ent = pcm.lspw(args.chg)
 	elif args.rms:
 		for r in args.rms:
 			if not pcm.rmpw(r):
 				error('could not delete entry ', r)
-		_printpws_(pcm.lspw(), args.sho)
+		__ent = pcm.lspw()
 	elif args.lst is not False:
 		__ent = pcm.lspw(args.lst)
 		if not __ent:
@@ -372,58 +347,24 @@ def cli():
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(
-						args.lst, ' '.join(__pc[1:])), args.time)
-				if args.out:
-					sleep(1)
-					prc = Popen(str(
-		                'xvkbd -no-keypad -delay 10 -text %s'%__pc[0]
-                        ).split(' '), stdout=PIPE, stderr=DEVNULL)
-					prc.communicate()
-				copy(__pc[0], 'pb')
-				forkwaitclip(__pc[0], poclp, boclp, args.time)
-			elif __pc:
-				if len(__pc) == 2:
-					xnotify('%s: %s'%(
-						args.lst, __pc[1]), wait=args.time)
-				copy(__pc[0], 'pb')
-				forkwaitclip(__pc[0], poclp, boclp, args.time)
-	else:
-		__in = xgetpass()
-		if not __in: exit(1)
-		__ent = pcm.lspw(__in)
-		if __ent and __in:
-			if __in not in __ent.keys() or not __ent[__in]:
-				fatal(
-					'could not find entry for ',
-					__in, ' in ', pkwargs['crypt'])
-			__pc = __ent[__in]
-			if __pc:
-				if len(__pc) == 2:
-					xnotify('%s: %s'%(__in, __pc[1:]), args.time)
-				if args.out:
-					sleep(1)
-					prc = Popen(str(
-                        'xvkbd -no-keypad -delay 10 -text %s'%__pc[0]
-                        ).split(' '), stdout=PIPE, stderr=DEVNULL)
-					prc.communicate()
-				copy(__pc[0], 'pb')
-				forkwaitclip(__pc[0], poclp, boclp, args.time)
-		if __ent:
-			_printpws_(__ent, args.sho)
-	exit(0)
+                        args.lst, ' '.join(__pc[1:])), args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+	if __ent:
+		_printpws_(pcm.lspw(), args.sho)
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
-	cfgs = confpars()
 	poclp, boclp = paste('pb')
+	args, pargs, pkwargs = confpars('gui')
 	if typ == 'yk':
 		__in = xgetpass()
-		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
+		__res = ykchalres(__in, args.ykslot, args.ykser)
 		if not __res:
 			xmsgok('no entry found for %s or decryption failed'%__in)
 			exit(1)
-		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+		forkwaitclip(__res, poclp, boclp, args.time)
+		exit(0)
+	pcm = PassCrypt(*pargs, **pkwargs)
 	__in = xgetpass()
 	if not __in: exit(1)
 	__ent = pcm.lspw(__in)
@@ -434,11 +375,9 @@ def gui(typ='pw'):
 		__pc = __ent[__in]
 		if __pc:
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
-			poclp, boclp = paste('pb')
-			if 'out' in cfgs.keys():
-				prc = Popen(str('xvkbd -no-keypad -delay 100 -text %s'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
-			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+
 
 
 
