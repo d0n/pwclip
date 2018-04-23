@@ -22,7 +22,7 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
-from subprocess import call
+from subprocess import call, Popen, DEVNULL, PIPE
 
 from argparse import ArgumentParser
 
@@ -30,10 +30,10 @@ from time import sleep
 
 from yaml import load
 
-try:
-	import readline
-except ImportError:
-	pass
+#try:
+#	import readline
+#except ImportError:
+#	pass
 
 # local relative imports
 from colortext import bgre, tabd, error, fatal
@@ -107,6 +107,10 @@ def __confcfgs():
 			cfgs = load(cfh.read())
 	except FileNotFoundError:
 		cfgs = {}
+	if '-o' in sys.argv:
+		prc = Popen(str('xvkbd -no-keypad -delay 10 -text %s'%__pc[0]
+                    ).split(' '), stdout=PIPE, stderr=DEVNULL)
+		prc.communicate()
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
@@ -359,7 +363,11 @@ def cli():
 			elif args.lst and __ent:
 				__pc = __ent[args.lst]
 				if __pc and args.out:
-					print(__pc[0], end='')
+					prc = Popen(str(
+                        'xvkbd -no-keypad -delay 10 -text %s'%__pc[0]
+                        ).split(' '), stdout=PIPE, stderr=DEVNULL)
+					prc.communicate()
+					#print(__pc[0], end='')
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
