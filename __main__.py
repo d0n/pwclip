@@ -3,4 +3,5 @@
 import pwclip
 
 if __name__ == '__main__':
+	print(dir(pwclip))
 	pwclip.pwcli()
