@@ -36,11 +36,6 @@ from time import sleep
 
 from yaml import load
 
-#try:
-#	import readline
-#except ImportError:
-#	pass
-
 from virtkey import virtkey
 
 # local relative imports
@@ -69,12 +64,12 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	if out:
-		Popen(str(
-            'xvkbd -no-keypad -delay 10 -text %s'%text
-            ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 	copy(text, mode='pb')
 	if fork() == 0:
+		if out:
+			Popen(str(
+                'xvkbd -no-keypad -delay 10 -text %s'%text
+                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		try:
 			sleep(int(wait))
 		except (KeyboardInterrupt, RuntimeError):
