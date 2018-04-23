@@ -28,6 +28,8 @@ from subprocess import DEVNULL, PIPE, Popen, call
 
 from argparse import ArgumentParser
 
+from argcomplete import autocomplete
+
 from socket import gethostname as hostname
 
 from time import sleep
@@ -283,6 +285,7 @@ def confpars(mode='gui'):
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
+	autocomplete(pars)
 	args = pars.parse_args()
 	if args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
