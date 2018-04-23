@@ -22,9 +22,15 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
+<<<<<<< HEAD
 from sys import argv
 
 from subprocess import DEVNULL, PIPE, Popen
+||||||| merged common ancestors
+from subprocess import call
+=======
+from subprocess import call, Popen, DEVNULL, PIPE
+>>>>>>> 549238c372294dcbf9b98bb68a21864f9a07b13d
 
 from argparse import ArgumentParser
 
@@ -34,10 +40,10 @@ from time import sleep
 
 from yaml import load
 
-try:
-	import readline
-except ImportError:
-	pass
+#try:
+#	import readline
+#except ImportError:
+#	pass
 
 from virtkey import virtkey
 
@@ -196,6 +202,10 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
 			poclp, boclp = paste('pb')
+			if '-o' in sys.argv:
+				prc = Popen(str('xvkbd -no-keypad -delay 10 -text %s'%
+                    ).split(' '), stdout=PIPE, stderr=DEVNULL)
+				prc.communicate()
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
@@ -451,6 +461,16 @@ def cli():
 			elif args.lst and __ent:
 				__pc = __ent[args.lst]
 				if __pc and args.out:
+<<<<<<< HEAD
+||||||| merged common ancestors
+					print(__pc[0], end='')
+=======
+					prc = Popen(str(
+                        'xvkbd -no-keypad -delay 10 -text %s'%__pc[0]
+                        ).split(' '), stdout=PIPE, stderr=DEVNULL)
+					prc.communicate()
+					#print(__pc[0], end='')
+>>>>>>> 549238c372294dcbf9b98bb68a21864f9a07b13d
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)

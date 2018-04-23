@@ -19,5 +19,11 @@ pybuild/build*
 pybuild/pwlip/lib*
 =======
 *__pycache__*
+<<<<<<< HEAD
 lib
 >>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
+||||||| merged common ancestors
+lib
+=======
+lib/*
+>>>>>>> 549238c372294dcbf9b98bb68a21864f9a07b13d
