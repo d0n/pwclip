@@ -107,10 +107,6 @@ def __confcfgs():
 			cfgs = load(cfh.read())
 	except FileNotFoundError:
 		cfgs = {}
-	if '-o' in sys.argv:
-		prc = Popen(str('xvkbd -no-keypad -delay 10 -text %s'%__pc[0]
-                    ).split(' '), stdout=PIPE, stderr=DEVNULL)
-		prc.communicate()
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
@@ -167,6 +163,10 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
 			poclp, boclp = paste('pb')
+			if '-o' in sys.argv:
+				prc = Popen(str('xvkbd -no-keypad -delay 10 -text %s'%
+                    ).split(' '), stdout=PIPE, stderr=DEVNULL)
+				prc.communicate()
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
