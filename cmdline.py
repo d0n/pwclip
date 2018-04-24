@@ -29,6 +29,7 @@ from subprocess import DEVNULL, Popen, call
 from argparse import ArgumentParser
 
 from argcomplete import autocomplete
+from argcomplete.completers import FilesCompleter, ChoicesCompleter
 
 from socket import gethostname as hostname
 
@@ -247,7 +248,8 @@ def confpars(mode):
         '-S', '--slot',
         dest='ysl', default=2, type=int, choices=(1, 2),
         help='set one of the two yubikey slots ' \
-             '(only useful with -y, defailt is 2)')
+             '(only useful with -y, defailt is 2)'
+        ).completer = ChoicesCompleter((1,2))
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
@@ -269,7 +271,8 @@ def confpars(mode):
 	gpars.add_argument(
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
-        help='list entry matching PATTERN if given - otherwise all')
+        help='pwclip an entry matching PATTERN if given ' \
+             '- otherwise list all entrys')
 	autocomplete(pars)
 	args = pars.parse_args()
 	pargs = [a for a in [
