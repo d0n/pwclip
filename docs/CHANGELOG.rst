@@ -13,7 +13,11 @@ Released: 2018-04-22
   * fixed MANIFEST pointing to non-existent doc/ folder and added lots of
     template files for documentation to come
 
-  * added compatibility for auto-paste into current focused window
+  * added compatibility for auto-paste into current focused window (if not
+    executed via Keystroke in X11 while those, at least in my case would
+    only log the output and i've found no way to prevnt it from doing so)
+
+  * fixed ValueError exception in xlib.xinput
 
 1.3.1
 -----
