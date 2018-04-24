@@ -201,6 +201,15 @@ def confpars(mode):
         dest='usr', metavar='USER', default=cfgs['user'],
         help='query entrys only for USER ' \
              '(defaults to current user, overridden by -A)')
+	pars.add_argument(
+        '-p', '--password',
+        dest='pwd', default=None,
+        help='enter password for add/change actions' \
+             '(insecure & not recommended)')
+	pars.add_argument(
+        '--comment',
+        dest='com', default=None,
+        help='enter comment for add/change actions')
 	gpars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
@@ -317,38 +326,37 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 		exit(0)
-	pcm = PassCrypt(*pargs, **pkwargs)
-	__ent = None
+	__ents = None
 	if args.add:
-		if not pcm.adpw(args.add):
+		if not PassCrypt(*pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
 			fatal('could not add entry ', args.add)
-		__ent = pcm.lspw(args.add)
 	elif args.chg:
-		if not pcm.chpw(args.chg):
+		if args.pwd:
+			pkwargs['password'] = args.pwd
+		if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 			fatal('could not change entry ', args.chg)
-		__ent = pcm.lspw(args.chg)
 	elif args.rms:
 		for r in args.rms:
-			if not pcm.rmpw(r):
+			if not PassCrypt(*pargs, **pkwargs).rmpw(r):
 				error('could not delete entry ', r)
-		__ent = pcm.lspw()
 	elif args.lst is not False:
-		__ent = pcm.lspw(args.lst)
-		if not __ent:
+		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
+		if not __ents:
 			fatal('could not decrypt')
-		elif __ent and args.lst and not args.lst in __ent.keys():
+		elif __ents and args.lst and not args.lst in __ents.keys():
 			fatal(
-				'could not find entry for ',
-				args.lst, ' in ', pkwargs['crypt'])
-		elif args.lst and __ent:
-			__pc = __ent[args.lst]
+                'could not find entry for ',
+                args.lst, ' in ', pkwargs['crypt'])
+		elif args.lst and __ents:
+			__pc = __ents[args.lst]
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-	if __ent:
-		_printpws_(pcm.lspw(), args.sho)
+	if not __ents:
+		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+	_printpws_(__ents, args.sho)
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
