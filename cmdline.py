@@ -374,18 +374,21 @@ def gui(typ='pw'):
 		forkwaitclip(__res, poclp, boclp, args.time)
 		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
-	__in = xgetpass()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			xmsgok('no entry found for %s'%__in)
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+	while True:
+		__in = xgetpass()
+		if not __in: exit(1)
+		__ent = pcm.lspw(__in)
+		if __ent and __in:
+			if __in not in __ent.keys() or not __ent[__in]:
+				xmsgok('no entry found for %s'%__in)
+				if not xyesno('try again?'):
+					break
+				continue
+			__pc = __ent[__in]
+			if __pc:
+				if len(__pc) == 2:
+					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 
 
 
