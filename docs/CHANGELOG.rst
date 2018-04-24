@@ -4,11 +4,12 @@ Changelog
 1.3.2 (current)
 ---------------
 
-Released: 2018-04-22
+Released: 2018-04-24
 
-  * fixed typo in README and removed print added for debugging purpose
+  * fixed typo in README and removed unnecessary debugging output
 
   * replaced all xinput related libs into one class with functions using it
+    as well as fixing the ValueError exception in xlib.xinput
 
   * fixed MANIFEST pointing to non-existent doc/ folder and added lots of
     template files for documentation to come
@@ -16,8 +17,19 @@ Released: 2018-04-22
   * added compatibility for auto-paste into current focused window (if not
     executed via Keystroke in X11 while those, at least in my case would
     only log the output and i've found no way to prevnt it from doing so)
+    by using xvkbd when gui-mode is used (pwclip/ykclip) - otherwise
+    default print is executed to auto-paste the password
 
-  * fixed ValueError exception in xlib.xinput
+  * finally fixed tab-completion bug and added autocompletion of commandline
+    options as well as readding commandline options even for gui modes
+    (pwclip/ykclip)
+
+  * implemented commandline options for password and comment even if it's
+    dangerous to use - at least for the password
+
+  * [W] compatibility most certainly lost for now :-(
+        had no time to fix the stuff implemented without testing till now
+
 
 1.3.1
 -----
