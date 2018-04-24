@@ -381,15 +381,15 @@ def gui(typ='pw'):
 		if __ent and __in:
 			if __in not in __ent.keys() or not __ent[__in]:
 				xmsgok('no entry found for %s'%__in)
-				if not xyesno('try again?'):
-					break
-				continue
+				if xyesno('try again?'):
+					continue
+				exit(1)
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-
+	exit(0)
 
 
 
