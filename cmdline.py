@@ -138,6 +138,7 @@ def confpars(mode):
 		cfgs['binary'] = 'gpg2'
 		if osname == 'nt':
 			cfgs['binary'] = 'gpg'
+	cfgs['user'] = '$USER' if osname != 'nt' else '$USERNAME'
 	try:
 		cfgs['user'] = environ['USER']
 	except KeyError:
@@ -167,19 +168,19 @@ def confpars(mode):
 	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
-        help='switch to all users entrys (instead of current user only)')
+        help='switch to all users entrys ("%s" only is default)'%cfgs['user'])
 	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
-        help='print received password to stdout (insecure & unrecommended)')
+        help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
-        help='switch to display passwords (replaced with * by default)')
+        help='show passwords when listing (replaced by "*" is default)')
 	pars.add_argument(
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
-        help='time to wait before resetting clip (default is 3 max 3600)')
+        help='time to wait before resetting clip (%d is default)'%cfgs['time'])
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -192,18 +193,18 @@ def confpars(mode):
 	rpars.add_argument(
         '--remote-user',
         dest='reuser', metavar='USER',
-        help='use USER for connections to HOST')
+        help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-r', '--recipients',
-        dest='rcp', metavar='"ID \[ID\]"',
-        help='gpg-key ID(s) to use for ' \
-             'encryption (string seperated by spaces)')
+        dest='rcp', metavar='"ID ..."',
+        help='one ore more gpg-key ID(s) to use for ' \
+             'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
         '-u', '--user',
         dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys only for USER ' \
-             '(defaults to current user, overridden by -A)')
+        help='query entrys only for USER (-A overrides, ' \
+             '"%s" is default)'%cfgs['user'])
 	pars.add_argument(
         '-p', '--password',
         dest='pwd', default=None,
@@ -234,16 +235,19 @@ def confpars(mode):
         '-P', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
         default=path.expanduser('~/.passcrypt'),
-        help='set location of CRYPTFILE to use for gpg features')
+        help='set location of CRYPTFILE to use as ' \
+             'password store (~/.passcrypt is default)')
 	gpars.add_argument(
         '-Y', '--yaml',
         dest='yml', metavar='YAMLFILE',
         default=path.expanduser('~/.pwd.yaml'),
-        help='set location of one-time password YAMLFILE to read & delete')
+        help='set location of YAMLFILE to read whole ' \
+             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	gpars.add_argument(
         '-S', '--slot',
         dest='ysl', default=2, type=int, choices=(1, 2),
-        help='set the slot on the yubikey (only useful with -y)')
+        help='set one of the two yubikey slots ' \
+             '(only useful with -y, defailt is 2)')
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
@@ -265,7 +269,7 @@ def confpars(mode):
 	gpars.add_argument(
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
-        help='search entry matching PATTERN if given otherwise list all')
+        help='list entry matching PATTERN if given - otherwise all')
 	autocomplete(pars)
 	args = pars.parse_args()
 	pargs = [a for a in [
