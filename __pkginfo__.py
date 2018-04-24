@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """pwclip packaging information"""
 name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 2)])
