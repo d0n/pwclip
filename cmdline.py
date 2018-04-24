@@ -156,8 +156,11 @@ def confpars(mode):
            'arguments mights also be set by the config ~/.config/%s.yaml'%_me
 	epic = 'the yubikey feature is compatible with its\'s ' \
            'challenge-response feature only'
-	pars = ArgumentParser(description=desc ,epilog=epic)
+	pars = ArgumentParser(description=desc, epilog=epic, add_help=False)
 	pars.set_defaults(**cfgs)
+	pars.add_argument(
+        '-h', '--help',
+        dest='hlp', help='show this help message and exit')
 	pars.add_argument(
         '--version',
         action='version', version='%(prog)s-v'+version)
