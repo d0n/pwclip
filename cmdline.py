@@ -36,8 +36,6 @@ from time import sleep
 
 from yaml import load
 
-from virtkey import virtkey
-
 # local relative imports
 from colortext import bgre, tabd, error, fatal
 
@@ -45,7 +43,7 @@ from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
 # first if on windows and gpg.exe cannot be found in PATH install gpg4win
 if osname == 'nt' and not which('gpg.exe'):
-	if not xyesno('gpg4win is mandatory! Install it?'):
+	if not xyesno('mandatory gpg4win not found! Install it?'):
 		exit(1)
 	import wget
 	src = 'https://files.gpg4win.org/gpg4win-latest.exe'
@@ -54,9 +52,14 @@ if osname == 'nt' and not which('gpg.exe'):
 	try:
 		call(trg)
 	except TimeoutError:
+		xmsgok('something went wrong while downloading gpg4win from: ' \
+               'https://files.gpg4win.org/ - try installing yourself!')
 		exit(1)
 	finally:
-		remove(trg)
+		try:
+			remove(trg)
+		except FileNotFoundError:
+			pass
 
 from secrecy import PassCrypt, ykchalres
 
@@ -150,7 +153,7 @@ def confpars(mode):
 	desc = 'pwclip - Multi functional password manager to temporarily ' \
            'save passphrases to your copy/paste buffers for easy and ' \
            'secure accessing your passwords. Most of the following ' \
-		   'arguments mights also be set by the config ~/.config/%s.yaml'%_me
+           'arguments mights also be set by the config ~/.config/%s.yaml'%_me
 	epic = 'the yubikey feature is compatible with challenge-response ' \
            'features only'
 	pars = ArgumentParser(description=desc ,epilog=epic)
