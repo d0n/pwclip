@@ -31,6 +31,9 @@ Released: 2018-04-24
 
   * fixed indentation of old changelog messages to be manpage make compliant
 
+  * made some gui-dialog improvements like asking for repitition if input
+    was not found in passcrypt
+
   * [W] compatibility most certainly lost for now :-(
         had no time to fix the stuff implemented without testing till now
 
