@@ -4,7 +4,7 @@ name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 2)])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
-    'argcomplete', 'netaddr', 'paramiko', 'psutil',
+    'argcomplete', 'autocomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
