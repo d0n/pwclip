@@ -11,8 +11,8 @@ Released: 2018-04-24
   * replaced all xinput related libs into one class with functions using it
     as well as fixing the ValueError exception in xlib.xinput
 
-  * fixed MANIFEST pointing to non-existent doc/ folder and added lots of
-    template files for documentation to come
+  * fixed MANIFEST pointing to non-existent doc folder and added lots of
+    template files for future documentation :-)
 
   * added compatibility for auto-paste into current focused window (if not
     executed via Keystroke in X11 while those, at least in my case would
@@ -28,6 +28,8 @@ Released: 2018-04-24
     dangerous to use - at least for the password
 
   * fixed filerotater function not setting file times correctly
+
+  * fixed indentation of old changelog messages to be manpage make compliant
 
   * [W] compatibility most certainly lost for now :-(
         had no time to fix the stuff implemented without testing till now
