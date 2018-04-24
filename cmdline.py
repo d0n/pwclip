@@ -384,7 +384,7 @@ def gui(typ='pw'):
 		__pc = __ent[__in]
 		if __pc:
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), int(args.time))
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 
 
