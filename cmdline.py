@@ -381,9 +381,9 @@ def gui(typ='pw'):
 		if __ent and __in:
 			if __in not in __ent.keys() or not __ent[__in]:
 				xmsgok('no entry found for %s'%__in)
-				if xyesno('try again?'):
-					continue
-				break
+				if not xyesno('try again?'):
+					break
+				continue
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
