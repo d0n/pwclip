@@ -1,0 +1,20 @@
+[submodule "lib/colortext"]
+	path = lib/colortext
+	url = d0n@janeiskla.de:rpo/python/colortext.git
+	branch = pwclip
+[submodule "lib/executor"]
+	path = lib/executor
+	url = d0n@janeiskla.de:rpo/python/executor.git
+	branch = pwclip
+[submodule "lib/secrecy"]
+	path = lib/secrecy
+	url = d0n@janeiskla.de:rpo/python/secrecy.git
+	branch = pwclip
+[submodule "lib/system"]
+	path = lib/system
+	url = d0n@janeiskla.de:rpo/python/system.git
+	branch = pwclip
+[submodule "lib/net"]
+	path = lib/net
+	url = d0n@janeiskla.de:rpo/python/net.git
+	branch = pwclip

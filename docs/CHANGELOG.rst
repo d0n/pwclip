@@ -13,10 +13,7 @@ Released: 2018-04-22
   * fixed MANIFEST pointing to non-existent doc/ folder and added lots of
     template files for documentation to come
 
-  * added compatibility for auto-paste into current focused window which
-    uses xvkbd as virtual keyboard but is only working if executed via
-    shell at least for openbox based X
-
+  * added compatibility for auto-paste into current focused window
 
 1.3.1
 -----

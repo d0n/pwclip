@@ -22,21 +22,18 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
-from sys import argv
-
-from subprocess import DEVNULL, Popen, call
+from subprocess import call
 
 from argparse import ArgumentParser
-
-from argcomplete import autocomplete
-
-from socket import gethostname as hostname
 
 from time import sleep
 
 from yaml import load
 
-from virtkey import virtkey
+try:
+	import readline
+except ImportError:
+	pass
 
 # local relative imports
 from colortext import bgre, tabd, error, fatal
@@ -62,15 +59,8 @@ from secrecy import PassCrypt, ykchalres
 
 from pwclip.__pkginfo__ import version
 
-def forkwaitclip(text, poclp, boclp, wait=3, out=None):
+def forkwaitclip(text, poclp, boclp, wait=3):
 	"""clipboard forking, after time resetting function"""
-	if out:
-		if out == 'gui':
-			Popen(str(
-                'xvkbd -no-keypad -delay 10 -text %s'%text
-                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-		else:
-			print(text, end='')
 	if fork() == 0:
 		try:
 			copy(text, mode='pb')
@@ -108,8 +98,8 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def confpars(mode):
-	"""pwclip command line opt/arg parsing function"""
+def __confcfgs():
+	"""config parser function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
@@ -147,13 +137,42 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
 	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
-	desc = 'pwclip - Multi functional password manager to temporarily ' \
-           'save passphrases to your copy/paste buffers for easy and ' \
-           'secure accessing your passwords. Most of the following ' \
-		   'arguments mights also be set by the config ~/.config/%s.yaml'%_me
-	epic = 'the yubikey feature is compatible with challenge-response ' \
-           'features only'
-	pars = ArgumentParser(description=desc ,epilog=epic)
+	return cfgs
+
+def gui(typ='pw'):
+	"""gui wrapper function to not run unnecessary code"""
+	poclp, boclp = paste('pb')
+	cfgs = __confcfgs()
+	if typ == 'yk':
+		__in = xgetpass()
+		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
+		if not __res:
+			xmsgok('no entry found for %s or decryption failed'%__in)
+			exit(1)
+		forkwaitclip(__res, poclp, boclp, cfgs['time'])
+	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
+	__in = xgetpass()
+	if not __in: exit(1)
+	__ent = pcm.lspw(__in)
+	if __ent and __in:
+		if __in not in __ent.keys() or not __ent[__in]:
+			xmsgok('no entry found for %s'%__in)
+			exit(1)
+		__pc = __ent[__in]
+		if __pc:
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
+			poclp, boclp = paste('pb')
+			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+
+
+def cli():
+	"""pwclip command line opt/arg parsing function"""
+	cfgs = __confcfgs()
+	prol = 'pwclip - multi functional password manager to temporarily ' \
+           'save passphrases  to your copy/paste buffers for easy and ' \
+           'secure accessing your passwords'
+	pars = ArgumentParser(description=prol) #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -167,7 +186,7 @@ def confpars(mode):
         help='switch to all users entrys (instead of current user only)')
 	pars.add_argument(
         '-o', '--stdout',
-        dest='out', action='store_const', const=mode,
+        dest='out', action='store_true',
         help='print received password to stdout (insecure & unrecommended)')
 	pars.add_argument(
         '-s', '--show-passwords',
@@ -177,6 +196,7 @@ def confpars(mode):
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
+
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -190,6 +210,7 @@ def confpars(mode):
         '--remote-user',
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST')
+
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-r', '--recipients',
@@ -201,20 +222,11 @@ def confpars(mode):
         dest='usr', metavar='USER', default=cfgs['user'],
         help='query entrys only for USER ' \
              '(defaults to current user, overridden by -A)')
-	pars.add_argument(
-        '-p', '--password',
-        dest='pwd', default=None,
-        help='enter password for add/change actions' \
-             '(insecure & not recommended)')
-	pars.add_argument(
-        '--comment',
-        dest='com', default=None,
-        help='enter comment for add/change actions')
 	gpars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
         help='force ssl compatible gpgsm mode - usually is autodetected ' \
-             '(use --cert & --key for imports)')
+             '(use --cert --key for imports)')
 	gpars.add_argument(
         '-C', '--cert',
         dest='sslcrt', metavar='SSL-Certificate',
@@ -239,14 +251,15 @@ def confpars(mode):
         help='set location of one-time password YAMLFILE to read & delete')
 	gpars.add_argument(
         '-S', '--slot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
-        help='set the slot on the yubikey (only useful with -y)')
+        dest='ysl', default=None, type=int, choices=(1, 2),
+        help='set one of the two slots on the yubi-key (only useful for -y)')
 
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
+
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
@@ -264,9 +277,15 @@ def confpars(mode):
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
-	autocomplete(pars)
+
 	args = pars.parse_args()
-	pargs = [a for a in [
+	if args.yks is False and args.lst is False and \
+	      args.add is None and args.chg is None and \
+	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
+		pars.print_help()
+		exit(1)
+
+	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
@@ -277,40 +296,28 @@ def confpars(mode):
 		__bin = args.gpv
 	if osname == 'nt':
 		__bin = 'gpgsm.exe' if args.gpv else 'gpg.exe'
-	pkwargs = {}
-	pkwargs['binary'] = __bin
-	pkwargs['sslcrt'] = args.sslcrt
-	pkwargs['sslkey'] = args.sslkey
+	__pkwargs = {}
+	__pkwargs['binary'] = __bin
+	__pkwargs['sslcrt'] = args.sslcrt
+	__pkwargs['sslkey'] = args.sslkey
 	if args.pcr:
-		pkwargs['crypt'] = args.pcr
+		__pkwargs['crypt'] = args.pcr
 	if args.rcp:
-		pkwargs['recvs'] = list(args.rcp.split(' '))
+		__pkwargs['recvs'] = list(args.rcp.split(' '))
 	if args.usr:
-		pkwargs['user'] = args.usr
+		__pkwargs['user'] = args.usr
 	if args.time:
-		pkwargs['time'] = args.time
+		__pkwargs['time'] = args.time
 	if args.yml:
-		pkwargs['plain'] = args.yml
+		__pkwargs['plain'] = args.yml
 	if hasattr(args, 'remote'):
-		pkwargs['remote'] = args.remote
+		__pkwargs['remote'] = args.remote
 	if hasattr(args, 'reuser'):
-		pkwargs['reuser'] = args.reuser
+		__pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
-		print(bgre(pkwargs))
-	if mode == 'gui':
-		return args, pargs, pkwargs
-	#print(tabd(args.__dict__))
-	if args.yks is False and args.lst is False and \
-          args.add is None and args.chg is None and \
-          args.rms is None and (args.sslcrt is None and args.sslkey is None):
-		pars.print_help()
-		exit(1)
-	return args, pargs, pkwargs
-
-def cli():
-	args, pargs, pkwargs = confpars('cli')
+		print(bgre(__pkwargs))
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
@@ -325,65 +332,63 @@ def cli():
 		if not __res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
-		exit(0)
-	__ents = None
-	if args.add:
-		if not PassCrypt(*pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
-			fatal('could not add entry ', args.add)
-	elif args.chg:
-		if args.pwd:
-			pkwargs['password'] = args.pwd
-		if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-			fatal('could not change entry ', args.chg)
-	elif args.rms:
-		for r in args.rms:
-			if not PassCrypt(*pargs, **pkwargs).rmpw(r):
-				error('could not delete entry ', r)
-	elif args.lst is not False:
-		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
-		if not __ents:
-			fatal('could not decrypt')
-		elif __ents and args.lst and not args.lst in __ents.keys():
-			fatal(
-                'could not find entry for ',
-                args.lst, ' in ', pkwargs['crypt'])
-		elif args.lst and __ents:
-			__pc = __ents[args.lst]
-			if __pc:
-				if len(__pc) == 2:
-					xnotify('%s: %s'%(
-                        args.lst, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-	if not __ents:
-		__ents = PassCrypt(*pargs, **pkwargs).lspw()
-	_printpws_(__ents, args.sho)
-
-def gui(typ='pw'):
-	"""gui wrapper function to not run unnecessary code"""
-	poclp, boclp = paste('pb')
-	args, pargs, pkwargs = confpars('gui')
-	if typ == 'yk':
-		__in = xgetpass()
-		__res = ykchalres(__in, args.ykslot, args.ykser)
-		if not __res:
-			xmsgok('no entry found for %s or decryption failed'%__in)
-			exit(1)
-		forkwaitclip(__res, poclp, boclp, args.time)
-		exit(0)
-	pcm = PassCrypt(*pargs, **pkwargs)
-	__in = xgetpass()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			xmsgok('no entry found for %s'%__in)
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-
+	else:
+		pcm = PassCrypt(*__pargs, **__pkwargs)
+		__ent = None
+		if args.add:
+			if not pcm.adpw(args.add):
+				fatal('could not add entry ', args.add)
+			_printpws_(pcm.lspw(args.add), args.sho)
+		elif args.chg:
+			if not pcm.chpw(args.chg):
+				fatal('could not change entry ', args.chg)
+			_printpws_(pcm.lspw(args.chg), args.sho)
+		elif args.rms:
+			for r in args.rms:
+				if not pcm.rmpw(r):
+					error('could not delete entry ', r)
+			_printpws_(pcm.lspw(), args.sho)
+		elif args.lst is not False:
+			__ent = pcm.lspw(args.lst)
+			if not __ent:
+				fatal('could not decrypt')
+			elif __ent and args.lst and not args.lst in __ent.keys():
+				fatal(
+                    'could not find entry for ',
+                    args.lst, ' in ', __pkwargs['crypt'])
+			elif args.lst and __ent:
+				__pc = __ent[args.lst]
+				if __pc and args.out:
+					print(__pc[0], end='')
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(
+                            args.lst, ' '.join(__pc[1:])), args.time)
+					exit(0)
+				elif __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(
+                            args.lst, __pc[1]), wait=args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
+		else:
+			__in = xgetpass()
+			if not __in: exit(1)
+			__ent = pcm.lspw(__in)
+			if __ent and __in:
+				if __in not in __ent.keys() or not __ent[__in]:
+					fatal(
+                        'could not find entry for ',
+                        __in, ' in ', __pkwargs['crypt'])
+				__pc = __ent[__in]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(__in, __pc[1:]), args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time)
+		if __ent:
+			_printpws_(__ent, args.sho)
+	try:
+		readline.clear_history()
+	except UnboundLocalError:
+		pass
 
 
 
