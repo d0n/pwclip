@@ -196,7 +196,7 @@ def confpars(mode):
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-r', '--recipients',
-        dest='rcp', metavar='ID(s)',
+        dest='rcp', metavar='"[ID [ID ...]]"',
         help='gpg-key ID(s) to use for ' \
              'encryption (string seperated by spaces)')
 	gpars.add_argument(
