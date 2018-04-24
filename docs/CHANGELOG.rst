@@ -27,6 +27,8 @@ Released: 2018-04-24
   * implemented commandline options for password and comment even if it's
     dangerous to use - at least for the password
 
+  * fixed filerotater function not setting file times correctly
+
   * [W] compatibility most certainly lost for now :-(
         had no time to fix the stuff implemented without testing till now
 
