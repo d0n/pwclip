@@ -1,5 +1,6 @@
 xsel
 gpgsm
+vbkbd
 gnupg2
 openssl
 libreadline6
