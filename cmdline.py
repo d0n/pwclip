@@ -22,30 +22,18 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
-<<<<<<< HEAD
-from sys import argv
-
-from subprocess import DEVNULL, PIPE, Popen
-||||||| merged common ancestors
 from subprocess import call
-=======
-from subprocess import call, Popen, DEVNULL, PIPE
->>>>>>> 549238c372294dcbf9b98bb68a21864f9a07b13d
 
 from argparse import ArgumentParser
-
-from socket import gethostname as hostname
 
 from time import sleep
 
 from yaml import load
 
-#try:
-#	import readline
-#except ImportError:
-#	pass
-
-from virtkey import virtkey
+try:
+	import readline
+except ImportError:
+	pass
 
 # local relative imports
 from colortext import bgre, tabd, error, fatal
@@ -126,7 +114,7 @@ def __confcfgs():
 	try:
 		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
-		cfgs['ykslot'] = 2 if 'ykslot' not in cfgs.keys() else cfgs['ykslot']
+		cfgs['ykslot'] = None
 	try:
 		cfgs['ykser'] = environ['YKSERIAL']
 	except KeyError:
@@ -156,33 +144,6 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	cfgs = __confcfgs()
 	if typ == 'yk':
-		__in = xinput()
-		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
-		if not __res:
-			exit(1)
-		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	key = __keycheck('gui', cfgs)
-	if key:
-		cfgs['recvs'] = key
-	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
-	__in = xinput()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
-			poclp, boclp = paste('pb')
-			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
-
-def gui(typ='pw'):
-	"""gui wrapper function to not run unnecessary code"""
-	poclp, boclp = paste('pb')
-	cfgs = __confcfgs()
-	if typ == 'yk':
 		__in = xgetpass()
 		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
 		if not __res:
@@ -202,64 +163,16 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
 			poclp, boclp = paste('pb')
-			if '-o' in sys.argv:
-				prc = Popen(str('xvkbd -no-keypad -delay 10 -text %s'%
-                    ).split(' '), stdout=PIPE, stderr=DEVNULL)
-				prc.communicate()
 			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
 
 
-def confpars(mode='gui'):
+def cli():
 	"""pwclip command line opt/arg parsing function"""
-	_me = path.basename(path.dirname(__file__))
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
-	try:
-		with open(cfg, 'r') as cfh:
-			cfgs = load(cfh.read())
-	except FileNotFoundError:
-		cfgs = {}
-	if args.out:
-		cfgs['out'] = True
-	try:
-		cfgs['time'] = environ['PWCLIPTIME']
-	except KeyError:
-		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
-	try:
-		cfgs['ykslot'] = environ['YKSLOT']
-	except KeyError:
-		cfgs['ykslot'] = None
-	try:
-		cfgs['ykser'] = environ['YKSERIAL']
-	except KeyError:
-		cfgs['ykser'] = None
-	try:
-		cfgs['binary']
-	except KeyError:
-		cfgs['binary'] = 'gpg2'
-		if osname == 'nt':
-			cfgs['binary'] = 'gpg'
-	try:
-		cfgs['user'] = environ['USER']
-	except KeyError:
-		cfgs['user'] = environ['USERNAME']
-	if 'crypt' not in cfgs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if 'plain' not in cfgs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(cfgs['plain'])
-
-	__me = path.basename(path.dirname(__file__))
 	cfgs = __confcfgs()
-	desc = 'pwclip - Multi functional password manager to temporarily ' \
-           'save passphrases to your copy/paste buffers for easy and ' \
-           'secure accessing your passwords. Most of the following ' \
-		   'arguments mights also be set by the config ~/.config/%s.yaml'%__me
-	epic = 'the yubikey feature is compatible with challenge-response ' \
-           'features only'
-	pars = ArgumentParser(description=desc ,epilog=epic)
+	prol = 'pwclip - multi functional password manager to temporarily ' \
+           'save passphrases  to your copy/paste buffers for easy and ' \
+           'secure accessing your passwords'
+	pars = ArgumentParser(description=prol) #add_help=False)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -283,6 +196,7 @@ def confpars(mode='gui'):
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (default is 3 max 3600)')
+
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -296,6 +210,7 @@ def confpars(mode='gui'):
         '--remote-user',
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST')
+
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-r', '--recipients',
@@ -336,26 +251,15 @@ def confpars(mode='gui'):
         help='set location of one-time password YAMLFILE to read & delete')
 	gpars.add_argument(
         '-S', '--slot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
-        help='set the slot on the yubikey (only useful with -y)')
-	gpars.add_argument(
-        '--cert',
-        dest='sslcrt', metavar='SSL-Certificate',
-        help='one-shot setting of SSL-Certificate')
-	gpars.add_argument(
-        '--key',
-        dest='sslkey', metavar='SSL-Private-Key',
-        help='one-shot setting of SSL-Private-Key')
-	gpars.add_argument(
-        '--ca-cert',
-        dest='sslca', metavar='SSL-CA-Certificate',
-        help='one-shot setting of SSL-CA-Certificate')
+        dest='ysl', default=None, type=int, choices=(1, 2),
+        help='set one of the two slots on the yubi-key (only useful for -y)')
 
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set SERIAL of yubikey')
+
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
@@ -373,20 +277,14 @@ def confpars(mode='gui'):
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='search entry matching PATTERN if given otherwise list all')
-	args = pars.parse_args()
 
-	if len(argv) == 1:
-		pars.print_help()
-		exit(1)
+	args = pars.parse_args()
 	if args.yks is False and args.lst is False and \
 	      args.add is None and args.chg is None and \
 	     args.rms is None and (args.sslcrt is None and args.sslkey is None):
 		pars.print_help()
 		exit(1)
-	return args
 
-def cli():
-	args = confpars()
 	__pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
@@ -461,28 +359,15 @@ def cli():
 			elif args.lst and __ent:
 				__pc = __ent[args.lst]
 				if __pc and args.out:
-<<<<<<< HEAD
-||||||| merged common ancestors
 					print(__pc[0], end='')
-=======
-					prc = Popen(str(
-                        'xvkbd -no-keypad -delay 10 -text %s'%__pc[0]
-                        ).split(' '), stdout=PIPE, stderr=DEVNULL)
-					prc.communicate()
-					#print(__pc[0], end='')
->>>>>>> 549238c372294dcbf9b98bb68a21864f9a07b13d
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, ' '.join(__pc[1:])), args.time)
-					prc = Popen(str('xvkbd -no-keypad -delay 100 -text %s'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
-					prc.communicate()
-					copy(__pc[0], 'pb')
-					forkwaitclip(__pc[0], poclp, boclp, args.time)
+					exit(0)
 				elif __pc:
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(
                             args.lst, __pc[1]), wait=args.time)
-					copy(__pc[0], 'pb')
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		else:
 			__in = xgetpass()
@@ -497,41 +382,13 @@ def cli():
 				if __pc:
 					if len(__pc) == 2:
 						xnotify('%s: %s'%(__in, __pc[1:]), args.time)
-					if args.out:
-						prc = Popen(str('xvkbd -no-keypad -delay 100 -text %s'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
-						prc.communicate()
-					copy(__pc[0], 'pb')
 					forkwaitclip(__pc[0], poclp, boclp, args.time)
 		if __ent:
 			_printpws_(__ent, args.sho)
-
-def gui(typ='pw'):
-	"""gui wrapper function to not run unnecessary code"""
-	cfgs = confpars()
-	poclp, boclp = paste('pb')
-	if typ == 'yk':
-		__in = xgetpass()
-		__res = ykchalres(__in, cfgs['ykslot'], cfgs['ykser'])
-		if not __res:
-			xmsgok('no entry found for %s or decryption failed'%__in)
-			exit(1)
-		forkwaitclip(__res, poclp, boclp, cfgs['time'])
-	pcm = PassCrypt(*('aal', 'rem', ), **cfgs)
-	__in = xgetpass()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			xmsgok('no entry found for %s'%__in)
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, __pc[1]), cfgs['time'])
-			poclp, boclp = paste('pb')
-			if 'out' in cfgs.keys():
-				prc = Popen(str('xvkbd -no-keypad -delay 100 -text %s'%__pc[0]).split(' '), stdout=PIPE, stderr=DEVNULL)
-			forkwaitclip(__pc[0], poclp, boclp, cfgs['time'])
+	try:
+		readline.clear_history()
+	except UnboundLocalError:
+		pass
 
 
 
