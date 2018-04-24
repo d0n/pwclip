@@ -64,13 +64,16 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	copy(text, mode='pb')
-	if fork() == 0:
-		if out:
+	if out:
+		if out == 'gui':
 			Popen(str(
                 'xvkbd -no-keypad -delay 10 -text %s'%text
                 ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+		else:
+			print(text, end='')
+	if fork() == 0:
 		try:
+			copy(text, mode='pb')
 			sleep(int(wait))
 		except (KeyboardInterrupt, RuntimeError):
 			exit(1)
@@ -164,7 +167,7 @@ def confpars(mode):
         help='switch to all users entrys (instead of current user only)')
 	pars.add_argument(
         '-o', '--stdout',
-        dest='out', action='store_true',
+        dest='out', action='store_const', const=mode,
         help='print received password to stdout (insecure & unrecommended)')
 	pars.add_argument(
         '-s', '--show-passwords',
