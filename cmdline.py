@@ -154,7 +154,7 @@ def confpars(mode):
            'save passphrases to your copy/paste buffers for easy and ' \
            'secure accessing your passwords. Most of the following ' \
            'arguments mights also be set by the config ~/.config/%s.yaml'%_me
-	epic = 'the yubikey feature is compatible with yubikey\'s ' \
+	epic = 'the yubikey feature is compatible with its\'s ' \
            'challenge-response feature only'
 	pars = ArgumentParser(description=desc ,epilog=epic)
 	pars.set_defaults(**cfgs)
