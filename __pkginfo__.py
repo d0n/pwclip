@@ -3,7 +3,7 @@ name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 2)])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
-    'argcomplete', 'autocomplete', 'netaddr', 'paramiko', 'psutil',
+    'argcomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
@@ -38,10 +38,11 @@ try:
         ).format(ChangeLog=long_description)
 except OSError:
 	long_description = ''
+
 entry_points = {
+    'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
-                    'ykclip = pwclip.__init__:ykclip'],
-    'console_scripts': ['pwcli = pwclip.__init__:pwcli']}
+                    'ykclip = pwclip.__init__:ykclip']}
 package_data = {
     '': ['pwclip/docs/*.rst']}
 data_files=[
