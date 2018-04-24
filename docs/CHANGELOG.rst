@@ -626,20 +626,19 @@ Released: 2017-08-15
   * merged private libs into ./lib - many changes related to that
     lib respectivly:
     - ./lib/net:
-     -- ssh.py module updated to match paramiko changes and some other fixes
-     -- added functions to do DNS lookups for the (optional) scp backup
-        function
+    -- ssh.py module updated to match paramiko changes and some other fixes
+    -- added functions to do DNS lookups for the (optional) scp backup function
     - ./lib/secrecy/gpg.py
-     -- fixed passing of command line setting of gpg-key-recipient option
-     -- [W] fixed path to gnupg home
-     -- [W] fixed setting wrong keystores (.gpg|.kbx) in windows
-     -- [W] replaced concatenated string by path.join
-     -- [W] added passphrase input mode while pinentry is not available
+    -- fixed passing of command line setting of gpg-key-recipient option
+    -- [W] fixed path to gnupg home
+    -- [W] fixed setting wrong keystores (.gpg|.kbx) in windows
+    -- [W] replaced concatenated string by path.join
+    -- [W] added passphrase input mode while pinentry is not available
     - ./lib/secrecy/passcrypt.py
-     -- if debugging is enabled the plaintext file is removed no more
+    -- if debugging is enabled the plaintext file is removed no more
     - ./__init__.py
-     -- fixed comment for strange lib include
-     -- changed wrapper to gereric name
+    -- fixed comment for strange lib include
+    -- changed wrapper to gereric name
 
 
 0.4.18
