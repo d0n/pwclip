@@ -4,7 +4,17 @@ Changelog
 1.3.2 (current)
 ---------------
 
-Released: 2018-04-24
+Released: 2018-04-25
+
+  * made some more changes to docs and trying to add more of them by
+    build environment
+
+
+
+1.3.2 (current)
+---------------
+
+Released: 2018-04-25
 
   * fixed typo in README and removed unnecessary debugging output
 

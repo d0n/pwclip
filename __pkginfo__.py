@@ -3,7 +3,14 @@ name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 2)])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
+<<<<<<< HEAD
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
+||||||| merged common ancestors
+<<<<<<< HEAD
+    'argcomplete', 'netaddr', 'paramiko', 'psutil',
+=======
+    'argcomplete', 'autocomplete', 'netaddr', 'paramiko', 'psutil',
+>>>>>>> 72bb26ae6372deda6ad45d0d31c6e59728afa9a8
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
@@ -39,8 +46,21 @@ try:
         ).format(ChangeLog=long_description)
 except OSError:
 	long_description = ''
+<<<<<<< HEAD
 with open('pwclip/README', 'w+') as rfh:
 	rfh.write(long_description)
+||||||| merged common ancestors
+||||||| merged common ancestors
+	readme = ''
+
+long_desc = (readme)
+
+=======
+	readme = ''
+long_desc = (readme)
+>>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
+=======
+>>>>>>> 72bb26ae6372deda6ad45d0d31c6e59728afa9a8
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',

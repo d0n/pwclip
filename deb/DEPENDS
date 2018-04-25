@@ -12,4 +12,9 @@ python3-wget
 python3-gnupg
 python3-argparse
 python3-paramiko
+<<<<<<< HEAD
 python3-argcomplete
+||||||| merged common ancestors
+python3-virtkey
+=======
+>>>>>>> 72bb26ae6372deda6ad45d0d31c6e59728afa9a8
