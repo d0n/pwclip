@@ -39,6 +39,8 @@ try:
         ).format(ChangeLog=long_description)
 except OSError:
 	long_description = ''
+with open('pwclip/README', 'w+') as rfh:
+	rfh.write(long_description)
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
