@@ -4,9 +4,9 @@
 *.swp
 *.deb
 *.tar.gz
-#deb_dist
-#dist
-#build
-#docs/_build
-#pwclip.egg-info
-#__pycache__
+deb_dist
+dist
+build
+docs/_build
+pwclip.egg-info
+__pycache__
