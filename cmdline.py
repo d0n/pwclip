@@ -246,9 +246,9 @@ def confpars(mode):
              'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	gpars.add_argument(
         '-S', '--slot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
+        dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots ' \
-             '(only useful with -y, defailt is 2)'
+             '(auto is default)'
         ).completer = ChoicesCompleter((1, 2))
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
