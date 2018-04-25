@@ -62,7 +62,7 @@ if osname == 'nt' and not which('gpg.exe'):
 		except FileNotFoundError:
 			pass
 
-from secrecy import PassCrypt, ykchalres
+from secrecy import PassCrypt, ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
@@ -254,7 +254,8 @@ def confpars(mode):
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
-        help='switch to yubikey mode and optionally set SERIAL of yubikey')
+        help='switch to yubikey mode and optionally set SERIAL of yubikey'
+        ).completer = ChoicesCompleter((k for k in yubikeys().keys()))
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
