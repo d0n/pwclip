@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """pwclip packaging information"""
 name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 2)])
@@ -28,6 +27,7 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 include_package_data = True
+long_description = ''
 try:
 	long_description = '\n\n\n'.join(
         str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
@@ -40,11 +40,13 @@ try:
 except OSError:
 	long_description = ''
 entry_points = {
+    'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
-                    'ykclip = pwclip.__init__:ykclip'],
-    'console_scripts': ['pwcli = pwclip.__init__:pwcli']}
+                    'ykclip = pwclip.__init__:ykclip']}
 package_data = {
-    '': ['pwclip/docs/*.rst']}
+    '': ['pwclip/docs/'],
+    '': ['pwclip/example']
+	}
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [

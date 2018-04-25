@@ -29,6 +29,7 @@ from subprocess import DEVNULL, Popen, call
 from argparse import ArgumentParser
 
 from argcomplete import autocomplete
+from argcomplete.completers import FilesCompleter, ChoicesCompleter
 
 from socket import gethostname as hostname
 
@@ -61,7 +62,7 @@ if osname == 'nt' and not which('gpg.exe'):
 		except FileNotFoundError:
 			pass
 
-from secrecy import PassCrypt, ykchalres
+from secrecy import PassCrypt, ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
@@ -74,16 +75,16 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
                 ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		else:
 			print(text, end='')
+	copy(text, mode='pb')
 	if fork() == 0:
 		try:
-			copy(text, mode='pb')
 			sleep(int(wait))
 		except (KeyboardInterrupt, RuntimeError):
 			exit(1)
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-	exit(0)
+		exit(0)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -138,6 +139,7 @@ def confpars(mode):
 		cfgs['binary'] = 'gpg2'
 		if osname == 'nt':
 			cfgs['binary'] = 'gpg'
+	cfgs['user'] = '$USER' if osname != 'nt' else '$USERNAME'
 	try:
 		cfgs['user'] = environ['USER']
 	except KeyError:
@@ -154,9 +156,9 @@ def confpars(mode):
            'save passphrases to your copy/paste buffers for easy and ' \
            'secure accessing your passwords. Most of the following ' \
            'arguments mights also be set by the config ~/.config/%s.yaml'%_me
-	epic = 'the yubikey feature is compatible with challenge-response ' \
-           'features only'
-	pars = ArgumentParser(description=desc ,epilog=epic)
+	epic = 'the yubikey feature is compatible with its\'s ' \
+           'challenge-response feature only'
+	pars = ArgumentParser(description=desc, epilog=epic)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
         '--version',
@@ -167,19 +169,19 @@ def confpars(mode):
 	pars.add_argument(
         '-A', '--all',
         dest='aal', action='store_true',
-        help='switch to all users entrys (instead of current user only)')
+        help='switch to all users entrys ("%s" only is default)'%cfgs['user'])
 	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
-        help='print received password to stdout (insecure & unrecommended)')
+        help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
-        help='switch to display passwords (replaced with * by default)')
+        help='show passwords when listing (replaced by "*" is default)')
 	pars.add_argument(
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
-        help='time to wait before resetting clip (default is 3 max 3600)')
+        help='time to wait before resetting clip (%d is default)'%cfgs['time'])
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -192,18 +194,18 @@ def confpars(mode):
 	rpars.add_argument(
         '--remote-user',
         dest='reuser', metavar='USER',
-        help='use USER for connections to HOST')
+        help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-r', '--recipients',
-        dest='rcp', metavar='ID(s)',
-        help='gpg-key ID(s) to use for ' \
-             'encryption (string seperated by spaces)')
+        dest='rcp', metavar='"ID ..."',
+        help='one ore more gpg-key ID(s) to use for ' \
+             'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
         '-u', '--user',
         dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys only for USER ' \
-             '(defaults to current user, overridden by -A)')
+        help='query entrys only for USER (-A overrides, ' \
+             '"%s" is default)'%cfgs['user'])
 	pars.add_argument(
         '-p', '--password',
         dest='pwd', default=None,
@@ -234,21 +236,25 @@ def confpars(mode):
         '-P', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
         default=path.expanduser('~/.passcrypt'),
-        help='set location of CRYPTFILE to use for gpg features')
+        help='set location of CRYPTFILE to use as ' \
+             'password store (~/.passcrypt is default)')
 	gpars.add_argument(
         '-Y', '--yaml',
         dest='yml', metavar='YAMLFILE',
         default=path.expanduser('~/.pwd.yaml'),
-        help='set location of one-time password YAMLFILE to read & delete')
+        help='set location of YAMLFILE to read whole ' \
+             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	gpars.add_argument(
         '-S', '--slot',
-        dest='ysl', default=2, type=int, choices=(1, 2),
-        help='set the slot on the yubikey (only useful with -y)')
+        dest='ysl', default=None, type=int, choices=(1, 2),
+        help='set one of the two yubikey slots (only useful with -y)'
+        ).completer = ChoicesCompleter((1, 2))
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
-        help='switch to yubikey mode and optionally set SERIAL of yubikey')
+        help='switch to yubikey mode and optionally set ' \
+		     'SERIAL of yubikey (autoselect serial and slot is default)')
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
@@ -265,7 +271,8 @@ def confpars(mode):
 	gpars.add_argument(
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
-        help='search entry matching PATTERN if given otherwise list all')
+        help='pwclip an entry matching PATTERN if given ' \
+             '- otherwise list all entrys')
 	autocomplete(pars)
 	args = pars.parse_args()
 	pargs = [a for a in [
@@ -304,9 +311,10 @@ def confpars(mode):
 	if mode == 'gui':
 		return args, pargs, pkwargs
 	#print(tabd(args.__dict__))
-	if args.yks is False and args.lst is False and \
+	if (
+          args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
-          args.rms is None and (args.sslcrt is None and args.sslkey is None):
+          args.rms is None and (args.sslcrt is None and args.sslkey is None)):
 		pars.print_help()
 		exit(1)
 	return args, pargs, pkwargs
@@ -373,19 +381,23 @@ def gui(typ='pw'):
 		forkwaitclip(__res, poclp, boclp, args.time)
 		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
-	__in = xgetpass()
-	if not __in: exit(1)
-	__ent = pcm.lspw(__in)
-	if __ent and __in:
-		if __in not in __ent.keys() or not __ent[__in]:
-			xmsgok('no entry found for %s'%__in)
-			exit(1)
-		__pc = __ent[__in]
-		if __pc:
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-
+	while True:
+		__in = xgetpass()
+		if not __in: exit(1)
+		__ent = pcm.lspw(__in)
+		if __ent and __in:
+			if __in not in __ent.keys() or not __ent[__in]:
+				xmsgok('no entry found for %s'%__in)
+				if xyesno('try again?'):
+					continue
+				exit(1)
+			__pc = __ent[__in]
+			if __pc:
+				if len(__pc) == 2:
+					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				exit(0)
+	exit(0)
 
 
 
