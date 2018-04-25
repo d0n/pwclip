@@ -248,7 +248,7 @@ def confpars(mode):
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots ' \
-             '(autoselection is default)'
+             '(autoselect is default)'
         ).completer = ChoicesCompleter((1, 2))
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
