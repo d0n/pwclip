@@ -168,26 +168,42 @@ pwclip an entry matching PATTERN if given \- otherwise list all entrys
 .sp
 the yubikey feature is compatible with its\(aqs challenge\-response feature only
 .SH EXAMPLES
+.sp
+list all entrys for current loged\-in system user
 .INDENT 0.0
 .INDENT 3.5
-# list all entrys for current loged\-in system user
 $ pwcli \-l
+.UNINDENT
+.UNINDENT
 .sp
-# add password entry for "someotheruser" (users as well as entrys dont need to exist)
+add password entry for "someotheruser" (users as well as entrys dont need to exist)
+.INDENT 0.0
+.INDENT 3.5
 $ pwcli \-u someotheruser \-a
+.UNINDENT
+.UNINDENT
 .sp
-# merge passwords using ssl into .mycrypt and list all entrys for all users
+merge passwords using ssl into .mycrypt and list all entrys for all users
+.INDENT 0.0
+.INDENT 3.5
 $ pwcli \-P .mycrypt \-Y pwds.yaml \-C myrottensslcert.pem \-K myrottensslkey.pem \-A \-l
+.UNINDENT
+.UNINDENT
 .sp
-# yubikey gui\-mode autoselecting  slot and serial (usually even
-# if more than one key connected)
-pwclip \-y
+yubikey gui\-mode autoselecting  slot and serial (usually even if more than one key connected)
+.INDENT 0.0
+.INDENT 3.5
+$ pwclip \-y
+.UNINDENT
+.UNINDENT
 .sp
-# not used by default but can be combined with every actions is the ftp
-# sync feature which compares remote and local file timestams as well
-# as copying it from or to that remote server (for obvious reasons not
-# recommended but needed in some cases)
-pwclip \-R \-\-remote\-host my.secure.ftp.storage \-\-remote\-user remoteuser
+not used by default but can be combined with every actions is the ftp
+sync feature which compares remote and local file timestams as well
+as copying it from or to that remote server (for obvious reasons not
+recommended but needed in some cases)
+.INDENT 0.0
+.INDENT 3.5
+$ pwclip \-R \-\-remote\-host my.secure.ftp.storage \-\-remote\-user remoteuser
 .UNINDENT
 .UNINDENT
 .sp

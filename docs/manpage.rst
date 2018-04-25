@@ -126,26 +126,28 @@ the yubikey feature is compatible with its's challenge-response feature only
 
 Examples
 --------
+list all entrys for current loged-in system user
 
-    # list all entrys for current loged-in system user
     $ pwcli -l
 
-    # add password entry for "someotheruser" (users as well as entrys dont need to exist)
+add password entry for "someotheruser" (users as well as entrys dont need to exist)
+
     $ pwcli -u someotheruser -a
 
-    # merge passwords using ssl into .mycrypt and list all entrys for all users
+merge passwords using ssl into .mycrypt and list all entrys for all users
+
     $ pwcli -P .mycrypt -Y pwds.yaml -C myrottensslcert.pem -K myrottensslkey.pem -A -l
 
-    # yubikey gui-mode autoselecting  slot and serial (usually even
-    # if more than one key connected)
-    pwclip -y
+yubikey gui-mode autoselecting  slot and serial (usually even if more than one key connected)
 
-    # not used by default but can be combined with every actions is the ftp
-    # sync feature which compares remote and local file timestams as well
-    # as copying it from or to that remote server (for obvious reasons not
-    # recommended but needed in some cases)
-    pwclip -R --remote-host my.secure.ftp.storage --remote-user remoteuser
+    $ pwclip -y
 
+not used by default but can be combined with every actions is the ftp
+sync feature which compares remote and local file timestams as well
+as copying it from or to that remote server (for obvious reasons not
+recommended but needed in some cases)
+
+    $ pwclip -R --remote-host my.secure.ftp.storage --remote-user remoteuser
 
 .. seealso::
 
