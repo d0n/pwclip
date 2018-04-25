@@ -34,106 +34,167 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .INDENT 0.0
 .TP
 .B usage: pwcli [\-h] [\-\-version] [\-D] [\-A] [\-o] [\-s] [\-t seconds] [\-R]
-[\-\-remote\-host HOST] [\-\-remote\-user USER] [\-r IDs] [\-u USER] [\-x]
-[\-C SSL\-Certificate] [\-K SSL\-Private\-Key]
-[\-\-ca SSL\-CA\-Certificate] [\-P CRYPTFILE] [\-Y YAMLFILE] [\-S {1,2}]
-[\-y [SERIAL]] [\-a ENTRY] [\-c ENTRY] [\-d ENTRY [ENTRY ...]]
-[\-l [PATTERN]]
+[\-\-remote\-host HOST] [\-\-remote\-user USER] [\-r "ID ..."] [\-u USER]
+[\-p PWD] [\-\-comment COM] [\-x] [\-C SSL\-Certificate]
+[\-K SSL\-Private\-Key] [\-\-ca SSL\-CA\-Certificate] [\-P CRYPTFILE]
+[\-Y YAMLFILE] [\-S {1,2}] [\-y [SERIAL]] [\-a ENTRY] [\-c ENTRY]
+[\-d ENTRY [ENTRY ...]] [\-l [PATTERN]]
 .UNINDENT
 .SH DESCRIPTION
 .sp
-pwclip \- multi functional password manager to temporarily save passphrases to
-your copy/paste buffers for easy and secure accessing your passwords
+pwclip \- Multi functional password manager to temporarily save passphrases to
+your copy/paste buffers for easy and secure accessing your passwords. Most of
+the following arguments mights also be set by the config ~/.config/pwclip.yaml
 .SH OPTIONS
 .INDENT 0.0
 .TP
+.B \-\-version
+show program\(aqs version number and exit
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-D, \-\-debug
+debugging mode
+.UNINDENT
+.INDENT 0.0
+.TP
 .B \-A, \-\-all
+switch to all users entrys ("d0n" only is default)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-o, \-\-stdout
+print password to stdout (insecure and unrecommended)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-s, \-\-show\-passwords
+show passwords when listing (replaced by "*" is default)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-t seconds
+time to wait before resetting clip (3 is default)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-p PWD, \-\-password PWD
+enter password for add/change actions (insecure & not recommended)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-comment COM
+enter comment for add/change actions
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-R
+use remote backup given by \-\-remote\-host
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-\-remote\-host HOST
+use HOST for connections
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-\-remote\-user USER
+use USER for connections to HOST ("d0n" is default)
 .UNINDENT
 .INDENT 0.0
 .TP
-.B \-r ID(s), \-\-recipients ID(s)
+.B \-r "ID ...", \-\-recipients "ID ..."
+one ore more gpg\-key ID(s) to use for encryption (strings seperated by spaces within "")
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-u USER, \-\-user USER
+query entrys only for USER (\-A overrides, "d0n" is default)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-x, \-\-x509
+force ssl compatible gpgsm mode \- usually is autodetected (use \-\-cert & \-\-key for imports)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-C SSL\-Certificate, \-\-cert SSL\-Certificate
+one\-shot setting of SSL\-Certificate
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-K SSL\-Private\-Key, \-\-key SSL\-Private\-Key
+one\-shot setting of SSL\-Private\-Key
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-\-ca SSL\-CA\-Certificate, \-\-ca\-cert SSL\-CA\-Certificate
+one\-shot setting of SSL\-CA\-Certificate
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-P CRYPTFILE, \-\-passcrypt CRYPTFILE
+set location of CRYPTFILE to use as password store (~/.passcrypt is default)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-Y YAMLFILE, \-\-yaml YAMLFILE
+set location of YAMLFILE to read whole sets of passwords from a yaml file (~/.pwd.yaml is default)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-S {1,2}, \-\-slot {1,2}
+set one of the two yubikey slots (only useful with \-y)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-y [SERIAL], \-\-ykserial [SERIAL]
+switch to yubikey mode and optionally set SERIAL of yubikey (autoselect serial and slot is default)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-a ENTRY, \-\-add ENTRY
+add ENTRY (password will be asked interactivly)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-c ENTRY, \-\-change ENTRY
+change ENTRY (password will be asked interactivly)
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-d ENTRY [ENTRY ...], \-\-delete ENTRY [ENTRY ...]
+delete ENTRY(s) from the passcrypt list
 .UNINDENT
 .INDENT 0.0
 .TP
 .B \-l [PATTERN], \-\-list [PATTERN]
+pwclip an entry matching PATTERN if given \- otherwise list all entrys
 .UNINDENT
+.SH EPILOG
+.sp
+the yubikey feature is compatible with its\(aqs challenge\-response feature only
 .SH EXAMPLES
 .INDENT 0.0
 .INDENT 3.5
-# merge and list passwords using ssl
+# list all entrys for current loged\-in system user
+$ pwcli \-l
+.sp
+# add password entry for "someotheruser" (users as well as entrys dont need to exist)
+$ pwcli \-u someotheruser \-a
+.sp
+# merge passwords using ssl into .mycrypt and list all entrys for all users
 $ pwcli \-P .mycrypt \-Y pwds.yaml \-C myrottensslcert.pem \-K myrottensslkey.pem \-A \-l
+.sp
+# yubikey gui\-mode autoselecting  slot and serial (usually even
+# if more than one key connected)
+pwclip \-y
+.sp
+# not used by default but can be combined with every actions is the ftp
+# sync feature which compares remote and local file timestams as well
+# as copying it from or to that remote server (for obvious reasons not
+# recommended but needed in some cases)
+pwclip \-R \-\-remote\-host my.secure.ftp.storage \-\-remote\-user remoteuser
 .UNINDENT
 .UNINDENT
 .sp
