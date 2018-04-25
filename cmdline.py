@@ -248,13 +248,14 @@ def confpars(mode):
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots ' \
-             '(auto is default)'
+             '(autoselection is default)'
         ).completer = ChoicesCompleter((1, 2))
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
-        help='switch to yubikey mode and optionally set SERIAL of yubikey')
+        help='switch to yubikey mode and optionally set ' \
+		     'SERIAL of yubikey (autoselect is default)')
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
