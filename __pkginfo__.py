@@ -39,9 +39,10 @@ try:
         ).format(ChangeLog=long_description)
 except FileNotFoundError:
 	long_description = ''
-with open('README', 'w+') as rfh:
-	rfh.write(long_description)
-	readme = ''
+if long_description:
+	with open('README', 'w+') as rfh:
+		rfh.write(long_description)
+		readme = ''
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
