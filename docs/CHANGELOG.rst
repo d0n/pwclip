@@ -1,18 +1,22 @@
 Changelog
 =========
 
-1.3.2 (current)
+1.3.3 (current)
 ---------------
 
-Released: 2018-04-25
+Released: 2018-04-26
 
   * made some more changes to docs and trying to add more of them by
     build environment
 
+  * fixed bug implemented with 1.3.2 which causes crash in any case while
+    trying to create README
+
+  ** hotfix release **
 
 
-1.3.2 (current)
----------------
+1.3.2
+-----
 
 Released: 2018-04-25
 
