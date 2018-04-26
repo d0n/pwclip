@@ -1,6 +1,6 @@
 """pwclip packaging information"""
 name = 'pwclip'
-version = '.'.join([str(num) for num in (1, 3, 2)])
+version = '.'.join([str(num) for num in (1, 3, 3)])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
@@ -31,15 +31,15 @@ long_description = ''
 try:
 	long_description = '\n\n\n'.join(
         str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
-except OSError:
+except FileNotFoundError:
 	long_description = ''
 try:
 	long_description = str(
         open('pwclip/docs/README.rst', 'r').read()
         ).format(ChangeLog=long_description)
-except OSError:
+except FileNotFoundError:
 	long_description = ''
-with open('pwclip/README', 'w+') as rfh:
+with open('README', 'w+') as rfh:
 	rfh.write(long_description)
 	readme = ''
 entry_points = {
