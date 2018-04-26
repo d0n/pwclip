@@ -6,41 +6,7 @@ dist
 build
 docs/_build
 pwclip.egg-info
-lib
 *.pyc
 *.swp
 *.deb
 *.tar.gz
-<<<<<<< HEAD
-deb_dist
-dist
-build
-docs/_build
-pwclip.egg-info
-__pycache__
-||||||| merged common ancestors
-<<<<<<< HEAD
-#README
-deb_dist/*
-dist/*
-build/*
-docs/_build/*
-#pwclip/lib/*
-pwclip.egg-info/*
-||||||| merged common ancestors
-*__pycache__*
-pybuild/deb-dist*
-pybuild/build*
-pybuild/pwlip/lib*
-=======
-*__pycache__*
-<<<<<<< HEAD
-lib
->>>>>>> 44642e0efa1032a32fd04d75cae853c9c14640ac
-||||||| merged common ancestors
-lib
-=======
-lib/*
->>>>>>> 549238c372294dcbf9b98bb68a21864f9a07b13d
-=======
->>>>>>> 72bb26ae6372deda6ad45d0d31c6e59728afa9a8
