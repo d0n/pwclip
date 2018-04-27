@@ -403,15 +403,13 @@ def gui(typ='pw'):
 			exit(0)
 		__in = args.lst if args.lst else xgetpass()
 		if not __in:
-			xmsgok('no input received, try again?')
-			if xyesno('try again?'):
+			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
 		__ent = pcm.lspw(__in)
 		if __ent and __in:
 			if __in not in __ent.keys() or not __ent[__in]:
-				xmsgok('no entry found for %s'%__in)
-				if xyesno('try again?'):
+				if xyesno('no entry found for %s, try again?'%__in)
 					continue
 				exit(1)
 			__pc = __ent[__in]
