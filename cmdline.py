@@ -42,50 +42,32 @@ from colortext import bgre, tabd, error, fatal
 
 from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
-# first if on windows and gpg.exe cannot be found in PATH install gpg4win
-if osname == 'nt' and not which('gpg.exe'):
-	if not xyesno('mandatory gpg4win not found! Install it?'):
-		exit(1)
-	import wget
-	src = 'https://files.gpg4win.org/gpg4win-latest.exe'
-	trg = path.join(environ['TEMP'], 'gpg4win.exe')
-	wget.download(src, out=trg)
-	try:
-		call(trg)
-	except TimeoutError:
-		xmsgok('something went wrong while downloading gpg4win from: ' \
-               'https://files.gpg4win.org/ - try installing yourself!')
-		exit(1)
-	finally:
-		try:
-			remove(trg)
-		except FileNotFoundError:
-			pass
-
 from secrecy import PassCrypt, ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	if out:
-		if out == 'gui':
-			Popen(str(
-                'xvkbd -no-keypad -delay 10 -text %s'%text
-                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-		else:
-			stdout.write(text)
-			stdout.flush()
 	copy(text, mode='pb')
+	eno = 0
 	if fork() == 0:
+		if out:
+			if out == 'gui':
+				Popen(str(
+                    'xvkbd -no-keypad -delay 10 -text %s'%text
+                    ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+			else:
+				stdout.write(text)
+				stdout.flush()
 		try:
 			sleep(int(wait))
 		except (KeyboardInterrupt, RuntimeError):
-			exit(1)
+			eno = 1
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-		exit(0)
+		exit(eno)
+	exit(eno)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""

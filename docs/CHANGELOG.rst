@@ -1,8 +1,16 @@
 Changelog
 =========
 
-1.3.4 (current)
+1.3.5 (current)
 ---------------
+
+Released: 2018-04-27
+
+  * fix for stdout password print function
+
+
+1.3.4
+-----
 
 Released: 2018-04-27
 
