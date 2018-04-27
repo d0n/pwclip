@@ -1,10 +1,4 @@
 """pwclip packaging information"""
-__all__ = [
-    'name',  'version',  'provides',
-    'install_requires', 'license', 'description',
-    'url', 'author', 'author_email', 'download_url',
-	'classifiers', 'include_package_data', 'long_description',
-	'entry_points', 'package_data', 'data_files']
 name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 4)])
 provides = ['pwcli', 'pwclip', 'ykclip']
@@ -46,8 +40,7 @@ try:
 except FileNotFoundError:
 	long_description = ''
 if long_description:
-	with open('README', 'w+') as rfh:
-		rfh.write(long_description)
+	open('README', 'w+').write(long_description)
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
