@@ -51,14 +51,12 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	copy(text, mode='pb')
 	eno = 0
 	if fork() == 0:
-		if out:
-			if out == 'gui':
-				Popen(str(
-                    'xvkbd -no-keypad -delay 10 -text %s'%text
-                    ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-			else:
-				stdout.write(text)
-				stdout.flush()
+		if out == 'gui':
+			Popen(str(
+				'xvkbd -no-keypad -delay 50 -text %s'%text
+			).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+		elif out == 'cli':
+			print(text, end='')
 		try:
 			sleep(int(wait))
 		except (KeyboardInterrupt, RuntimeError):
@@ -346,8 +344,9 @@ def cli():
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				exit(0)
+				forkwaitclip(
+                    __pc[0], poclp, boclp,
+                    args.time, 'cli' if args.out else None)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	_printpws_(__ents, args.sho)
@@ -364,7 +363,6 @@ def gui(typ='pw'):
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
 		forkwaitclip(__res, poclp, boclp, args.time)
-		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
 		if args.add:
@@ -375,7 +373,8 @@ def gui(typ='pw'):
 		elif args.chg:
 			if args.pwd:
 				pkwargs['password'] = args.pwd
-			if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+			if not PassCrypt(
+                  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.rms)
 				exit(1)
 		elif args.rms:
@@ -399,5 +398,6 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				exit(0)
+				forkwaitclip(
+                    __pc[0], poclp, boclp,
+                    args.time, 'gui' if args.out else None)
