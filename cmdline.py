@@ -349,7 +349,7 @@ def cli():
 		for r in args.rms:
 			if not PassCrypt(*pargs, **pkwargs).rmpw(r):
 				error('could not delete entry ', r)
-	elif args.lst is not False:
+	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if not __ents:
 			fatal('could not decrypt')
