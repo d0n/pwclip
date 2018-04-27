@@ -22,7 +22,7 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
-from sys import argv
+from sys import stdout
 
 from subprocess import DEVNULL, Popen, call
 
@@ -74,7 +74,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
                 'xvkbd -no-keypad -delay 10 -text %s'%text
                 ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		else:
-			print(text, end='')
+			sys.stdout.write(text)
+			sys.stdout.flush()
 	copy(text, mode='pb')
 	if fork() == 0:
 		try:
