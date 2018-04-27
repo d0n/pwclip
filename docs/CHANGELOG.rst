@@ -10,6 +10,8 @@ Released: 2018-04-27
 
   * fixed locations in pkginfo to match index/download url
 
+  * some more changes for user dialogs in x mode
+
 
 1.3.3
 -----

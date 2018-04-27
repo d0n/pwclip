@@ -384,8 +384,29 @@ def gui(typ='pw'):
 		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
+		if args.add:
+			if not PassCrypt(
+                  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
+				xmsgok('could not add entry %s'%args.rms)
+				exit(1)
+		elif args.chg:
+			if args.pwd:
+				pkwargs['password'] = args.pwd
+			if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+				xmsgok('could not change entry %s'%args.rms)
+				exit(1)
+		elif args.rms:
+			for r in args.rms:
+				if not PassCrypt(*pargs, **pkwargs).rmpw(r):
+					xmsgok('could not delete entry %s'%args.rms)
+					exit(1)
+			exit(0)
 		__in = args.lst if args.lst else xgetpass()
-		if not __in: exit(1)
+		if not __in:
+			xmsgok('no input received, try again?')
+			if xyesno('try again?'):
+				continue
+			exit(1)
 		__ent = pcm.lspw(__in)
 		if __ent and __in:
 			if __in not in __ent.keys() or not __ent[__in]:
