@@ -384,7 +384,7 @@ def gui(typ='pw'):
 		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
-		__in = xgetpass()
+		__in = args.lst if args.lst else xgetpass()
 		if not __in: exit(1)
 		__ent = pcm.lspw(__in)
 		if __ent and __in:
