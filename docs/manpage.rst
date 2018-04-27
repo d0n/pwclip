@@ -138,7 +138,7 @@ merge passwords using ssl into .mycrypt and list all entrys for all users
 
     $ pwcli -P .mycrypt -Y pwds.yaml -C myrottensslcert.pem -K myrottensslkey.pem -A -l
 
-yubikey gui-mode autoselecting  slot and serial (usually even if more than one key connected)
+yubikey gui-mode autoselecting slot and serial (usually even if more than one key is connected)
 
     $ pwclip -y
 
