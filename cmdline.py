@@ -84,7 +84,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-	exit(0)
+		exit(0)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -364,7 +364,8 @@ def cli():
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-	if not __ents:
+				exit(0)
+	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	_printpws_(__ents, args.sho)
 
@@ -396,10 +397,3 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				exit(0)
-	exit(0)
-
-
-
-if __name__ == '__main__':
-	exit(1)
