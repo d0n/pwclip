@@ -40,7 +40,7 @@ try:
 except FileNotFoundError:
 	long_description = ''
 if long_description:
-	with open('pwclip/README', 'w+') as rfh:
+	with open('README', 'w+') as rfh:
 		rfh.write(long_description)
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
