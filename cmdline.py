@@ -77,15 +77,16 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 			stdout.write(text)
 			stdout.flush()
 	copy(text, mode='pb')
+	eno = 0
 	if fork() == 0:
 		try:
 			sleep(int(wait))
 		except (KeyboardInterrupt, RuntimeError):
-			exit(1)
+			eno = 1
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-		exit(0)
+	exit(eno)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -365,7 +366,6 @@ def cli():
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	_printpws_(__ents, args.sho)
@@ -382,7 +382,6 @@ def gui(typ='pw'):
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
 		forkwaitclip(__res, poclp, boclp, args.time)
-		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
 		if args.add:
@@ -418,4 +417,3 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				exit(0)
