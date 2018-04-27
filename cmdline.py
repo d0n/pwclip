@@ -74,8 +74,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
                 'xvkbd -no-keypad -delay 10 -text %s'%text
                 ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		else:
-			sys.stdout.write(text)
-			sys.stdout.flush()
+			stdout.write(text)
+			stdout.flush()
 	copy(text, mode='pb')
 	if fork() == 0:
 		try:
