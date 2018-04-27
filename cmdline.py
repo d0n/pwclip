@@ -22,7 +22,7 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
-from sys import argv
+from sys import stdout
 
 from subprocess import DEVNULL, Popen, call
 
@@ -74,7 +74,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
                 'xvkbd -no-keypad -delay 10 -text %s'%text
                 ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		else:
-			print(text, end='')
+			stdout.write(text)
+			stdout.flush()
 	copy(text, mode='pb')
 	if fork() == 0:
 		try:
@@ -349,7 +350,7 @@ def cli():
 		for r in args.rms:
 			if not PassCrypt(*pargs, **pkwargs).rmpw(r):
 				error('could not delete entry ', r)
-	elif args.lst is not False:
+	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if not __ents:
 			fatal('could not decrypt')
@@ -364,7 +365,8 @@ def cli():
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-	if not __ents:
+				exit(0)
+	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	_printpws_(__ents, args.sho)
 
@@ -376,19 +378,39 @@ def gui(typ='pw'):
 		__in = xgetpass()
 		__res = ykchalres(__in, args.ykslot, args.ykser)
 		if not __res:
-			xmsgok('no entry found for %s or decryption failed'%__in)
-			exit(1)
+			if xyesno('entry %s does not ' \
+                  'exist or decryption failed\ntry again?'%__in):
+				exit(1)
 		forkwaitclip(__res, poclp, boclp, args.time)
 		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
-		__in = xgetpass()
-		if not __in: exit(1)
+		if args.add:
+			if not PassCrypt(
+                  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
+				xmsgok('could not add entry %s'%args.rms)
+				exit(1)
+		elif args.chg:
+			if args.pwd:
+				pkwargs['password'] = args.pwd
+			if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+				xmsgok('could not change entry %s'%args.rms)
+				exit(1)
+		elif args.rms:
+			for r in args.rms:
+				if not PassCrypt(*pargs, **pkwargs).rmpw(r):
+					xmsgok('could not delete entry %s'%args.rms)
+					exit(1)
+			exit(0)
+		__in = args.lst if args.lst else xgetpass()
+		if not __in:
+			if xyesno('no input received, try again?'):
+				continue
+			exit(1)
 		__ent = pcm.lspw(__in)
 		if __ent and __in:
 			if __in not in __ent.keys() or not __ent[__in]:
-				xmsgok('no entry found for %s'%__in)
-				if xyesno('try again?'):
+				if xyesno('no entry found for %s, try again?'%__in):
 					continue
 				exit(1)
 			__pc = __ent[__in]
@@ -397,9 +419,3 @@ def gui(typ='pw'):
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 				exit(0)
-	exit(0)
-
-
-
-if __name__ == '__main__':
-	exit(1)

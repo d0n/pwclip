@@ -1,16 +1,16 @@
 """pwclip packaging information"""
 name = 'pwclip'
-version = '.'.join([str(num) for num in (1, 3, 3)])
+version = '.'.join([str(num) for num in (1, 3, 4)])
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
-url = 'https://pypi.org/project/pwclip/%s/'%version
+url = 'https://pypi.org/project/pwclip/'
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
-download_url = 'https://pypi.python.org/pypi/pwclip/%s#downloads'%version
+download_url = 'https://pypi.python.org/pypi/pwclip/%s#files'%version
 classifiers = ['Environment :: Console',
                'Environment :: MacOS X',
                'Environment :: Win32 (MS Windows)',
@@ -40,8 +40,7 @@ try:
 except FileNotFoundError:
 	long_description = ''
 if long_description:
-	with open('pwclip/README', 'w+') as rfh:
-		rfh.write(long_description)
+	open('README', 'w+').write(long_description)
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',

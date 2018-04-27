@@ -1,8 +1,24 @@
 Changelog
 =========
 
-1.3.3 (current)
+1.3.4 (current)
 ---------------
+
+Released: 2018-04-27
+
+  * some more changes to build environment
+
+  * fixed locations in pkginfo to match index/download url
+
+  * some more changes for user dialogs in x mode
+
+  * implemented all commandline options in gui mode as well
+
+  * pwcli -o now uses sys.stdout and pwclip -o uses xvkbd
+
+
+1.3.3
+-----
 
 Released: 2018-04-26
 
