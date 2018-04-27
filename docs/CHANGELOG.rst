@@ -12,6 +12,10 @@ Released: 2018-04-27
 
   * some more changes for user dialogs in x mode
 
+  * implemented all commandline options in gui mode as well
+
+  * pwcli -o now uses sys.stdout and pwclip -o uses xvkbd
+
 
 1.3.3
 -----
