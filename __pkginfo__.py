@@ -1,4 +1,10 @@
 """pwclip packaging information"""
+__all__ = [
+    'name',  'version',  'provides',
+    'install_requires', 'license', 'description',
+    'url', 'author', 'author_email', 'download_url',
+	'classifiers', 'include_package_data', 'long_description',
+	'entry_points', 'package_data', 'data_files']
 name = 'pwclip'
 version = '.'.join([str(num) for num in (1, 3, 4)])
 provides = ['pwcli', 'pwclip', 'ykclip']
