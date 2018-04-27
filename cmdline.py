@@ -56,8 +56,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
                     'xvkbd -no-keypad -delay 20 -text %s'%text
                 ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 			elif out == 'cli':
-				sys.sdtout.write(text)
-				sys.stdout.flush()
+				sdtout.write(text)
+				stdout.flush()
 				#print(text, end='')
 			copy(text, mode='pb')
 			sleep(int(wait))
