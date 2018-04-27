@@ -378,8 +378,9 @@ def gui(typ='pw'):
 		__in = xgetpass()
 		__res = ykchalres(__in, args.ykslot, args.ykser)
 		if not __res:
-			xmsgok('no entry found for %s or decryption failed'%__in)
-			exit(1)
+			if xyesno('entry %s does not ' \
+			      'exist or decryption failed\ntry again?'%__in)
+				exit(1)
 		forkwaitclip(__res, poclp, boclp, args.time)
 		exit(0)
 	pcm = PassCrypt(*pargs, **pkwargs)
@@ -409,7 +410,7 @@ def gui(typ='pw'):
 		__ent = pcm.lspw(__in)
 		if __ent and __in:
 			if __in not in __ent.keys() or not __ent[__in]:
-				if xyesno('no entry found for %s, try again?'%__in)
+				if xyesno('no entry found for %s, try again?'%__in):
 					continue
 				exit(1)
 			__pc = __ent[__in]
