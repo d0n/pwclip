@@ -379,7 +379,7 @@ def gui(typ='pw'):
 		__res = ykchalres(__in, args.ykslot, args.ykser)
 		if not __res:
 			if xyesno('entry %s does not ' \
-			      'exist or decryption failed\ntry again?'%__in)
+                  'exist or decryption failed\ntry again?'%__in):
 				exit(1)
 		forkwaitclip(__res, poclp, boclp, args.time)
 		exit(0)
