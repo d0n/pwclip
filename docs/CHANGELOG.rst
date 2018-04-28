@@ -1,20 +1,12 @@
 Changelog
 =========
 
-1.3.5 (current)
+1.3.4 (current)
 ---------------
 
-Released: 2018-04-27
+Released: 2018-04-28
 
-  * fix for stdout password print function
-
-
-1.3.4
------
-
-Released: 2018-04-27
-
-  * some more changes to build environment
+  * some more changes to build environment (not really of interest for pwclip)
 
   * fixed locations in pkginfo to match index/download url
 
@@ -22,7 +14,7 @@ Released: 2018-04-27
 
   * implemented all commandline options in gui mode as well
 
-  * pwcli -o now uses sys.stdout and pwclip -o uses xvkbd
+  * pwcli -o/--out now uses sys.stdout and pwclip -o uses xvkbd
 
 
 1.3.3

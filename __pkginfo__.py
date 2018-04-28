@@ -10,7 +10,7 @@ description = "gui to temporarily save passwords to system-clipboard"
 url = 'https://pypi.org/project/pwclip/'
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
-download_url = 'https://pypi.python.org/pypi/pwclip/%s#files'%version
+download_url = 'https://pypi.python.org/pypi/pwclip/%s/#download'%version
 classifiers = ['Environment :: Console',
                'Environment :: MacOS X',
                'Environment :: Win32 (MS Windows)',
