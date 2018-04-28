@@ -5,7 +5,6 @@ provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
-license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
 url = 'https://pypi.org/project/pwclip/'
 author = 'Leon Pelzer'
@@ -19,13 +18,14 @@ classifiers = ['Environment :: Console',
                'Intended Audience :: End Users/Desktop',
                'Intended Audience :: System Administrators',
                'Intended Audience :: Information Technology',
-               'License :: OSI Approved :: GNU General Public License (GPL)',
+               'License :: GNU General Public License',
                'Operating System :: OS Independent',
-               'Programming Language :: Python :: 3',
+               'Programming Language :: Python3',
                'Topic :: Security',
                'Topic :: Utilities',
-               'Topic :: Desktop Environment',
-               'Topic :: System :: Systems Administration']
+               'Topic :: Passwords',
+               'Topic :: Password Management',
+               'Topic :: Desktop Environment']
 include_package_data = True
 long_description = ''
 try:

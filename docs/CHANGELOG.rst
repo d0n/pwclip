@@ -8,7 +8,8 @@ Released: 2018-04-28
 
   * some more changes to build environment (not really of interest for pwclip)
 
-  * fixed locations in pkginfo to match index/download url
+  * fixed locations in pkginfo to match index/download url, fixed license
+    in "intended audience" classifiers and changed some release information
 
   * some more changes for user dialogs in x mode
 
