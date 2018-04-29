@@ -54,4 +54,4 @@ data_files=[
     ('share/pwclip', [
         'pwclip/example/ca.crt', 'example/commands.lst',
         'pwclip/example/ssl.crt', 'example/ssl.key',
-        'pwclip/example/passwords.yaml', 'example/passwords.yaml])]
+        'pwclip/example/passwords.yaml'])]
