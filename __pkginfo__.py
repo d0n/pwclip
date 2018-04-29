@@ -30,12 +30,12 @@ include_package_data = True
 long_description = ''
 try:
 	long_description = '\n\n\n'.join(
-        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
+        str(open('docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
 except FileNotFoundError:
 	long_description = ''
 try:
 	long_description = str(
-        open('pwclip/docs/README.rst', 'r').read()
+        open('docs/README.rst', 'r').read()
         ).format(ChangeLog=long_description)
 except FileNotFoundError:
 	long_description = ''
@@ -50,8 +50,8 @@ package_data = {
     '': ['pwclip/example']
 	}
 data_files=[
-    ('share/man/man1', ['pwclip/docs/pwclip.1']),
+    ('share/man/man1', ['docs/pwclip.1']),
     ('share/pwclip', [
-        'pwclip/example/ca.crt', 'pwclip/example/commands.lst',
-        'pwclip/example/ssl.crt', 'pwclip/example/ssl.key',
-        'pwclip/example/example_passwords.yaml'])]
+        'pwclip/example/ca.crt', 'example/commands.lst',
+        'pwclip/example/ssl.crt', 'example/ssl.key',
+        'pwclip/example/passwords.yaml', 'example/passwords.yaml])]

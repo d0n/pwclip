@@ -1,2 +1,2 @@
-include pwclip/example/*
-include pwclip/docs/*
+include example/*
+include docs/*
