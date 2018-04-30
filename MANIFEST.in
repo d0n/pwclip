@@ -1,3 +1,2 @@
 include example/*
 include docs/*
-include deb/*
