@@ -4,7 +4,7 @@ provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.3.4'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil',
-    'python-gnupg', 'python-yubico', 'PyYAML']
+    'python-gnupg', 'PyYAML']
 description = "gui to temporarily save passwords to system-clipboard"
 url = 'https://pypi.org/project/pwclip/'
 download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/' \
