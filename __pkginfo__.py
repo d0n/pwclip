@@ -30,7 +30,8 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
-	open('DEPENDS', 'w+').write(str(open('pwclip/deb/DEPENDS', 'r').read()))
+	open('pwclip/DEPENDS', 'w+').write(
+        str(open('pwclip/deb/DEPENDS', 'r').read()))
 except FileNotFoundError:
 	pass
 try:
