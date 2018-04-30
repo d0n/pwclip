@@ -4,7 +4,6 @@ gpgsm
 gnupg2
 openssl
 libreadline6
-python-yubico
 python3-tk
 python3-gi
 python3-usb
