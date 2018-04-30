@@ -1,6 +1,9 @@
 """pwclip packaging information"""
 name = 'pwclip'
-version = '.'.join([str(num) for num in (1, 3, 4)])
+version = None
+with open('CHANGELOG.rst', 'r') as cfh:
+    version = [l for l in cfh.readlines() if '(current)' in l]
+version = "0.0.1" if not version else version[0].split('(current)')[0]
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
@@ -9,7 +12,7 @@ description = "gui to temporarily save passwords to system-clipboard"
 url = 'https://pypi.org/project/pwclip/'
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
-download_url = 'https://pypi.python.org/pypi/pwclip/%s/#download'%version
+download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/p/pwclip/python3-pwclip_%s-1_all.deb'%version
 classifiers = ['Environment :: Console',
                'Environment :: MacOS X',
                'Environment :: Win32 (MS Windows)',
