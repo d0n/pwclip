@@ -49,24 +49,24 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	eno = 0
-	if fork() == 0:
+	if fork() != -1:
+		if out == 'gui':
+			Popen(str(
+                'xvkbd -no-keypad -delay 20 -text %s'%text
+            ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+		elif out == 'cli':
+			stdout.write(text)
+			stdout.flush()
+			#print(text, end='')
+		print(text)
+		copy(text, mode='pb')
 		try:
-			if out == 'gui':
-				Popen(str(
-                    'xvkbd -no-keypad -delay 20 -text %s'%text
-                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-			elif out == 'cli':
-				stdout.write(text)
-				stdout.flush()
-				#print(text, end='')
-			copy(text, mode='pb')
 			sleep(int(wait))
-		except (KeyboardInterrupt, RuntimeError):
+		except KeyboardInterrupt:
 			eno = 1
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-		exit(eno)
 	exit(eno)
 
 def __passreplace(pwlist):
@@ -316,13 +316,10 @@ def cli():
 		if __ykser and len(__ykser) >= 6:
 			__ykser = ''.join(str(__ykser)[-6:])
 		__in = xgetpass()
-		print('bla')
-		__res = ykchalres(__in, args.ysl, __ykser)
-		print('bla')
-		print(__res)
+		_res = ykchalres(__in, args.ysl, __ykser)
 		if not __res:
 			fatal('could not get valid response on slot ', args.ysl)
-		forkwaitclip(__res, poclp, boclp, args.time)
+		forkwaitclip(_res, poclp, boclp, args.time)
 		exit(0)
 	__ents = None
 	if args.add:
