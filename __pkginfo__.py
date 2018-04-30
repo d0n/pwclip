@@ -41,8 +41,8 @@ if long_description and '(current)' in long_description:
 	version = [
         l for l in long_description.split('\n') if '(current)' in l
     ][0].split('(current)')[0].strip()
-download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/' \
-               'p/pwclip/python3-pwclip_%s-1_all.deb'%version
+	download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/' \
+                   'p/pwclip/python3-pwclip_%s-1_all.deb'%version
 
 if long_description:
 	open('README', 'w+').write(long_description)
