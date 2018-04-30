@@ -11,11 +11,12 @@ Released: 2018-04-28
   * fixed locations in pkginfo to match index/download url, fixed license
     in "intended audience" classifiers and changed some release information
 
-  * some more changes for user dialogs in x mode
+  * some more changes for user dialogs in x mode like option to repeat input,
+    error messages and so on
 
   * implemented all commandline options in gui mode as well
 
-  * pwcli -o/--out now uses sys.stdout and pwclip -o uses xvkbd
+  * pwcli -o/--out now uses sys.stdout and pwclip -o/--out uses xvkbd
 
 
 1.3.3
