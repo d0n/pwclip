@@ -316,7 +316,10 @@ def cli():
 		if __ykser and len(__ykser) >= 6:
 			__ykser = ''.join(str(__ykser)[-6:])
 		__in = xgetpass()
+		print('bla')
 		__res = ykchalres(__in, args.ysl, __ykser)
+		print('bla')
+		print(__res)
 		if not __res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
