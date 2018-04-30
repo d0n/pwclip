@@ -312,7 +312,10 @@ def cli():
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
 			__ykser = environ['YKSERIAL']
-		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
+		__ykser = args.yks if args.yks else None
+		if __ykser and len(__ykser) >= 6:
+			__ykser = ''.join(str(__ykser)[-6:])
+		print(__ykser)
 		__in = xgetpass()
 		__res = ykchalres(__in, args.ysl, __ykser)
 		if not __res:
@@ -357,7 +360,7 @@ def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
-	if typ == 'yk':
+	if args.yks or args.yks is None or typ == 'yk':
 		__in = xgetpass()
 		__res = ykchalres(__in, args.ykslot, args.ykser)
 		if not __res:
