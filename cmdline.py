@@ -37,6 +37,8 @@ from time import sleep
 
 from yaml import load
 
+from getpass import getpass
+
 # local relative imports
 from colortext import bgre, tabd, error, fatal
 
@@ -313,7 +315,7 @@ def cli():
 		ykser = args.yks if args.yks else None
 		if ykser and len(ykser) >= 6:
 			ykser = ''.join(str(ykser)[-6:])
-		res = ykchalres(xgetpass(), args.ysl, ykser)
+		res = ykchalres(getpass(), args.ysl, ykser)
 		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
