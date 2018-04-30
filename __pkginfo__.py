@@ -30,12 +30,10 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
-	with open('pwclip/docs/conf.py.tmpl', 'r') as tfh:
-		conf = str(tfh.read())
-	print(conf)
+	with open('pwclip/docs/conf.py.tmpl', 'r') as tfh, \
+	      open('pwclip/docs/conf.py', 'w+') as cfh:
+		cfh.write(str(tfh.read()).format(VersionString=version)
 	#.format(VersionString=str(version))
-	with open('pwclip/docs/conf.py', 'w+') as cfh:
-		cfh.write(conf)
 except FileNotFoundError:
 	long_description = ''
 try:
