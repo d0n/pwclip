@@ -11,12 +11,18 @@ Released: 2018-04-28
   * fixed locations in pkginfo to match index/download url, fixed license
     in "intended audience" classifiers and changed some release information
 
-  * some more changes for user dialogs in x mode like option to repeat input,
-    error messages and so on
+  * some more changes for user dialogs in x mode like possible repitition of
+    input as well as some more error messages
 
   * implemented all commandline options in gui mode as well
 
   * pwcli -o/--out now uses sys.stdout and pwclip -o/--out uses xvkbd
+
+  * yubikey function was missing selection of correct slot if one is set and
+    now it is able to operate on any slot of any yubikey even if more than one
+    key is attached
+
+  * some more changes merged from master whith different relationship to pwclip
 
 
 1.3.3
