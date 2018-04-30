@@ -34,11 +34,6 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
-	open('stdeb.cfg', 'w+').write(
-        str(open('pwclip/stdeb.cfg', 'r').read()))
-except FileNotFoundError:
-	pass
-try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()
         ).format(VersionString=version))
