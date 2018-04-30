@@ -3,7 +3,7 @@ name = 'pwclip'
 version = None
 with open('%s/docs/CHANGELOG.rst'%name, 'r') as cfh:
     version = [l for l in cfh.readlines() if '(current)' in l]
-version = "0.0.1" if not version else version[0].split('(current)')[0]
+version = "0.0.1" if not version else version[0].split('(current)')[0].strip()
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
