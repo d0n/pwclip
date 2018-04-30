@@ -31,7 +31,9 @@ include_package_data = True
 long_description = ''
 try:
 	with open('pwclip/docs/conf.py.tmpl', 'r') as tfh:
-		conf = str(tfh.read()).format(VersionString=str(version))
+		conf = str(tfh.read())
+	print(conf)
+	#.format(VersionString=str(version))
 	with open('pwclip/docs/conf.py', 'w+') as cfh:
 		cfh.write(conf)
 except FileNotFoundError:
