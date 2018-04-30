@@ -36,7 +36,6 @@ try:
 except FileNotFoundError:
 	long_description = ''
 try:
-try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()
         ).format(VersionString=version))
