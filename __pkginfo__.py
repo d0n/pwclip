@@ -31,15 +31,15 @@ include_package_data = True
 long_description = ''
 try:
 	with open('pwclip/docs/conf.py.tmpl', 'r') as tfh, \
-	      open('pwclip/docs/conf.py', 'w+') as cfh:
+          open('pwclip/docs/conf.py', 'w+') as cfh:
 		cfh.write(str(tfh.read()).format(VersionString=version))
-	#.format(VersionString=str(version))
 except FileNotFoundError:
 	long_description = ''
 try:
 	long_description = str('\n\n\n'.join(
         str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
-		)).format(CurrentVersion='%s (current)')
+		)).format(CurrentVersion='%s (current)%s----------'%(
+            version, '-'*len(version))
 except FileNotFoundError:
 	long_description = ''
 try:

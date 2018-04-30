@@ -23,6 +23,8 @@ Released: 2018-04-28
 
   * some more changes merged from master whith different relationship to pwclip
 
+  * download link now points to pwclip in my debian repo for current version
+
 
 1.3.3
 -----
