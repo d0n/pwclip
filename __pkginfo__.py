@@ -1,7 +1,7 @@
 """pwclip packaging information"""
 name = 'pwclip'
 version = None
-with open('docs/CHANGELOG.rst', 'r') as cfh:
+with open('./docs/CHANGELOG.rst', 'r') as cfh:
     version = [l for l in cfh.readlines() if '(current)' in l]
 version = "0.0.1" if not version else version[0].split('(current)')[0]
 provides = ['pwcli', 'pwclip', 'ykclip']
