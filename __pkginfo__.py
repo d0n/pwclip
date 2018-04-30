@@ -29,11 +29,11 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment']
 include_package_data = True
 long_description = ''
-try:
-	open('pwclip/DEPENDS', 'w+').write(
-        str(open('pwclip/deb/DEPENDS', 'r').read()))
-except FileNotFoundError:
-	pass
+#try:
+#	open('pwclip/DEPENDS', 'w+').write(
+#        str(open('pwclip/deb/DEPENDS', 'r').read()))
+#except FileNotFoundError:
+#	pass
 try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()
@@ -62,8 +62,8 @@ entry_points = {
                     'ykclip = pwclip.__init__:ykclip']}
 package_data = {
     '': ['pwclip/docs/'],
-    '': ['pwclip/example']
-	}
+    '': ['pwclip/example'],
+    '': ['pwclipDEPENDS']}
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [
