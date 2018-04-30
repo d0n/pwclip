@@ -49,6 +49,7 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	eno = 0
+	copy(text, mode='pb')
 	if fork() == 0:
 		if out == 'gui':
 			Popen(str(
@@ -57,9 +58,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		elif out == 'cli':
 			stdout.write(text)
 			stdout.flush()
-		print(text)
-		print(wait)
-		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
@@ -311,16 +309,14 @@ def cli():
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
-			__ykser = environ['YKSERIAL']
-		__ykser = args.yks if args.yks else None
-		if __ykser and len(__ykser) >= 6:
-			__ykser = ''.join(str(__ykser)[-6:])
-		__in = xgetpass()
-		_res = ykchalres(__in, args.ysl, __ykser)
-		if not _res:
+			ykser = environ['YKSERIAL']
+		ykser = args.yks if args.yks else None
+		if ykser and len(ykser) >= 6:
+			ykser = ''.join(str(ykser)[-6:])
+		res = ykchalres(xgetpass(), args.ysl, ykser)
+		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
-		print(_res, poclp, boclp, args.time, args.out)
-		forkwaitclip(_res, poclp, boclp, args.time, arg.out)
+		forkwaitclip(res, poclp, boclp, args.time, args.out)
 		exit(0)
 	__ents = None
 	if args.add:
@@ -361,14 +357,12 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
 	if args.yks or args.yks is None or typ == 'yk':
-		__in = xgetpass()
-		_res = ykchalres(__in, args.ykslot, args.ykser)
-		if not _res:
+		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
+		if not res:
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
-		print(_res, poclp, boclp, args.time, args.out)
-		forkwaitclip(_res, poclp, boclp, args.time, args.out)
+		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
 		if args.add:
