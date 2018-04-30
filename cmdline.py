@@ -317,7 +317,7 @@ def cli():
 			__ykser = ''.join(str(__ykser)[-6:])
 		__in = xgetpass()
 		_res = ykchalres(__in, args.ysl, __ykser)
-		if not __res:
+		if not _res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(_res, poclp, boclp, args.time)
 		exit(0)
@@ -361,15 +361,12 @@ def gui(typ='pw'):
 	args, pargs, pkwargs = confpars('gui')
 	if args.yks or args.yks is None or typ == 'yk':
 		__in = xgetpass()
-		print('bla')
-		__res = ykchalres(__in, args.ykslot, args.ykser)
-		print('bla')
-		print(__res)
-		if not __res:
+		_res = ykchalres(__in, args.ykslot, args.ykser)
+		if not _res:
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
-		forkwaitclip(__res, poclp, boclp, args.time)
+		forkwaitclip(_res, poclp, boclp, args.time)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
 		if args.add:
