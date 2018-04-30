@@ -315,7 +315,6 @@ def cli():
 		__ykser = args.yks if args.yks else None
 		if __ykser and len(__ykser) >= 6:
 			__ykser = ''.join(str(__ykser)[-6:])
-		print(__ykser)
 		__in = xgetpass()
 		__res = ykchalres(__in, args.ysl, __ykser)
 		if not __res:
@@ -362,7 +361,10 @@ def gui(typ='pw'):
 	args, pargs, pkwargs = confpars('gui')
 	if args.yks or args.yks is None or typ == 'yk':
 		__in = xgetpass()
+		print('bla')
 		__res = ykchalres(__in, args.ykslot, args.ykser)
+		print('bla')
+		print(__res)
 		if not __res:
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
