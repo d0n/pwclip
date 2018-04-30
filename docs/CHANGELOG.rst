@@ -1,7 +1,7 @@
 Changelog
 =========
 
-.. include:: version.rst
+{CurrentVersion}
 
 Released: 2018-04-28
 
