@@ -32,7 +32,7 @@ long_description = ''
 try:
 	with open('pwclip/docs/conf.py.tmpl', 'r') as tfh, \
           open('pwclip/docs/conf.py', 'w+') as cfh:
-		cfh.write(tfh.read().format(VersionString=version))
+		cfh.write(str(str(tfh.read()).format(VersionString=version)))
 except FileNotFoundError:
 	long_description = ''
 try:
