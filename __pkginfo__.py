@@ -30,6 +30,13 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
+	open('DEPENDS', 'w+').write(str(
+            open('pwclip/DEPENDS', 'r').read()
+        ).format(VersionString=version))
+except FileNotFoundError:
+	long_description = ''
+try:
+try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()
         ).format(VersionString=version))
@@ -58,7 +65,7 @@ entry_points = {
 package_data = {
     '': ['pwclip/docs/'],
     '': ['pwclip/example'],
-    '': ['pwclipDEPENDS']}
+    '': ['pwclip/DEPENDS']}
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [
