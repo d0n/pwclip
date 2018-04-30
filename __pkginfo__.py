@@ -4,7 +4,7 @@ provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.3.4'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil', 'python-gnupg', 'PyYAML']
-build_depends = [
+depends = [
     'xsel', 'xvkbd', 'gpgsm', 'gnupg2', 'openssl', 'libreadline6',
     'python3-tk', 'python3-gi', 'python3-usb', 'python3-wget', 'python3-gnupg',
     'python3-argparse', 'python3-paramiko', 'python3-argcomplete']
