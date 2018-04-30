@@ -49,7 +49,7 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	eno = 0
-	if fork() != -1:
+	if fork() == 0:
 		if out == 'gui':
 			Popen(str(
                 'xvkbd -no-keypad -delay 20 -text %s'%text
@@ -57,8 +57,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		elif out == 'cli':
 			stdout.write(text)
 			stdout.flush()
-			#print(text, end='')
 		print(text)
+		print(wait)
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
@@ -319,7 +319,8 @@ def cli():
 		_res = ykchalres(__in, args.ysl, __ykser)
 		if not _res:
 			fatal('could not get valid response on slot ', args.ysl)
-		forkwaitclip(_res, poclp, boclp, args.time)
+		print(_res, poclp, boclp, args.time, args.out)
+		forkwaitclip(_res, poclp, boclp, args.time, arg.out)
 		exit(0)
 	__ents = None
 	if args.add:
@@ -366,7 +367,8 @@ def gui(typ='pw'):
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
-		forkwaitclip(_res, poclp, boclp, args.time)
+		print(_res, poclp, boclp, args.time, args.out)
+		forkwaitclip(_res, poclp, boclp, args.time, args.out)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
 		if args.add:
