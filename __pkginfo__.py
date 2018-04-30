@@ -8,6 +8,7 @@ description = "gui to temporarily save passwords to system-clipboard"
 url = 'https://pypi.org/project/pwclip/'
 download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/' \
                'p/pwclip/python3-pwclip_%s-1_all.deb'%version
+license = "GPL",
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
 classifiers = ['Environment :: Console',
@@ -18,7 +19,7 @@ classifiers = ['Environment :: Console',
                'Intended Audience :: End Users/Desktop',
                'Intended Audience :: System Administrators',
                'Intended Audience :: Information Technology',
-               'License :: GNU General Public License',
+               'License :: OSI Approved :: GNU General Public License',
                'Operating System :: OS Independent',
                'Programming Language :: Python3',
                'Topic :: Security',
