@@ -309,7 +309,7 @@ def cli():
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
-	if args.yks or args.yks is None:
+	if args.yks or args.yks is False:
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
 		ykser = args.yks if args.yks else None
@@ -391,7 +391,7 @@ def gui(typ='pw'):
 				continue
 			exit(1)
 		__ent = pcm.lspw(__in)
-		if __ent and __in:
+		if __ent:
 			if __in not in __ent.keys() or not __ent[__in]:
 				if xyesno('no entry found for %s, try again?'%__in):
 					continue
