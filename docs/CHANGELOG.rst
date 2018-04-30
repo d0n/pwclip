@@ -25,6 +25,8 @@ Released: 2018-04-28
 
   * download link now points to pwclip in my debian repo for current version
 
+  * removed depricated dependencies from __pkginfo__ and deb/DEPENDS
+
 
 1.3.3
 -----
