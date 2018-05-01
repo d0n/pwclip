@@ -1,8 +1,0 @@
-Author: Leon Pelzer
-Basename: pwclip
-Homepage: https://pypi.org/project/pwclip/
-License: GPL
-Name: pwclip
-Project: pwclip
-Summary: gui to temporarily save passwords to system-clipboard
-Depends: xsel xvkbd gpgsm gnupg2 openssl libreadline6 python-yubico python3-tk python3-gi python3-usb python3-wget python3-gnupg python3-argparse python3-paramiko python3-argcomplete
