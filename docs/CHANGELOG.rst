@@ -27,6 +27,8 @@ Released: 2018-04-28
 
   * removed depricated dependencies from __pkginfo__ and deb/DEPENDS
 
+  * fixed bug when merging passwords from yaml into passcrypt
+
 
 1.3.3
 -----
