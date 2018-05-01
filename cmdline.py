@@ -352,6 +352,7 @@ def cli():
                     args.time, 'cli' if args.out else None)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+	print(__ents)
 	_printpws_(__ents, args.sho)
 
 def gui(typ='pw'):
