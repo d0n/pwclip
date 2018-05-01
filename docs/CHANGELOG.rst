@@ -29,8 +29,10 @@ Released: 2018-04-28
     out that they've never been used for packaging :-( i workaround building
     the package by hand for now
 
-  * fixed bug made us crash while merging passwords from yaml into passcrypt
-    as well as deletion of plain-text password file when finished with it
+  * fixed bug when merging passwords from yaml into passcrypt also the deletion
+    of the plain-text password file when finished merging is working again
+
+  * made -p/--password & --comment independent from each other
 
 
 1.3.3
