@@ -1,5 +1,4 @@
 """pwclip packaging information"""
-import sys
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.3.4'
@@ -29,35 +28,21 @@ classifiers = ['Environment :: Console',
                'Topic :: Password Management',
                'Topic :: Desktop Environment']
 include_package_data = True
-if '--pybuilder' in sys.argv:
+try:
+	long_description = str('\n\n\n'.join(
+        str(open('docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
+        )).format(CurrentVersion='%s (current)\n%s----------'%(
+            version, '-'*len(version)))
+except FileNotFoundError:
 	long_description = ''
-	try:
-		open('DEPENDS', 'w+').write(str(
-				open('pwclip/DEPENDS', 'r').read()
-			).format(VersionString=version))
-	except FileNotFoundError:
-		long_description = ''
-	try:
-		open('pwclip/docs/conf.py', 'w+').write(str(
-				open('pwclip/docs/conf.py.tmpl', 'r').read()
-			).format(VersionString=version))
-	except FileNotFoundError:
-		long_description = ''
-	try:
-		long_description = str('\n\n\n'.join(
-			str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
-			)).format(CurrentVersion='%s (current)\n%s----------'%(
-				version, '-'*len(version)))
-	except FileNotFoundError:
-		long_description = ''
-	try:
-		long_description = str(
-			open('pwclip/docs/README.rst', 'r').read()
-			).format(ChangeLog=long_description)
-	except FileNotFoundError:
-		long_description = ''
-	if long_description:
-		open('README', 'w+').write(long_description)
+try:
+	long_description = str(
+		open('docs/README.rst', 'r').read()
+		).format(ChangeLog=long_description)
+except FileNotFoundError:
+	long_description = ''
+if long_description:
+	open('README', 'w+').write(long_description)
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
