@@ -52,6 +52,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	eno = 0
 	copy(text, mode='pb')
+	"""
 	if out == 'gui':
 		Popen(str(
             'xvkbd -no-keypad -delay 20 -text %s'%text
@@ -60,17 +61,16 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		print(text, end='')
 		#stdout.write(text)
 		#stdout.flush()
+	"""
 	if fork() == 0:
-		"""
 		if out == 'gui':
 			Popen(str(
                 'xvkbd -no-keypad -delay 20 -text %s'%text
             ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		elif out == 'cli':
-			#print(text, end='')
-			stdout.write(text)
-		stdout.flush()
-		"""
+			print(text, end='')
+			#stdout.write(text)
+			#stdout.flush()
 	if fork() == 0:
 		try:
 			sleep(int(wait))
