@@ -24,7 +24,6 @@ classifiers = ['Environment :: Console',
                'Programming Language :: Python :: 3',
                'Topic :: Security',
                'Topic :: Utilities',
-               'Topic :: Passwords',
                'Topic :: Password Management',
                'Topic :: Desktop Environment']
 include_package_data = True
