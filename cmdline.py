@@ -71,7 +71,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 			print(text, end='')
 			#stdout.write(text)
 			#stdout.flush()
-	if fork() == 0:
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
