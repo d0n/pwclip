@@ -13,7 +13,7 @@ Released: 2018-04-28
   * some more changes for user dialogs in x mode like possible repitition of
     input as well as some more error messages
 
-  * implemented all commandline options in gui mode as well
+  * implemented most commandline options in gui mode as well
 
   * pwcli -o/--out now uses sys.stdout and pwclip -o/--out uses xvkbd
 
@@ -25,9 +25,12 @@ Released: 2018-04-28
 
   * download link now points to pwclip in my debian repo for current version
 
-  * removed depricated dependencies from __pkginfo__ and deb/DEPENDS
+  * removed depricated dependencies from __pkginfo__ and deb/DEPENDS as i found
+    out that they've never been used for packaging :-( i workaround building
+    the package by hand for now
 
-  * fixed bug when merging passwords from yaml into passcrypt
+  * fixed bug made us crash while merging passwords from yaml into passcrypt
+    as well as deletion of plain-text password file when finished with it
 
 
 1.3.3
