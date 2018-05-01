@@ -69,8 +69,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
             ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		elif out == 'cli':
 			print(text, end='')
-			#stdout.write(text)
-			#stdout.flush()
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
