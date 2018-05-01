@@ -1,4 +1,5 @@
 """pwclip packaging information"""
+import sys
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.3.4'
@@ -28,16 +29,29 @@ classifiers = ['Environment :: Console',
                'Topic :: Password Management',
                'Topic :: Desktop Environment']
 include_package_data = True
+long_description = ''
+try:
+	open('DEPENDS', 'w+').write(str(
+			open('pwclip/DEPENDS', 'r').read()
+		).format(VersionString=version))
+except FileNotFoundError:
+	pass
+try:
+	open('pwclip/docs/conf.py', 'w+').write(str(
+			open('pwclip/docs/conf.py.tmpl', 'r').read()
+		).format(VersionString=version))
+except FileNotFoundError:
+	pass
 try:
 	long_description = str('\n\n\n'.join(
-        str(open('docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
-        )).format(CurrentVersion='%s (current)\n%s----------'%(
-            version, '-'*len(version)))
+		str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
+		)).format(CurrentVersion='%s (current)\n%s----------'%(
+			version, '-'*len(version)))
 except FileNotFoundError:
 	long_description = ''
 try:
 	long_description = str(
-		open('docs/README.rst', 'r').read()
+		open('pwclip/docs/README.rst', 'r').read()
 		).format(ChangeLog=long_description)
 except FileNotFoundError:
 	long_description = ''
