@@ -324,15 +324,18 @@ def cli():
 	if args.add:
 		if not PassCrypt(*pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
 			fatal('could not add entry ', args.add)
+		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
 		if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 			fatal('could not change entry ', args.chg)
+		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	elif args.rms:
 		for r in args.rms:
 			if not PassCrypt(*pargs, **pkwargs).rmpw(r):
 				error('could not delete entry ', r)
+		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if not __ents:
