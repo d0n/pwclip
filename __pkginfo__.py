@@ -1,5 +1,4 @@
 """pwclip packaging information"""
-import sys
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.3.4'
