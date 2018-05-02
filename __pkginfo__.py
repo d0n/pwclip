@@ -1,17 +1,20 @@
-#!/usr/bin/env python3
 """pwclip packaging information"""
 name = 'pwclip'
+<<<<<<< HEAD
 version = '.'.join([str(num) for num in (1, 3, 3)])
+=======
+version = '.'.join([str(num) for num in (1, 3, 4)])
+>>>>>>> 2f59be607a60ddf7dcc16faa36146e68c1622d1f
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
-    'argcomplete', 'autocomplete', 'netaddr', 'paramiko', 'psutil',
+    'argcomplete', 'netaddr', 'paramiko', 'psutil',
     'pyusb', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 license = 'GPL'
 description = "gui to temporarily save passwords to system-clipboard"
-url = 'https://pypi.org/project/pwclip/%s/'%version
+url = 'https://pypi.org/project/pwclip/'
 author = 'Leon Pelzer'
 author_email = 'mail@leonpelzer.de'
-download_url = 'https://pypi.python.org/pypi/pwclip/%s#downloads'%version
+download_url = 'https://pypi.python.org/pypi/pwclip/%s#files'%version
 classifiers = ['Environment :: Console',
                'Environment :: MacOS X',
                'Environment :: Win32 (MS Windows)',
@@ -28,6 +31,7 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment',
                'Topic :: System :: Systems Administration']
 include_package_data = True
+long_description = ''
 try:
 	long_description = '\n\n\n'.join(
         str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
@@ -39,12 +43,16 @@ try:
         ).format(ChangeLog=long_description)
 except FileNotFoundError:
 	long_description = ''
+if long_description:
+	open('README', 'w+').write(long_description)
 entry_points = {
+    'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
-                    'ykclip = pwclip.__init__:ykclip'],
-    'console_scripts': ['pwcli = pwclip.__init__:pwcli']}
+                    'ykclip = pwclip.__init__:ykclip']}
 package_data = {
-    '': ['pwclip/docs/*.rst']}
+    '': ['pwclip/docs/'],
+    '': ['pwclip/example']
+	}
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [

@@ -1,19 +1,72 @@
 Changelog
 =========
 
-1.3.2 (current)
+1.3.4 (current)
 ---------------
 
-Released: 2018-04-22
+Released: 2018-04-27
 
-  * fixed typo in README and removed print added for debugging purpose
+  * some more changes to build environment
+
+  * fixed locations in pkginfo to match index/download url
+
+  * some more changes for user dialogs in x mode
+
+  * implemented all commandline options in gui mode as well
+
+  * pwcli -o now uses sys.stdout and pwclip -o uses xvkbd
+
+
+1.3.3
+-----
+
+Released: 2018-04-26
+
+  * made some more changes to docs and trying to add more of them by
+    build environment
+
+  * fixed bug implemented with 1.3.2 which causes crash in any case while
+    trying to create README
+
+  ** hotfix release **
+
+
+1.3.2
+-----
+
+Released: 2018-04-25
+
+  * fixed typo in README and removed unnecessary debugging output
 
   * replaced all xinput related libs into one class with functions using it
+    as well as fixing the ValueError exception in xlib.xinput
 
-  * fixed MANIFEST pointing to non-existent doc/ folder and added lots of
-    template files for documentation to come
+  * fixed MANIFEST pointing to non-existent doc folder and added lots of
+    template files for future documentation :-)
 
-  * added compatibility for auto-paste into current focused window
+  * added compatibility for auto-paste into current focused window (if not
+    executed via Keystroke in X11 while those, at least in my case would
+    only log the output and i've found no way to prevnt it from doing so)
+    by using xvkbd when gui-mode is used (pwclip/ykclip) - otherwise
+    default print is executed to auto-paste the password
+
+  * finally fixed tab-completion bug and added autocompletion of commandline
+    options as well as readding commandline options even for gui modes
+    (pwclip/ykclip)
+
+  * implemented commandline options for password and comment even if it's
+    dangerous to use - at least for the password
+
+  * fixed filerotater function not setting file times correctly
+
+  * fixed indentation of old changelog messages to be manpage make compliant
+
+  * made some gui-dialog improvements like asking for repitition if input
+    was not found in passcrypt
+
+  * [W] compatibility most certainly lost for now :-(
+        had no time to fix the stuff implemented without testing till now
+
 
 1.3.1
 -----
@@ -608,20 +661,19 @@ Released: 2017-08-15
   * merged private libs into ./lib - many changes related to that
     lib respectivly:
     - ./lib/net:
-     -- ssh.py module updated to match paramiko changes and some other fixes
-     -- added functions to do DNS lookups for the (optional) scp backup
-        function
+    -- ssh.py module updated to match paramiko changes and some other fixes
+    -- added functions to do DNS lookups for the (optional) scp backup function
     - ./lib/secrecy/gpg.py
-     -- fixed passing of command line setting of gpg-key-recipient option
-     -- [W] fixed path to gnupg home
-     -- [W] fixed setting wrong keystores (.gpg|.kbx) in windows
-     -- [W] replaced concatenated string by path.join
-     -- [W] added passphrase input mode while pinentry is not available
+    -- fixed passing of command line setting of gpg-key-recipient option
+    -- [W] fixed path to gnupg home
+    -- [W] fixed setting wrong keystores (.gpg|.kbx) in windows
+    -- [W] replaced concatenated string by path.join
+    -- [W] added passphrase input mode while pinentry is not available
     - ./lib/secrecy/passcrypt.py
-     -- if debugging is enabled the plaintext file is removed no more
+    -- if debugging is enabled the plaintext file is removed no more
     - ./__init__.py
-     -- fixed comment for strange lib include
-     -- changed wrapper to gereric name
+    -- fixed comment for strange lib include
+    -- changed wrapper to gereric name
 
 
 0.4.18

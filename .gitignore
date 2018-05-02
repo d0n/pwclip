@@ -6,7 +6,6 @@ dist
 build
 docs/_build
 pwclip.egg-info
-lib
 *.pyc
 *.swp
 *.deb

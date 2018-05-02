@@ -1,6 +1,6 @@
 xsel
-gpgsm
 xvkbd
+gpgsm
 gnupg2
 openssl
 libreadline6
@@ -12,3 +12,4 @@ python3-wget
 python3-gnupg
 python3-argparse
 python3-paramiko
+python3-argcomplete
