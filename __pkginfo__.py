@@ -1,10 +1,6 @@
 """pwclip packaging information"""
 name = 'pwclip'
-<<<<<<< HEAD
-version = '.'.join([str(num) for num in (1, 3, 3)])
-=======
 version = '.'.join([str(num) for num in (1, 3, 4)])
->>>>>>> 2f59be607a60ddf7dcc16faa36146e68c1622d1f
 provides = ['pwcli', 'pwclip', 'ykclip']
 install_requires = [
     'argcomplete', 'netaddr', 'paramiko', 'psutil',
