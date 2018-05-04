@@ -3,6 +3,19 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2018-05-04
+
+  * fixed bug when merging crypted dictionary resulting in a string where a
+    dictionary should be
+
+  * fix bug when adding/changing/deleting entrys will not show result on cli
+
+  * minor update to error messages and small efficiency updates of output
+
+
+1.3.4
+-----
+
 Released: 2018-04-28
 
   * some more changes to build environment (not really of interest for pwclip)
