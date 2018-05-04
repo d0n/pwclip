@@ -345,13 +345,13 @@ def cli():
 		ers = []
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
-			if not __ents or __ents and r in __ents:
+			if __ents and r in __ents or not __ents:
 				ers.append(r)
 		ewrd = 'entry'
 		if len(ers) > 1:
 			ewrd = 'entrys'
-		err = 'deletion of the following %s has failed: '%(
-            ewrd, str(', '.join(ers)).rstrip(',')) if ers else None
+		err = str('deletion of the following %s has failed: %s'%(
+                  ewrd, ', '.join(ers))) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if not __ents:
