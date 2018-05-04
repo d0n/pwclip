@@ -1,7 +1,7 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.3.4'
+version = '1.3.5 (current)'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil', 'python-gnupg', 'PyYAML']
 description = "gui to temporarily save passwords to system-clipboard"
@@ -29,6 +29,24 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
+	long_description = str('\n\n\n'.join(
+        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
+        )).format(CurrentVersion='%s\n%s'%(
+            version, '-'*len(version)))
+except FileNotFoundError:
+	long_description = ''
+if '(current)' in version:
+	version = version.split(' ')[0].strip()
+try:
+	long_description = str(
+        open('pwclip/docs/README.rst', 'r').read()
+        ).format(ChangeLog=long_description)
+except FileNotFoundError:
+	long_description = ''
+if long_description:
+	open('README', 'w+').write(long_description)
+
+try:
 	open('DEPENDS', 'w+').write(str(
             open('pwclip/DEPENDS', 'r').read()
         ).format(VersionString=version))
@@ -40,20 +58,6 @@ try:
         ).format(VersionString=version))
 except FileNotFoundError:
 	pass
-try:
-	long_description = str('\n\n\n'.join(
-        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
-        )).format(CurrentVersion='0.0.0 (current)\n%s----------')
-except FileNotFoundError:
-	long_description = ''
-try:
-	long_description = str(
-        open('pwclip/docs/README.rst', 'r').read()
-        ).format(ChangeLog=long_description)
-except FileNotFoundError:
-	long_description = ''
-if long_description:
-	open('README', 'w+').write(long_description)
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
