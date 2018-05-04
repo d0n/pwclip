@@ -41,8 +41,9 @@ try:
 except FileNotFoundError:
 	pass
 try:
-	long_description = '\n\n\n'.join(
-        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
+	long_description = str('\n\n\n'.join(
+        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
+        )).format(CurrentVersion='0.0.0 (current)\n%s----------')
 except FileNotFoundError:
 	long_description = ''
 try:
