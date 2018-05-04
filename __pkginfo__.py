@@ -36,7 +36,7 @@ try:
 except FileNotFoundError:
 	long_description = ''
 if '(current)' in version:
-	version = '%s'%version.split(' ')[0].strip("'")
+	version = "'%s'"%str(version.strip("'")).split(' ')[0]
 try:
 	long_description = str(
         open('pwclip/docs/README.rst', 'r').read()
