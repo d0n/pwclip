@@ -3,7 +3,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 
+Released: 2018-05-04
 
   * fixed bug when merging crypted dictionary resulting in a string where a
     dictionary should be
@@ -11,6 +11,8 @@ Released:
   * fix bug when adding/changing/deleting entrys will not show result on cli
 
   * minor update to error messages and small efficiency updates of output
+
+  * fixed nonsense and formatting in README
 
 
 1.3.4
