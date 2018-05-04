@@ -346,10 +346,10 @@ def cli():
 		ers = []
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
-			if not __ents or r in __ents.keys():
+			if r in __ents.keys():
 				ers.append(r)
 		ewrd = 'entry'
-		if len(ers) > 1:
+		if len(ers) >= 1:
 			ewrd = 'entrys'
 		err = ('deleting the following %s failed:', bred(', ').join(
                ers)) if ers else None
