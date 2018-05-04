@@ -1,7 +1,7 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.3.5 (current)'
+version = '1.3.5'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil', 'python-gnupg', 'PyYAML']
 description = "gui to temporarily save passwords to system-clipboard"
