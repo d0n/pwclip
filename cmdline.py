@@ -356,7 +356,7 @@ def cli():
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if not __ents:
 			err = 'could not decrypt'
-		elif __ents and args.lst and args.lst not in __ents.keys():
+		elif __ents and args.lst not in __ents.keys():
 			err = 'could not find entry for %s in %s'%(
                 args.lst, pkwargs['crypt'])
 		elif args.lst and __ents:
