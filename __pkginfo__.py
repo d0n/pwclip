@@ -31,7 +31,7 @@ long_description = ''
 try:
 	long_description = str('\n\n\n'.join(
         str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
-        )).format(CurrentVersion='%s (current)\n%s'%(
+        )).format(CurrentVersion='%s (current)\n----------%s'%(
             version, '-'*len(version)))
 except FileNotFoundError:
 	long_description = ''
