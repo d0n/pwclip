@@ -143,11 +143,11 @@ cli mode please see:
 
 ``pwcli --help``
 
-GUI-Mode
+GUI-Modes
 --------
 
-For the GUI-Mode just use one of the following commands, not accepting any
-options or arguments:
+For the GUI-Mode just use one of the following commands, also accepting most of
+the commandline arguments:
 
 ``pwclip``
 
@@ -159,26 +159,34 @@ Troubleshooting
 
 When using the yubikey challenge-response mode there is a bug in the usb_hid
 interface. This is because of python2 => 3 transition, most likely and can be
-fixed easily (having root privileges) by executing the following commands:
-``sudo su -`` # only needed if current user isn't root already
+fixed by executing the following command:
+
 ``sudo vi +':107s/\(.* =\).*/\1 response[0]/' +':wq' /usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py``
+
 Explained:
+
 In line 107 of the file
-/usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py
-the ord() coversion of the response
-`r_len = ord(response[0])`
+
+``/usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py``
+
+the ord() coversion of the response:
+
+``r_len = ord(response[0])``
+
 needs to be replaced by:
-`r_len = response[0]`
+
+``r_len = response[0]``
 
 
 Credits
 =======
 
- * Python3 developers & the whole community (farmost those @stackoverflow.com)
+ * Python3 developers
+ * stackoverflow.com for hosting endless threads of problems & trubleshooting
  * Pyperclip for they excellent Windows & OSX clipboard code
  * Yubico (cheap & solid HW-Security-Modules) & python-yubico developers
  * GNU Privacy Guard (basic kryptography) & python-gnupg developers
- * SonicLux for telling me that a final version must not be 0.3.3 :D
+ * SonicLux for testing and telling me that a final version must not be 0.3.3 :D
 
 I hope that this might be somewhat of help or at least be inspiring for own
 ideas. You're alway welcome to leave me a message for requests, reviews or
