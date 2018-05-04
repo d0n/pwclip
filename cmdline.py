@@ -334,13 +334,13 @@ def cli():
 	if args.add:
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
-		err = 'add entry %s'args.add if not __ents else None
+		err = 'add entry %s'%args.add if not __ents else None
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
 		__ents = PassCrypt(*pargs, **pkwargs).chpw(
             args.chg, args.pwd, args.com)
-		err = 'change entry %s'args.add if not __ents else None
+		err = 'change entry %s'%args.chg if not __ents else None
 	elif args.rms:
 		ers = []
 		for r in args.rms:
@@ -391,7 +391,7 @@ def gui(typ='pw'):
 		if args.add:
 			if not PassCrypt(
                   *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
-				xmsgok('could not add entry %s'%args.rms)
+				xmsgok('could not add entry %s'%args.add)
 				exit(1)
 			exit(0)
 		elif args.chg:
@@ -399,7 +399,7 @@ def gui(typ='pw'):
 				pkwargs['password'] = args.pwd
 			if not PassCrypt(
                   *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-				xmsgok('could not change entry %s'%args.rms)
+				xmsgok('could not change entry %s'%args.chg)
 				exit(1)
 			exit(0)
 		elif args.rms:
