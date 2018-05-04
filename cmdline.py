@@ -333,18 +333,20 @@ def cli():
 	if args.add:
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
-		err = ('could not add entry', args.add) if not __ents else None
+		if not __ents or args.add not in __ents.keys():
+			err = ('could not add entry', args.add)
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
 		__ents = PassCrypt(*pargs, **pkwargs).chpw(
             args.chg, args.pwd, args.com)
-		err = ('could not change entry', args.chg) if not __ents else None
+		if not __ents or args.chg not in __ents.keys():
+			err = ('could not change entry', args.chg)
 	elif args.rms:
 		ers = []
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
-			if __ents and r in __ents or not __ents:
+			if not __ents or r in __ents.keys():
 				ers.append(r)
 		ewrd = 'entry'
 		if len(ers) > 1:
