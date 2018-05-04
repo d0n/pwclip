@@ -331,8 +331,6 @@ def cli():
 	__ents = {}
 	err = None
 	if args.add:
-		print(args.com)
-		exit()
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
 		if not args.aal:
