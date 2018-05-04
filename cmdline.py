@@ -353,6 +353,8 @@ def cli():
                   ewrd, ', '.join(ers))) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
+		print(__ents)
+		print(args.lst)
 		if __ents and args.lst not in __ents.keys():
 			err = 'could not find entry %s for %s in %s'%(
                    args.lst, cfgs['user'], pkwargs['crypt'])
