@@ -144,7 +144,7 @@ cli mode please see:
 ``pwcli --help``
 
 GUI-Modes
---------
+---------
 
 For the GUI-Mode just use one of the following commands, also accepting most of
 the commandline arguments:
