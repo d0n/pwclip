@@ -3,7 +3,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-05-04
+Released:
 
   * fixed bug when merging crypted dictionary resulting in a string where a
     dictionary should be
