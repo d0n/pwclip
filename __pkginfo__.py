@@ -30,27 +30,25 @@ include_package_data = True
 long_description = ''
 try:
 	open('DEPENDS', 'w+').write(str(
-			open('pwclip/DEPENDS', 'r').read()
-		).format(VersionString=version))
+            open('pwclip/DEPENDS', 'r').read()
+        ).format(VersionString=version))
 except FileNotFoundError:
 	pass
 try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
-			open('pwclip/docs/conf.py.tmpl', 'r').read()
-		).format(VersionString=version))
+            open('pwclip/docs/conf.py.tmpl', 'r').read()
+        ).format(VersionString=version))
 except FileNotFoundError:
 	pass
 try:
-	long_description = str('\n\n\n'.join(
-		str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
-		)).format(CurrentVersion='%s (current)\n%s----------'%(
-			version, '-'*len(version)))
+	long_description = '\n\n\n'.join(
+        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4])
 except FileNotFoundError:
 	long_description = ''
 try:
 	long_description = str(
-		open('pwclip/docs/README.rst', 'r').read()
-		).format(ChangeLog=long_description)
+        open('pwclip/docs/README.rst', 'r').read()
+        ).format(ChangeLog=long_description)
 except FileNotFoundError:
 	long_description = ''
 if long_description:
