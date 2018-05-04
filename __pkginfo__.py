@@ -31,12 +31,10 @@ long_description = ''
 try:
 	long_description = str('\n\n\n'.join(
         str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
-        )).format(CurrentVersion='%s\n%s'%(
+        )).format(CurrentVersion='%s (current)\n%s'%(
             version, '-'*len(version)))
 except FileNotFoundError:
 	long_description = ''
-if '(current)' in version:
-	version = "'%s'"%str(version.strip("'")).split(' ')[0]
 try:
 	long_description = str(
         open('pwclip/docs/README.rst', 'r').read()
@@ -45,7 +43,6 @@ except FileNotFoundError:
 	long_description = ''
 if long_description:
 	open('README', 'w+').write(long_description)
-
 try:
 	open('DEPENDS', 'w+').write(str(
             open('pwclip/DEPENDS', 'r').read()
