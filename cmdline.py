@@ -333,13 +333,13 @@ def cli():
 	if args.add:
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
-		err = 'add entry %s'%args.add if not __ents else None
+		err = ('could not add entry', args.add) if not __ents else None
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
 		__ents = PassCrypt(*pargs, **pkwargs).chpw(
             args.chg, args.pwd, args.com)
-		err = 'change entry %s'%args.chg if not __ents else None
+		err = ('could not change entry', args.chg) if not __ents else None
 	elif args.rms:
 		ers = []
 		for r in args.rms:
@@ -349,13 +349,14 @@ def cli():
 		ewrd = 'entry'
 		if len(ers) > 1:
 			ewrd = 'entrys'
-		err = str('deletion of the following %s has failed: %s'%(
-                  ewrd, ', '.join(ers))) if ers else None
+		err = ('deleting the following %s failed:', bred(', ').join(
+               ers)) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if __ents and args.lst not in __ents.keys():
-			err = 'could not find entry %s for %s in %s'%(
-                   args.lst, args.user, pkwargs['crypt'])
+			err = (
+                'could not find entry', args.lst,
+                'for', args.user, 'in', pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
 			if __pc:
@@ -369,7 +370,7 @@ def cli():
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'could not decrypt' if not __ents else None
 	if err:
-		fatal(err)
+		fatal(*err)
 	_printpws_(__ents, args.sho)
 
 def gui(typ='pw'):
