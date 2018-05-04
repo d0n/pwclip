@@ -136,7 +136,7 @@ To have it wait for a specific time like 60 seconds (bevore resetting the paste
 buffer to the previously copied value) the PWCLIPTIME environment variable is
 used or also the command accepts it as input:
 
-``pwcli -t 60 -l mysavedusername``
+``pwcli -t 60 -l somename``
 
 Most of the options may be combined. For more information on possible options in
 cli mode please see:
