@@ -329,30 +329,36 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 		exit(0)
-	__ents = None
+	__ents = {}
+	err = None
 	if args.add:
-		if not PassCrypt(*pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
-			fatal('could not add entry ', args.add)
-		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+		__ents = PassCrypt(*pargs, **pkwargs).adpw(
+            args.add, args.pwd, args.com)
+		err = 'add entry %s'args.add if not __ents else None
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
-		if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-			fatal('could not change entry ', args.chg)
-		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+		__ents = PassCrypt(*pargs, **pkwargs).chpw(
+            args.chg, args.pwd, args.com)
+		err = 'change entry %s'args.add if not __ents else None
 	elif args.rms:
+		ers = []
 		for r in args.rms:
-			if not PassCrypt(*pargs, **pkwargs).rmpw(r):
-				error('could not delete entry ', r)
-		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
+			if not __ents or __ents and r in __ents:
+				ers.append(r)
+		ewrd = 'entry'
+		if len(ers) > 1:
+			ewrd = 'entrys'
+		err = 'deletion of the following %s has failed: '%(
+            ewrd, str(', '.join(ers)).rstrip(',')) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if not __ents:
-			fatal('could not decrypt')
-		elif __ents and args.lst and not args.lst in __ents.keys():
-			fatal(
-                'could not find entry for ',
-                args.lst, ' in ', pkwargs['crypt'])
+			err = 'could not decrypt'
+		elif __ents and args.lst and args.lst not in __ents.keys():
+			err = 'could not find entry for %s in %s'%(
+                args.lst, pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
 			if __pc:
@@ -364,6 +370,9 @@ def cli():
                     args.time, 'cli' if args.out else None)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+		err = 'could not decrypt' if not __ents else None
+	if err:
+		fatal(err)
 	_printpws_(__ents, args.sho)
 
 def gui(typ='pw'):
@@ -384,6 +393,7 @@ def gui(typ='pw'):
                   *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
 				xmsgok('could not add entry %s'%args.rms)
 				exit(1)
+			exit(0)
 		elif args.chg:
 			if args.pwd:
 				pkwargs['password'] = args.pwd
@@ -391,9 +401,11 @@ def gui(typ='pw'):
                   *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.rms)
 				exit(1)
+			exit(0)
 		elif args.rms:
 			for r in args.rms:
-				if not PassCrypt(*pargs, **pkwargs).rmpw(r):
+				__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
+				if not __ents:
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
