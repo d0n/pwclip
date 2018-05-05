@@ -44,9 +44,7 @@ except FileNotFoundError:
 if long_description:
 	open('README', 'w+').write(long_description)
 try:
-	open('DEPENDS', 'w+').write(str(
-            open('pwclip/DEPENDS', 'r').read()
-        ).format(VersionString=version))
+	depends = [l.strip() for l in open('pwclip/DEPENDS', 'r').readlines()]
 except FileNotFoundError:
 	pass
 try:
