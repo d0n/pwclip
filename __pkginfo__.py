@@ -45,10 +45,6 @@ except FileNotFoundError:
 if long_description:
 	open('README', 'w+').write(long_description)
 try:
-	depends = [l.strip() for l in open('pwclip/DEPENDS', 'r').readlines()]
-except FileNotFoundError:
-	pass
-try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()
         ).format(VersionString=version))
@@ -60,8 +56,7 @@ entry_points = {
                     'ykclip = pwclip.__init__:ykclip']}
 package_data = {
     '': ['pwclip/docs/'],
-    '': ['pwclip/example'],
-    '': ['pwclip/DEPENDS']}
+    '': ['pwclip/example']}
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [
