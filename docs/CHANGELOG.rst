@@ -18,6 +18,9 @@ Released: 2018-05-06
 
   * readded description to __pkginfo__.py (dunno how it lost em)
 
+  * lots of changes to my build environment so files may have moved over
+    the last releases
+
 
 1.3.4
 -----
