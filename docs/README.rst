@@ -183,7 +183,7 @@ Credits
 
  * Python3 developers
  * stackoverflow.com for hosting endless threads of problems & trubleshooting
- * Pyperclip for they excellent Windows & OSX clipboard code
+ * Pyperclip for that excellent Windows & OSX clipboard code
  * Yubico (cheap & solid HW-Security-Modules) & python-yubico developers
  * GNU Privacy Guard (basic kryptography) & python-gnupg developers
  * SonicLux for testing and telling me that a final version must not be 0.3.3 :D
