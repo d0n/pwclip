@@ -8,6 +8,8 @@ url = 'https://pypi.org/project/pwclip/'
 download_url = 'http://deb.janeiskla.de/python/python3-pwclip_current_all.deb'
 license = "GPLv3+"
 author = 'Leon Pelzer'
+description = "pwclip is a tool to temporarily save passwords to the ' \
+    'system-clipboard (copy/paste buffer)"
 author_email = 'mail@leonpelzer.de'
 classifiers = ['Environment :: Console',
                'Environment :: MacOS X',
@@ -17,7 +19,8 @@ classifiers = ['Environment :: Console',
                'Intended Audience :: End Users/Desktop',
                'Intended Audience :: System Administrators',
                'Intended Audience :: Information Technology',
-               'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+               'License :: OSI Approved :: ' \
+                   'GNU General Public License v3 or later (GPLv3+)',
                'Operating System :: OS Independent',
                'Programming Language :: Python :: 3',
                'Topic :: Security',
