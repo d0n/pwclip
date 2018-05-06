@@ -7,8 +7,8 @@ python3-tk
 python3-gi
 python3-wget
 python3-gnupg
-python3-argparse
 python3-paramiko
 python3-argcomplete
+python3-yaml
 python-yubico
 libreadline-dev

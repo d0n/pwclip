@@ -14,6 +14,8 @@ Released: 2018-05-05
 
   * fixed nonsense and formatting in README
 
+  * fixed deb package dependencies 
+
 
 1.3.4
 -----
