@@ -6,6 +6,7 @@ Synopsis
 
 **pwclip** [*options*]
 
+
 Description
 -----------
 
@@ -64,7 +65,6 @@ Since version 1.2 openssl keys are supported. For use with pwclip they will be
 converted to gpg-keys (gpgsm) automaticly - openssl is not used for
 en/decryption.
 
-
 YAML-Format
 ===========
 
@@ -78,8 +78,6 @@ realsystemuser:
 
     \- othername:
         \- Som3other(rypt!cPass
-
-
 
 
 Options
@@ -188,11 +186,6 @@ Options
     pwclip an entry matching PATTERN if given - otherwise list all entrys
 
 
-Epilog
-------
-the yubikey feature is compatible with its's challenge-response feature only
-
-
 Examples
 --------
 list all entrys for current loged-in system user
@@ -218,127 +211,7 @@ recommended but needed in some cases)
 
     $ pwclip -R --remote-host my.secure.ftp.storage --remote-user remoteuser
 
+
 .. seealso::
 
    :manpage:`gnupg(1)`, :manpage:`python(1)`
-
-Installation
-============
-
-On Windows you need to install Python3 from http://python.org/ first. On most
-Linux distributions python will be part of the system. With Python installed,
-you can install the pwclip package from the Python-Package-Index (pyPI) by
-running:
-
-``pip3 install pwclip``
-
-and installing the dependencies (not managed by pip) manually.
-
-Installing from a source distribution archive
----------------------------------------------
-To install this package from a source distribution archive, do the following:
-
-1. Extract all the files in the distribution archive to some directory on your
-   system.
-
-2. In that directory, run: ``python setup.py install``
-
-
-Usage
-=====
-
-Although is was planed as GUI-Program it's also possible to be executed from
-terminals. For Windows, Linux and OSX there is an appropriate executable
-packed which might be executed like the following examples will show:
-
-GPG-Mode
---------
-
-If there is an environment variable called GPGKEYS it will use those keys to
-encrypt on changes to the password file. To list the password file you may use
-the list switch followed by optional search pattern like:
-
-``pwcli -l``
-
-or
-
-``pwcli -l $PATTERN``
-
-as you can see the yaml format tends to be used for multiple user names to
-better manage large lists. By default the current users entrys will be listed
-only. To have them all listed (or searched for by the above pattern example)
-use:
-
-``pwcli -A -l $PATTERN``
-
-Yubikey-Mode
-------------
-``ykclip``
-
-The YKSERIAL environment variable is used if found to select the yubikey to use
-if more than one key is connected. Otherwise the first one found is chosen.
-Likewise it also accepts an option:
-
-``pwcli -y $YKSERIAL``
-
-To have it wait for a specific time like 60 seconds (bevore resetting the paste
-buffer to the previously copied value) the PWCLIPTIME environment variable is
-used or also the command accepts it as input:
-
-``pwcli -t 60 -l somename``
-
-Most of the options may be combined. For more information on possible options in
-cli mode please see:
-
-``pwcli --help``
-
-GUI-Modes
----------
-
-For the GUI-Mode just use one of the following commands, also accepting most of
-the commandline arguments:
-
-``pwclip``
-
-``ykclip``
-
-
-Troubleshooting
-===============
-
-When using the yubikey challenge-response mode there is a bug in the usb_hid
-interface. This is because of python2 => 3 transition, most likely and can be
-fixed by executing the following command:
-
-``sudo vi +':107s/\(.* =\).*/\1 response[0]/' +':wq' /usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py``
-
-Explained:
-
-In line 107 of the file
-
-``/usr/local/lib/python3.5/dist-packages/yubico/yubikey_4_usb_hid.py``
-
-the ord() coversion of the response:
-
-``r_len = ord(response[0])``
-
-needs to be replaced by:
-
-``r_len = response[0]``
-
-
-Credits
-=======
-
- * Python3 developers
- * stackoverflow.com for hosting endless threads of problems & trubleshooting
- * Pyperclip for they excellent Windows & OSX clipboard code
- * Yubico (cheap & solid HW-Security-Modules) & python-yubico developers
- * GNU Privacy Guard (basic kryptography) & python-gnupg developers
- * SonicLux for testing and telling me that a final version must not be 0.3.3 :D
-
-I hope that this might be somewhat of help or at least be inspiring for own
-ideas. You're alway welcome to leave me a message for requests, reviews or
-feature requests as well as bug reports: <mail@leonpelzer.de>
-
-{ChangeLog}
