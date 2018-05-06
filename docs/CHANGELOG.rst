@@ -3,7 +3,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-05-05
+Released: 2018-05-06
 
   * fixed bug when merging crypted dictionary resulting in a string where a
     dictionary should be
@@ -14,7 +14,9 @@ Released: 2018-05-05
 
   * fixed nonsense and formatting in README
 
-  * fixed deb package dependencies 
+  * fixed deb package dependencies
+
+  * readded description to __pkginfo__.py (dunno how it lost em)
 
 
 1.3.4
