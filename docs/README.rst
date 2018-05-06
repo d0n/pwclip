@@ -15,7 +15,7 @@ The main feature is the pwcli/pwclip mode which provides easy access to the
 ~/.passcrypt file. That file is used by default as password storage. The
 program is executed in gui mode when pwclip is called and in cli mode when
 pwcli is called respectivly. Is creates the ~/.passcrypt file which is gpg
-encrypted text using either the value of GPGKEYS as gpg recipients (if its
+encrypted text using either the value of GPGKEYS as gpg recipients (if it's
 found in the user's environment). On startup it lookes for a ~/.pwd.yaml file
 which, if found, is merged with the already known passwords from the
 ~/.passcrypt file if there already is one. All entrys in the ~/.passcrypt file
