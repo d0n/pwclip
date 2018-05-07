@@ -31,7 +31,7 @@ include_package_data = True
 long_description = ''
 try:
 	long_description = str('\n\n\n'.join(
-        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:4]
+        str(open('pwclip/docs/CHANGELOG.rst', 'r').read()).split('\n\n\n')[:3]
         )).format(CurrentVersion='%s (current)\n----------%s'%(
             version, '-'*len(version)))
 except FileNotFoundError:
