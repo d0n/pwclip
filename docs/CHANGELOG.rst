@@ -3,6 +3,17 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2018-05-07
+
+  * added trow_keyids option to the encrypt function trying to fix a bug with
+    multiple recipients - if decrypting and having only one of the secret keys
+    in the keyring while trying to decrypt it always fails
+
+  ** hotfix release **
+
+1.3.5
+-----
+
 Released: 2018-05-06
 
   * fixed bug when merging crypted dictionary resulting in a string where a
