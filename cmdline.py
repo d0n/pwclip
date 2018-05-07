@@ -336,7 +336,7 @@ def cli():
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(__res, poclp, boclp, args.time)
 		exit(0)
-	__ents = {}
+	__ents = None
 	if args.add:
 		if not PassCrypt(*pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
 			fatal('could not add entry ', args.add)
