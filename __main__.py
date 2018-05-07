@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """pwclip main module"""
 import pwclip
 pwclip.pwcli()
