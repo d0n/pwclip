@@ -172,7 +172,7 @@ def confpars(mode):
 	pars.add_argument(
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
-        help='time to wait before resetting clip (%d is default)'%cfgs['time'])
+        help='time to wait before resetting clip (%s is default)'%cfgs['time'])
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
