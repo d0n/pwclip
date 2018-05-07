@@ -1,13 +1,15 @@
-usage: pwcli [-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]
-             [--remote-host HOST] [--remote-user USER] [-r "ID ..."] [-u USER]
-             [-p PWD] [--comment COM] [-x] [-C SSL-Certificate]
-             [-K SSL-Private-Key] [--ca SSL-CA-Certificate] [-P CRYPTFILE]
-             [-Y YAMLFILE] [-S {1,2}] [-y [SERIAL]] [-a ENTRY] [-c ENTRY]
-             [-d ENTRY [ENTRY ...]] [-l [PATTERN]]
+usage: __main__.py [-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]
+                   [--remote-host HOST] [--remote-user USER] [-r "ID ..."]
+                   [-u USER] [-p PWD] [--comment COM] [-x]
+                   [-C SSL-Certificate] [-K SSL-Private-Key]
+                   [--ca SSL-CA-Certificate] [-P CRYPTFILE] [-Y YAMLFILE]
+                   [-S {1,2}] [-y [SERIAL]] [-a ENTRY] [-c ENTRY]
+                   [-d ENTRY [ENTRY ...]] [-l [PATTERN]]
 
 pwclip - Multi functional password manager to temporarily save passphrases to
-your copy/paste buffers for easy and secure accessing your passwords. Most of
-the following arguments mights also be set by the config ~/.config/pwclip.yaml
+your copy/paste buffers for easy and secure accessing your passwords. The
+following arguments mights also be set by the config ~/.config/pwclip.yaml
+file
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -67,4 +69,5 @@ action arguments:
                         pwclip an entry matching PATTERN if given - otherwise
                         list all entrys
 
-the yubikey feature is compatible with its's challenge-response feature only
+the yubikey mode is compatible with the challenge-response feature of yubikeys
+only for now.

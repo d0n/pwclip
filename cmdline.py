@@ -146,7 +146,7 @@ def confpars(mode):
 	desc = 'pwclip - Multi functional password manager to temporarily ' \
            'save passphrases to your copy/paste buffers for easy and ' \
            'secure accessing your passwords. The following ' \
-           'arguments mights also be set by the config '
+           'arguments mights also be set by the config ' \
            '~/.config/%s.yaml file'%_me
 	epic = 'the yubikey mode is compatible with the ' \
            'challenge-response feature of yubikeys only for now.'

@@ -1,4 +1,4 @@
 #!/usr/bin/python3
 """pwclip main module"""
-import pwclip
-pwclip.pwcli()
+from pwclip.cmdline import cli
+cli()
