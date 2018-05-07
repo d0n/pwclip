@@ -1,10 +1,9 @@
-usage: __main__.py [-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]
-                   [--remote-host HOST] [--remote-user USER] [-r "ID ..."]
-                   [-u USER] [-p PWD] [--comment COM] [-x]
-                   [-C SSL-Certificate] [-K SSL-Private-Key]
-                   [--ca SSL-CA-Certificate] [-P CRYPTFILE] [-Y YAMLFILE]
-                   [-S {1,2}] [-y [SERIAL]] [-a ENTRY] [-c ENTRY]
-                   [-d ENTRY [ENTRY ...]] [-l [PATTERN]]
+usage: pwclip [-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]
+              [--remote-host HOST] [--remote-user USER] [-r "ID ..."]
+              [-u USER] [-p PWD] [--comment COM] [-x] [-C SSL-Certificate]
+              [-K SSL-Private-Key] [--ca SSL-CA-Certificate] [-P CRYPTFILE]
+              [-Y YAMLFILE] [-S {1,2}] [-y [SERIAL]] [-a ENTRY] [-c ENTRY]
+              [-d ENTRY [ENTRY ...]] [-l [PATTERN]]
 
 pwclip - Multi functional password manager to temporarily save passphrases to
 your copy/paste buffers for easy and secure accessing your passwords. The
