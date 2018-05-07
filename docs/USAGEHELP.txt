@@ -9,7 +9,7 @@ usage: __main__.py [-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]
 pwclip - Multi functional password manager to temporarily save passphrases to
 your copy/paste buffers for easy and secure accessing your passwords. The
 following arguments mights also be set by the config ~/.config/pwclip.yaml
-file
+file.
 
 optional arguments:
   -h, --help            show this help message and exit
