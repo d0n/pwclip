@@ -7,6 +7,8 @@ Released: 2018-05
 
   * more updates to README
 
+  * removed throw_keys for encryption while library does not support it
+
 
 1.3.6
 -----
