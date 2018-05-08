@@ -361,8 +361,6 @@ def cli():
 		err = ('deleting the following %s failed:', bred(', ').join(
                ers)) if ers else None
 	elif args.lst is not False and args.lst is not None:
-		print('not here')
-		exit()
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
 		if __ents and args.lst not in __ents.keys():
 			err = (
