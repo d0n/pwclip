@@ -7,7 +7,10 @@ Released: 2018-05
 
   * more updates to README
 
-  * removed throw_keys for encryption while library does not support it
+  * removed throw_keys for encryption while gpg library does not support it -.-
+
+  * fixed receiving wrong passphrase in some cases if more than one user has
+    matching entrys for user password query
 
 
 1.3.6
