@@ -39,18 +39,15 @@ displayed on the screen if set. Therefor python3's gi notify2 is used which is
 another reason for discontinuing python2 support.
 
 I would encourage you to bind pwclip to a shortcut within your X-Environment
-to have access to your stored passwords from within any program. For example
-i like binding it to `Super-Middle-Mouse-Button` for the pwclip default mode
-and `Strg-Shift-Middle-Mouse-Button` for the yubico mode. On Windows-Systems
-you need to create a link for it somewhere. When editing that link you may set
-a keyboard shortcut (could not find a nicer solution by now). The target for
-that link then whould be "%PYTHONINSTALLDIR%\\scripts\\pwclip.exe".
+to have access to your passwords at any time. On Windows-Systems you need to
+create a link for it somewhere. When editing that link you may set a keyboard
+shortcut (could not find a nicer solution by now). The target for that link
+then whould be "%PYTHONINSTALLDIR%\\scripts\\pwclip.exe".
 
-I've been trying my best to keep the passwords secure from unwanted access BUT
-there is !NO GUARANTEE! that the passwords handled during runtime are safe from
-other users access (especially "root" on linux systems - help on that is very
-welcome).
-Please be aware of that!
+I've been trying my best to keep the passwords from unwanted access BUT i do
+!NOT GUARANTEE! that the passwords handled during runtime are safe from other
+users access (especially "root" on linux systems - help on that is very
+welcome) - please be aware of that!
 
 Since version 1.2 openssl keys are supported. For the use with pwclip they will
 be converted to gpg-keys automaticly and gpgsm is used instead of gpg - openssl
