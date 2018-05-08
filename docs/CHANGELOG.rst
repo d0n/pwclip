@@ -7,11 +7,11 @@ Released: 2018-05-08
 
   * deletion of ~/.pwd.yaml is removed permanently
 
+  * changed README again to fit current state
+
   * added trow_keyids option to the encrypt function trying to fix a bug with
     multiple recipients - if decrypting and having only one of the secret keys
     in the keyring while trying to decrypt it always fails
-
-  ** hotfix release **
 
 
 1.3.5
