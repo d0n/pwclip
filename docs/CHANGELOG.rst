@@ -3,7 +3,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-05
+Released: 2018-05-09
 
   * more updates to README
 
