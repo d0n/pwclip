@@ -3,6 +3,14 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2018-05
+
+  * more updates to README
+
+
+1.3.6
+-----
+
 Released: 2018-05-08
 
   * deletion of ~/.pwd.yaml is removed permanently

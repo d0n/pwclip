@@ -7,9 +7,8 @@ What pwclip is
 pwclip is a password management tool. It's main target is having fast and
 comfortable access to passwords by storing them for a variable time in the
 systems clipboard (copy/paste buffer). It uses either GnuPG2 or OpenSSL
-(converted to GPGSM) keys as cryptographic operations. It also works with
-yubikey's challenge-response to generate uniq HMAC-SHA1 hashes stored to the
-clipboard as well.
+(converted to GPGSM) keys for cryptographic operations. It also works with
+yubikey's challenge-response to generate uniq HMAC-SHA1 hashes as well.
 
 The main feature is the pwcli/pwclip mode which provides easy access to the
 ~/.passcrypt file. That file is used by default as password storage. The
