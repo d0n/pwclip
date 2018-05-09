@@ -12,6 +12,11 @@ Released: 2018-05-09
   * fixed receiving wrong passphrase in some cases if more than one user has
     matching entrys for the query
 
+  * readded '-l /dev/null' arguments for xsel (unfortunately ~/.xsel.log is
+    created anyways) suppressing messages like:
+    >XIO:  fatal IO error 11 (Resource temporarily unavailable) on X server ":"
+    >      after 30 requests (28 known processed) with 0 events remaining.
+
 
 1.3.6
 -----
