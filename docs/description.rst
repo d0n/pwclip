@@ -64,7 +64,7 @@ you can be read it using "gpg -d" as well at any time if the correct key is
 present.
 
 YAML-Format
-"""""""""""
+-----------
 
 \-\-\-
 
