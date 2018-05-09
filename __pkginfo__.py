@@ -58,7 +58,7 @@ package_data = {
     '': ['pwclip/docs/'],
     '': ['pwclip/example']}
 data_files=[
-    ('share/man/man1', ['pwclip/docs/pwclip.1']),
+    ('share/man/man1', ['pwclip/docs/_build/man/pwclip.1']),
     ('share/pwclip', [
         'pwclip/example/ca.crt', 'pwclip/example/commands.rst',
         'pwclip/example/ssl.crt', 'pwclip/example/ssl.key',
