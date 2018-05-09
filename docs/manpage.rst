@@ -1,7 +1,7 @@
 pwclip
 ======
 
-.. include:: description
+.. include:: ./description.rst
 
 Synopsis
 --------
