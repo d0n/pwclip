@@ -118,7 +118,7 @@ Options
 .. include:: usage.rst
 
 
-.. include:: toubleshoot.rst
+.. include:: troubleshoot.rst
 
 
 .. include:: credits.rst
