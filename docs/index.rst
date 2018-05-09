@@ -10,7 +10,7 @@ Contents:
    :maxdepth: 2
 
    Man Page <manpage>
-   changes
+   changelog
    readme
 
 
