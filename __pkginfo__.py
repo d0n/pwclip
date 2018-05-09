@@ -38,12 +38,12 @@ except FileNotFoundError:
 	long_description = ''
 try:
 	long_description = str(
-        open('pwclip/docs/README.rst', 'r').read()
+        open('pwclip/docs/readme.rst', 'r').read()
         ).format(ChangeLog=long_description)
 except FileNotFoundError:
 	long_description = ''
 if long_description:
-	open('README', 'w+').write(long_description)
+	open('%s_readme'%name, 'w+').write(long_description)
 try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()
@@ -60,6 +60,6 @@ package_data = {
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [
-        'pwclip/example/ca.crt', 'pwclip/example/commands.lst',
+        'pwclip/example/ca.crt', 'pwclip/example/commands.rst',
         'pwclip/example/ssl.crt', 'pwclip/example/ssl.key',
         'pwclip/example/passwords.yaml'])]
