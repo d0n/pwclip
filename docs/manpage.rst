@@ -1,7 +1,7 @@
 pwclip
 ======
 
-.. include:: description.rst
+.. include:: description
 
 Synopsis
 --------
@@ -115,13 +115,14 @@ Options
     pwclip an entry matching PATTERN if given - otherwise list all entrys
 
 
-.. include:: usage.rst
+.. include:: usage
 
 
-.. include:: troubleshoot.rst
+.. include:: troubleshoot
 
 
-.. include:: credits.rst
+.. include:: credits
 
 
 .. seealso:: :manpage:`gnupg(1)`, :manpage:`python(1)`
+
