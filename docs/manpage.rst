@@ -115,13 +115,13 @@ Options
     pwclip an entry matching PATTERN if given - otherwise list all entrys
 
 
-.. include:: usage
+.. include:: ./usage.rst
 
 
-.. include:: troubleshoot
+.. include:: ./troubleshoot.rst
 
 
-.. include:: credits
+.. include:: ./credits.rst
 
 
 .. seealso:: :manpage:`gnupg(1)`, :manpage:`python(1)`
