@@ -124,9 +124,4 @@ Options
 .. include:: credits.rst
 
 
-.. seealso::
-
-   :manpage:`gnupg(1)`, :manpage:`python(1)`
-
-
-
+.. seealso:: :manpage:`gnupg(1)`, :manpage:`python(1)`
