@@ -1,1 +1,1 @@
-make clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
+make html htmlhelp text latex linkcheck texinfo man info gettext changes
