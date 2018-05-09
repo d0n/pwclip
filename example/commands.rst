@@ -6,7 +6,7 @@ terminals. For Windows, Linux and OSX there is an appropriate executable
 packed which might be executed like the following examples will show:
 
 GPG-Mode
---------
+""""""""
 
 If there is an environment variable called GPGKEYS it will use those keys to
 encrypt on changes to the password file. To list the password file you may use
@@ -31,7 +31,7 @@ passwords.yaml and list them:
 ``pwcli -Y passwords.yaml --cert ssl.crt --key ssl.key --ca-cert ca.crt -l``
 
 Yubikey-Mode
-------------
+""""""""""""
 ``ykclip``
 
 The YKSERIAL environment variable is used if found to select the yubikey to use
@@ -52,7 +52,7 @@ cli mode please see:
 ``pwcli --help``
 
 GUI-Modes
----------
+"""""""""
 
 For the GUI-Mode just use one of the following commands, also accepting most of
 the commandline arguments:
