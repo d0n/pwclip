@@ -56,12 +56,11 @@ who can store passwords also can password stored for other usernames in that
 file. It is just of practical use if you have stored passwords for different
 system usernames sharing the same passcrypt file.
 As an example: A person called "Andrew" has a username called "bob". On some
-other machine he has a username called "cat" and uses SSH for both of them.
-Now sharing the same passcrypt that file would be assembled like the attached
-YAML-Format. If so he can omit prividing -u or -A when beeing logged in as
-"bob" or "cat" respectivly. While its only the encrypted yaml written to file
-you can be read it using "gpg -d" as well at any time if the correct key is
-present.
+other machine he has a username called "cat" and he uses SSH for both of them.
+The shared passcrypt file would be assembled like the attached YAML-Format.
+If so providing -u or -A when beeing logged in as "bob" or "cat" respectivly
+can be omitted. While its only the encrypted yaml written as pem you can read
+it using "gpg -d" as well at any time if the correct gpg-key is present.
 
 YAML-Format
 -----------
