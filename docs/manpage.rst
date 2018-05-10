@@ -5,7 +5,7 @@ pwclip
 
 Synopsis
 --------
-**pwcli**  *[-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]*
+  **pwcli**  *[-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]*
 
                *[--remote-host HOST] [--remote-user USER] [-r "ID ..."] [-u USER]*
 
