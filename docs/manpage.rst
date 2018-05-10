@@ -128,6 +128,4 @@ Options
 
 .. include:: ./credits.rst
 
-
-.. seealso::
-    :manpage:`gnupg(1)`, :manpage:`python(1)`
+.. include:: ./alsos.rst
