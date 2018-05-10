@@ -1,12 +1,10 @@
-======
 pwclip
 ======
 
 .. include:: ./description.rst
 
-========
 Synopsis
-========
+--------
 
 **pwcli** *[-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]*
           *[--remote-host HOST] [--remote-user USER] [-r "ID ..."] [-u USER]*
@@ -15,9 +13,9 @@ Synopsis
           *[-Y YAMLFILE] [-S {1,2}] [-y [SERIAL]] [-a ENTRY] [-c ENTRY]*
           *[-d ENTRY [ENTRY ...]] [-l [PATTERN]]*
 
-=======
+
 Options
-=======
+-------
 
 .. program:: pwclip
 

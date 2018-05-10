@@ -1,12 +1,10 @@
-=====
 Usage
-=====
+-----
 
 Although is was planed as GUI-Program it's also possible to be executed from
 terminals. For Windows, Linux and OSX there is an appropriate executable
 packed which might be executed like the following examples will show:
 
---------
 GPG-Mode
 --------
 
@@ -32,7 +30,6 @@ passwords.yaml and list them:
 
 ``pwcli -Y passwords.yaml --cert ssl.crt --key ssl.key --ca-cert ca.crt -l``
 
-------------
 Yubikey-Mode
 ------------
 ``ykclip``
@@ -54,7 +51,6 @@ cli mode please see:
 
 ``pwcli --help``
 
----------
 GUI-Modes
 ---------
 

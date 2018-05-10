@@ -1,6 +1,5 @@
-===========
 Description
-===========
+-----------
 
 pwclip is a password management tool. It's main target is having fast and
 comfortable access to passwords by storing them for a variable time in the
@@ -64,7 +63,6 @@ YAML-Format. If so he can omit prividing -u or -A when beeing logged in as
 you can be read it using "gpg -d" as well at any time if the correct key is
 present.
 
------------
 YAML-Format
 -----------
 

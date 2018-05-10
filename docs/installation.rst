@@ -1,6 +1,5 @@
-============
 Installation
-============
+------------
 
 On Windows you need to install Python3 from http://python.org/ first. On most
 Linux distributions python will be part of the system. With Python installed,

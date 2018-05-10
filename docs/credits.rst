@@ -1,6 +1,5 @@
-=======
 Credits
-=======
+-------
 
  * Python3 developers
  * stackoverflow.com for hosting endless threads of problems & trubleshooting
