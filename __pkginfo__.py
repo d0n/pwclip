@@ -27,6 +27,8 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment',
                'Topic :: Utilities',
                'Topic :: Desktop Environment']
+setup_requires = ['pytest-runner']
+tests_require = ['pytest']
 include_package_data = True
 long_description = ''
 try:
