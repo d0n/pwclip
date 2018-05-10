@@ -6,6 +6,15 @@ Changelog
 
 Released: 2018-05-10
 
+  * cleaned up code resided from merge and fixed error messages if entry to be
+    deleted cannot be found
+
+
+1.3.7
+-----
+
+Released: 2018-05-10
+
   * replaced CHANGELOG.rst and README.rst by many small rst files and readme
     as well as changelog updated (mostly wrote it new from scratch)
 
