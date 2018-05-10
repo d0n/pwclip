@@ -75,9 +75,12 @@ bob:
         \- remember to cleanup on logout
 
     \- othertool:
+
         \- 0th3r(rypt!cPass
 
 cat:
     \- ssh:
+
         \- $om30ther(rypticPass
+
 
