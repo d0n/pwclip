@@ -7,6 +7,7 @@ Synopsis
 --------
   **pwcli**  *[-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]*
 
+
                *[--remote-host HOST] [--remote-user USER] [-r "ID ..."] [-u USER]*
 
                *[-p PWD] [--comment COM] [-x] [-C SSL-Certificate]*
