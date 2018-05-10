@@ -368,7 +368,6 @@ def cli():
                 'for', args.user, 'in', pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
-			print(args.time)
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(
