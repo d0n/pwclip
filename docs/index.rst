@@ -1,3 +1,4 @@
+=============================================================
 pwclip: gui to temporarily save passwords to system-clipboard
 =============================================================
 
@@ -13,7 +14,7 @@ Contents:
    changes
    readme
 
-
+==================
 Indices and tables
 ==================
 
