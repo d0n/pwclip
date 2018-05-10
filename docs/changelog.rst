@@ -6,7 +6,10 @@ Changelog
 
 Released: 2018-05-10
 
-  * more updates to README
+  * replaced CHANGELOG.rst and README.rst by many small rst files and readme
+    as well as changelog updated (mostly wrote it new from scratch)
+
+  * docs fixed to fit format needed for manpage
 
   * removed throw_keys for encryption while gpg library does not support it -.-
 
