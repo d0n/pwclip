@@ -1,7 +1,7 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.3.7'
+version = '1.3.8'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil', 'python-gnupg', 'PyYAML']
 url = 'https://pypi.org/project/pwclip/'
