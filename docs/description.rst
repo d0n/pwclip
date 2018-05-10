@@ -73,7 +73,7 @@ bob:
 
         \- $om3(rypt!cPass
 
-        \- remember to cleanup on logout
+        \- AlwaysRememberMe
 
     \- othertool:
 
