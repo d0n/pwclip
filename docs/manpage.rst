@@ -1,7 +1,3 @@
-======
-pwclip
-======
-
 .. include:: ./description.rst
 
 ========
