@@ -64,6 +64,7 @@ YAML-Format. If so he can omit prividing -u or -A when beeing logged in as
 you can be read it using "gpg -d" as well at any time if the correct key is
 present.
 
+-----------
 YAML-Format
 -----------
 
