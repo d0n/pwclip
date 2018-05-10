@@ -70,6 +70,7 @@ YAML-Format
 
 bob:
     \- ssh:
+
         \- $om3(rypt!cPass
 
         \- remember to cleanup on logout
