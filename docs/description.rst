@@ -73,7 +73,7 @@ bob:
 
         \- $om3(rypt!cPass
 
-        \- AlwaysRememberMe
+        \- DoNotForgetSomething!
 
     \- othertool:
 
