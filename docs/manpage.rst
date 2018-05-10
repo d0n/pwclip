@@ -7,15 +7,15 @@ Synopsis
 --------
 **pwcli**  *[-h] [--version] [-D] [-A] [-o] [-s] [-t seconds] [-R]*
 
-           *[--remote-host HOST] [--remote-user USER] [-r "ID ..."] [-u USER]*
+               *[--remote-host HOST] [--remote-user USER] [-r "ID ..."] [-u USER]*
 
-           *[-p PWD] [--comment COM] [-x] [-C SSL-Certificate]*
+               *[-p PWD] [--comment COM] [-x] [-C SSL-Certificate]*
 
-           *[-K SSL-Private-Key] [--ca SSL-CA-Certificate] [-P CRYPTFILE]*
+               *[-K SSL-Private-Key] [--ca SSL-CA-Certificate] [-P CRYPTFILE]*
 
-           *[-Y YAMLFILE] [-S {1,2}] [-y [SERIAL]] [-a ENTRY] [-c ENTRY]*
+               *[-Y YAMLFILE] [-S {1,2}] [-y [SERIAL]] [-a ENTRY] [-c ENTRY]*
 
-           *[-d ENTRY [ENTRY ...]] [-l [PATTERN]]*
+               *[-d ENTRY [ENTRY ...]] [-l [PATTERN]]*
 
 Options
 -------
