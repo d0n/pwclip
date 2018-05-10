@@ -6,8 +6,9 @@ Changelog
 
 Released: 2018-05-10
 
-  * cleaned up code resided from merge and fixed error messages if entry to be
-    deleted cannot be found
+  * fixed error messages if entry to be deleted cannot be found
+
+  * cleaned up code resided from merge
 
 
 1.3.7
