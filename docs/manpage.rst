@@ -6,7 +6,7 @@ pwclip
 Synopsis
 --------
 
-  **pwclip**  *[options]*
+  **pwclip**  [*options*]
 
 Options
 -------
