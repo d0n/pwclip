@@ -10,6 +10,8 @@ Released: 2018-05-11
 
   * cleaned up code resided from merge
 
+  * added tests (not working right now)
+
 
 1.3.7
 -----
