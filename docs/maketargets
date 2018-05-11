@@ -1,1 +1,1 @@
-make man
+make html htmlhelp text latex linkcheck texinfo man info gettext changes
