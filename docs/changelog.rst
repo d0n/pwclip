@@ -6,9 +6,9 @@ Changelog
 
 Released: 2018-05-11
 
-  * fix bug implemented with last version
+  * fix bug that caused pwclip to crash instanly in some cases
 
-  ** hotfix release **
+  * fixed filerotate function wich now just uses shutil.move
 
 
 1.4.0
