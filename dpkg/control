@@ -1,6 +1,6 @@
 Package: python3-pwclip
 Source: pwclip
-Version: 1.4.0-1
+Version: {Version}-1
 Architecture: all
 Maintainer: Leon Pelzer <mail@leonpelzer.de>
 Installed-Size: 611
