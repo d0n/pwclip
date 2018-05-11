@@ -104,7 +104,7 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def confpars(mode):
+def argspars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
@@ -266,6 +266,9 @@ def confpars(mode):
         help='pwclip an entry matching PATTERN if given ' \
              '- otherwise list all entrys')
 	autocomplete(pars)
+	return pars
+
+def confargs(pars):
 	args = pars.parse_args()
 	pargs = [a for a in [
         'aal' if args.aal else None,
@@ -313,9 +316,8 @@ def confpars(mode):
 			pars.print_help()
 	return args, pargs, pkwargs
 
-def cli(args=None, pargs=None, pkwargs=None):
-	if not args or not pargs or not pkwargs:
-		args, pargs, pkwargs = confpars('cli')
+def cli():
+	args, pargs, pkwargs = confargs(argspars('cli'))
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
@@ -387,8 +389,8 @@ def cli(args=None, pargs=None, pkwargs=None):
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
+	args, pargs, pkwargs = confargs(argspars('gui'))
 	poclp, boclp = paste('pb')
-	args, pargs, pkwargs = confpars('gui')
 	if args.yks or args.yks is None or typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:

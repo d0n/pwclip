@@ -1,5 +1,6 @@
+import sys
 from unittest import TestCase
-from pwclip.cmdline import cli, confpars
+from pwclip.cmdline import argspars, confargs, cli
 
 class CommandLineTestCase(TestCase):
 	"""
@@ -7,7 +8,8 @@ class CommandLineTestCase(TestCase):
 	"""
 	@classmethod
 	def setUpClass(cls):
-		cls.args, cls.pargs, cls.pkwargs = confpars('cli')
+		cls.parser = argspars('cli')
+		cls.args, cls.pargs, cls.pkwargs = cls.parser
 
 
 class TestCase4pwcli(CommandLineTestCase):
@@ -22,6 +24,4 @@ class TestCase4pwcli(CommandLineTestCase):
 		"""
 		Find database servers with the Ubuntu AMI in Australia region
 		"""
-		args = self.parser.parse_args(['pwcli', '-l'])
-		result = cli(args.tags, args.region, args.ami)
-		self.assertIsNotNone(result)
+		cli(confsargs())
