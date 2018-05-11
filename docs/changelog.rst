@@ -6,6 +6,8 @@ Changelog
 
 Released: 2018-05-11
 
+  * obviously fixed readme :-)
+
   * fix bug that caused pwclip to crash instanly in some cases
 
   * fixed filerotate function wich now just uses shutil.move to set filetimes
