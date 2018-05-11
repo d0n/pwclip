@@ -22,7 +22,7 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
-from sys import stdout
+from sys import stdout, exit
 
 from subprocess import DEVNULL, Popen, call
 
@@ -307,12 +307,15 @@ def confpars(mode):
           args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
           args.rms is None and (args.sslcrt is None and args.sslkey is None)):
-		pars.print_help()
-		exit(1)
+		try:
+			exit()
+		finally:
+			pars.print_help()
 	return args, pargs, pkwargs
 
-def cli():
-	args, pargs, pkwargs = confpars('cli')
+def cli(args=None, pargs=None, pkwargs=None):
+	if not args or not pargs or not pkwargs:
+		args, pargs, pkwargs = confpars('cli')
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
@@ -391,7 +394,7 @@ def gui(typ='pw'):
 		if not res:
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
-				exit(1)
+				exit()
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
@@ -399,7 +402,7 @@ def gui(typ='pw'):
 			if not PassCrypt(
                   *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
 				xmsgok('could not add entry %s'%args.add)
-				exit(1)
+				exit()
 			exit(0)
 		elif args.chg:
 			if args.pwd:
@@ -407,26 +410,26 @@ def gui(typ='pw'):
 			if not PassCrypt(
                   *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.chg)
-				exit(1)
+				exit()
 			exit(0)
 		elif args.rms:
 			for r in args.rms:
 				__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 				if not __ents:
 					xmsgok('could not delete entry %s'%args.rms)
-					exit(1)
+					exit()
 			exit(0)
 		__in = args.lst if args.lst else xgetpass()
 		if not __in:
 			if xyesno('no input received, try again?'):
 				continue
-			exit(1)
+			exit()
 		__ent = pcm.lspw(__in)
 		if __ent:
 			if __in not in __ent.keys() or not __ent[__in]:
 				if xyesno('no entry found for %s, try again?'%__in):
 					continue
-				exit(1)
+				exit()
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
