@@ -341,8 +341,10 @@ def cli():
             args.add, args.pwd, args.com)
 		if not args.aal:
 			__ents = __ents[args.user]
-		if not __ents or args.add not in __ents.keys():
-			err = ('could not add entry', args.add)
+		elif __ents:
+			for u in __ents.keys():
+				if not args.user in u.keys():
+					err = ('could not add entry', args.add, 'to user', u)
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
