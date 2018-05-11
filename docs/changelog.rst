@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-05-10
+Released: 2018-05-11
 
   * fixed error messages if entry to be deleted cannot be found
 
