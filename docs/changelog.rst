@@ -6,6 +6,16 @@ Changelog
 
 Released: 2018-05-11
 
+  * fix bug implemented with last version
+
+  ** hotfix release **
+
+
+1.4.0
+-----
+
+Released: 2018-05-11
+
   * fixed error messages if entry to be deleted cannot be found
 
   * cleaned up code resided from merge
