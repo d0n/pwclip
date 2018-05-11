@@ -8,7 +8,8 @@ Released: 2018-05-11
 
   * fix bug that caused pwclip to crash instanly in some cases
 
-  * fixed filerotate function wich now just uses shutil.move
+  * fixed filerotate function wich now just uses shutil.move and iterates
+    one count more as before (not effective on pwclip default)
 
 
 1.4.0
