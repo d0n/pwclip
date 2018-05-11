@@ -199,7 +199,7 @@ def argspars(mode):
         help='query entrys only for USER (-A overrides, ' \
              '"%s" is default)'%cfgs['user'])
 	pars.add_argument(
-        '-p', '--password',
+        '--password',
         dest='pwd', default=None,
         help='enter password for add/change actions' \
              '(insecure & not recommended)')
