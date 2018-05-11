@@ -39,18 +39,22 @@ try:
 except FileNotFoundError:
 	long_description = ''
 try:
-	reads = []
+	__rs = []
 	with open('pwclip/docs/readme.rst', 'r') as __r:
-		for l in __r.readlines():
-			if l.startswith('.. include::'):
-				rst = l.split('.. include::')[1].lstrip(' ./')
-				with open('pwclip/docs/%s', 'r') as __i:
-					reads = reads + [i for i in __i.readlines()]
+		__rrs = __r.readlines()
+	for l in __rrs:
+		if l.startswith('.. include::'):
+			__rst = l.split('.. include::')[1].lstrip(' ./').strip()
+			try:
+				with open('pwclip/docs/%s'%__rst, 'r') as __i:
+					__rs = __rs + [i for i in __i.readlines()]
 				continue
-			reads.append(l)
-	long_description = '\n'.join(reads).format(ChangeLog=long_description)
+			except FileNotFoundError:
+				pass
+		__rs.append(l)
+	long_description = ''.join(__rs).format(ChangeLog=long_description)
 except FileNotFoundError:
-	long_description = ''
+    long_description = ''
 try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()

@@ -13,6 +13,8 @@ Released: 2018-05-11
   * fixed filerotate function wich now just uses shutil.move to set filetimes
     correctly and now iterates one counter more
 
+  * more readme updates
+
 
 1.4.0
 -----
