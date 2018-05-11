@@ -268,7 +268,7 @@ def argspars(mode):
 	autocomplete(pars)
 	return pars
 
-def confargs(pars):
+def confargs(mode, pars):
 	args = pars.parse_args()
 	pargs = [a for a in [
         'aal' if args.aal else None,
@@ -317,7 +317,7 @@ def confargs(pars):
 	return args, pargs, pkwargs
 
 def cli():
-	args, pargs, pkwargs = confargs(argspars('cli'))
+	args, pargs, pkwargs = confargs('cli', argspars('cli'))
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
