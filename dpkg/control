@@ -1,0 +1,30 @@
+Package: python3-pwclip
+Source: pwclip
+Version: {Version}-1
+Architecture: all
+Maintainer: Leon Pelzer <mail@leonpelzer.de>
+Installed-Size: 611
+Depends: xsel, xvkbd, gpgsm, gnupg2, openssl, python3-tk, python3-gi, python3-wget,
+ python3-gnupg, python3-paramiko, python3-argcomplete, python3-yaml, python-yubico
+Section: main
+Priority: optional
+Homepage: https://pypi.org/project/pwclip/
+Description: password-manager - temporarily saves passwords to the clipboard
+ .
+ pwclip is a password management tool. It's main target is having fast and
+ comfortable access to passwords by storing them for a variable time in the
+ systems clipboard (copy/paste buffer). It uses either GnuPG2 or OpenSSL
+ (converted to GPGSM) keys for cryptographic operations. It also works with
+ yubikey's challenge-response to generate uniq HMAC-SHA1 hashes as well.
+ .
+ The main feature is the pwcli/pwclip mode which provides easy access to the
+ ~/.passcrypt file. That file is used by default as password storage. The
+ program is executed in gui mode when pwclip is called and in cli mode when
+ pwcli is called respectivly. It creates the ~/.passcrypt file which is gpg
+ encrypted text using either the value of GPGKEYS from the users environment as
+ gpg encryption recipients. On startup it lookes for a ~/.pwd.yaml file which is
+ merged with known passwords from the ~/.passcrypt (file if there  already is
+ one). All entrys in the ~/.passcrypt file will be overridden by entrys from the
+ ~/.pwd.yaml file.
+ .
+ See `man pwclip` for details.
