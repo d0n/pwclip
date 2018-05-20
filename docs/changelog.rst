@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-05-11
+Released: 2018-05-20
 
   * obviously fixed readme :-)
 
