@@ -422,11 +422,11 @@ def gui(typ='pw'):
 				continue
 			exit(1)
 		__ent = pcm.lspw(__in)
+		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
+			if xyesno('no entry found for %s, try again?'%__in):
+				continue
+			exit(1)
 		if __ent:
-			if __in not in __ent.keys() or not __ent[__in]:
-				if xyesno('no entry found for %s, try again?'%__in):
-					continue
-				exit(1)
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
@@ -434,3 +434,4 @@ def gui(typ='pw'):
 				forkwaitclip(
                     __pc[0], poclp, boclp,
                     args.time, 'gui' if args.out else None)
+		
