@@ -52,23 +52,14 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	eno = 0
 	copy(text, mode='pb')
-	if out == 'gui':
-		Popen(str(
-            'xvkbd -no-keypad -delay 20 -text %s'%text
-        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-	elif out == 'cli':
-		print(text, end='')
-		#stdout.write(text)
-		#stdout.flush()
 	if fork() == 0:
-		"""
 		if out == 'gui':
 			Popen(str(
                 'xvkbd -no-keypad -delay 20 -text %s'%text
             ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		elif out == 'cli':
-			print(text, end='')
-		"""
+			stdout.write(text)
+			stdout.flush()
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
@@ -76,6 +67,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
+		exit(eno)
 	exit(eno)
 
 def __passreplace(pwlist):
@@ -345,7 +337,9 @@ def cli():
             args.chg, args.pwd, args.com)
 		if not args.aal:
 			__ents[args.user]
-		if not __ents or args.chg not in __ents.keys():
+		if not __ents:
+			if [h for (u, es) in __ents.items() if args.chg in en.keys()]:
+				exit(0)
 			err = ('could not change entry', args.chg)
 	elif args.rms:
 		ers = []
@@ -369,7 +363,7 @@ def cli():
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
 			if __pc:
-				if len(__pc) == 2:
+				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(

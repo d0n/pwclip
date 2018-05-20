@@ -59,8 +59,10 @@ As an example: A person called "Andrew" has a username called "bob". On some
 other machine he has a username called "cat" and he uses SSH for both of them.
 The shared passcrypt file would be assembled like the attached YAML-Format.
 If so providing -u or -A when beeing logged in as "bob" or "cat" respectivly
-can be omitted. While its only the encrypted yaml written as pem you can read
-it using "gpg -d" as well at any time if the correct gpg-key is present.
+may be omitted. In the following example both, "bob" and "cat" have an entry
+called ssh. If -A is used in that case the entry corresponding to the logged-in
+user is prefered. If in doubt you're able to read the crypt file using "gpg -d 
+~/.passcrypt" as well (assuming the correct gpg-key is present).
 
 YAML-Format
 -----------

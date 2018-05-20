@@ -4,9 +4,16 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2018-05-
+
+  * minor readme update for multi user & non-uniq entrys
+
+1.4.1
+-----
+
 Released: 2018-05-20
 
-  * obviously fixed readme :-)
+  * obviously fixed and updated readme =)
 
   * fix bug that caused pwclip to crash instanly in some cases
 
@@ -16,7 +23,9 @@ Released: 2018-05-20
   * fixed repitition in gui mode if no entrys are received or given pattern
     cannot be found in received entrys
 
-  * more readme updates
+  * fixed bug in password printing function (-o) and made it responde quicker
+
+  * replaced findentry function with inline entry matchers
 
 
 1.4.0
