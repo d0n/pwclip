@@ -13,6 +13,9 @@ Released: 2018-05-11
   * fixed filerotate function wich now just uses shutil.move to set filetimes
     correctly and now iterates one counter more
 
+  * fixed repitition in gui mode if no entrys are received or given pattern
+    cannot be found in received entrys
+
   * more readme updates
 
 
