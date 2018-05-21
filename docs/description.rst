@@ -52,17 +52,17 @@ is not used for en/decryption to be precisely.
 The ~/.pwd.yaml as well as the ~/.passcrypt file is assembled as a list of one
 or more users which should be named like the username used for current system
 login. You may have more than one users passwords in the passcrypt but any user
-who can store passwords also can password stored for other usernames in that
-file. It is just of practical use if you have stored passwords for different
-system usernames sharing the same passcrypt file.
+who can store passwords also is able to read password stored for other users in
+that file. It is just of use for visual kategories if you have stored passwords
+for different systems users sharing the same passcrypt file.
 As an example: A person called "Andrew" has a username called "bob". On some
 other machine he has a username called "cat" and he uses SSH for both of them.
-The shared passcrypt file would be assembled like the attached YAML-Format.
-If so providing -u or -A when beeing logged in as "bob" or "cat" respectivly
-may be omitted. In the following example both, "bob" and "cat" have an entry
-called ssh. If -A is used in that case the entry corresponding to the logged-in
-user is prefered. If in doubt you're able to read the crypt file using "gpg -d 
-~/.passcrypt" as well (assuming the correct gpg-key is present).
+The shared passcrypt file would be assembled like the attached YAML-Format
+section. If so providing -u or -A when beeing logged in as "bob" or "cat"
+respectivly may be omitted. In the following example both, "bob" and "cat" have
+an entry called ssh. If -A is used in that case the entry corresponding to the
+logged-in user is prefered. If in doubt you're able to read the crypt file
+using "gpg -d ~/.passcrypt" as well (assuming the correct gpg-key is present).
 
 YAML-Format
 -----------

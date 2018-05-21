@@ -8,7 +8,7 @@ Released:
 
   * fixed non existent reference
 
-
+  * minor readme update 
 
 1.4.2
 -----
