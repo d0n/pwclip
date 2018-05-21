@@ -4,9 +4,28 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-05-
+Released:
+
+  * fixed non existent reference
+
+
+
+1.4.2
+-----
+
+Released: 2018-05-20
 
   * minor readme update for multi user & non-uniq entrys
+
+  * reimplemented windows compatibility
+
+  * many minor changes related to import errors if on windows so many libs have
+    been changed to comply again
+
+  * readded dependency for wget & yubico
+
+  * first release with some automated testing
+
 
 1.4.1
 -----

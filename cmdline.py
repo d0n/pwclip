@@ -300,7 +300,7 @@ def confpars(mode):
           args.add is None and args.chg is None and \
           args.rms is None and (args.sslcrt is None and args.sslkey is None)):
 		pars.print_help()
-		exit(1)
+		#exit(1)
 	return args, pargs, pkwargs
 
 def cli():
@@ -417,7 +417,8 @@ def gui(typ='pw'):
 			exit(1)
 		__ent = pcm.lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
-			if xyesno('no entry found for %s, try again?'%__in):
+			if xyesno('no entry found for %s matching %s, try again?'%(
+                  args.usr, __in)):
 				continue
 			exit(1)
 		if __ent:
@@ -428,4 +429,3 @@ def gui(typ='pw'):
 				forkwaitclip(
                     __pc[0], poclp, boclp,
                     args.time, 'gui' if args.out else None)
-		
