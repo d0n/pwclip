@@ -20,9 +20,9 @@ try:
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, remove, name as osname
+from os import environ, path, remove, getpid, name as osname
 
-from sys import argv
+from sys import stdout
 
 from subprocess import DEVNULL, Popen, call
 
@@ -48,20 +48,26 @@ from secrecy import PassCrypt, ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
-def forkwaitclip(text, poclp, boclp, wait=3):
+def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
+	copy(text, mode='pb')
+	if out == 'gui' and pid == fno:
+		Popen(str(
+            'xvkbd -no-keypad -delay 20 -text %s'%text
+        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+		exit(0)
+	elif out == 'cli' and pid != fno and fno != 0:
+		#print(pid, fno, poclp, boclp, wait, out)
+		#print(text, end='')
+		pass
 	if fork() == 0:
-		del argv[1:]
-		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
 			exit(1)
-		finally:
-			copy(poclp, mode='p')
-			copy(boclp, mode='b')
-		exit(0)
-	return 1
+		copy(poclp, mode='p')
+		copy(boclp, mode='b')
+	exit(0)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -86,7 +92,7 @@ def _printpws_(pwdict, insecure=False):
 	"""password printer with in/secure option"""
 	if not insecure:
 		pwdict = __dictreplace(pwdict)
-	print(tabd(pwdict))
+	#print(tabd(pwdict))
 	exit(0)
 
 def confpars(mode):
@@ -315,7 +321,6 @@ def cli():
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	__ents = {}
 	err = None
-	fork = 0
 	if args.add:
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
@@ -359,9 +364,8 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				fork = forkwaitclip(__pc[0], poclp, boclp, args.time)
-				if fork and args.out:
-					print(__pc[0], end='')
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'could not decrypt' if not __ents else None
@@ -421,7 +425,7 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				fork = forkwaitclip(__pc[0], poclp, boclp, args.time)
+				fork = forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 				if fork and args.out:
 					Popen(
                         str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
