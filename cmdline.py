@@ -55,11 +55,10 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
-			exit(1)
-		finally:
-			copy(poclp, mode='p')
-			copy(boclp, mode='b')
-		exit(0)
+			return 1
+		copy(poclp, mode='p')
+		copy(boclp, mode='b')
+		return 0
 	return 1
 
 def __passreplace(pwlist):
