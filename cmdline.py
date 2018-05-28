@@ -66,6 +66,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
+		exit(eno)
 	return eno
 
 def __passreplace(pwlist):
