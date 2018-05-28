@@ -20,9 +20,9 @@ try:
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, remove, getpid, name as osname
+import sys
 
-from sys import stdout
+from os import environ, path, remove, getpid, name as osname
 
 from subprocess import DEVNULL, Popen, call
 
@@ -50,22 +50,28 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	copy(text, mode='pb')
 	if out == 'gui':
 		Popen(str(
             'xvkbd -no-keypad -delay 20 -text %s'%text
         ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		exit(0)
 	elif out == 'cli':
-		print(text, end='')
+		print(text)
+		print(poclp)
+		print(boclp)
+		print(wait)
+		print(out)
+		#print(text, end='')
+		#pass
 	if fork() == 0:
+		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
 			exit(1)
 		copy(poclp, mode='p')
 		copy(boclp, mode='b')
-	exit(0)
+	exit(1)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -297,7 +303,7 @@ def confpars(mode):
           args.add is None and args.chg is None and \
           args.rms is None and (args.sslcrt is None and args.sslkey is None)):
 		pars.print_help()
-		#exit(1)
+		exit(0)
 	return args, pargs, pkwargs
 
 def cli():
@@ -307,6 +313,9 @@ def cli():
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
+	print(poclp)
+	print(boclp)
+	exit()
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
@@ -423,9 +432,4 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				fork = forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				if fork and args.out:
-					Popen(
-                        str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
-                            ).split(' '), stdout=DEVNULL, stderr=DEVNULL
-                        ).communicate()
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
