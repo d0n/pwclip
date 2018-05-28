@@ -51,12 +51,12 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	copy(text, mode='pb')
-	if out == 'gui' and pid == fno:
+	if out == 'gui':
 		Popen(str(
             'xvkbd -no-keypad -delay 20 -text %s'%text
         ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		exit(0)
-	elif out == 'cli' and pid != fno and fno != 0:
+	elif out == 'cli':
 		#print(pid, fno, poclp, boclp, wait, out)
 		#print(text, end='')
 		pass
