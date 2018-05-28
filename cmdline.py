@@ -359,8 +359,7 @@ def cli():
                         args.lst, ' '.join(__pc[1:])), args.time)
 				if args.out:
 					print(__pc[0], end='')
-				forkwaitclip(
-                    __pc[0], poclp, boclp, args.time, 'cli')
+				forkwaitclip(__pc[0], poclp, boclp, args.time)
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -424,7 +423,5 @@ def gui(typ='pw'):
 					Popen(str(
                         'xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
                     ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-				forkwaitclip(
-                    __pc[0], poclp, boclp,
-                    args.time, 'gui')
+				forkwaitclip(__pc[0], poclp, boclp, args.time)
 				exit(0)
