@@ -50,27 +50,23 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
+	copy(text, mode='pb')
 	if out == 'gui':
 		Popen(str(
             'xvkbd -no-keypad -delay 20 -text %s'%text
         ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		exit(0)
 	elif out == 'cli':
-		print(text)
-		print(poclp)
-		print(boclp)
-		print(wait)
-		print(out)
-		#print(text, end='')
-		#pass
+		print(text, end='')
 	if fork() == 0:
-		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
 			exit(1)
-		copy(poclp, mode='p')
-		copy(boclp, mode='b')
+		finally:
+			copy(poclp, mode='p')
+			copy(boclp, mode='b')
+		exit(0)
 	exit(1)
 
 def __passreplace(pwlist):
@@ -313,9 +309,6 @@ def cli():
 		with open(args.yml, 'w+') as yfh:
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
-	print(poclp)
-	print(boclp)
-	exit()
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
