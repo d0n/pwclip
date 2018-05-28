@@ -60,7 +60,7 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 		exit(0)
-	exit(0)
+	return 1
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -357,9 +357,9 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				if args.out:
-					print(__pc[0], end='')
-				forkwaitclip(__pc[0], poclp, boclp, args.time)
+				if forkwaitclip(__pc[0], poclp, boclp, args.time):
+					if args.out:
+						print(__pc[0], end='')
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -419,9 +419,10 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				if args.out:
-					Popen(str(
-                        'xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
-                    ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-				forkwaitclip(__pc[0], poclp, boclp, args.time)
+				if forkwaitclip(__pc[0], poclp, boclp, args.time):
+					if args.out:
+						Popen(
+                            str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
+                                ).split(' '), stdout=DEVNULL, stderr=DEVNULL
+                            ).communicate()
 				exit(0)
