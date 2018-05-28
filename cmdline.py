@@ -50,10 +50,7 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	print(text)
-	exit()
 	eno = 0
-	copy(text, mode='pb')
 	if out == 'gui':
 		Popen(str(
             'xvkbd -no-keypad -delay 20 -text %s'%text
@@ -61,6 +58,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	elif out == 'cli':
 		stdout.write(text)
 		stdout.flush()
+	copy(text, mode='pb')
 	if fork() == 0:
 		try:
 			sleep(int(wait))
