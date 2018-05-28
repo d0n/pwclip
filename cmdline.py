@@ -369,6 +369,7 @@ def cli():
 				forkwaitclip(
                     __pc[0], poclp, boclp,
                     args.time, 'cli' if args.out else None)
+				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'could not decrypt' if not __ents else None
@@ -429,3 +430,4 @@ def gui(typ='pw'):
 				forkwaitclip(
                     __pc[0], poclp, boclp,
                     args.time, 'gui' if args.out else None)
+				exit(0)
