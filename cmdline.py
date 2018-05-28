@@ -20,8 +20,6 @@ try:
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
-import sys
-
 from os import environ, path, remove, getpid, name as osname
 
 from subprocess import DEVNULL, Popen, call
@@ -293,7 +291,6 @@ def confpars(mode):
 		print(bgre(pkwargs))
 	if mode == 'gui':
 		return args, pargs, pkwargs
-	#print(tabd(args.__dict__))
 	if (
           args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
