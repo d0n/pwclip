@@ -66,8 +66,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-		exit(eno)
-	exit(eno)
+	return eno
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -364,9 +363,10 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(
+				eno = forkwaitclip(
                     __pc[0], poclp, boclp,
                     args.time, 'cli' if args.out else None)
+				exit(eno)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'could not decrypt' if not __ents else None
@@ -384,7 +384,8 @@ def gui(typ='pw'):
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
-		forkwaitclip(res, poclp, boclp, args.time, args.out)
+		eno = forkwaitclip(res, poclp, boclp, args.time, args.out)
+		exit(eno)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
 		if args.add:
@@ -424,6 +425,7 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(
+				eno = forkwaitclip(
                     __pc[0], poclp, boclp,
                     args.time, 'gui' if args.out else None)
+				exit(eno)
