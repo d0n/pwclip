@@ -6,9 +6,14 @@ Changelog
 
 Released:
 
-  * fixed non existent reference
+  * fixed non existent variable reference
 
-  * minor readme update 
+  * minor readme update & typo fixes
+
+  * stdout printing function fix for cli mode
+
+  * lib.system.clip updated as well as corresponding changes in cmdline
+
 
 1.4.2
 -----
