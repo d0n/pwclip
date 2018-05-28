@@ -48,7 +48,7 @@ from secrecy import PassCrypt, ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
-def forkwaitclip(text, poclp, boclp, wait=3, out=None):
+def forkwaitclip(text, poclp, boclp, wait=3):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
 		copy(text, mode='pb')
@@ -357,9 +357,10 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
+				if args.out:
+					print(__pc[0], end='')
 				forkwaitclip(
-                    __pc[0], poclp, boclp,
-                    args.time, 'cli' if args.out else None)
+                    __pc[0], poclp, boclp, args.time, 'cli')
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -419,7 +420,11 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+				if args.out:
+					Popen(str(
+                        'xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
+                    ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 				forkwaitclip(
                     __pc[0], poclp, boclp,
-                    args.time, 'gui' if args.out else None)
+                    args.time, 'gui')
 				exit(0)
