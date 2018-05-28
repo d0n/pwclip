@@ -51,6 +51,7 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
+		del sys.argv[1:]
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
@@ -357,11 +358,9 @@ def cli():
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
 				print('bla')
-				if forkwaitclip(__pc[0], poclp, boclp, args.time):
-					if args.out:
-						print(__pc[0], end='')
-					exit(0)
-				exit(0)
+				if args.out:
+					print(__pc[0], end='')
+				exit(forkwaitclip(__pc[0], poclp, boclp, args.time))
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'could not decrypt' if not __ents else None
