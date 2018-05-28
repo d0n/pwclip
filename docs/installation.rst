@@ -26,4 +26,5 @@ Installing via apt
 ------------------
 
 curl deb.janeiskla.de/ubuntu/project/d0ndeb-pub.key | apt-key add -
-apt-get update ;apt-get install python3-pwclip
+apt-get update
+apt-get install python3-pwclip

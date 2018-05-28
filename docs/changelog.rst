@@ -14,6 +14,8 @@ Released:
 
   * lib.system.clip updated as well as corresponding changes in cmdline
 
+  * updated "see also" and "credits" section in manpage
+
 
 1.4.2
 -----
