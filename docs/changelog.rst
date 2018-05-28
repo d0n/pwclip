@@ -8,9 +8,9 @@ Released:
 
   * fixed non existent variable reference
 
-  * minor readme update & typo fixes
+  * fixed typo in readme and minor updates
 
-  * stdout printing function fix for cli mode
+  * fixed stdout printing function for cli mode
 
   * lib.system.clip updated as well as corresponding changes in cmdline
 
