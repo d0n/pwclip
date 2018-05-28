@@ -113,15 +113,10 @@ Options
 
     pwclip an entry matching PATTERN if given - otherwise list all entrys
 
-
 .. include:: ./usage.rst
-
 
 .. include:: ./troubleshoot.rst
 
-
 .. include:: ./credits.rst
 
-
 .. include:: ./alsos.rst
-
