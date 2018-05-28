@@ -315,7 +315,7 @@ def cli():
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	__ents = {}
 	err = None
-	nofork = 0
+	fork = 0
 	if args.add:
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
@@ -359,8 +359,8 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				nofok = forkwaitclip(__pc[0], poclp, boclp, args.time)
-				if nofork and args.out:
+				fork = forkwaitclip(__pc[0], poclp, boclp, args.time)
+				if fork and args.out:
 					print(__pc[0], end='')
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -383,7 +383,7 @@ def gui(typ='pw'):
 		exit(eno)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
-		nofok = 0
+		fork = 0
 		if args.add:
 			if not PassCrypt(
                   *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
@@ -421,8 +421,8 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				nofok = forkwaitclip(__pc[0], poclp, boclp, args.time)
-				if nofok and args.out:
+				fork = forkwaitclip(__pc[0], poclp, boclp, args.time)
+				if fork and args.out:
 					Popen(
                         str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
                             ).split(' '), stdout=DEVNULL, stderr=DEVNULL
