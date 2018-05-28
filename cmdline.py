@@ -57,9 +57,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
         ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		exit(0)
 	elif out == 'cli':
-		#print(pid, fno, poclp, boclp, wait, out)
-		#print(text, end='')
-		pass
+		print(text, end='')
 	if fork() == 0:
 		try:
 			sleep(int(wait))
