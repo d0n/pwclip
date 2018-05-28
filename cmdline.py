@@ -57,8 +57,9 @@ def forkwaitclip(text, poclp, boclp, wait=3):
 			sleep(int(wait))
 		except KeyboardInterrupt:
 			exit(1)
-		copy(poclp, mode='p')
-		copy(boclp, mode='b')
+		finally:
+			copy(poclp, mode='p')
+			copy(boclp, mode='b')
 		exit(0)
 	return 1
 
@@ -314,6 +315,7 @@ def cli():
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	__ents = {}
 	err = None
+	nofork = 0
 	if args.add:
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
@@ -357,9 +359,9 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				if args.out:
+				nofok = forkwaitclip(__pc[0], poclp, boclp, args.time)
+				if nofork and args.out:
 					print(__pc[0], end='')
-				exit(forkwaitclip(__pc[0], poclp, boclp, args.time))
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'could not decrypt' if not __ents else None
@@ -381,6 +383,7 @@ def gui(typ='pw'):
 		exit(eno)
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
+		nofok = 0
 		if args.add:
 			if not PassCrypt(
                   *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
@@ -418,9 +421,9 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				if args.out:
+				nofok = forkwaitclip(__pc[0], poclp, boclp, args.time)
+				if nofok and args.out:
 					Popen(
                         str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
                             ).split(' '), stdout=DEVNULL, stderr=DEVNULL
                         ).communicate()
-				exit(forkwaitclip(__pc[0], poclp, boclp, args.time))
