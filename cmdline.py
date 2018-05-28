@@ -360,6 +360,7 @@ def cli():
 				if forkwaitclip(__pc[0], poclp, boclp, args.time):
 					if args.out:
 						print(__pc[0], end='')
+					exit(0)
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -419,7 +420,7 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				if forkwaitclip(__pc[0], poclp, boclp, args.time):
+				if not forkwaitclip(__pc[0], poclp, boclp, args.time):
 					if args.out:
 						Popen(
                             str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
