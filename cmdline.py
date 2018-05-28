@@ -356,6 +356,7 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
+				print('bla')
 				if forkwaitclip(__pc[0], poclp, boclp, args.time):
 					if args.out:
 						print(__pc[0], end='')
