@@ -51,23 +51,21 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	eno = 0
+	if out == 'gui':
+		Popen(str(
+            'xvkbd -no-keypad -delay 20 -text %s'%text
+        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+	elif out == 'cli':
+		print(text, end='')
 	if fork() == 0:
-		if out == 'gui':
-			Popen(str(
-                'xvkbd -no-keypad -delay 20 -text %s'%text
-            ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-		elif out == 'cli':
-			print(text, end='')
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
 			eno = 1
-		finally:
-			copy(poclp, mode='p')
-			copy(boclp, mode='b')
-		exit(eno)
-	return eno
+		copy(poclp, mode='p')
+		copy(boclp, mode='b')
+	exit(eno)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
