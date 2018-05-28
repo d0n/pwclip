@@ -22,7 +22,7 @@ except ImportError:
 
 from os import environ, path, remove, name as osname
 
-from sys import stdout
+from sys import argv
 
 from subprocess import DEVNULL, Popen, call
 
@@ -51,7 +51,7 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
-		del sys.argv[1:]
+		del argv[1:]
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
@@ -357,7 +357,6 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				print('bla')
 				if args.out:
 					print(__pc[0], end='')
 				exit(forkwaitclip(__pc[0], poclp, boclp, args.time))
@@ -419,10 +418,9 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				if not forkwaitclip(__pc[0], poclp, boclp, args.time):
-					if args.out:
-						Popen(
-                            str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
-                                ).split(' '), stdout=DEVNULL, stderr=DEVNULL
-                            ).communicate()
-				exit(0)
+				if args.out:
+					Popen(
+                        str('xvkbd -no-keypad -delay 20 -text %s'%__pc[0]
+                            ).split(' '), stdout=DEVNULL, stderr=DEVNULL
+                        ).communicate()
+				exit(forkwaitclip(__pc[0], poclp, boclp, args.time))
