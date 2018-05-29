@@ -366,6 +366,7 @@ def cli():
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+		print(__ents)
 		err = 'could not decrypt' if not __ents else None
 	if err:
 		fatal(*err)
