@@ -4,6 +4,12 @@ Changelog
 
 {CurrentVersion}
 
+Released:
+
+
+1.4.3
+-----
+
 Released: 2018-05-29
 
   * fixed non existent variable reference
