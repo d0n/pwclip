@@ -365,6 +365,8 @@ def cli():
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 				exit(0)
 	elif args.lst is None:
+		print(pargs)
+		print(pkwargs)
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		print(__ents)
 		err = 'could not decrypt' if not __ents else None
