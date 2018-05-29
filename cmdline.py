@@ -90,7 +90,7 @@ def _printpws_(pwdict, insecure=False):
 	"""password printer with in/secure option"""
 	if not insecure:
 		pwdict = __dictreplace(pwdict)
-	#print(tabd(pwdict))
+	print(tabd(pwdict))
 	exit(0)
 
 def confpars(mode):
@@ -365,10 +365,7 @@ def cli():
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 				exit(0)
 	elif args.lst is None:
-		print(pargs)
-		print(pkwargs)
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
-		print(__ents)
 		err = 'could not decrypt' if not __ents else None
 	if err:
 		fatal(*err)
