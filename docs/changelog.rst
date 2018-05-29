@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released:
+Released: 2018-05-29
 
   * fixed non existent variable reference
 
@@ -16,7 +16,7 @@ Released:
 
   * updated "see also" and "credits" section in manpage
 
-  * fixed some timeouts and error messages when using scp without connection
+  * fixed some timeouts and error messages when using scp without a connection
 
 
 1.4.2
