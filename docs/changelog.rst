@@ -16,6 +16,8 @@ Released:
 
   * updated "see also" and "credits" section in manpage
 
+  * fixed some timeouts and error messages when using scp without connection
+
 
 1.4.2
 -----
