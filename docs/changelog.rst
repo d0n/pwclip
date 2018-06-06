@@ -4,7 +4,9 @@ Changelog
 
 {CurrentVersion}
 
-Released:
+Released: 2018-06
+
+  * fixed typo in readme
 
 
 1.4.3
