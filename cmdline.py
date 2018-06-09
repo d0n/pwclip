@@ -260,6 +260,7 @@ def confpars(mode):
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
+		'gui' if mode else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
@@ -366,7 +367,7 @@ def cli():
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
-		err = 'could not decrypt' if not __ents else None
+		err = 'no password entrys or decryption failed' if not __ents else None
 	if err:
 		fatal(*err)
 	_printpws_(__ents, args.sho)
