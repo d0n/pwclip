@@ -48,37 +48,15 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-<<<<<<< HEAD
-	copy(text, mode='pb')
-	if fork() == 0:
-		if out == 'gui':
-			Popen(str(
-				'xvkbd -no-keypad -delay 50 -text %s'%text
-			).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-		elif out == 'cli':
-			print(text, end='')
-||||||| merged common ancestors
 	if out:
 		if out == 'gui':
 			Popen(str(
                 'xvkbd -no-keypad -delay 10 -text %s'%text
                 ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		else:
-			stdout.write(text)
-			stdout.flush()
+			print(text)
 	copy(text, mode='pb')
 	if fork() == 0:
-=======
-	fno = fork()
-	if out == 'gui' and fno == 0:
-		Popen(str(
-			'xvkbd -no-keypad -delay 20 -text %s'%text
-		).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-	elif out == 'cli' and fno == 0:
-		print(text, end='')
-	if fno == 0:
-		copy(text, mode='pb')
->>>>>>> 918415335a31366cc2cadc4445f7ff45fe445088
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
@@ -405,15 +383,8 @@ def gui(typ='pw'):
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
-<<<<<<< HEAD
-		forkwaitclip(__res, poclp, boclp, args.time)
-||||||| merged common ancestors
-		forkwaitclip(__res, poclp, boclp, args.time)
-		exit(0)
-=======
 		eno = forkwaitclip(res, poclp, boclp, args.time, args.out)
 		exit(eno)
->>>>>>> 918415335a31366cc2cadc4445f7ff45fe445088
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
 		fork = 0
@@ -426,18 +397,9 @@ def gui(typ='pw'):
 		elif args.chg:
 			if args.pwd:
 				pkwargs['password'] = args.pwd
-<<<<<<< HEAD
 			if not PassCrypt(
                   *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.rms)
-||||||| merged common ancestors
-			if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-				xmsgok('could not change entry %s'%args.rms)
-=======
-			if not PassCrypt(
-                  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-				xmsgok('could not change entry %s'%args.chg)
->>>>>>> 918415335a31366cc2cadc4445f7ff45fe445088
 				exit(1)
 			exit(0)
 		elif args.rms:
