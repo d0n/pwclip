@@ -4,9 +4,16 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-06
+Released: 2018-06-09
 
   * fixed typo in readme
+
+  * fixed error to not comply by wrong message if no entrys are found
+
+  * lots of updates for windows compatibility and it lookes better again
+
+  * completed implementation of key-generation dialog with nasty usability but
+    only is needed once if no keys are found on first start of pwclip
 
 
 1.4.3
@@ -137,6 +144,13 @@ Released: 2018-05-06
 Released: 2018-04-28
 
   * some more changes to build environment (not really of interest for pwclip)
+
+  * fixed locations in pkginfo to match index/download url, fixed license
+    in "intended audience" classifiers and changed some release information
+
+  * some more changes for user dialogs in x mode like possible repitition of
+    input as well as some more error messages
+
 
   * fixed locations in pkginfo to match index/download url, fixed license
     in "intended audience" classifiers and changed some release information
@@ -1151,10 +1165,3 @@ Released: 2016-10-22
   usual environment
 
 * added complete new en/decryption mode via python3-gnupg - now it's capable
-  of selecting gpg-keys by GPGKEYS environment variable to en/decrypt
-  ~/.passcrypt
-
-* documentation updated and cleanup on typo/irrelevant text
-
-* FIXED: issue where the gpg-agent isn't able decrypt without passphrase/pin
-  and clould not ask for it
