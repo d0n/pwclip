@@ -1,17 +1,12 @@
 pwclip
 ======
 
+.. include:: ./description.rst
+
 Synopsis
 --------
 
-**pwclip** [*options*]
-
-Description
------------
-
-pwclip - Multi functional password manager to temporarily save passphrases to
-your copy/paste buffers for easy and secure accessing your passwords. Most of
-the following arguments mights also be set by the config ~/.config/pwclip.yaml
+  **pwclip**  [*options*]
 
 Options
 -------
@@ -118,37 +113,10 @@ Options
 
     pwclip an entry matching PATTERN if given - otherwise list all entrys
 
+.. include:: ./usage.rst
 
-Epilog
-------
-the yubikey feature is compatible with its's challenge-response feature only
+.. include:: ./troubleshoot.rst
 
+.. include:: ./credits.rst
 
-Examples
---------
-list all entrys for current loged-in system user
-
-    $ pwcli -l
-
-add password entry for "someotheruser" (users as well as entrys dont need to exist)
-
-    $ pwcli -u someotheruser -a
-
-merge passwords using ssl into .mycrypt and list all entrys for all users
-
-    $ pwcli -P .mycrypt -Y pwds.yaml -C myrottensslcert.pem -K myrottensslkey.pem -A -l
-
-yubikey gui-mode autoselecting slot and serial (usually even if more than one key is connected)
-
-    $ pwclip -y
-
-not used by default but can be combined with every actions is the ftp
-sync feature which compares remote and local file timestams as well
-as copying it from or to that remote server (for obvious reasons not
-recommended but needed in some cases)
-
-    $ pwclip -R --remote-host my.secure.ftp.storage --remote-user remoteuser
-
-.. seealso::
-
-   :manpage:`gnupg(1)`, :manpage:`python(1)`
+.. include:: ./alsos.rst

@@ -48,15 +48,15 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	if out:
-		if out == 'gui':
-			Popen(str(
-                'xvkbd -no-keypad -delay 10 -text %s'%text
-                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-		else:
-			print(text)
-	copy(text, mode='pb')
-	if fork() == 0:
+	fno = fork()
+	if out == 'gui' and fno == 0:
+		Popen(str(
+			'xvkbd -no-keypad -delay 20 -text %s'%text
+		).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+	elif out == 'cli' and fno == 0:
+		print(text, end='')
+	if fno == 0:
+		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
@@ -363,9 +363,8 @@ def cli():
 				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(
-                    __pc[0], poclp, boclp,
-                    args.time, 'cli' if args.out else None)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'no password entrys or decryption failed' if not __ents else None
@@ -399,7 +398,7 @@ def gui(typ='pw'):
 				pkwargs['password'] = args.pwd
 			if not PassCrypt(
                   *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-				xmsgok('could not change entry %s'%args.rms)
+				xmsgok('could not change entry %s'%args.chg)
 				exit(1)
 			exit(0)
 		elif args.rms:
@@ -425,6 +424,5 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(
-                    __pc[0], poclp, boclp,
-                    args.time, 'gui' if args.out else None)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				exit(0)
