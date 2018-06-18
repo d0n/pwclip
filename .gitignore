@@ -11,3 +11,4 @@ pwclip.egg-info
 *.swp
 *.deb
 *.tar.gz
+*.FAILED

@@ -20,9 +20,7 @@ try:
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
-from os import environ, path, remove, name as osname
-
-from sys import stdout
+from os import environ, path, remove, getpid, name as osname
 
 from subprocess import DEVNULL, Popen, call
 
@@ -37,30 +35,12 @@ from time import sleep
 
 from yaml import load
 
+from getpass import getpass
+
 # local relative imports
-from colortext import bgre, tabd, error, fatal
+from colortext import bgre, bred, tabd, error, fatal
 
 from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
-
-# first if on windows and gpg.exe cannot be found in PATH install gpg4win
-if osname == 'nt' and not which('gpg.exe'):
-	if not xyesno('mandatory gpg4win not found! Install it?'):
-		exit(1)
-	import wget
-	src = 'https://files.gpg4win.org/gpg4win-latest.exe'
-	trg = path.join(environ['TEMP'], 'gpg4win.exe')
-	wget.download(src, out=trg)
-	try:
-		call(trg)
-	except TimeoutError:
-		xmsgok('something went wrong while downloading gpg4win from: ' \
-               'https://files.gpg4win.org/ - try installing yourself!')
-		exit(1)
-	finally:
-		try:
-			remove(trg)
-		except FileNotFoundError:
-			pass
 
 from secrecy import PassCrypt, ykchalres, yubikeys
 
@@ -68,6 +48,7 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
+<<<<<<< HEAD
 	copy(text, mode='pb')
 	if fork() == 0:
 		if out == 'gui':
@@ -76,9 +57,31 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 			).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		elif out == 'cli':
 			print(text, end='')
+||||||| merged common ancestors
+	if out:
+		if out == 'gui':
+			Popen(str(
+                'xvkbd -no-keypad -delay 10 -text %s'%text
+                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+		else:
+			stdout.write(text)
+			stdout.flush()
+	copy(text, mode='pb')
+	if fork() == 0:
+=======
+	fno = fork()
+	if out == 'gui' and fno == 0:
+		Popen(str(
+			'xvkbd -no-keypad -delay 20 -text %s'%text
+		).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+	elif out == 'cli' and fno == 0:
+		print(text, end='')
+	if fno == 0:
+		copy(text, mode='pb')
+>>>>>>> 918415335a31366cc2cadc4445f7ff45fe445088
 		try:
 			sleep(int(wait))
-		except (KeyboardInterrupt, RuntimeError):
+		except KeyboardInterrupt:
 			exit(1)
 		finally:
 			copy(poclp, mode='p')
@@ -139,7 +142,6 @@ def confpars(mode):
 		cfgs['binary'] = 'gpg2'
 		if osname == 'nt':
 			cfgs['binary'] = 'gpg'
-	cfgs['user'] = '$USER' if osname != 'nt' else '$USERNAME'
 	try:
 		cfgs['user'] = environ['USER']
 	except KeyError:
@@ -154,10 +156,11 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	desc = 'pwclip - Multi functional password manager to temporarily ' \
            'save passphrases to your copy/paste buffers for easy and ' \
-           'secure accessing your passwords. Most of the following ' \
-           'arguments mights also be set by the config ~/.config/%s.yaml'%_me
-	epic = 'the yubikey feature is compatible with its\'s ' \
-           'challenge-response feature only'
+           'secure accessing your passwords. The following ' \
+           'arguments mights also be set by the config ' \
+           '~/.config/%s.yaml file.'%_me
+	epic = 'the yubikey mode is compatible with the ' \
+           'challenge-response feature of yubikeys only for now.'
 	pars = ArgumentParser(description=desc, epilog=epic)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
@@ -181,7 +184,7 @@ def confpars(mode):
 	pars.add_argument(
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
-        help='time to wait before resetting clip (%d is default)'%cfgs['time'])
+        help='time to wait before resetting clip (%s is default)'%cfgs['time'])
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -279,6 +282,7 @@ def confpars(mode):
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
+		'gui' if mode else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
@@ -310,13 +314,12 @@ def confpars(mode):
 		print(bgre(pkwargs))
 	if mode == 'gui':
 		return args, pargs, pkwargs
-	#print(tabd(args.__dict__))
 	if (
           args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
           args.rms is None and (args.sslcrt is None and args.sslkey is None)):
 		pars.print_help()
-		exit(1)
+		exit(0)
 	return args, pargs, pkwargs
 
 def cli():
@@ -328,39 +331,58 @@ def cli():
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
 		if 'YKSERIAL' in environ.keys():
-			__ykser = environ['YKSERIAL']
-		__ykser = args.yks if args.yks and len(args.yks) >= 6 else None
-		__in = xgetpass()
-		__res = ykchalres(__in, args.ysl, __ykser)
-		if not __res:
+			ykser = environ['YKSERIAL']
+		ykser = args.yks if args.yks else None
+		if ykser and len(ykser) >= 6:
+			ykser = ''.join(str(ykser)[-6:])
+		res = ykchalres(getpass(), args.ysl, ykser)
+		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
-		forkwaitclip(__res, poclp, boclp, args.time)
+		forkwaitclip(res, poclp, boclp, args.time, args.out)
 		exit(0)
-	__ents = None
+	__ents = {}
+	err = None
 	if args.add:
-		if not PassCrypt(*pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
-			fatal('could not add entry ', args.add)
+		__ents = PassCrypt(*pargs, **pkwargs).adpw(
+            args.add, args.pwd, args.com)
+		if not args.aal:
+			__ents = __ents[args.user]
+		if not __ents or args.add not in __ents.keys():
+			err = ('could not add entry', args.add)
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
-		if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-			fatal('could not change entry ', args.chg)
+		__ents = PassCrypt(*pargs, **pkwargs).chpw(
+            args.chg, args.pwd, args.com)
+		if not args.aal:
+			__ents[args.user]
+		if not __ents:
+			if [h for (u, es) in __ents.items() if args.chg in en.keys()]:
+				exit(0)
+			err = ('could not change entry', args.chg)
 	elif args.rms:
+		ers = []
 		for r in args.rms:
-			if not PassCrypt(*pargs, **pkwargs).rmpw(r):
-				error('could not delete entry ', r)
+			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
+			if not args.aal:
+				__ents[args.user]
+			if r in __ents.keys():
+				ers.append(r)
+		ewrd = 'entry'
+		if len(ers) >= 1:
+			ewrd = 'entrys'
+		err = ('deleting the following %s failed:', bred(', ').join(
+               ers)) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
-		if not __ents:
-			fatal('could not decrypt')
-		elif __ents and args.lst and not args.lst in __ents.keys():
-			fatal(
-                'could not find entry for ',
-                args.lst, ' in ', pkwargs['crypt'])
+		if __ents and args.lst not in __ents.keys():
+			err = (
+                'could not find entry', args.lst,
+                'for', args.user, 'in', pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
 			if __pc:
-				if len(__pc) == 2:
+				if len(__pc) == 2 and osname != 'nt':
 					xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(
@@ -368,37 +390,60 @@ def cli():
                     args.time, 'cli' if args.out else None)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+		err = 'no password entrys or decryption failed' if not __ents else None
+	if err:
+		fatal(*err)
 	_printpws_(__ents, args.sho)
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
-	if typ == 'yk':
-		__in = xgetpass()
-		__res = ykchalres(__in, args.ykslot, args.ykser)
-		if not __res:
+	if args.yks or args.yks is None or typ == 'yk':
+		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
+		if not res:
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
+<<<<<<< HEAD
 		forkwaitclip(__res, poclp, boclp, args.time)
+||||||| merged common ancestors
+		forkwaitclip(__res, poclp, boclp, args.time)
+		exit(0)
+=======
+		eno = forkwaitclip(res, poclp, boclp, args.time, args.out)
+		exit(eno)
+>>>>>>> 918415335a31366cc2cadc4445f7ff45fe445088
 	pcm = PassCrypt(*pargs, **pkwargs)
 	while True:
+		fork = 0
 		if args.add:
 			if not PassCrypt(
                   *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
-				xmsgok('could not add entry %s'%args.rms)
+				xmsgok('could not add entry %s'%args.add)
 				exit(1)
+			exit(0)
 		elif args.chg:
 			if args.pwd:
 				pkwargs['password'] = args.pwd
+<<<<<<< HEAD
 			if not PassCrypt(
                   *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.rms)
+||||||| merged common ancestors
+			if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+				xmsgok('could not change entry %s'%args.rms)
+=======
+			if not PassCrypt(
+                  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+				xmsgok('could not change entry %s'%args.chg)
+>>>>>>> 918415335a31366cc2cadc4445f7ff45fe445088
 				exit(1)
+			exit(0)
 		elif args.rms:
 			for r in args.rms:
-				if not PassCrypt(*pargs, **pkwargs).rmpw(r):
+				__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
+				if not __ents:
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
@@ -408,11 +453,12 @@ def gui(typ='pw'):
 				continue
 			exit(1)
 		__ent = pcm.lspw(__in)
-		if __ent and __in:
-			if __in not in __ent.keys() or not __ent[__in]:
-				if xyesno('no entry found for %s, try again?'%__in):
-					continue
-				exit(1)
+		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
+			if xyesno('no entry found for %s matching %s, try again?'%(
+                  args.usr, __in)):
+				continue
+			exit(1)
+		if __ent:
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
