@@ -355,7 +355,7 @@ def cli():
 		ewrd = 'entry'
 		if len(ers) >= 1:
 			ewrd = 'entrys'
-		err = ('deleting the following %s failed:', bred(', ').join(
+		err = ('deleting the following %s failed:'%ewrd, bred(', ').join(
                ers)) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
