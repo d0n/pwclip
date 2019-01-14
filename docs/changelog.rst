@@ -17,7 +17,7 @@ Released: 2019-01-14
 
   * completed implementation of key-generation dialog with nasty usability but
     only is needed once if no keys are found on first start
-  
+
   * [W] lots of updates for windows compatibility which is getting better again
     (regaining windows compatibility is ongoing)
 
