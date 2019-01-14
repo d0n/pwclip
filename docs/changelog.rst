@@ -4,16 +4,22 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2018-06-09
+Released: 2019-01-14
+
+  * fixed removing passcrypt file on filerotation
+
+  * merged changes from master fixing ssh lib which is broken by using paramiko
+    caused me to use ssh system binary for now
 
   * fixed typo in readme
 
-  * fixed error to not comply by wrong message if no entrys are found
-
-  * lots of updates for windows compatibility and it lookes better again
+  * fixed error to not comply if no entrys are found
 
   * completed implementation of key-generation dialog with nasty usability but
-    only is needed once if no keys are found on first start of pwclip
+    only is needed once if no keys are found on first start
+  
+  * [W] lots of updates for windows compatibility which is getting better again
+    (regaining windows compatibility is ongoing)
 
 
 1.4.3
