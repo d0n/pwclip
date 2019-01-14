@@ -20,8 +20,6 @@ try:
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
-from sys import stdout
-
 from os import environ, path, remove, getpid, name as osname
 
 from subprocess import DEVNULL, Popen, call
@@ -92,11 +90,7 @@ def _printpws_(pwdict, insecure=False):
 	"""password printer with in/secure option"""
 	if not insecure:
 		pwdict = __dictreplace(pwdict)
-	try:
-		print(tabd(pwdict))
-	except UnicodeEncodeError:
-		for (k, v) in pwdict.items():
-			stdout.write('%s %s'%(k, v))
+	print(tabd(pwdict))
 	exit(0)
 
 def confpars(mode):
@@ -355,7 +349,7 @@ def cli():
 		ewrd = 'entry'
 		if len(ers) >= 1:
 			ewrd = 'entrys'
-		err = ('deleting the following %s failed:'%ewrd, bred(', ').join(
+		err = ('deleting the following %s failed:', bred(', ').join(
                ers)) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)

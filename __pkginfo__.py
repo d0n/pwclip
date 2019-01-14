@@ -1,7 +1,7 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.4.3'
+version = '1.4.4'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil',
     'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
@@ -28,8 +28,6 @@ classifiers = ['Environment :: Console',
                'Topic :: Desktop Environment',
                'Topic :: Utilities',
                'Topic :: Desktop Environment']
-setup_requires = ['pytest-runner']
-tests_require = ['pytest']
 include_package_data = True
 long_description = ''
 try:
