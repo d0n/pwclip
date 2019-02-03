@@ -14,6 +14,8 @@ Released: 2019-02-03
   * fix incorrect warning about depricated keys passed by paramiko 
     (cryptography==2.4.2 dependency)
 
+  * some stylistic changes to docs
+
 
 1.4.4
 -----
