@@ -4,6 +4,17 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-02-03
+
+  * fix passcrypt not beeing reencrypted if gpg-keys differ from those the
+    passcrypt have been made with
+
+
+
+
+1.4.4
+-----
+
 Released: 2019-01-14
 
   * fixed removing passcrypt file on filerotation
