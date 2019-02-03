@@ -9,6 +9,10 @@ Released: 2019-02-03
   * fix passcrypt not beeing reencrypted if gpg-keys differ from those the
     passcrypt have been made with
 
+  * fix input (stdin) for command functions
+
+  * fix incorrect warning about depricated keys passed by paramiko 
+    (cryptography==2.4.2 dependency)
 
 
 

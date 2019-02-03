@@ -4,7 +4,7 @@ provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.4.4'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil',
-    'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
+    'python-gnupg', 'python-yubico', 'PyYAML', 'wget' 'cryptography==2.4.2']
 url = 'https://pypi.org/project/pwclip/'
 download_url = 'http://deb.janeiskla.de/python/python3-pwclip_current_all.deb'
 license = "GPLv3+"
