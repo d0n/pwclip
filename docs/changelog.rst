@@ -15,7 +15,6 @@ Released: 2019-02-03
     (cryptography==2.4.2 dependency)
 
 
-
 1.4.4
 -----
 
