@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-	
 #
 # This file is free software by d0n <d0n@janeiskla.de>
 #
@@ -55,6 +55,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 	elif out == 'cli' and fno == 0:
 		print(text, end='')
+	print(text)
 	if fno == 0:
 		copy(text, mode='pb')
 		try:
@@ -163,6 +164,23 @@ def confpars(mode):
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (%s is default)'%cfgs['time'])
+	pars.add_argument(
+        '-P', '--passcrypt',
+        dest='pcr', metavar='CRYPTFILE',
+        default=path.expanduser('~/.passcrypt'),
+        help='set location of CRYPTFILE to use as ' \
+             'password store (~/.passcrypt is default)')
+	pars.add_argument(
+        '-u', '--user',
+        dest='usr', metavar='USER', default=cfgs['user'],
+        help='query entrys only for USER (-A overrides, ' \
+             '"%s" is default)'%cfgs['user'])
+	pars.add_argument(
+        '-Y', '--yaml',
+        dest='yml', metavar='YAMLFILE',
+        default=path.expanduser('~/.pwd.yaml'),
+        help='set location of YAMLFILE to read whole ' \
+             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -182,20 +200,15 @@ def confpars(mode):
         dest='rcp', metavar='"ID ..."',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
-	gpars.add_argument(
-        '-u', '--user',
-        dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys only for USER (-A overrides, ' \
-             '"%s" is default)'%cfgs['user'])
 	pars.add_argument(
         '-p', '--password',
         dest='pwd', default=None,
-        help='enter password for add/change actions' \
+        help='enter password for add/change action' \
              '(insecure & not recommended)')
 	pars.add_argument(
         '--comment',
         dest='com', default=None,
-        help='enter comment for add/change actions')
+        help='enter comment for add/change action')
 	gpars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
@@ -213,29 +226,20 @@ def confpars(mode):
         '--ca', '--ca-cert',
         dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
-	gpars.add_argument(
-        '-P', '--passcrypt',
-        dest='pcr', metavar='CRYPTFILE',
-        default=path.expanduser('~/.passcrypt'),
-        help='set location of CRYPTFILE to use as ' \
-             'password store (~/.passcrypt is default)')
-	gpars.add_argument(
-        '-Y', '--yaml',
-        dest='yml', metavar='YAMLFILE',
-        default=path.expanduser('~/.pwd.yaml'),
-        help='set location of YAMLFILE to read whole ' \
-             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
-	gpars.add_argument(
+
+	
+	ypars = pars.add_argument_group('yubikey arguments')
+	ypars.add_argument(
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots (only useful with -y)'
-        ).completer = ChoicesCompleter((1, 2))
-	ypars = pars.add_argument_group('yubikey arguments')
+			).completer = ChoicesCompleter((1, 2))
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set ' \
 		     'SERIAL of yubikey (autoselect serial and slot is default)')
+				
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
@@ -367,7 +371,6 @@ def cli():
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
-		err = 'no password entrys or decryption failed' if not __ents else None
 	if err:
 		fatal(*err)
 	_printpws_(__ents, args.sho)
