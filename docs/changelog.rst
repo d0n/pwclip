@@ -11,6 +11,9 @@ Released: 2019-02-20
   * merged with upstream which fixes executor handling input of commands
     correctly
 
+  * added github repo as homepage url and the download link (for deb packet)
+    is fixed
+
   * [W] some windows related issues fixed - paths, non-existent windows-lib
     imports, etc.
 
