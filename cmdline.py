@@ -55,7 +55,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 	elif out == 'cli' and fno == 0:
 		print(text, end='')
-	print(text)
 	if fno == 0:
 		copy(text, mode='pb')
 		try:
