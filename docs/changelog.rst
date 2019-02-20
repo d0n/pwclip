@@ -9,9 +9,10 @@ Released: 2019-02-20
   * fixed wrong alignment of "ok" and "cancle" buttons
 
   * merged with upstream which fixes executor handling input of commands
-    correctly (at least)
+    correctly
 
-  * [W] some windows related issues fixed
+  * [W] some windows related issues fixed like random function which is named
+    differently
 
 
 1.4.5
