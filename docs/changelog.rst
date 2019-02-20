@@ -11,8 +11,8 @@ Released: 2019-02-20
   * merged with upstream which fixes executor handling input of commands
     correctly
 
-  * [W] some windows related issues fixed like random function which is named
-    differently
+  * [W] some windows related issues fixed - paths, non-existent windows-lib
+    imports, etc.
 
 
 1.4.5
