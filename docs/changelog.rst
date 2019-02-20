@@ -4,6 +4,19 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-02-20
+
+  * fixed wrong alignment of "ok" and "cancle" buttons
+
+  * merged with upstream which fixes executor handling input of commands
+    correctly (at least)
+
+  * [W] some windows related issues fixed
+
+
+1.4.5
+-----
+
 Released: 2019-02-03
 
   * fix passcrypt not beeing reencrypted if gpg-keys differ from those the
