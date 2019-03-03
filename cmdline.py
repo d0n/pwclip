@@ -272,6 +272,7 @@ def confpars(mode):
 	pkwargs['binary'] = __bin
 	pkwargs['sslcrt'] = args.sslcrt
 	pkwargs['sslkey'] = args.sslkey
+	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
 	if args.rcp:
