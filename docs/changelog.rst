@@ -3,6 +3,20 @@ Changelog
 =========
 
 {CurrentVersion}
+-----
+
+Released: 2019-03-08
+
+  * [W] again fixed a few windows related errors like text colorization
+
+  * fixed environment setting for GPGKEY/GPGKEYS wich must not override
+    if they are not set - now if unset, will be set to the keys formerly
+    used to encrypt
+ 
+
+
+1.4.6
+-----
 
 Released: 2019-02-20
 
