@@ -99,13 +99,13 @@ def confpars(mode):
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = load(cfh.read())
-	except FileNotFoundError:
+			cfgs = dict(load(cfh.read()))
+	except (TypeError, FileNotFoundError):
 		cfgs = {}
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
-		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
+		cfgs['time'] = 3
 	try:
 		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
@@ -309,6 +309,7 @@ def cli():
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
+		print('bla')
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
 		ykser = args.yks if args.yks else None
@@ -387,14 +388,11 @@ def gui(typ='pw'):
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
-		eno = forkwaitclip(res, poclp, boclp, args.time, args.out)
-		exit(eno)
-	pcm = PassCrypt(*pargs, **pkwargs)
+		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	while True:
-		fork = 0
 		if args.add:
 			if not PassCrypt(
-                  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
+				  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
 				xmsgok('could not add entry %s'%args.add)
 				exit(1)
 			exit(0)
@@ -402,7 +400,7 @@ def gui(typ='pw'):
 			if args.pwd:
 				pkwargs['password'] = args.pwd
 			if not PassCrypt(
-                  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+				  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.chg)
 				exit(1)
 			exit(0)
@@ -421,7 +419,7 @@ def gui(typ='pw'):
 		__ent = pcm.lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
 			if xyesno('no entry found for %s matching %s, try again?'%(
-                  args.usr, __in)):
+				  args.usr, __in)):
 				continue
 			exit(1)
 		if __ent:
