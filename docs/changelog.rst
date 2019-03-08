@@ -9,10 +9,13 @@ Released: 2019-03-08
 
   * [W] again fixed a few windows related errors like text colorization
 
-  * fixed environment setting for GPGKEY/GPGKEYS wich must not override
-    if they are not set - now if unset, will be set to the keys formerly
-    used to encrypt
- 
+  * fixed environment setting for GPGKEY/GPGKEYS wich, if not set would
+    raise an error even though in that case all gpg-keys are used
+
+  * reimplemented timefile checker to only push to remote if remote is set
+    ande time since last remote check is greater then 4h
+
+  * fixed executor methods didn't recognise input if given
 
 
 1.4.6
