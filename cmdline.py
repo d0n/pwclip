@@ -416,7 +416,7 @@ def gui(typ='pw'):
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
-		__ent = pcm.lspw(__in)
+		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
 			if xyesno('no entry found for %s matching %s, try again?'%(
 				  args.usr, __in)):
