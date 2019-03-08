@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-	
+# -*- coding: utf-8 -*-
 #
 # This file is free software by d0n <d0n@janeiskla.de>
 #
@@ -51,8 +51,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	fno = fork()
 	if out == 'gui' and fno == 0:
 		Popen(str(
-			'xvkbd -no-keypad -delay 20 -text %s'%text
-		).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+            'xvkbd -no-keypad -delay 20 -text %s'%text
+        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 	elif out == 'cli' and fno == 0:
 		print(text, end='')
 	if fno == 0:
@@ -99,13 +99,13 @@ def confpars(mode):
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = load(cfh.read())
-	except FileNotFoundError:
+			cfgs = dict(load(cfh.read()))
+	except (TypeError, FileNotFoundError):
 		cfgs = {}
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
-		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
+		cfgs['time'] = 3
 	try:
 		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
@@ -163,23 +163,6 @@ def confpars(mode):
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (%s is default)'%cfgs['time'])
-	pars.add_argument(
-        '-P', '--passcrypt',
-        dest='pcr', metavar='CRYPTFILE',
-        default=path.expanduser('~/.passcrypt'),
-        help='set location of CRYPTFILE to use as ' \
-             'password store (~/.passcrypt is default)')
-	pars.add_argument(
-        '-u', '--user',
-        dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys only for USER (-A overrides, ' \
-             '"%s" is default)'%cfgs['user'])
-	pars.add_argument(
-        '-Y', '--yaml',
-        dest='yml', metavar='YAMLFILE',
-        default=path.expanduser('~/.pwd.yaml'),
-        help='set location of YAMLFILE to read whole ' \
-             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -199,15 +182,20 @@ def confpars(mode):
         dest='rcp', metavar='"ID ..."',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
+	gpars.add_argument(
+        '-u', '--user',
+        dest='usr', metavar='USER', default=cfgs['user'],
+        help='query entrys only for USER (-A overrides, ' \
+             '"%s" is default)'%cfgs['user'])
 	pars.add_argument(
         '-p', '--password',
         dest='pwd', default=None,
-        help='enter password for add/change action' \
+        help='enter password for add/change actions' \
              '(insecure & not recommended)')
 	pars.add_argument(
         '--comment',
         dest='com', default=None,
-        help='enter comment for add/change action')
+        help='enter comment for add/change actions')
 	gpars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
@@ -225,20 +213,29 @@ def confpars(mode):
         '--ca', '--ca-cert',
         dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
-
-	
-	ypars = pars.add_argument_group('yubikey arguments')
-	ypars.add_argument(
+	gpars.add_argument(
+        '-P', '--passcrypt',
+        dest='pcr', metavar='CRYPTFILE',
+        default=path.expanduser('~/.passcrypt'),
+        help='set location of CRYPTFILE to use as ' \
+             'password store (~/.passcrypt is default)')
+	gpars.add_argument(
+        '-Y', '--yaml',
+        dest='yml', metavar='YAMLFILE',
+        default=path.expanduser('~/.pwd.yaml'),
+        help='set location of YAMLFILE to read whole ' \
+             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
+	gpars.add_argument(
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots (only useful with -y)'
-			).completer = ChoicesCompleter((1, 2))
+        ).completer = ChoicesCompleter((1, 2))
+	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set ' \
 		     'SERIAL of yubikey (autoselect serial and slot is default)')
-				
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
@@ -263,7 +260,7 @@ def confpars(mode):
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
-		'gui' if mode else None,
+        'gui' if mode == 'gui' else None,
         'rem' if args.sho else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
@@ -275,6 +272,7 @@ def confpars(mode):
 	pkwargs['binary'] = __bin
 	pkwargs['sslcrt'] = args.sslcrt
 	pkwargs['sslkey'] = args.sslkey
+	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
 	if args.rcp:
@@ -311,6 +309,7 @@ def cli():
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
+		print('bla')
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
 		ykser = args.yks if args.yks else None
@@ -326,10 +325,14 @@ def cli():
 	if args.add:
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
             args.add, args.pwd, args.com)
-		if not args.aal:
-			__ents = __ents[args.user]
-		if not __ents or args.add not in __ents.keys():
+		if not __ents:
 			err = ('could not add entry', args.add)
+		elif args.aal:
+			for u in __ents.keys():
+				if args.add not in __ents[u].keys():
+					error('entry', args.add, 'not found for', u)
+		elif not args.aal:
+			__ents = __ents[args.user]
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
@@ -370,6 +373,7 @@ def cli():
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+		err = 'no password entrys or decryption failed' if not __ents else None
 	if err:
 		fatal(*err)
 	_printpws_(__ents, args.sho)
@@ -384,14 +388,11 @@ def gui(typ='pw'):
 			if xyesno('entry %s does not ' \
                   'exist or decryption failed\ntry again?'%__in):
 				exit(1)
-		eno = forkwaitclip(res, poclp, boclp, args.time, args.out)
-		exit(eno)
-	pcm = PassCrypt(*pargs, **pkwargs)
+		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	while True:
-		fork = 0
 		if args.add:
 			if not PassCrypt(
-                  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
+				  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
 				xmsgok('could not add entry %s'%args.add)
 				exit(1)
 			exit(0)
@@ -399,7 +400,7 @@ def gui(typ='pw'):
 			if args.pwd:
 				pkwargs['password'] = args.pwd
 			if not PassCrypt(
-                  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+				  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.chg)
 				exit(1)
 			exit(0)
@@ -415,10 +416,10 @@ def gui(typ='pw'):
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
-		__ent = pcm.lspw(__in)
+		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
 			if xyesno('no entry found for %s matching %s, try again?'%(
-                  args.usr, __in)):
+				  args.usr, __in)):
 				continue
 			exit(1)
 		if __ent:
