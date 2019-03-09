@@ -259,8 +259,7 @@ def confpars(mode):
 	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	pars = optpars(cfgs, mode, 'pwcli')
-	if mode == 'gui':
-		pars = optpars(cfgs, mode, 'pwclip')
+	pars = optpars(cfgs, mode, 'pwclip')
 	autocomplete(pars)
 	args = pars.parse_args()
 	pargs = [a for a in [
