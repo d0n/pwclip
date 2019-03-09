@@ -35,7 +35,7 @@ try:
         str(open('pwclip/docs/changelog.rst', 'r').read()).split('\n\n\n')[:4]
         )).format(CurrentVersion='%s (current)\n----------%s'%(
             version, '-'*len(version)))
-except FileNotFoundError:
+except (FileNotFoundError, NotADirectoryError):
 	long_description = ''
 try:
 	__rs = []
@@ -52,13 +52,13 @@ try:
 				pass
 		__rs.append(l)
 	long_description = ''.join(__rs).format(ChangeLog=long_description)
-except FileNotFoundError:
+except (FileNotFoundError, NotADirectoryError):
     long_description = ''
 try:
 	open('pwclip/docs/conf.py', 'w+').write(str(
             open('pwclip/docs/conf.py.tmpl', 'r').read()
         ).format(VersionString=version))
-except FileNotFoundError:
+except (FileNotFoundError, NotADirectoryError):
 	pass
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],

@@ -93,50 +93,12 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def confpars(mode):
-	"""pwclip command line opt/arg parsing function"""
-	_me = path.basename(path.dirname(__file__))
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
-	try:
-		with open(cfg, 'r') as cfh:
-			cfgs = dict(load(cfh.read()))
-	except (TypeError, FileNotFoundError):
-		cfgs = {}
-	try:
-		cfgs['time'] = environ['PWCLIPTIME']
-	except KeyError:
-		cfgs['time'] = 3
-	try:
-		cfgs['ykslot'] = environ['YKSLOT']
-	except KeyError:
-		cfgs['ykslot'] = None
-	try:
-		cfgs['ykser'] = environ['YKSERIAL']
-	except KeyError:
-		cfgs['ykser'] = None
-	try:
-		cfgs['binary']
-	except KeyError:
-		cfgs['binary'] = 'gpg2'
-		if osname == 'nt':
-			cfgs['binary'] = 'gpg'
-	try:
-		cfgs['user'] = environ['USER']
-	except KeyError:
-		cfgs['user'] = environ['USERNAME']
-	if 'crypt' not in cfgs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if 'plain' not in cfgs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(cfgs['plain'])
+def optpars(cfgs, mode, name):
 	desc = 'pwclip - Multi functional password manager to temporarily ' \
            'save passphrases to your copy/paste buffers for easy and ' \
            'secure accessing your passwords. The following ' \
            'arguments mights also be set by the config ' \
-           '~/.config/%s.yaml file.'%_me
+           '~/.config/%s.yaml file.'%name
 	epic = 'the yubikey mode is compatible with the ' \
            'challenge-response feature of yubikeys only for now.'
 	pars = ArgumentParser(description=desc, epilog=epic)
@@ -254,6 +216,51 @@ def confpars(mode):
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='pwclip an entry matching PATTERN if given ' \
              '- otherwise list all entrys')
+	return pars
+
+
+def confpars(mode):
+	"""pwclip command line opt/arg parsing function"""
+	_me = path.basename(path.dirname(__file__))
+	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	try:
+		with open(cfg, 'r') as cfh:
+			cfgs = dict(load(cfh.read()))
+	except (TypeError, FileNotFoundError):
+		cfgs = {}
+	try:
+		cfgs['time'] = environ['PWCLIPTIME']
+	except KeyError:
+		cfgs['time'] = 3
+	try:
+		cfgs['ykslot'] = environ['YKSLOT']
+	except KeyError:
+		cfgs['ykslot'] = None
+	try:
+		cfgs['ykser'] = environ['YKSERIAL']
+	except KeyError:
+		cfgs['ykser'] = None
+	try:
+		cfgs['binary']
+	except KeyError:
+		cfgs['binary'] = 'gpg2'
+		if osname == 'nt':
+			cfgs['binary'] = 'gpg'
+	try:
+		cfgs['user'] = environ['USER']
+	except KeyError:
+		cfgs['user'] = environ['USERNAME']
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	pars = optpars(cfgs, mode, 'pwcli')
+	if mode == 'gui':
+		pars = optpars(cfgs, mode, 'pwclip')
 	autocomplete(pars)
 	args = pars.parse_args()
 	pargs = [a for a in [
@@ -303,6 +310,7 @@ def confpars(mode):
 
 def cli():
 	args, pargs, pkwargs = confpars('cli')
+	autocomplete(args)
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
