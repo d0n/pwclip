@@ -1,12 +1,12 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.4.4'
+version = '1.4.7'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil',
-    'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
-url = 'https://pypi.org/project/pwclip/'
-download_url = 'http://deb.janeiskla.de/python/python3-pwclip_current_all.deb'
+    'python-gnupg', 'python-yubico', 'PyYAML', 'wget', 'cryptography==2.4.2']
+url = 'https://github.com/d0n/pwclip'
+download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/p/pwclip/python3-pwclip_%s-1_all.deb'%version
 license = "GPLv3+"
 author = 'Leon Pelzer'
 description = 'password-manager - temporarily saves passwords to the clipboard'

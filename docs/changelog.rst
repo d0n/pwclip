@@ -3,6 +3,56 @@ Changelog
 =========
 
 {CurrentVersion}
+-----
+
+Released: 2019-03-08
+
+  * [W] again fixed a few windows related errors like text colorization
+
+  * fixed environment setting for GPGKEY/GPGKEYS wich, if not set would
+    raise an error even though in that case all gpg-keys are used
+
+  * reimplemented timefile checker to only push to remote if remote is set
+    ande time since last remote check is greater then 4h
+
+  * fixed executor methods didn't recognise input if given
+
+
+1.4.6
+-----
+
+Released: 2019-02-20
+
+  * fixed wrong alignment of "ok" and "cancle" buttons
+
+  * merged with upstream which fixes executor handling input of commands
+    correctly
+
+  * added github repo as homepage url and the download link (for deb packet)
+    is fixed
+
+  * [W] some windows related issues fixed - paths, non-existent windows-lib
+    imports, etc.
+
+
+1.4.5
+-----
+
+Released: 2019-02-03
+
+  * fix passcrypt not beeing reencrypted if gpg-keys differ from those the
+    passcrypt have been made with
+
+  * fix input (stdin) for command functions
+
+  * fix incorrect warning about depricated keys passed by paramiko 
+    (cryptography==2.4.2 dependency)
+
+  * some stylistic changes to docs
+
+
+1.4.4
+-----
 
 Released: 2019-01-14
 
