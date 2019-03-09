@@ -16,6 +16,8 @@ Released: 2019-03-09
 
   * fixed executor methods didn't recognise input if given
 
+  * fixed TAB autocompetion for pwcli
+
 
 1.4.6
 -----

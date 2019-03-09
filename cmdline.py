@@ -260,6 +260,8 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
+	pars = optpars(cfgs, mode, 'pwclip')
+	autocomplete(pars)
 	args = pars.parse_args()
 	pargs = [a for a in [
         'aal' if args.aal else None,
