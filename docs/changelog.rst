@@ -3,7 +3,6 @@ Changelog
 =========
 
 {CurrentVersion}
------
 
 Released: 2019-03-09
 
