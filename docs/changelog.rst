@@ -3,9 +3,27 @@ Changelog
 =========
 
 {CurrentVersion}
+
+Released: 2019-03-10
+
+  * [W] windows compatibility is restored and it seems even sccard is now
+    working - mostly as sideeffect of the here documented fixes
+
+  * fixed gpg recipient from file scanning function
+
+  * fixed TAB autocompetion for pwcli - only was working on pwlip on which it's
+    pretty senceless
+
+  * fixed for executor breaking on fancy unicode caracters of command output
+    (hale to german umlauts)
+
+  * fix typo in changelog
+
+
+1.4.7
 -----
 
-Released: 2019-03-08
+Released: 2019-03-09
 
   * [W] again fixed a few windows related errors like text colorization
 
@@ -23,7 +41,7 @@ Released: 2019-03-08
 
 Released: 2019-02-20
 
-  * fixed wrong alignment of "ok" and "cancle" buttons
+  * fixed wrong alignment of "ok" and "cancel" buttons
 
   * merged with upstream which fixes executor handling input of commands
     correctly
@@ -45,7 +63,7 @@ Released: 2019-02-03
 
   * fix input (stdin) for command functions
 
-  * fix incorrect warning about depricated keys passed by paramiko 
+  * fix incorrect warning about depricated keys passed by paramiko
     (cryptography==2.4.2 dependency)
 
   * some stylistic changes to docs
