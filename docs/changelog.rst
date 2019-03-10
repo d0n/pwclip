@@ -4,6 +4,8 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-03-10
+
   * [W] windows compatibility is restored and it seems even sccard is now
     working - mostly as sideeffect of the here documented fixes
 
