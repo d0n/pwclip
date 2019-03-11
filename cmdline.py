@@ -268,7 +268,7 @@ def confpars(mode):
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
-        'rem' if args.sho else None,
+        'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
@@ -290,10 +290,11 @@ def confpars(mode):
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
-	if hasattr(args, 'remote'):
-		pkwargs['remote'] = args.remote
-	if hasattr(args, 'reuser'):
-		pkwargs['reuser'] = args.reuser
+	if args.rem:
+		if hasattr(args, 'remote'):
+			pkwargs['remote'] = args.remote
+		if hasattr(args, 'reuser'):
+			pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
@@ -383,7 +384,7 @@ def cli():
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'no password entrys or decryption failed' if not __ents else None
 	if err:
-		fatal(*err)
+		fatal(err)
 	_printpws_(__ents, args.sho)
 
 def gui(typ='pw'):
