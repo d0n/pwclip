@@ -33,7 +33,7 @@ from socket import gethostname as hostname
 
 from time import sleep
 
-from yaml import load
+from yaml import load, FullLoader
 
 from getpass import getpass
 
@@ -223,23 +223,33 @@ def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	cfgs = {}
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = dict(load(cfh.read()))
+			cfgs = dict(load(cfh.read(), Loader=FullLoader))
 	except (TypeError, FileNotFoundError):
-		cfgs = {}
+		pass
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
 		cfgs['time'] = 3
+	cfgs['yubikey'] = {}
 	try:
-		cfgs['ykslot'] = environ['YKSLOT']
+		cfgs['yubikey']['slot'] = environ['YKSLOT']
 	except KeyError:
-		cfgs['ykslot'] = None
+		cfgs['yubikey']['slut'] = None
 	try:
-		cfgs['ykser'] = environ['YKSERIAL']
+		cfgs['yubikey']['serial'] = environ['YKSERIAL']
 	except KeyError:
-		cfgs['ykser'] = None
+		cfgs['yubikey']['serial'] = None
 	try:
 		cfgs['binary']
 	except KeyError:
@@ -250,14 +260,6 @@ def confpars(mode):
 		cfgs['user'] = environ['USER']
 	except KeyError:
 		cfgs['user'] = environ['USERNAME']
-	if 'crypt' not in cfgs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if 'plain' not in cfgs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
