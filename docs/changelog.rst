@@ -13,6 +13,9 @@ Released: 2019-03-14
 
   * again fixing file rotation which breaks crypt file in some uncommon cases
 
+  * fix deprecation warning in YAML for loader to use Loader=FullLoader
+
+  * some cleanup changes in gpgtools and passcrypt merged from master
 
 
 1.4.8
