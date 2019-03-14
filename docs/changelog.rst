@@ -4,6 +4,20 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-03-14
+
+  * for complete windows compatibility ssh using paramiko needs to be fixed
+    (ongoing or just fixed)
+
+  * changed config file setup to be more intuitive
+
+  * again fixing file rotation which breaks crypt file in some uncommon cases
+
+
+
+1.4.8
+-----
+
 Released: 2019-03-10
 
   * [W] windows compatibility is restored and it seems even sccard is now

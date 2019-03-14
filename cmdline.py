@@ -226,30 +226,47 @@ def confpars(mode):
 	cfgs = {}
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = dict(load(cfh.read(), Loader=FullLoader))
+			confs = dict(load(cfh.read(), Loader=FullLoader))
 	except (TypeError, FileNotFoundError):
-		pass
-	if 'crypt' not in cfgs.keys():
+		confs
+	if 'crypt' not in confs.keys():
 		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if 'plain' not in cfgs.keys():
+	elif 'crypt' in confs.keys() and confs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(confs['crypt'])
+	if 'plain' not in confs.keys():
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	elif 'plain' in confs.keys() and confs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(confs['plain'])
+	if 'yubikey' in confs.keys():
+		if confs['yubikey'] in (None, {}, []):
+			error(
+                'config entry', 'yubikey:', 'senseless without sub entry',
+                'serial', 'and/or', 'slot')
+		if confs['yubikey'] and 'serial' in confs['yubikey'].keys():
+			cfgs['ykser'] = confs['yubikey']['serial']
+		if confs['yubikey'] and 'slot' in cfgs.keys():
+			cfgs['ykser'] = confs['yubikey']['slot']
+	if 'remote' in confs.keys():
+		if confs['remote'] in (None, {}, []):
+			error(
+                'config entry', 'remote:', 'senseless without sub entry',
+                'host', 'and/or', 'user')
+		if confs['remote'] and 'host' in confs['remote'].keys():
+			cfgs['remote'] = confs['remote']['host']
+		if confs['remote'] and 'user' in confs.keys():
+			cfgs['reuser'] = confs['remote']['user']
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
 		cfgs['time'] = 3
-	cfgs['yubikey'] = {}
 	try:
-		cfgs['yubikey']['slot'] = environ['YKSLOT']
+		cfgs['ykslot'] = environ['YKSLOT']
 	except KeyError:
-		cfgs['yubikey']['slut'] = None
+		cfgs['ykslot'] = None
 	try:
-		cfgs['yubikey']['serial'] = environ['YKSERIAL']
+		cfgs['ykser'] = environ['YKSERIAL']
 	except KeyError:
-		cfgs['yubikey']['serial'] = None
+		cfgs['ykser'] = None
 	try:
 		cfgs['binary']
 	except KeyError:
@@ -320,7 +337,6 @@ def cli():
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
-		print('bla')
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
 		ykser = args.yks if args.yks else None
@@ -393,12 +409,11 @@ def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
-	if args.yks or args.yks is None or typ == 'yk':
+	if typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
-			if xyesno('entry %s does not ' \
-                  'exist or decryption failed\ntry again?'%__in):
-				exit(1)
+			xmsgok('no response from the key (if there is one)'%__in)
+			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	while True:
 		if args.add:
