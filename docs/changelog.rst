@@ -17,6 +17,11 @@ Released: 2019-03-14
 
   * some cleanup changes in gpgtools and passcrypt merged from master
 
+  * now dying in fatality if no keys are locally available - at least until
+    key-generating ui/dialog is finished
+
+  * fixed wrong indentation in auto fromatting for outputs
+
 
 1.4.8
 -----
