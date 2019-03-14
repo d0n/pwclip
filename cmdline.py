@@ -318,6 +318,8 @@ def confpars(mode):
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
+	if not PassCrypt(*pargs, **pkwargs).gpg.findkey():
+		fatal('cannot ')
 	if mode == 'gui':
 		return args, pargs, pkwargs
 	if (
