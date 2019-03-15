@@ -33,14 +33,13 @@ from socket import gethostname as hostname
 
 from time import sleep
 
-from yaml import load
-
 from getpass import getpass
 
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal
 
-from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+from system import \
+    ymload as load, copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
 from secrecy import PassCrypt, ykchalres, yubikeys
 
