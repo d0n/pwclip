@@ -33,14 +33,21 @@ from socket import gethostname as hostname
 
 from time import sleep
 
+<<<<<<< HEAD
 from yaml import load, FullLoader
 
+||||||| merged common ancestors
+from yaml import load
+
+=======
+>>>>>>> ee727d6290ba481fea88677bbc179aa6a36dac43
 from getpass import getpass
 
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal
 
-from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+from system import \
+    ymload as load, copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
 from secrecy import PassCrypt, ykchalres, yubikeys
 
