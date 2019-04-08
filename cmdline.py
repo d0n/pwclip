@@ -38,10 +38,11 @@ from getpass import getpass
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal
 
-from system import \
-    ymload as load, copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
 
 from secrecy import PassCrypt, ykchalres, yubikeys
+
+from yaml import load, Loader
 
 from pwclip.__pkginfo__ import version
 
@@ -131,7 +132,7 @@ def optpars(cfgs, mode, name):
         help='use remote backup given by --remote-host')
 	rpars.add_argument(
         '--remote-host',
-        dest='rehost', metavar='HOST',
+        dest='remote', metavar='HOST',
         help='use HOST for connections')
 	rpars.add_argument(
         '--remote-user',
@@ -224,8 +225,9 @@ def confpars(mode):
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = dict(load(cfh.read()))
-	except (TypeError, FileNotFoundError):
+			cfgs = load(cfh.read(), Loader=Loader)
+	except (TypeError, FileNotFoundError) as err:
+		error(err)
 		cfgs = {}
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
@@ -249,6 +251,9 @@ def confpars(mode):
 		cfgs['user'] = environ['USER']
 	except KeyError:
 		cfgs['user'] = environ['USERNAME']
+	if 'remote' in cfgs.keys():
+		cfgs['reuser'] = cfgs['remote']['user']
+		cfgs['remote'] = cfgs['remote']['host']
 	if 'crypt' not in cfgs.keys():
 		cfgs['crypt'] = path.expanduser('~/.passcrypt')
 	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
@@ -267,7 +272,7 @@ def confpars(mode):
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
-        'rem' if args.sho else None,
+        'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
@@ -366,6 +371,7 @@ def cli():
                ers)) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
+		print(__ents)
 		if __ents and args.lst not in __ents.keys():
 			err = (
                 'could not find entry', args.lst,
@@ -382,7 +388,7 @@ def cli():
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'no password entrys or decryption failed' if not __ents else None
 	if err:
-		fatal(*err)
+		fatal(err)
 	_printpws_(__ents, args.sho)
 
 def gui(typ='pw'):
