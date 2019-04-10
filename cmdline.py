@@ -371,19 +371,20 @@ def cli():
                ers)) if ers else None
 	elif args.lst is not False and args.lst is not None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw(args.lst)
-		print(__ents)
 		if __ents and args.lst not in __ents.keys():
 			err = (
                 'could not find entry', args.lst,
                 'for', args.user, 'in', pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
-			if __pc:
-				if len(__pc) == 2 and osname != 'nt':
-					xnotify('%s: %s'%(
-                        args.lst, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			if not __pc:
+				error('entry', args.lst, 'exists but is empty')
 				exit(0)
+			if len(__pc) == 2 and osname != 'nt':
+				xnotify('%s: %s'%(
+                    args.lst, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'no password entrys or decryption failed' if not __ents else None
