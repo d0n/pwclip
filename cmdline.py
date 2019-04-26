@@ -321,7 +321,7 @@ def confpars(mode):
 	if args.rvs:
 		pkwargs['recvs'] = list(args.rvs)
 	if args.key:
-		pkwargs['key'] = list(args.key)
+		pkwargs['key'] = args.key
 	if args.usr:
 		pkwargs['user'] = args.usr
 	if args.time:
