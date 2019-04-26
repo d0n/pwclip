@@ -144,10 +144,10 @@ def optpars(cfgs, mode, name):
 	gpars.add_argument(
         '-k', '--key',
         dest='key', metavar='"ID"',
-        help='gpg-key ID(s) to use for deencryption/signing')
+        help='gpg-key ID(s) to use for decryption/signing')
 	gpars.add_argument(
         '-r', '--recipients',
-        dest='rvs', metavar='"ID ..."',
+        dest='rvs', metavar='"ID [ID]..."',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
@@ -174,7 +174,7 @@ def optpars(cfgs, mode, name):
         dest='sslcrt', metavar='SSL-Certificate',
         help='one-shot setting of SSL-Certificate')
 	gpars.add_argument(
-        '-K', '--key',
+        '-K', '--ssl-key',
         dest='sslkey', metavar='SSL-Private-Key',
         help='one-shot setting of SSL-Private-Key')
 	gpars.add_argument(
