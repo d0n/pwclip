@@ -33,21 +33,16 @@ from socket import gethostname as hostname
 
 from time import sleep
 
-<<<<<<< HEAD
 from yaml import load, FullLoader
 
-||||||| merged common ancestors
-from yaml import load
-
-=======
->>>>>>> ee727d6290ba481fea88677bbc179aa6a36dac43
 from getpass import getpass
 
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal
 
 from system import \
-    ymload as load, copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+    copy, paste, xgetpass, \
+    xmsgok, xyesno, xnotify, which
 
 from secrecy import PassCrypt, ykchalres, yubikeys
 
@@ -147,8 +142,12 @@ def optpars(cfgs, mode, name):
         help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
+        '-k', '--key',
+        dest='key', metavar='"ID"',
+        help='gpg-key ID(s) to use for deencryption/signing')
+	gpars.add_argument(
         '-r', '--recipients',
-        dest='rcp', metavar='"ID ..."',
+        dest='rvs', metavar='"ID ..."',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
@@ -225,7 +224,6 @@ def optpars(cfgs, mode, name):
              '- otherwise list all entrys')
 	return pars
 
-
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
@@ -244,11 +242,23 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
 	elif 'plain' in confs.keys() and confs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(confs['plain'])
+	if 'gpg' in confs.keys():
+		if confs['gpg'] in (None, {}, []):
+			error(
+                'config entry', 'gpg:', 'senseless without sub entry')
+		if confs['gpg'] and 'binary' in confs['gpg'].keys():
+			cfgs['binary'] = confs['gpg']['binary']
+		if confs['gpg'] and 'recipient' in confs['gpg'].keys():
+			cfgs['rvs'] = [confs['gpg']['recipient']]
+		elif confs['gpg'] and 'recipients' in confs['gpg'].keys():
+			cfgs['rvs'] = [
+                k.strip() for k in confs['gpg']['recipients'].split() if k]
+		if confs['gpg'] and 'key' in confs['gpg'].keys():
+			cfgs['key'] = confs['gpg']['key']
 	if 'yubikey' in confs.keys():
 		if confs['yubikey'] in (None, {}, []):
 			error(
-                'config entry', 'yubikey:', 'senseless without sub entry',
-                'serial', 'and/or', 'slot')
+                'config entry', 'yubikey:', 'senseless without sub entry')
 		if confs['yubikey'] and 'serial' in confs['yubikey'].keys():
 			cfgs['ykser'] = confs['yubikey']['serial']
 		if confs['yubikey'] and 'slot' in cfgs.keys():
@@ -308,8 +318,10 @@ def confpars(mode):
 	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
-	if args.rcp:
-		pkwargs['recvs'] = list(args.rcp.split(' '))
+	if args.rvs:
+		pkwargs['recvs'] = list(args.rvs)
+	if args.key:
+		pkwargs['key'] = list(args.key)
 	if args.usr:
 		pkwargs['user'] = args.usr
 	if args.time:
