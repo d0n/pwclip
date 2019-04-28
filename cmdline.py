@@ -33,16 +33,18 @@ from socket import gethostname as hostname
 
 from time import sleep
 
+from yaml import load, FullLoader
+
 from getpass import getpass
 
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal
 
-from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+from system import \
+    copy, paste, xgetpass, \
+    xmsgok, xyesno, xnotify, which
 
 from secrecy import PassCrypt, ykchalres, yubikeys
-
-from yaml import load, Loader
 
 from pwclip.__pkginfo__ import version
 
@@ -132,7 +134,7 @@ def optpars(cfgs, mode, name):
         help='use remote backup given by --remote-host')
 	rpars.add_argument(
         '--remote-host',
-        dest='remote', metavar='HOST',
+        dest='rehost', metavar='HOST',
         help='use HOST for connections')
 	rpars.add_argument(
         '--remote-user',
@@ -140,8 +142,12 @@ def optpars(cfgs, mode, name):
         help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
+        '-k', '--key',
+        dest='key', metavar='"ID"',
+        help='gpg-key ID(s) to use for decryption/signing')
+	gpars.add_argument(
         '-r', '--recipients',
-        dest='rcp', metavar='"ID ..."',
+        dest='rvs', metavar='"ID [ID]..."',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
@@ -168,7 +174,7 @@ def optpars(cfgs, mode, name):
         dest='sslcrt', metavar='SSL-Certificate',
         help='one-shot setting of SSL-Certificate')
 	gpars.add_argument(
-        '-K', '--key',
+        '-K', '--ssl-key',
         dest='sslkey', metavar='SSL-Private-Key',
         help='one-shot setting of SSL-Private-Key')
 	gpars.add_argument(
@@ -218,17 +224,54 @@ def optpars(cfgs, mode, name):
              '- otherwise list all entrys')
 	return pars
 
-
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	cfgs = {}
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = load(cfh.read(), Loader=Loader)
-	except (TypeError, FileNotFoundError) as err:
-		error(err)
-		cfgs = {}
+			confs = dict(load(cfh.read(), Loader=FullLoader))
+	except (TypeError, FileNotFoundError):
+		confs
+	if 'crypt' not in confs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in confs.keys() and confs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(confs['crypt'])
+	if 'plain' not in confs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in confs.keys() and confs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(confs['plain'])
+	if 'gpg' in confs.keys():
+		if confs['gpg'] in (None, {}, []):
+			error(
+                'config entry', 'gpg:', 'senseless without sub entry')
+		if confs['gpg'] and 'binary' in confs['gpg'].keys():
+			cfgs['binary'] = confs['gpg']['binary']
+		if confs['gpg'] and 'recipient' in confs['gpg'].keys():
+			cfgs['rvs'] = [confs['gpg']['recipient']]
+		elif confs['gpg'] and 'recipients' in confs['gpg'].keys():
+			cfgs['rvs'] = [
+                k.strip() for k in confs['gpg']['recipients'].split() if k]
+		if confs['gpg'] and 'key' in confs['gpg'].keys():
+			cfgs['key'] = confs['gpg']['key']
+	if 'yubikey' in confs.keys():
+		if confs['yubikey'] in (None, {}, []):
+			error(
+                'config entry', 'yubikey:', 'senseless without sub entry')
+		if confs['yubikey'] and 'serial' in confs['yubikey'].keys():
+			cfgs['ykser'] = confs['yubikey']['serial']
+		if confs['yubikey'] and 'slot' in cfgs.keys():
+			cfgs['ykser'] = confs['yubikey']['slot']
+	if 'remote' in confs.keys():
+		if confs['remote'] in (None, {}, []):
+			error(
+                'config entry', 'remote:', 'senseless without sub entry',
+                'host', 'and/or', 'user')
+		if confs['remote'] and 'host' in confs['remote'].keys():
+			cfgs['remote'] = confs['remote']['host']
+		if confs['remote'] and 'user' in confs.keys():
+			cfgs['reuser'] = confs['remote']['user']
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
 	except KeyError:
@@ -251,17 +294,6 @@ def confpars(mode):
 		cfgs['user'] = environ['USER']
 	except KeyError:
 		cfgs['user'] = environ['USERNAME']
-	if 'remote' in cfgs.keys():
-		cfgs['reuser'] = cfgs['remote']['user']
-		cfgs['remote'] = cfgs['remote']['host']
-	if 'crypt' not in cfgs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if 'plain' not in cfgs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
@@ -286,22 +318,27 @@ def confpars(mode):
 	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
-	if args.rcp:
-		pkwargs['recvs'] = list(args.rcp.split(' '))
+	if args.rvs:
+		pkwargs['recvs'] = list(args.rvs)
+	if args.key:
+		pkwargs['key'] = args.key
 	if args.usr:
 		pkwargs['user'] = args.usr
 	if args.time:
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
-	if hasattr(args, 'remote'):
-		pkwargs['remote'] = args.remote
-	if hasattr(args, 'reuser'):
-		pkwargs['reuser'] = args.reuser
+	if args.rem:
+		if hasattr(args, 'remote'):
+			pkwargs['remote'] = args.remote
+		if hasattr(args, 'reuser'):
+			pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
+	if not PassCrypt(*pargs, **pkwargs).gpg.findkey():
+		fatal('cannot ')
 	if mode == 'gui':
 		return args, pargs, pkwargs
 	if (
@@ -321,7 +358,6 @@ def cli():
 			yfh.write("""---\n%s:  {}"""%args.usr)
 	poclp, boclp = paste('pb')
 	if args.yks or args.yks is None:
-		print('bla')
 		if 'YKSERIAL' in environ.keys():
 			ykser = environ['YKSERIAL']
 		ykser = args.yks if args.yks else None
@@ -377,14 +413,12 @@ def cli():
                 'for', args.user, 'in', pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
-			if not __pc:
-				error('entry', args.lst, 'exists but is empty')
+			if __pc:
+				if len(__pc) == 2 and osname != 'nt':
+					xnotify('%s: %s'%(
+                        args.lst, ' '.join(__pc[1:])), args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 				exit(0)
-			if len(__pc) == 2 and osname != 'nt':
-				xnotify('%s: %s'%(
-                    args.lst, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-			exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'no password entrys or decryption failed' if not __ents else None
@@ -396,12 +430,11 @@ def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
-	if args.yks or args.yks is None or typ == 'yk':
+	if typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
-			if xyesno('entry %s does not ' \
-                  'exist or decryption failed\ntry again?'%__in):
-				exit(1)
+			xmsgok('no response from the key (if there is one)'%__in)
+			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	while True:
 		if args.add:
