@@ -6,6 +6,8 @@ Changelog
 
 Released: 2019-04-29
 
+  * changed config 
+
   * added gpg signing and fixed lots of bugs around gpg wrapping
 
   * added a bit of cli default output
