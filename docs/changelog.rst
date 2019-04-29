@@ -6,11 +6,18 @@ Changelog
 
 Released: 2019-04-29
 
-  * changed config 
+  * changed config synopsis introducing gpg: and remote: (see examples
+    for details)
 
-  * added gpg signing and fixed lots of bugs around gpg wrapping
+  * added environment variable KEY and RECIPIENTS and removed GPGKEY and
+    GPGKEYS as they are misleading and incomplete
 
-  * added a bit of cli default output
+  * added gpg signing and fixed lots of bugs around gpg wrapping like picking
+    the selected keys only
+
+  * fixed ssh for scp usage as backup (still optionally selected by -R)
+
+  * added a bit more of commandline output
 
   * ./lib master merge
 
