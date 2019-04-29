@@ -442,9 +442,9 @@ def gui(typ='pw'):
 		pkwargs['plain'] = args.yml
 	if args.rem:
 		if hasattr(args, 'host'):
-			pkwargs['host'] = args.remote
+			pkwargs['host'] = args.host
 		if hasattr(args, 'user'):
-			pkwargs['user'] = args.reuser
+			kwargs['user'] = args.user
 	if typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
