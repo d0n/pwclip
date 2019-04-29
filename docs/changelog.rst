@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-04
+Released: 2019-04-29
 
   * added gpg signing and fixed lots of bugs around gpg wrapping
 
