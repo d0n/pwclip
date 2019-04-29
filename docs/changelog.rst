@@ -13,6 +13,9 @@ Released: 2019-04-29
   * ./lib master merge
 
 
+1.4.9
+-----
+
 Released: 2019-03-14
 
   * for complete windows compatibility ssh using paramiko needs to be fixed
