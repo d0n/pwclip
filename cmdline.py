@@ -270,7 +270,7 @@ def confpars(mode):
                 'host', 'and/or', 'user')
 		if confs['remote'] and 'host' in confs['remote'].keys():
 			cfgs['remote'] = confs['remote']['host']
-		if confs['remote'] and 'user' in confs.keys():
+		if confs['remote'] and 'user' in confs['remote'].keys():
 			cfgs['reuser'] = confs['remote']['user']
 	try:
 		cfgs['time'] = environ['PWCLIPTIME']
