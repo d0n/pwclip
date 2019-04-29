@@ -33,7 +33,7 @@ from socket import gethostname as hostname
 
 from time import sleep
 
-from yaml import load, FullLoader
+from yaml import load, Loader
 
 from getpass import getpass
 
@@ -231,7 +231,7 @@ def confpars(mode):
 	cfgs = {}
 	try:
 		with open(cfg, 'r') as cfh:
-			confs = dict(load(cfh.read(), Loader=FullLoader))
+			confs = dict(load(cfh.read(), Loader=Loader))
 	except (TypeError, FileNotFoundError):
 		confs
 	if 'crypt' not in confs.keys():
@@ -319,7 +319,7 @@ def confpars(mode):
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
 	if args.rvs:
-		pkwargs['recvs'] = list(args.rvs)
+		pkwargs['recvs'] = args.rvs
 	if args.key:
 		pkwargs['key'] = args.key
 	if args.usr:
@@ -337,8 +337,6 @@ def confpars(mode):
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
-	if not PassCrypt(*pargs, **pkwargs).gpg.findkey():
-		fatal('cannot ')
 	if mode == 'gui':
 		return args, pargs, pkwargs
 	if (
@@ -430,6 +428,24 @@ def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
+	if args.pcr:
+		pkwargs['crypt'] = args.pcr
+	if args.rvs:
+		pkwargs['recvs'] = args.rvs
+	if args.key:
+		pkwargs['key'] = args.key
+	if args.usr:
+		pkwargs['user'] = args.usr
+	if args.time:
+		pkwargs['time'] = args.time
+	if args.yml:
+		pkwargs['plain'] = args.yml
+	if args.rem:
+		if hasattr(args, 'remote'):
+			pkwargs['remote'] = args.remote
+		if hasattr(args, 'reuser'):
+			pkwargs['reuser'] = args.reuser
+	print(pkwargs.__dict__)
 	if typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
