@@ -4,6 +4,15 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-04
+
+  * added gpg signing and fixed lots of bugs around gpg wrapping
+
+  * added a bit of cli default output
+
+  * ./lib master merge
+
+
 Released: 2019-03-14
 
   * for complete windows compatibility ssh using paramiko needs to be fixed
