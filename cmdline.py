@@ -143,7 +143,7 @@ def optpars(cfgs, mode, name):
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-k', '--key',
-        dest='key', metavar='"ID"',
+        dest='key', metavar='"ID"', type=str,
         help='gpg-key ID(s) to use for decryption/signing')
 	gpars.add_argument(
         '-r', '--recipients',
@@ -337,8 +337,6 @@ def confpars(mode):
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
-	if not PassCrypt(*pargs, **pkwargs).gpg.findkey():
-		fatal('cannot ')
 	if mode == 'gui':
 		return args, pargs, pkwargs
 	if (
