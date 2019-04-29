@@ -445,7 +445,7 @@ def gui(typ='pw'):
 			pkwargs['remote'] = args.remote
 		if hasattr(args, 'reuser'):
 			pkwargs['reuser'] = args.reuser
-	print(pkwargs.__dict__)
+	print(pkwargs)
 	if typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
