@@ -6,20 +6,25 @@ Changelog
 
 Released: 2019-04-29
 
-  * changed config synopsis introducing gpg: and remote: (see examples
-    for details)
+  * introducing signing of the passcrypt file as well as appropriate signature
+    verification
 
-  * added environment variable KEY and RECIPIENTS and removed GPGKEY and
-    GPGKEYS as they are misleading and incomplete
+  * introducing gpg: and remote: as parent keys for [key, recvipients]
+    and remote [user, host] respectivly (see ./examples for more info)
 
-  * added gpg signing and fixed lots of bugs around gpg wrapping like picking
-    the selected keys only
+  * reviewed gpg options and removed some unnecessary ones
 
-  * fixed ssh for scp usage as backup (still optionally selected by -R)
+  * added environment variable RECIPIENTS and removed GPGKEYS - now using
+    GPGKEY as signing/decryption key and RECIPIENTS for encrypting while
+    RECIPIENTS is a space seperated string of gpg-key ID's
 
-  * added a bit more of commandline output
+  * fixed ssh for scp usage as backup - still optionally selected by -R which
+    now needs to be set explicitly even if remote-host and/or remote-user
 
-  * ./lib master merge
+  * added a bit more of commandline output in cli mode
+
+  * merged submodules in ./lib/* which improves response, decrypting and
+    encrypting performance
 
 
 1.4.9
