@@ -41,8 +41,8 @@ from getpass import getpass
 from colortext import bgre, bred, tabd, error, fatal
 
 from system import \
-    copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, which
+    absrelpath, copy, paste, xgetpass, \
+    xmsgok, xyesno, xnotify, which, whoami
 
 from secrecy import PassCrypt, ykchalres, yubikeys
 
@@ -134,7 +134,7 @@ def optpars(cfgs, mode, name):
         help='use remote backup given by --remote-host')
 	rpars.add_argument(
         '--remote-host',
-        dest='rehost', metavar='HOST',
+        dest='remote', metavar='HOST',
         help='use HOST for connections')
 	rpars.add_argument(
         '--remote-user',
@@ -224,76 +224,57 @@ def optpars(cfgs, mode, name):
              '- otherwise list all entrys')
 	return pars
 
+def dictreplace(srcdict, trgdict):
+	if not isinstance(srcdict, dict):
+		return error('type \'dict\' expected, got', type(trgdict))
+	newdict = {}
+	for (k, v) in srcdict.items():
+		if k in trgdict.keys() and isinstance(trgdict[k], dict):
+			__dict = dictreplace(srcdict[k], trgdict[k])
+			if 'delkey' not in trgdict[k].keys():
+				newdict[k] = __dict
+				continue
+			for (ik, iv) in __dict.items():
+				newdict[ik] = iv
+		elif k in trgdict.keys():
+			newdict[trgdict[k]] = srcdict[k]
+		else:
+			newdict[k] = v
+	return newdict
+
+def envconf(srcdict):
+	newdict = {}
+	for (k, v) in srcdict.items():
+		if k in environ.keys():
+			newdict[v] = environ[k]
+	return newdict
+
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.yaml'%_me)
-	cfgs = {}
+	cfgs = {
+        'crypt': path.expanduser('~/.passcrypt'),
+        'plain': path.expanduser('~/.pwd.yaml'),
+        'time': 3,
+        'binary': 'gpg' if osname == 'nt' else 'gpg.exe',
+        'user': whoami(),
+        }
 	try:
 		with open(cfg, 'r') as cfh:
 			confs = dict(load(cfh.read(), Loader=FullLoader))
 	except (TypeError, FileNotFoundError):
 		confs
-	if 'crypt' not in confs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in confs.keys() and confs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(confs['crypt'])
-	if 'plain' not in confs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in confs.keys() and confs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(confs['plain'])
-	if 'gpg' in confs.keys():
-		if confs['gpg'] in (None, {}, []):
-			error(
-                'config entry', 'gpg:', 'senseless without sub entry')
-		if confs['gpg'] and 'binary' in confs['gpg'].keys():
-			cfgs['binary'] = confs['gpg']['binary']
-		if confs['gpg'] and 'recipient' in confs['gpg'].keys():
-			cfgs['rvs'] = [confs['gpg']['recipient']]
-		elif confs['gpg'] and 'recipients' in confs['gpg'].keys():
-			cfgs['rvs'] = [
-                k.strip() for k in confs['gpg']['recipients'].split() if k]
-		if confs['gpg'] and 'key' in confs['gpg'].keys():
-			cfgs['key'] = confs['gpg']['key']
-	if 'yubikey' in confs.keys():
-		if confs['yubikey'] in (None, {}, []):
-			error(
-                'config entry', 'yubikey:', 'senseless without sub entry')
-		if confs['yubikey'] and 'serial' in confs['yubikey'].keys():
-			cfgs['ykser'] = confs['yubikey']['serial']
-		if confs['yubikey'] and 'slot' in cfgs.keys():
-			cfgs['ykser'] = confs['yubikey']['slot']
-	if 'remote' in confs.keys():
-		if confs['remote'] in (None, {}, []):
-			error(
-                'config entry', 'remote:', 'senseless without sub entry',
-                'host', 'and/or', 'user')
-		if confs['remote'] and 'host' in confs['remote'].keys():
-			cfgs['remote'] = confs['remote']['host']
-		if confs['remote'] and 'user' in confs.keys():
-			cfgs['reuser'] = confs['remote']['user']
-	try:
-		cfgs['time'] = environ['PWCLIPTIME']
-	except KeyError:
-		cfgs['time'] = 3
-	try:
-		cfgs['ykslot'] = environ['YKSLOT']
-	except KeyError:
-		cfgs['ykslot'] = None
-	try:
-		cfgs['ykser'] = environ['YKSERIAL']
-	except KeyError:
-		cfgs['ykser'] = None
-	try:
-		cfgs['binary']
-	except KeyError:
-		cfgs['binary'] = 'gpg2'
-		if osname == 'nt':
-			cfgs['binary'] = 'gpg'
-	try:
-		cfgs['user'] = environ['USER']
-	except KeyError:
-		cfgs['user'] = environ['USERNAME']
+	cfgmap = {
+        'gpg': {'key': 'gpgkey', 'delkey': True},
+        'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
+        'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
+	envmap = {
+        'PWCLIPTIME': 'time',
+        'YKSERIAL': 'ykser',
+        'YKSLOT': 'ykslot'}
+	cfgs.update(dictreplace(confs, cfgmap))
+	print(cfgs)
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
