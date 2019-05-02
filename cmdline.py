@@ -266,7 +266,7 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs
 	cfgmap = {
-        'gpg': {'key': 'gpgkey', 'delkey': True},
+        'gpg': {'key': 'gpgkey', 'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
@@ -274,7 +274,6 @@ def confpars(mode):
         'YKSERIAL': 'ykser',
         'YKSLOT': 'ykslot'}
 	cfgs.update(dictreplace(confs, cfgmap))
-	print(cfgs)
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
@@ -300,7 +299,7 @@ def confpars(mode):
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
 	if args.rvs:
-		pkwargs['recvs'] = list(args.rvs)
+		pkwargs['recvs'] = [k.strip() for k in args.rvs.split(' ')]
 	if args.key:
 		pkwargs['key'] = args.key
 	if args.usr:
