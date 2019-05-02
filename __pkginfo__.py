@@ -3,8 +3,8 @@ name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.5.0'
 install_requires = [
-    'argcomplete', 'psutil',
-    'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
+    'argcomplete', 'paramiko', 'psutil',
+    'python-gnupg', 'python-yubico', 'PyYAML', 'wget', 'cryptography==2.4.2']
 url = 'https://github.com/d0n/pwclip'
 download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/p/pwclip/python3-pwclip_%s-1_all.deb'%version
 license = "GPLv3+"
