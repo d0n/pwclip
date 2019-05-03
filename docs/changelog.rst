@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-04-29
+Released: 2019-05-03
 
   * introducing signing of the passcrypt file as well as appropriate signature
     verification
