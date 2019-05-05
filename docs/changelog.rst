@@ -4,54 +4,6 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-05-03
-
-  * introducing signing of the passcrypt file as well as appropriate signature
-    verification
-
-  * introducing gpg: and remote: as parent keys for [key, recvipients]
-    and remote [user, host] respectivly (see ./examples for more info)
-
-  * reviewed gpg options and removed some unnecessary ones
-
-  * added environment variable RECIPIENTS and removed GPGKEYS - now using
-    GPGKEY as signing/decryption key and RECIPIENTS for encrypting while
-    RECIPIENTS is a space seperated string of gpg-key ID's
-
-  * fixed ssh for scp usage as backup - still optionally selected by -R which
-    now needs to be set explicitly even if remote-host and/or remote-user
-
-  * added a bit more of commandline output in cli mode
-
-  * merged submodules in ./lib/* which improves response, decrypting and
-    encrypting performance
-
-
-1.4.9
------
-
-Released: 2019-03-14
-
-  * for complete windows compatibility ssh using paramiko needs to be fixed
-    (ongoing or just fixed)
-
-  * changed config file setup to be more intuitive
-
-  * again fixing file rotation which breaks crypt file in some uncommon cases
-
-  * fix deprecation warning in YAML for loader to use Loader=FullLoader
-
-  * some cleanup changes in gpgtools and passcrypt merged from master
-
-  * now dying in fatality if no keys are locally available - at least until
-    key-generating ui/dialog is finished
-
-  * fixed wrong indentation in auto fromatting for outputs
-
-
-1.4.8
------
-
 Released: 2019-03-10
 
   * [W] windows compatibility is restored and it seems even sccard is now
