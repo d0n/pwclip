@@ -436,8 +436,15 @@ def gui(typ='pw'):
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
-		__in = args.lst if args.lst else xgetpass()
-		if not __in:
+		_umsg = 'as "%s"'%args.usr
+		if args.aal:
+			_umsg = 'in all users'
+		__in = args.lst if args.lst else xgetpass(
+            'enter entry to search for %s'%_umsg)
+		if __in is None:
+			xnotify('aborted by keystroke')
+			exit()
+		elif not __in:
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
