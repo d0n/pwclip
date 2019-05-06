@@ -4,6 +4,24 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-05-06
+
+  * added signature function which adds another file ("~/.passcrypt.sig"
+    by default)
+
+  * GPGKEY and GPGKEYS is exchanged for GPGKEY and RECIPIENTS while GPGKEY
+    is a key string used for signing (recipients still can be multiple keys
+    seperated by spaces)
+
+  * removed unnecessary options passed to gpg
+
+  * fix option parser groups and reordered/renamed options to better fit
+    the intension
+
+
+1.4.8
+-----
+
 Released: 2019-03-10
 
   * [W] windows compatibility is restored and it seems even sccard is now
