@@ -10,8 +10,8 @@ Released: 2019-05-06
     by default)
 
   * GPGKEY and GPGKEYS is exchanged for GPGKEY and RECIPIENTS while GPGKEY
-    is a key string used for signing (recipients still can be multiple keys
-    seperated by spaces)
+    is a string identifying the signature key (recipients still can be
+    multiple keys seperated by spaces)
 
   * removed unnecessary options passed to gpg
 
