@@ -344,7 +344,7 @@ def cli():
 		ykser = args.yks if args.yks else None
 		if ykser and len(ykser) >= 6:
 			ykser = ''.join(str(ykser)[-6:])
-		res = ykchalres(getpass(), args.ysl, ykser)
+		res = ykchalres(args.lst if args.lst else getpass(), args.ysl, ykser)
 		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
@@ -377,10 +377,8 @@ def cli():
 		ers = []
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
-			if not args.aal:
-				__ents[args.user]
-			if r in __ents.keys():
-				ers.append(r)
+		if not args.aal:
+			__ents = __ents[args.user]
 		ewrd = 'entry'
 		if len(ers) >= 1:
 			ewrd = 'entrys'
@@ -412,7 +410,8 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
 	if typ == 'yk':
-		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
+		res = ykchalres(
+            args.lst if args.lst else getpass(), args.ykslot, args.yks)
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
