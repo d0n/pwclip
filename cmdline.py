@@ -120,18 +120,13 @@ def optpars(cfgs, mode, name):
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
-        '-S', '--show-passwords',
+        '-s', '--show-passwords',
         dest='sho', action='store_true',
         help='show passwords when listing (replaced by "*" is default)')
 	pars.add_argument(
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (%s is default)'%cfgs['time'])
-	pars.add_argument(
-        '-u', '--user',
-        dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys only for USER (-A overrides, ' \
-             '"%s" is default)'%cfgs['user'])
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
@@ -145,27 +140,7 @@ def optpars(cfgs, mode, name):
         '--remote-user',
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
-
-	spars = pars.add_argument_group('ssl arguments')
-	spars.add_argument(
-        '-x', '--x509',
-        dest='gpv', action='store_const', const='gpgsm',
-        help='force ssl compatible gpgsm mode - usually is autodetected ' \
-             '(use --cert & --key for imports)')
-	spars.add_argument(
-        '-C', '--cert',
-        dest='sslcrt', metavar='SSL-Certificate',
-        help='one-shot setting of SSL-Certificate')
-	spars.add_argument(
-        '-K', '--ssl-key',
-        dest='sslkey', metavar='SSL-Private-Key',
-        help='one-shot setting of SSL-Private-Key')
-	spars.add_argument(
-        '--ca', '--ca-cert',
-        dest='sslca', metavar='SSL-CA-Certificate',
-        help='one-shot setting of SSL-CA-Certificate')
-
-	gpars = pars.add_argument_group('gpg arguments')
+	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-k', '--key',
         dest='key', metavar='"ID"', type=str,
@@ -175,6 +150,11 @@ def optpars(cfgs, mode, name):
         dest='rvs', metavar='"ID [ID]..."',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
+	gpars.add_argument(
+        '-u', '--user',
+        dest='usr', metavar='USER', default=cfgs['user'],
+        help='query entrys only for USER (-A overrides, ' \
+             '"%s" is default)'%cfgs['user'])
 	pars.add_argument(
         '-p', '--password',
         dest='pwd', default=None,
@@ -184,6 +164,23 @@ def optpars(cfgs, mode, name):
         '--comment',
         dest='com', default=None,
         help='enter comment for add/change actions')
+	gpars.add_argument(
+        '-x', '--x509',
+        dest='gpv', action='store_const', const='gpgsm',
+        help='force ssl compatible gpgsm mode - usually is autodetected ' \
+             '(use --cert & --key for imports)')
+	gpars.add_argument(
+        '-C', '--cert',
+        dest='sslcrt', metavar='SSL-Certificate',
+        help='one-shot setting of SSL-Certificate')
+	gpars.add_argument(
+        '-K', '--ssl-key',
+        dest='sslkey', metavar='SSL-Private-Key',
+        help='one-shot setting of SSL-Private-Key')
+	gpars.add_argument(
+        '--ca', '--ca-cert',
+        dest='sslca', metavar='SSL-CA-Certificate',
+        help='one-shot setting of SSL-CA-Certificate')
 	gpars.add_argument(
         '-P', '--passcrypt',
         dest='pcr', metavar='CRYPTFILE',
@@ -196,17 +193,17 @@ def optpars(cfgs, mode, name):
         default=path.expanduser('~/.pwd.yaml'),
         help='set location of YAMLFILE to read whole ' \
              'sets of passwords from a yaml file (~/.pwd.yaml is default)')
-	ypars = pars.add_argument_group('yubikey arguments')
-	ypars.add_argument(
-        '-s', '--slot',
+	gpars.add_argument(
+        '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots (only useful with -y)'
         ).completer = ChoicesCompleter((1, 2))
+	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set ' \
-             'SERIAL of yubikey (autoselect serial and slot is default)')
+		     'SERIAL of yubikey (autoselect serial and slot is default)')
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
@@ -277,6 +274,7 @@ def confpars(mode):
         'YKSERIAL': 'ykser',
         'YKSLOT': 'ykslot'}
 	cfgs.update(dictreplace(confs, cfgmap))
+	cfgs.update(envconf(envmap))
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
@@ -332,7 +330,6 @@ def confpars(mode):
 
 def cli():
 	args, pargs, pkwargs = confpars('cli')
-	autocomplete(args)
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
@@ -344,7 +341,7 @@ def cli():
 		ykser = args.yks if args.yks else None
 		if ykser and len(ykser) >= 6:
 			ykser = ''.join(str(ykser)[-6:])
-		res = ykchalres(args.lst if args.lst else getpass(), args.ysl, ykser)
+		res = ykchalres(getpass(), args.ysl, ykser)
 		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
@@ -377,8 +374,10 @@ def cli():
 		ers = []
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
-		if not args.aal:
-			__ents = __ents[args.user]
+			if not args.aal:
+				__ents[args.user]
+			if r in __ents.keys():
+				ers.append(r)
 		ewrd = 'entry'
 		if len(ers) >= 1:
 			ewrd = 'entrys'
@@ -410,8 +409,7 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
 	if typ == 'yk':
-		res = ykchalres(
-            args.lst if args.lst else getpass(), args.ykslot, args.yks)
+		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
@@ -438,8 +436,15 @@ def gui(typ='pw'):
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
-		__in = args.lst if args.lst else xgetpass()
-		if not __in:
+		_umsg = 'as "%s"'%args.usr
+		if args.aal:
+			_umsg = 'in all users'
+		__in = args.lst if args.lst else xgetpass(
+            'enter entry to search for %s'%_umsg)
+		if __in is None:
+			xnotify('aborted by keystroke')
+			exit()
+		elif not __in:
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
