@@ -436,6 +436,7 @@ def gui(typ='pw'):
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
+		pc = PassCrypt(*pargs, **pkwargs)
 		_umsg = 'as "%s"'%args.usr
 		if args.aal:
 			_umsg = 'in all users'
@@ -448,7 +449,7 @@ def gui(typ='pw'):
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
-		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
+		__ent = pc.lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
 			if xyesno('no entry found for %s matching %s, try again?'%(
 				  args.usr, __in)):
