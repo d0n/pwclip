@@ -330,7 +330,6 @@ def confpars(mode):
 
 def cli():
 	args, pargs, pkwargs = confpars('cli')
-	autocomplete(args)
 	if not path.isfile(args.yml) and \
           not path.isfile(args.pcr) and args.yks is False:
 		with open(args.yml, 'w+') as yfh:
