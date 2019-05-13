@@ -131,7 +131,7 @@ def optpars(cfgs, mode, name):
 	rpars.add_argument(
         '-R',
         dest='rem', action='store_true',
-        help='use remote backup given by --remote-host')
+        help='use remote backup given by --remote-host/--remote-user')
 	rpars.add_argument(
         '--remote-host',
         dest='remote', metavar='HOST',
@@ -193,12 +193,12 @@ def optpars(cfgs, mode, name):
         default=path.expanduser('~/.pwd.yaml'),
         help='set location of YAMLFILE to read whole ' \
              'sets of passwords from a yaml file (~/.pwd.yaml is default)')
-	gpars.add_argument(
+	ypars = pars.add_argument_group('yubikey arguments')
+	ypars.add_argument(
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots (only useful with -y)'
         ).completer = ChoicesCompleter((1, 2))
-	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,

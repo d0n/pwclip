@@ -9,6 +9,9 @@ Released: 2019-05-06
   * added signature function which adds another file ("~/.passcrypt.sig"
     by default)
 
+  * added generating config if used for the first time - gpg-key is also
+    generated in user dialog
+
   * GPGKEY and GPGKEYS is exchanged for GPGKEY and RECIPIENTS while GPGKEY
     is a string identifying the signature key (recipients still can be
     multiple keys seperated by spaces)
