@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-05-06
+Released: 2019-05-13
 
   * added signature function which adds another file ("~/.passcrypt.sig"
     by default)
