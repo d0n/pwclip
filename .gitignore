@@ -5,6 +5,7 @@ deb_dist
 dist
 build
 docs/_build
+#example/gnupg
 lib/
 pwclip.egg-info
 *.pyc

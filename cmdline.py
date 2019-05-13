@@ -252,7 +252,7 @@ def envconf(srcdict):
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	cfg = path.expanduser('~/.config/%s.cfg'%_me)
 	cfgs = {
         'crypt': path.expanduser('~/.passcrypt'),
         'plain': path.expanduser('~/.pwd.yaml'),
@@ -264,7 +264,7 @@ def confpars(mode):
 		with open(cfg, 'r') as cfh:
 			confs = dict(load(cfh.read(), Loader=FullLoader))
 	except (TypeError, FileNotFoundError):
-		confs
+		confs = {}
 	cfgmap = {
         'gpg': {'key': 'gpgkey', 'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
