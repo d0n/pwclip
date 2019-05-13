@@ -252,7 +252,7 @@ def envconf(srcdict):
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
+	cfg = path.expanduser('~/.config/%s.cfg'%_me)
 	cfgs = {
         'crypt': path.expanduser('~/.passcrypt'),
         'plain': path.expanduser('~/.pwd.yaml'),
@@ -264,7 +264,7 @@ def confpars(mode):
 		with open(cfg, 'r') as cfh:
 			confs = dict(load(cfh.read(), Loader=FullLoader))
 	except (TypeError, FileNotFoundError):
-		confs
+		confs = {}
 	cfgmap = {
         'gpg': {'key': 'gpgkey', 'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
@@ -318,14 +318,14 @@ def confpars(mode):
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
-	if mode == 'gui':
-		return args, pargs, pkwargs
 	if (
           args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
           args.rms is None and (args.sslcrt is None and args.sslkey is None)):
 		pars.print_help()
 		exit(0)
+	if mode == 'gui':
+		return args, pargs, pkwargs
 	return args, pargs, pkwargs
 
 def cli():
@@ -436,6 +436,7 @@ def gui(typ='pw'):
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
+		pc = PassCrypt(*pargs, **pkwargs)
 		_umsg = 'as "%s"'%args.usr
 		if args.aal:
 			_umsg = 'in all users'
@@ -448,7 +449,7 @@ def gui(typ='pw'):
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
-		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
+		__ent = pc.lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
 			if xyesno('no entry found for %s matching %s, try again?'%(
 				  args.usr, __in)):
