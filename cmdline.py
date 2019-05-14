@@ -266,15 +266,19 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'gpg': {'key': 'gpgkey', 'recipients': 'rvs', 'delkey': True},
+        'gpg': {'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
+        'GPGKEY': 'key',
+        'RECIPIENTS': 'rvs',
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
         'YKSLOT': 'ykslot'}
 	cfgs.update(dictreplace(confs, cfgmap))
 	cfgs.update(envconf(envmap))
+	print(cfgs)
+	exit()
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
