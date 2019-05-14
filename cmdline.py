@@ -439,11 +439,11 @@ def gui(typ='pw'):
 					exit(1)
 			exit(0)
 		pc = PassCrypt(*pargs, **pkwargs)
-		_umsg = 'as "%s"'%args.usr
+		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
-			_umsg = 'in all users'
+			_umsg = 'all entrys'
 		__in = args.lst if args.lst else xgetpass(
-            'enter entry to search for %s'%_umsg)
+            'enter name to search in %s'%_umsg)
 		if __in is None:
 			xnotify('aborted by keystroke')
 			exit()
