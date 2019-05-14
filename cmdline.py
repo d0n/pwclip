@@ -277,8 +277,6 @@ def confpars(mode):
         'YKSLOT': 'ykslot'}
 	cfgs.update(dictreplace(confs, cfgmap))
 	cfgs.update(envconf(envmap))
-	print(cfgs)
-	exit()
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
