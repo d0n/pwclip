@@ -131,7 +131,7 @@ def optpars(cfgs, mode, name):
 	rpars.add_argument(
         '-R',
         dest='rem', action='store_true',
-        help='use remote backup given by --remote-host')
+        help='use remote backup given by --remote-host/--remote-user')
 	rpars.add_argument(
         '--remote-host',
         dest='remote', metavar='HOST',
@@ -193,12 +193,12 @@ def optpars(cfgs, mode, name):
         default=path.expanduser('~/.pwd.yaml'),
         help='set location of YAMLFILE to read whole ' \
              'sets of passwords from a yaml file (~/.pwd.yaml is default)')
-	gpars.add_argument(
+	ypars = pars.add_argument_group('yubikey arguments')
+	ypars.add_argument(
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots (only useful with -y)'
         ).completer = ChoicesCompleter((1, 2))
-	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
@@ -266,10 +266,12 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'gpg': {'key': 'gpgkey', 'recipients': 'rvs', 'delkey': True},
+        'gpg': {'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
+        'GPGKEY': 'key',
+        'RECIPIENTS': 'rvs',
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
         'YKSLOT': 'ykslot'}
@@ -318,7 +320,7 @@ def confpars(mode):
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
 		print(bgre(pkwargs))
-	if (
+	if mode != 'gui' and (
           args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
           args.rms is None and (args.sslcrt is None and args.sslkey is None)):
@@ -437,11 +439,11 @@ def gui(typ='pw'):
 					exit(1)
 			exit(0)
 		pc = PassCrypt(*pargs, **pkwargs)
-		_umsg = 'as "%s"'%args.usr
+		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
-			_umsg = 'in all users'
+			_umsg = 'all entrys'
 		__in = args.lst if args.lst else xgetpass(
-            'enter entry to search for %s'%_umsg)
+            'enter name to search in %s'%_umsg)
 		if __in is None:
 			xnotify('aborted by keystroke')
 			exit()
