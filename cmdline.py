@@ -147,7 +147,7 @@ def optpars(cfgs, mode, name):
         help='gpg-key ID(s) to use for decryption/signing')
 	gpars.add_argument(
         '-r', '--recipients',
-        dest='rvs', metavar='"ID [ID]..."',
+        dest='rvs', metavar='"ID [ID ...]"',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
