@@ -143,7 +143,7 @@ def optpars(cfgs, mode, name):
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
         '-k', '--key',
-        dest='key', metavar='"ID"', type=str,
+        dest='key', metavar='ID', type=str,
         help='gpg-key ID(s) to use for decryption/signing')
 	gpars.add_argument(
         '-r', '--recipients',
