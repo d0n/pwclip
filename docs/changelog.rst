@@ -4,6 +4,19 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-05-20
+
+  * some cosmetic fixes in user dialogs
+
+  * fixed bugs when adding from plain-text file as well as bugs when no crypt
+    file exists
+
+  * fixed bug in gui mode when signature verification is bad
+
+
+1.5.0
+-----
+
 Released: 2019-05-14
 
   * added signature function which adds another file ("~/.passcrypt.sig"
