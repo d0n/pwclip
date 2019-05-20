@@ -11,6 +11,8 @@ Released: 2019-05-20
   * fixed bugs when adding from plain-text file as well as bugs when no crypt
     file exists
 
+  * creating and verifying changes to the crypt have been simplified
+
   * fixed bug in gui mode when signature verification is bad
 
 
