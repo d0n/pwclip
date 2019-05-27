@@ -13,3 +13,5 @@ pwclip.egg-info
 *.deb
 *.tar.gz
 *.FAILED
+.weaknez
+.vlt
