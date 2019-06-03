@@ -1,7 +1,7 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.5.0'
+version = '1.5.1'
 install_requires = [
     'argcomplete', 'paramiko', 'psutil',
     'python-gnupg', 'python-yubico', 'PyYAML', 'wget', 'cryptography']
