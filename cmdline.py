@@ -42,7 +42,8 @@ from colortext import bgre, bred, tabd, error, fatal
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, which, whoami
+    xmsgok, xyesno, xnotify, which, whoami, \
+    dictreplace, envconf
 
 from secrecy import PassCrypt, ykchalres, yubikeys
 
@@ -223,31 +224,6 @@ def optpars(cfgs, mode, name):
         help='pwclip an entry matching PATTERN if given ' \
              '- otherwise list all entrys')
 	return pars
-
-def dictreplace(srcdict, trgdict):
-	if not isinstance(srcdict, dict):
-		return error('type \'dict\' expected, got', type(trgdict))
-	newdict = {}
-	for (k, v) in srcdict.items():
-		if k in trgdict.keys() and isinstance(trgdict[k], dict):
-			__dict = dictreplace(srcdict[k], trgdict[k])
-			if 'delkey' not in trgdict[k].keys():
-				newdict[k] = __dict
-				continue
-			for (ik, iv) in __dict.items():
-				newdict[ik] = iv
-		elif k in trgdict.keys():
-			newdict[trgdict[k]] = srcdict[k]
-		else:
-			newdict[k] = v
-	return newdict
-
-def envconf(srcdict):
-	newdict = {}
-	for (k, v) in srcdict.items():
-		if k in environ.keys():
-			newdict[v] = environ[k]
-	return newdict
 
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
