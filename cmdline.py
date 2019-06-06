@@ -42,10 +42,9 @@ from colortext import bgre, bred, tabd, error, fatal
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, which, whoami, \
-    dictreplace, envconf
+    xmsgok, xyesno, xnotify, which, whoami
 
-from secrecy import PassCrypt, ykchalres, yubikeys
+from secrecy import ykchalres, yubikeys, PassCrypt
 
 from pwclip.__pkginfo__ import version
 
@@ -88,6 +87,13 @@ def __dictreplace(pwdict):
 		elif ent:
 			__pwdict[usr] = __passreplace(ent)
 	return __pwdict
+
+def _envconf(srcdict):
+	newdict = {}
+	for (k, v) in srcdict.items():
+		if k in environ.keys():
+			newdict[v] = environ[k]
+	return newdict
 
 def _printpws_(pwdict, insecure=False):
 	"""password printer with in/secure option"""
@@ -251,8 +257,25 @@ def confpars(mode):
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
         'YKSLOT': 'ykslot'}
+	def dictreplace(srcdict, trgdict):
+		if not isinstance(srcdict, dict):
+			return error('type \'dict\' expected, got', type(trgdict))
+		newdict = {}
+		for (k, v) in srcdict.items():
+			if k in trgdict.keys() and isinstance(trgdict[k], dict):
+				__dict = dictreplace(srcdict[k], trgdict[k])
+				if 'delkey' not in trgdict[k].keys():
+					newdict[k] = __dict
+					continue
+				for (ik, iv) in __dict.items():
+					newdict[ik] = iv
+			elif k in trgdict.keys():
+				newdict[trgdict[k]] = srcdict[k]
+			else:
+				newdict[k] = v
+		return newdict
 	cfgs.update(dictreplace(confs, cfgmap))
-	cfgs.update(envconf(envmap))
+	cfgs.update(_envconf(envmap))
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
