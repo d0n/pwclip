@@ -22,6 +22,8 @@ except ImportError:
 
 from os import environ, path, remove, getpid, name as osname
 
+from sys import stdout
+
 from subprocess import DEVNULL, Popen, call
 
 from argparse import ArgumentParser
@@ -51,13 +53,14 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	fno = fork()
-	if out == 'gui' and fno == 0:
-		Popen(str(
-            'xvkbd -no-keypad -delay 20 -text %s'%text
-        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-	elif out == 'cli' and fno == 0:
-		print(text, end='')
-	if fno == 0:
+	if fno:
+		if out == 'gui' and fno == 0:
+			Popen(str(
+                'xvkbd -no-keypad -delay 20 -text %s'%text
+            ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+		elif out == 'cli' and fno == 0:
+			stdout.write(str(text))
+			stdout.flush()
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
