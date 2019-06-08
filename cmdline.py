@@ -53,14 +53,15 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	fno = fork()
-	if fno:
-		if out == 'gui' and fno == 0:
-			Popen(str(
-                'xvkbd -no-keypad -delay 20 -text %s'%text
-            ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-		elif out == 'cli' and fno == 0:
-			stdout.write(str(text))
-			stdout.flush()
+	if fno == 0:
+		if out:
+			if out == 'gui':
+				Popen(str(
+                     'xvkbd -no-keypad -delay 20 -text %s'%text
+                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+			elif out == 'cli':
+				stdout.write(str(text))
+				stdout.flush()
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
@@ -289,6 +290,7 @@ def confpars(mode):
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
+        'out' if args.out else None,
         'gui' if mode == 'gui' else None,
         'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
@@ -314,6 +316,10 @@ def confpars(mode):
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
+	if args.out:
+		pkwargs['vrb'] = False
+	if mode:
+		pkwargs['vrb'] = False
 	if args.rem:
 		if hasattr(args, 'remote'):
 			pkwargs['remote'] = args.remote
