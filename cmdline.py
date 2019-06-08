@@ -120,6 +120,10 @@ def optpars(cfgs, mode, name):
         dest='aal', action='store_true',
         help='switch to all users entrys ("%s" only is default)'%cfgs['user'])
 	pars.add_argument(
+        '--silent',
+        dest='vrb', action='store_false', default=True,
+        help='show passwords when listing (replaced by "*" is default)')
+	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
@@ -316,9 +320,10 @@ def confpars(mode):
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
+	pkwargs['vrb'] = True
 	if args.out:
 		pkwargs['vrb'] = False
-	if mode:
+	if mode == 'gui':
 		pkwargs['vrb'] = False
 	if args.rem:
 		if hasattr(args, 'remote'):
