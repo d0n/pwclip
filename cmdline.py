@@ -274,6 +274,8 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
+        'debug': 'dbg',
+        'verbose': 'vrb',
         'gpg': {'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
