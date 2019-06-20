@@ -46,7 +46,9 @@ from system import \
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, which, whoami
 
-from secrecy import PassCrypt, ykchalres, yubikeys
+from secrecy import ykchalres, yubikeys
+
+from pwclip.passcrypt import PassCrypt
 
 from pwclip.__pkginfo__ import version
 
