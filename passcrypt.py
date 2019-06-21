@@ -188,22 +188,17 @@ class PassCrypt(GPGTool):
 		ok = False
 		if self.sig:
 			fs = (self.crypt, '%s.sig'%self.crypt)
-		if self.rem and self.remote:
-			for i in fs:
-				ok = self.ssh.scpcompstats(
-                    i, path.basename(i),
-                    2, remote=self.remote, reuser=self.reuser)
-				if ok:
-					print(
-                        blu('file'),
-                        yel(path.basename(i)),
-                        blu('synced successfully'))
-				if not ok:
-					continue
-		else:
-			for i in fs:
-				print(blu('rotating'), yel(i))
-				filerotate(i, 2)
+		for i in fs:
+			ok = self.ssh.scpcompstats(
+                i, path.basename(i),
+                2, remote=self.remote, reuser=self.reuser)
+			if ok:
+				print(
+                    blu('file'),
+                    yel(path.basename(i)),
+                    blu('synced successfully'))
+			if not ok:
+				continue
 		return ok
 
 	def _readcrypt(self):
