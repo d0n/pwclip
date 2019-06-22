@@ -18,3 +18,7 @@
 	path = lib/system
 	url = d0n@janeiskla.de:rpo/python/system.git
 	branch = pwclip
+[submodule "system"]
+	path = system
+	url = d0n@janeiskla.de:rpo/python/system
+	branch = pwclip
