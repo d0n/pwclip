@@ -22,8 +22,6 @@ except ImportError:
 
 from os import environ, path, remove, getpid, name as osname
 
-from sys import stdout
-
 from subprocess import DEVNULL, Popen, call
 
 from argparse import ArgumentParser
@@ -46,24 +44,20 @@ from system import \
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, which, whoami
 
-from secrecy import ykchalres, yubikeys
-
-from pwclip.passcrypt import PassCrypt
+from secrecy import ykchalres, yubikeys, PassCrypt
 
 from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
 	fno = fork()
+	if out == 'gui' and fno == 0:
+		Popen(str(
+            'xvkbd -no-keypad -delay 20 -text %s'%text
+        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+	elif out == 'cli' and fno == 0:
+		print(text, end='')
 	if fno == 0:
-		if out:
-			if out == 'gui':
-				Popen(str(
-                     'xvkbd -no-keypad -delay 20 -text %s'%text
-                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-			elif out == 'cli':
-				stdout.write(str(text))
-				stdout.flush()
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
@@ -94,6 +88,13 @@ def __dictreplace(pwdict):
 			__pwdict[usr] = __passreplace(ent)
 	return __pwdict
 
+def _envconf(srcdict):
+	newdict = {}
+	for (k, v) in srcdict.items():
+		if k in environ.keys():
+			newdict[v] = environ[k]
+	return newdict
+
 def _printpws_(pwdict, insecure=False):
 	"""password printer with in/secure option"""
 	if not insecure:
@@ -121,10 +122,6 @@ def optpars(cfgs, mode, name):
         '-A', '--all',
         dest='aal', action='store_true',
         help='switch to all users entrys ("%s" only is default)'%cfgs['user'])
-	pars.add_argument(
-        '--silent',
-        dest='vrb', action='store_false', default=True,
-        help='show passwords when listing (replaced by "*" is default)')
 	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
@@ -234,31 +231,6 @@ def optpars(cfgs, mode, name):
              '- otherwise list all entrys')
 	return pars
 
-def dictreplace(srcdict, trgdict):
-	if not isinstance(srcdict, dict):
-		return error('type \'dict\' expected, got', type(trgdict))
-	newdict = {}
-	for (k, v) in srcdict.items():
-		if k in trgdict.keys() and isinstance(trgdict[k], dict):
-			__dict = dictreplace(srcdict[k], trgdict[k])
-			if 'delkey' not in trgdict[k].keys():
-				newdict[k] = __dict
-				continue
-			for (ik, iv) in __dict.items():
-				newdict[ik] = iv
-		elif k in trgdict.keys():
-			newdict[trgdict[k]] = srcdict[k]
-		else:
-			newdict[k] = v
-	return newdict
-
-def envconf(srcdict):
-	newdict = {}
-	for (k, v) in srcdict.items():
-		if k in environ.keys():
-			newdict[v] = environ[k]
-	return newdict
-
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
@@ -276,8 +248,6 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'debug': 'dbg',
-        'verbose': 'vrb',
         'gpg': {'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
@@ -287,8 +257,27 @@ def confpars(mode):
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
         'YKSLOT': 'ykslot'}
+	def dictreplace(srcdict, trgdict):
+		if not isinstance(srcdict, dict):
+			return error('type \'dict\' expected, got', type(trgdict))
+		newdict = {}
+		for (k, v) in srcdict.items():
+			if k in trgdict.keys() and isinstance(trgdict[k], dict):
+				__dict = dictreplace(srcdict[k], trgdict[k])
+				if 'delkey' not in trgdict[k].keys():
+					newdict[k] = __dict
+					continue
+				for (ik, iv) in __dict.items():
+					newdict[ik] = iv
+			elif k in trgdict.keys():
+				newdict[trgdict[k]] = srcdict[k]
+			else:
+				newdict[k] = v
+		return newdict
 	cfgs.update(dictreplace(confs, cfgmap))
-	cfgs.update(envconf(envmap))
+	senv = _envconf(envmap)
+	for (k, v) in senv.items():
+		cfgs[k] = v
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
@@ -298,7 +287,6 @@ def confpars(mode):
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
-        'out' if args.out else None,
         'gui' if mode == 'gui' else None,
         'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
@@ -324,11 +312,6 @@ def confpars(mode):
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
-	pkwargs['vrb'] = True
-	if args.out:
-		pkwargs['vrb'] = False
-	if mode == 'gui':
-		pkwargs['vrb'] = False
 	if args.rem:
 		if hasattr(args, 'remote'):
 			pkwargs['remote'] = args.remote
