@@ -44,7 +44,9 @@ from system import \
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, which, whoami
 
-from secrecy import ykchalres, yubikeys, PassCrypt
+from secrecy import ykchalres, yubikeys
+
+from pwclip.passcrypt import PassCrypt
 
 from pwclip.__pkginfo__ import version
 
@@ -235,7 +237,7 @@ def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.cfg'%_me)
-	cfgs = {
+	defaults = {
         'crypt': path.expanduser('~/.passcrypt'),
         'plain': path.expanduser('~/.pwd.yaml'),
         'time': 3,
@@ -244,9 +246,9 @@ def confpars(mode):
         }
 	try:
 		with open(cfg, 'r') as cfh:
-			confs = dict(load(cfh.read(), Loader=FullLoader))
+			cfgs = dict(load(cfh.read(), Loader=FullLoader))
 	except (TypeError, FileNotFoundError):
-		confs = {}
+		cfgs = defaults
 	cfgmap = {
         'gpg': {'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
@@ -274,7 +276,9 @@ def confpars(mode):
 			else:
 				newdict[k] = v
 		return newdict
-	cfgs.update(dictreplace(confs, cfgmap))
+	confs = dictreplace(confs, cfgmap)
+	for (k, v) in confs.items():
+		cfgs[k] = v
 	senv = _envconf(envmap)
 	for (k, v) in senv.items():
 		cfgs[k] = v
@@ -411,6 +415,7 @@ def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
+
 	if typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
