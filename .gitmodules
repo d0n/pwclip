@@ -14,3 +14,7 @@
 	path = lib/secrecy
 	url = d0n@janeiskla.de:rpo/python/secrecy.git
 	branch = pwclip
+[submodule "lib/system"]
+	path = lib/system
+	url = d0n@janeiskla.de:rpo/python/system
+	branch = pwclip
