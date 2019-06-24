@@ -41,12 +41,25 @@ from getpass import getpass
 from colortext import bgre, bred, tabd, error, fatal
 
 from system import \
+<<<<<<< HEAD
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, which, whoami
 
 from secrecy import ykchalres, yubikeys
+||||||| merged common ancestors
+    ymload as load, copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+=======
+    absrelpath, copy, paste, xgetpass, \
+    xmsgok, xyesno, xnotify, which, whoami
+>>>>>>> build
 
+<<<<<<< HEAD
 from pwclip.passcrypt import PassCrypt
+||||||| merged common ancestors
+from secrecy import PassCrypt, ykchalres, yubikeys
+=======
+from secrecy import ykchalres, yubikeys, PassCrypt
+>>>>>>> build
 
 from pwclip.__pkginfo__ import version
 
@@ -128,6 +141,10 @@ def optpars(cfgs, mode, name):
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
+	pars.add_argument(
+        '-r', '--random-password',
+        dest='rnd', action='store_true',
+        help='show passwords when listing (replaced by "*" is default)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -280,6 +297,37 @@ def confpars(mode):
 	cfgs = dictreplace(cfgs, cfgmap)
 	for (k, v) in _envconf(envmap).items():
 		cfgs[k] = v
+		cfgs = {}
+	try:
+		cfgs['time'] = environ['PWCLIPTIME']
+	except KeyError:
+		cfgs['time'] = 3
+	try:
+		cfgs['ykslot'] = environ['YKSLOT']
+	except KeyError:
+		cfgs['ykslot'] = None
+	try:
+		cfgs['ykser'] = environ['YKSERIAL']
+	except KeyError:
+		cfgs['ykser'] = None
+	try:
+		cfgs['binary']
+	except KeyError:
+		cfgs['binary'] = 'gpg2'
+		if osname == 'nt':
+			cfgs['binary'] = 'gpg'
+	try:
+		cfgs['user'] = environ['USER']
+	except KeyError:
+		cfgs['user'] = environ['USERNAME']
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
@@ -291,6 +339,7 @@ def confpars(mode):
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
         'rem' if args.rem else None,
+        'rnd' if args.rnd else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
@@ -413,8 +462,7 @@ def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
-
-	if typ == 'yk':
+	if args.yks or args.yks is None or typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
