@@ -237,7 +237,7 @@ def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
 	_me = path.basename(path.dirname(__file__))
 	cfg = path.expanduser('~/.config/%s.cfg'%_me)
-	defaults = {
+	cfgs = {
         'crypt': path.expanduser('~/.passcrypt'),
         'plain': path.expanduser('~/.pwd.yaml'),
         'time': 3,
@@ -246,9 +246,9 @@ def confpars(mode):
         }
 	try:
 		with open(cfg, 'r') as cfh:
-			cfgs = dict(load(cfh.read(), Loader=FullLoader))
+			confs = dict(load(cfh.read(), Loader=FullLoader))
 	except (TypeError, FileNotFoundError):
-		cfgs = defaults
+		confs = {}
 	cfgmap = {
         'gpg': {'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
@@ -276,11 +276,9 @@ def confpars(mode):
 			else:
 				newdict[k] = v
 		return newdict
-	confs = dictreplace(confs, cfgmap)
-	for (k, v) in confs.items():
-		cfgs[k] = v
-	senv = _envconf(envmap)
-	for (k, v) in senv.items():
+	cfgs.update(confs)
+	cfgs = dictreplace(cfgs, cfgmap)
+	for (k, v) in _envconf(envmap).items():
 		cfgs[k] = v
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
