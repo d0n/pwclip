@@ -127,6 +127,10 @@ def optpars(cfgs, mode, name):
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
+        '-r', '--random-password',
+        dest='rnd', action='store_true',
+        help='show passwords when listing (replaced by "*" is default)')
+	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
         help='show passwords when listing (replaced by "*" is default)')
@@ -287,6 +291,7 @@ def confpars(mode):
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
         'rem' if args.rem else None,
+        'rnd' if args.rnd else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
