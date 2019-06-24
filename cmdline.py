@@ -38,28 +38,15 @@ from yaml import load, FullLoader
 from getpass import getpass
 
 # local relative imports
-from colortext import bgre, bred, tabd, error, fatal
+from colortext import bgre, bred, tabd, error, fatal, abort
 
 from system import \
-<<<<<<< HEAD
     absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, which, whoami
+    xmsgok, xyesno, xnotify, which, whoami, dictreplace
+
+from pwclip.passcrypt import PassCrypt
 
 from secrecy import ykchalres, yubikeys
-||||||| merged common ancestors
-    ymload as load, copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
-=======
-    absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, which, whoami
->>>>>>> build
-
-<<<<<<< HEAD
-from pwclip.passcrypt import PassCrypt
-||||||| merged common ancestors
-from secrecy import PassCrypt, ykchalres, yubikeys
-=======
-from secrecy import ykchalres, yubikeys, PassCrypt
->>>>>>> build
 
 from pwclip.__pkginfo__ import version
 
@@ -142,9 +129,10 @@ def optpars(cfgs, mode, name):
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
-        '-r', '--random-password',
-        dest='rnd', action='store_true',
-        help='show passwords when listing (replaced by "*" is default)')
+        '-g', '--genpw-pattern',
+        dest='genpwrex', nargs='?',
+        help='randomly generate password (only useful ' \
+             'with -a, default is [\w \.\,\-\?\!]:24)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -275,51 +263,17 @@ def confpars(mode):
         'RECIPIENTS': 'rvs',
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
+        'USER': 'user',
+        'USERNAME': 'user',
         'YKSLOT': 'ykslot'}
-	def dictreplace(srcdict, trgdict):
-		if not isinstance(srcdict, dict):
-			return error('type \'dict\' expected, got', type(trgdict))
-		newdict = {}
-		for (k, v) in srcdict.items():
-			if k in trgdict.keys() and isinstance(trgdict[k], dict):
-				__dict = dictreplace(srcdict[k], trgdict[k])
-				if 'delkey' not in trgdict[k].keys():
-					newdict[k] = __dict
-					continue
-				for (ik, iv) in __dict.items():
-					newdict[ik] = iv
-			elif k in trgdict.keys():
-				newdict[trgdict[k]] = srcdict[k]
-			else:
-				newdict[k] = v
-		return newdict
-	cfgs.update(confs)
-	cfgs = dictreplace(cfgs, cfgmap)
+	confs = dictreplace(confs, cfgmap)
+	for (k, v) in confs.items():
+		cfgs[k] = v
 	for (k, v) in _envconf(envmap).items():
 		cfgs[k] = v
-		cfgs = {}
-	try:
-		cfgs['time'] = environ['PWCLIPTIME']
-	except KeyError:
-		cfgs['time'] = 3
-	try:
-		cfgs['ykslot'] = environ['YKSLOT']
-	except KeyError:
-		cfgs['ykslot'] = None
-	try:
-		cfgs['ykser'] = environ['YKSERIAL']
-	except KeyError:
-		cfgs['ykser'] = None
-	try:
-		cfgs['binary']
-	except KeyError:
-		cfgs['binary'] = 'gpg2'
-		if osname == 'nt':
-			cfgs['binary'] = 'gpg'
-	try:
-		cfgs['user'] = environ['USER']
-	except KeyError:
-		cfgs['user'] = environ['USERNAME']
+	cfgs['binary'] = 'gpg2'
+	if osname == 'nt':
+		cfgs['binary'] = 'gpg'
 	if 'crypt' not in cfgs.keys():
 		cfgs['crypt'] = path.expanduser('~/.passcrypt')
 	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
@@ -339,7 +293,6 @@ def confpars(mode):
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
         'rem' if args.rem else None,
-        'rnd' if args.rnd else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
@@ -351,6 +304,16 @@ def confpars(mode):
 	pkwargs['sslcrt'] = args.sslcrt
 	pkwargs['sslkey'] = args.sslkey
 	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
+	if args.genpwrex or args.genpwrex is None:
+		pargs.append('rnd')
+		genpwrex = args.genpwrex
+		if args.genpwrex is None:
+			genpwrex = '[\w \.\,\-\?\!]:24'
+		genpwlen = 24
+		if ':' in genpwrex:
+			genpwrex, genpwlen = str(genpwrex).split(':')
+		pkwargs['genpwrex'] = genpwrex
+		pkwargs['genpwlen'] = genpwlen
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
 	if args.rvs:
@@ -371,7 +334,7 @@ def confpars(mode):
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
-		print(bgre(pkwargs))
+		print(bgre('pargs:\n  %s\npkwargs:\n%s'%(pargs, tabd(pkwargs, 2))))
 	if mode != 'gui' and (
           args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
@@ -403,8 +366,11 @@ def cli():
 	__ents = {}
 	err = None
 	if args.add:
-		__ents = PassCrypt(*pargs, **pkwargs).adpw(
-            args.add, args.pwd, args.com)
+		try:
+			__ents = PassCrypt(*pargs, **pkwargs).adpw(
+                               args.add, args.pwd, args.com)
+		except KeyboardInterrupt:
+			abort()
 		if not __ents:
 			err = ('could not add entry', args.add)
 		elif args.aal:

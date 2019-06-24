@@ -17,7 +17,7 @@ from paramiko.ssh_exception import SSHException
 from colortext import blu, yel, grn, bgre, tabd, error
 
 from system import \
-    userfind, filerotate, setfiletime, filetime, absrelpath, xyesno
+    userfind, filerotate, setfiletime, filetime, absrelpath, xyesno, random
 
 from net.ssh import SecureSHell
 
@@ -32,6 +32,7 @@ class PassCrypt(GPGTool):
 	fsy = None
 	sho = None
 	rem = None
+	rnd = None
 	out = None
 	gsm = None
 	key = None
@@ -59,6 +60,8 @@ class PassCrypt(GPGTool):
 	sslcrt = ''
 	sslkey = ''
 	sigerr = None
+	genpwrex = None
+	genpwlen = 24
 	maxage = 3600
 	__weaks = {}
 	__oldweaks = {}
@@ -82,6 +85,7 @@ class PassCrypt(GPGTool):
 			gargs = list(args) + ['gui'] + ['sig'] if self.sig else []
 			self.cpasmsg = 'enter password for %s: '%self.crypt
 		gsks = GPGSMTool().keylist(True)
+		print(kwargs)
 		if self.gsm or (
               self.gsm is None and self.recvs and [
                   r for r in self.recvs if r in gsks]):
@@ -102,7 +106,7 @@ class PassCrypt(GPGTool):
 		chgs = []
 		crecvs = []
 		if path.isfile(self.crypt):
-			erecvs = list(set(GPGTool().recvlist(self.crypt)))
+			erecvs = list(set(self.gpg.recvlist(self.crypt)))
 			for r in erecvs:
 				crecvs.append('0x%s'%r[-16:])
 			for r in self.recvs:
@@ -263,6 +267,15 @@ class PassCrypt(GPGTool):
 
 	def adpw(self, usr, pwd=None, com=None):
 		"""password adding method"""
+		if self.rnd:
+			while True:
+				pwd = random(self.genpwlen, self.genpwrex)
+				print(
+                    grn('use the following generated password: "'),
+                    yel(pwd), grn('"?'), ' [Y/n]', sep='')
+				yesno = input()
+				if str(yesno).lower() in ('y', ''):
+					break
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr,
