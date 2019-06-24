@@ -85,7 +85,6 @@ class PassCrypt(GPGTool):
 			gargs = list(args) + ['gui'] + ['sig'] if self.sig else []
 			self.cpasmsg = 'enter password for %s: '%self.crypt
 		gsks = GPGSMTool().keylist(True)
-		print(kwargs)
 		if self.gsm or (
               self.gsm is None and self.recvs and [
                   r for r in self.recvs if r in gsks]):
