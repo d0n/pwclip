@@ -24,6 +24,8 @@ from net.ssh import SecureSHell
 
 from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 
+from atexit import register
+
 class PassCrypt(GPGTool):
 	"""passcrypt main class"""
 	dbg = None
@@ -100,8 +102,9 @@ class PassCrypt(GPGTool):
 		self.__weaks = self._readcrypt()
 		self.__oldweaks = str(self.__weaks)
 		self.__weaks = self._mergecrypt(self.__weaks)
+		register(self.__del)
 
-	def __del__(self):
+	def __del(self):
 		chgs = []
 		crecvs = []
 		if path.isfile(self.crypt):
