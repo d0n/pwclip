@@ -237,7 +237,7 @@ class PassCrypt(GPGTool):
 		kwargs = {
             'output': self.crypt,
             'recipients': self.recvs}
-		isok = self.encrypt(message=dump(__weaks), **kwargs)
+		isok = self.encrypt(message=dump(__weaks))
 		chmod(self.crypt, 0o600)
 		now = int(time())
 		setfiletime(self.crypt, (now, now))
