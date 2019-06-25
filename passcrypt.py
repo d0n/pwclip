@@ -89,10 +89,10 @@ class PassCrypt(GPGTool):
 		if self.gsm or (
               self.gsm is None and self.recvs and [
                   r for r in self.recvs if r in gsks]):
-			self.gpg = GPGSMTool(*gargs, **kwargs)
+			GPGSMTool.__init__(*gargs, **kwargs)
 		else:
-			self.gpg = GPGTool(*gargs, **kwargs)
-		self.keys = self.gpg.findkey()
+			GPGTool.__init__(*gargs, **kwargs)
+		self.keys = self.findkey()
 		if not self.keys:
 			self._mkconfkeys()
 		self.ssh = SecureSHell(*args, **kwargs)
@@ -106,7 +106,7 @@ class PassCrypt(GPGTool):
 		chgs = []
 		crecvs = []
 		if path.isfile(self.crypt):
-			erecvs = list(set(self.gpg.recvlist(self.crypt)))
+			erecvs = list(set(self.recvlist(self.crypt)))
 			for r in erecvs:
 				crecvs.append('0x%s'%r[-16:])
 			for r in self.recvs:
@@ -126,8 +126,8 @@ class PassCrypt(GPGTool):
 					error(*msg)
 				else:
 					xmsgok(' '.join(msg))
-			if not self.recvs and not self.gpg.findkey():
-				self.gpg.genkeys(self.gpg._gendefs(self.gui))
+			if not self.recvs and not self.findkey():
+				self.genkeys(self._gendefs(self.gui))
 			if self.__weaks:
 				if self._writecrypt(self.__weaks):
 					try:
@@ -136,7 +136,7 @@ class PassCrypt(GPGTool):
 						pass
 
 	def _mkconfkeys(self):
-		self.key = self.gpg.key = '0x%s'%str(self.gpg.genkeys())[-16:]
+		self.key = '0x%s'%str(self.genkeys())[-16:]
 		cfgs = {'gpg': {}}
 		override = False
 		if path.isfile(self.config):
@@ -211,7 +211,7 @@ class PassCrypt(GPGTool):
 			print(bgre(self._readcrypt))
 		__dct = {}
 		try:
-			__dct, err = self.gpg.decrypt(self.crypt)
+			__dct, err = self.decrypt(self.crypt)
 		except DecryptError as err:
 			error(err)
 			exit(1)
@@ -238,7 +238,7 @@ class PassCrypt(GPGTool):
 		kwargs = {
             'output': self.crypt,
             'recipients': self.recvs}
-		isok = self.gpg.encrypt(message=dump(__weaks), **kwargs)
+		isok = self.encrypt(message=dump(__weaks), **kwargs)
 		chmod(self.crypt, 0o600)
 		now = int(time())
 		setfiletime(self.crypt, (now, now))
@@ -287,7 +287,7 @@ class PassCrypt(GPGTool):
 					yesno = xyesno('use the following password: "%s"?'%pwd)
 					getpasswd = xgetpass
 				else:
-					getpasswd = self.gpg.passwd
+					getpasswd = self.passwd
 					print('%s %s? [Y/n]'%(
                         grn('use the following password: "'),
                         yel(pwd), grn('"?')))
@@ -341,7 +341,7 @@ class PassCrypt(GPGTool):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				self.__weaks[self.user][usr] = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, self.gpg.passwd)
+                    self.user, usr, pwd, com, __opw, __ocom, self.passwd)
 			else:
 				error('no entry named', usr, 'for user', self.user)
 		else:
@@ -354,7 +354,7 @@ class PassCrypt(GPGTool):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				self.__weaks[u][usr] = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, self.gpg.passwd)
+                    self.user, usr, pwd, com, __opw, __ocom, self.passwd)
 		return self.__weaks
 
 	def rmpw(self, usr):
