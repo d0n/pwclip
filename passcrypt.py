@@ -95,7 +95,7 @@ class PassCrypt(GPGTool):
 		self.keys = self.findkey()
 		if not self.keys:
 			self._mkconfkeys()
-		self.ssh = SecureSHell(self, *args, **kwargs)
+			SecureSHell(self, *args, **kwargs)
 		if self._cecktime():
 			self._copynews()
 		self.__weaks = self._readcrypt()
@@ -193,7 +193,7 @@ class PassCrypt(GPGTool):
 		if self.sig:
 			fs = (self.crypt, '%s.sig'%self.crypt)
 		for i in fs:
-			ok = self.ssh.scpcompstats(
+			ok = self.scpcompstats(
                 i, path.basename(i),
                 2, remote=self.remote, reuser=self.reuser)
 			if ok:
