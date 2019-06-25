@@ -95,7 +95,7 @@ class PassCrypt(GPGTool):
 		self.keys = self.findkey()
 		if not self.keys:
 			self._mkconfkeys()
-			SecureSHell(self, *args, **kwargs)
+			SecureSHell.__init__(self, *args, **kwargs)
 		if self._cecktime():
 			self._copynews()
 		self.__weaks = self._readcrypt()
