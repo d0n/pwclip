@@ -285,7 +285,6 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
 	if 'recipients' in cfgs.keys():
 		cfgs['recvs'] = cfgs['recipients']
-	print(cfgs)
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
@@ -321,7 +320,7 @@ def confpars(mode):
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
 	if args.rvs:
-		pkwargs['recvs'] = [k.strip() for k in args.rvs.split(' ')]
+		pkwargs['recvs'] = args.rvs
 	if args.key:
 		pkwargs['key'] = args.key
 	if args.usr:
