@@ -10,9 +10,12 @@ Released: 2019-06-25
 
   * merged lots of updates from master of each lib like: filerotation fixed for
     non-remote usage, fixed xinput windows (button placement and msg's),
-    dumped a lot of if - else crap into generic function
-    (cmdline-option-parsing), colortext made more generic, fixed gpg-signature
-    verification, overall pimped i/o messages
+    dumped a lot of if - else crap in cmdline.py into a generic function
+    colortext made more generic, fixed gpg-signature verification, overall
+    pimped i/o messages (extened existing and added some more)
+
+  * moved passcrypt.py from lib/secrecy/ to . for not fucking with recursed
+    imports
 
   * [W] most likely windows support is broken again - no time to test it yet
 
