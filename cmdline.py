@@ -283,6 +283,8 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
 	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	if 'recipients' in cfgs.keys():
+		cfgs['recvs'] = cfgs['recipients']
 	print(cfgs)
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
