@@ -17,7 +17,8 @@ from paramiko.ssh_exception import SSHException
 from colortext import blu, yel, grn, bgre, tabd, error
 
 from system import \
-    userfind, filerotate, setfiletime, filetime, absrelpath, xyesno, random
+    userfind, filerotate, setfiletime, \
+    xgetpass, xmsgok, xinput, filetime, absrelpath, xyesno, random
 
 from net.ssh import SecureSHell
 
@@ -243,22 +244,34 @@ class PassCrypt(GPGTool):
 		setfiletime(self.crypt, (now, now))
 		return isok
 
-	@staticmethod
-	def __askpwdcom(sysuser, usr, pwd, com, opw, ocom, passwd):
-		print(blu('as user '), yel(sysuser), ': ', sep='')
-		pwd = pwd if pwd else passwd(msg='%s%s%s%s: '%(
-                blu('  enter '), yel('password '),
-                blu('for entry '), yel('%s'%usr)))
-		pwd = pwd if pwd else opw
-		if not pwd:
-			error('password is needed if adding password')
-			return
+	def __askpwdcom(self, sysuser, usr, pwd, com, opw, ocom, passwd):
+		if not self.gui:
+			print(blu('as user '), yel(sysuser), ': ', sep='')
+			pwd = pwd if pwd else passwd(msg='%s%s%s%s: '%(
+                    blu('  enter '), yel('password '),
+                    blu('for entry '), yel('%s'%usr)))
+			pwd = pwd if pwd else opw
+			if not pwd:
+				error('password is needed if adding password')
+				return
+			if not com:
+				print(
+                    blu('  enter '), yel('comment '),
+                    blu('(optional, '), yel('___'),
+                    blu(' deletes the comment)'), ': ', sep='', end='')
+				com = input()
+			com = ocom if not com else com
+			if com == '___':
+				com = None
+			return [p for p in [pwd, com] if p is not None]
+		if not self.rnd:
+			pwd = passwd('as user %s: enter password for entry %s'%(sysuser, usr))
+			pwd = pwd if pwd else opw
+			if not pwd:
+				xmsgok('password is needed if adding password')
+				return
 		if not com:
-			print(
-                blu('  enter '), yel('comment '),
-                blu('(optional, '), yel('___'), blu(' deletes the comment)'),
-                ': ', sep='', end='')
-			com = input()
+			com = xinput('enter comment (optional, "___" deletes the comment)')
 		com = ocom if not com else com
 		if com == '___':
 			com = None
@@ -269,11 +282,18 @@ class PassCrypt(GPGTool):
 		if self.rnd:
 			while True:
 				pwd = random(self.genpwlen, self.genpwrex)
-				print(
-                    grn('use the following generated password: "'),
-                    yel(pwd), grn('"?'), ' [Y/n]', sep='')
-				yesno = input()
-				if str(yesno).lower() in ('y', ''):
+				yesno = False
+				if self.gui:
+					yesno = xyesno('use the following password: "%s"?'%pwd)
+					getpasswd = xgetpass
+				else:
+					getpasswd = self.gpg.passwd
+					print('%s %s? [Y/n]'%(
+                        grn('use the following password: "'),
+                        yel(pwd), grn('"?')))
+					yesno = input()
+					yesno = True if str(yesno).lower() in ('y', '') else False
+				if yesno:
 					break
 		if self.dbg:
 			print(bgre(tabd({
@@ -290,7 +310,7 @@ class PassCrypt(GPGTool):
 			except (KeyError, ValueError):
 				__opw, __ocom = None, None
 			pwdcom = self.__askpwdcom(
-                self.user, usr, pwd, com, __opw, __ocom, self.gpg.passwd)
+                self.user, usr, pwd, com, __opw, __ocom, getpasswd)
 			if pwdcom:
 				self.__weaks[self.user][usr] = [p for p in pwdcom if p]
 		else:
@@ -303,7 +323,7 @@ class PassCrypt(GPGTool):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				pwdcom = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, self.gpg.passwd)
+                    self.user, usr, pwd, com, __opw, __ocom, getpasswd)
 				if pwdcom:
 					self.__weaks[u][usr] = [p for p in pwdcom if p]
 		return self.__weaks

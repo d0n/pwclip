@@ -42,7 +42,7 @@ from colortext import bgre, bred, tabd, error, fatal, abort
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, which, whoami, dictreplace
+    xmsgok, xyesno, xnotify, xinput, which, whoami, dictreplace
 
 from pwclip.passcrypt import PassCrypt
 
@@ -130,7 +130,7 @@ def optpars(cfgs, mode, name):
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
         '-g', '--genpw-pattern',
-        dest='genpwrex', nargs='?',
+        dest='genpwrex', default=False, nargs='?',
         help='randomly generate password (only useful ' \
              'with -a, default is [\w \.\,\-\?\!]:24)')
 	pars.add_argument(
@@ -221,16 +221,16 @@ def optpars(cfgs, mode, name):
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
-        dest='add', metavar='ENTRY',
-        help='add ENTRY (password will be asked interactivly)')
+        dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        default=False, help='add ENTRY (password will be asked interactivly)')
 	gpars.add_argument(
         '-c', '--change',
-        dest='chg', metavar='ENTRY',
-        help='change ENTRY (password will be asked interactivly)')
+        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        default=False, help='change ENTRY (password will be asked interactivly)')
 	gpars.add_argument(
         '-d', '--delete',
-        dest='rms', metavar='ENTRY', nargs='+',
-        help='delete ENTRY(s) from the passcrypt list')
+        dest='rms', metavar='ENTRY', nargs='?' if mode == 'gui' else '+',
+        default=False, help='delete ENTRY(s) from the passcrypt list')
 	gpars.add_argument(
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
@@ -424,6 +424,21 @@ def cli():
 		fatal(err)
 	_printpws_(__ents, args.sho)
 
+def __xdialog(msg, sec=None):
+	getin = xinput
+	if sec:
+		getin = xgetpass
+	while True:
+		__ret = getin(msg)
+		print(__ret)
+		if not __ret:
+			yesno = xyesno('no input received, abort?')
+			if yesno:
+				return
+			continue
+		break
+	return __ret
+
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
@@ -434,14 +449,24 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
+	#print(tabd(args.__dict__))
 	while True:
-		if args.add:
-			if not PassCrypt(
-				  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
-				xmsgok('could not add entry %s'%args.add)
+		pcc = PassCrypt(*pargs, **pkwargs)
+		if args.add is not False:
+			__add = __xdialog('enter name for new password entry')
+			if not __add:
+				xmsgok('cannot add empty string ""')
 				exit(1)
+			__ent = pcc.adpw(__add, None, None)
+			if not __pc:
+				xmsgok('could not add entry %s'%__add)
+				exit(1)
+			__pc = __ent[__add]
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			exit(0)
-		elif args.chg:
+		elif args.chg is not False:
 			if args.pwd:
 				pkwargs['password'] = args.pwd
 			if not PassCrypt(
@@ -449,14 +474,13 @@ def gui(typ='pw'):
 				xmsgok('could not change entry %s'%args.chg)
 				exit(1)
 			exit(0)
-		elif args.rms:
+		elif args.rms is not False:
 			for r in args.rms:
 				__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 				if not __ents:
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
-		pc = PassCrypt(*pargs, **pkwargs)
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
 			_umsg = 'all entrys'
@@ -469,10 +493,10 @@ def gui(typ='pw'):
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
-		__ent = pc.lspw(__in)
+		__ent = pcc.lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
 			if xyesno('no entry found for %s matching %s, try again?'%(
-				  args.usr, __in)):
+                  args.usr, __in)):
 				continue
 			exit(1)
 		if __ent:
