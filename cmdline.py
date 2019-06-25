@@ -269,7 +269,8 @@ def confpars(mode):
 	confs = dictreplace(confs, cfgmap)
 	for (k, v) in confs.items():
 		cfgs[k] = v
-	for (k, v) in _envconf(envmap).items():
+	envs = _envconf(envmap)
+	for (k, v) in envs.items():
 		cfgs[k] = v
 	cfgs['binary'] = 'gpg2'
 	if osname == 'nt':
