@@ -449,7 +449,6 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
-	#print(tabd(args.__dict__))
 	while True:
 		pcc = PassCrypt(*pargs, **pkwargs)
 		if args.add is not False:
@@ -458,7 +457,7 @@ def gui(typ='pw'):
 				xmsgok('cannot add empty string ""')
 				exit(1)
 			__ent = pcc.adpw(__add, None, None)
-			if not __pc:
+			if not __ent:
 				xmsgok('could not add entry %s'%__add)
 				exit(1)
 			__pc = __ent[__add]
