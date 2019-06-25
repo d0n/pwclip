@@ -91,11 +91,11 @@ class PassCrypt(GPGTool):
                   r for r in self.recvs if r in gsks]):
 			GPGSMTool.__init__(*gargs, **kwargs)
 		else:
-			GPGTool.__init__(*gargs, **kwargs)
+			GPGTool.__init__(self, *gargs, **kwargs)
 		self.keys = self.findkey()
 		if not self.keys:
 			self._mkconfkeys()
-		self.ssh = SecureSHell(*args, **kwargs)
+		self.ssh = SecureSHell(self, *args, **kwargs)
 		if self._cecktime():
 			self._copynews()
 		self.__weaks = self._readcrypt()
