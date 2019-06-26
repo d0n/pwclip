@@ -462,13 +462,10 @@ def gui(typ='pw'):
 			if not __ent:
 				xmsgok('could not add entry %s'%__add)
 				exit(1)
-			__pc = PassCrypt(*pargs, **pkwargs).lspw(__add)
-			if not __pc:
-				xmsgok('no password entry %s'%__add)
-				exit(1)
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			if __add in __entskeys():
+				if len(__pc) == 2:
+					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 		exit(0)
 	elif args.chg is not False:
 		if args.pwd:
