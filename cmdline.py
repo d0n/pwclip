@@ -142,6 +142,7 @@ def optpars(cfgs, mode, name):
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (%s is default)'%cfgs['time'])
 	rpars = pars.add_argument_group('remote arguments')
+	rpars.set_defaults(**cfgs)
 	rpars.add_argument(
         '-R',
         dest='rem', action='store_true',
@@ -155,6 +156,7 @@ def optpars(cfgs, mode, name):
         dest='reuser', metavar='USER',
         help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
+	gpars.set_defaults(**cfgs)
 	gpars.add_argument(
         '-k', '--key',
         dest='key', metavar='ID', type=str,
@@ -169,12 +171,12 @@ def optpars(cfgs, mode, name):
         dest='usr', metavar='USER', default=cfgs['user'],
         help='query entrys only for USER (-A overrides, ' \
              '"%s" is default)'%cfgs['user'])
-	pars.add_argument(
+	gpars.add_argument(
         '-p', '--password',
         dest='pwd', default=None,
         help='enter password for add/change actions' \
              '(insecure & not recommended)')
-	pars.add_argument(
+	gpars.add_argument(
         '--comment',
         dest='com', default=None,
         help='enter comment for add/change actions')
@@ -208,6 +210,7 @@ def optpars(cfgs, mode, name):
         help='set location of YAMLFILE to read whole ' \
              'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	ypars = pars.add_argument_group('yubikey arguments')
+	ypars.set_defaults(**cfgs)
 	ypars.add_argument(
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
@@ -218,20 +221,22 @@ def optpars(cfgs, mode, name):
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set ' \
 		     'SERIAL of yubikey (autoselect serial and slot is default)')
-	gpars = pars.add_argument_group('action arguments')
-	gpars.add_argument(
+	
+	apars = pars.add_argument_group('action arguments')
+	apars.set_defaults(**cfgs)
+	apars.add_argument(
         '-a', '--add',
         dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
         default=False, help='add ENTRY (password will be asked interactivly)')
-	gpars.add_argument(
+	apars.add_argument(
         '-c', '--change',
         dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
         default=False, help='change ENTRY (password will be asked interactivly)')
-	gpars.add_argument(
+	apars.add_argument(
         '-d', '--delete',
         dest='rms', metavar='ENTRY', nargs='?' if mode == 'gui' else '+',
         default=False, help='delete ENTRY(s) from the passcrypt list')
-	gpars.add_argument(
+	apars.add_argument(
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='pwclip an entry matching PATTERN if given ' \
