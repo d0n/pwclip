@@ -15,6 +15,8 @@ Released: 2019-06-27
   * implemented more gui-mode functions like adding, deleting and changing
     entrys
 
+  * fix FAIL with versioning
+
 
 1.6.0/1
 -----
