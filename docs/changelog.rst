@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-06-25
+Released: 2019-06-26
 
   * added -g as addition for -a to generate random passwords instead of input
 
