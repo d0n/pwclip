@@ -4,6 +4,21 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-06-27
+
+  * fixed some bugs implemented with 1.6.0 like correct i/o of questions and
+    answer (few of'em merged from master in lib/system)
+
+  * fixed config parsing - especially in gui mode where e.g. recipients not
+    have been recognised
+
+  * implemented more gui-mode functions like adding, deleting and changing
+    entrys
+
+
+1.6.0
+-----
+
 Released: 2019-06-26
 
   * added -g as addition for -a to generate random passwords instead of input
