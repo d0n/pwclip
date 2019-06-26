@@ -467,7 +467,6 @@ def gui(typ='pw'):
 		if len(__pc) == 2:
 			xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 		forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		exit(0)
 	elif args.chg is not False:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
@@ -475,14 +474,12 @@ def gui(typ='pw'):
 			  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 			xmsgok('could not change entry %s'%args.chg)
 			exit(1)
-		exit(0)
 	elif args.rms is not False:
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
-		exit(0)
 	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -494,13 +491,9 @@ def gui(typ='pw'):
 			exit()
 		elif not __in:
 			if xyesno('no input received, try again?'):
-				continue
-			exit(1)
+				exit(1)
 		__ent = pcc.lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
-			if xyesno('no entry found for %s matching %s, try again?'%(
-				  args.usr, __in)):
-				continue
 			exit(1)
 		if __ent:
 			__pc = __ent[__in]
@@ -508,4 +501,3 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				exit(0)
