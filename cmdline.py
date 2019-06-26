@@ -133,7 +133,7 @@ def optpars(cfgs, mode, name):
         '-g', '--genpw-pattern',
         dest='genpwrex', default=False, nargs='?',
         help='randomly generate password (only useful ' \
-             'with -a, default is [\w \.\,\-\?\!]:24)')
+             'with -a, default is [\w#_;:\*\+\.\,\-\?\!]:24)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -314,10 +314,11 @@ def confpars(mode):
 		pargs.append('rnd')
 		genpwrex = args.genpwrex
 		if args.genpwrex is None:
-			genpwrex = '[\w \.\,\-\?\!]:24'
+			genpwrex = '[\w\#\_\;\:\*\+\.\,\-\?\!]:24'
 		genpwlen = 24
 		if ':' in genpwrex:
-			genpwrex, genpwlen = str(genpwrex).split(':')
+			genpwrex, genpwlen = \
+                str(genpwrex).split(':')[:-1], str(genpwrex).split(':')[-1]
 		pkwargs['genpwrex'] = genpwrex
 		pkwargs['genpwlen'] = genpwlen
 	if args.pcr:
