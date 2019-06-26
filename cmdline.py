@@ -255,7 +255,7 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'gpg': {'rvs': 'recipients', 'delkey': True},
+        'gpg': {'recipients': 'rvs', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
@@ -431,7 +431,6 @@ def __xdialog(msg, sec=None):
 		getin = xgetpass
 	while True:
 		__ret = getin(msg)
-		print(__ret)
 		if not __ret:
 			yesno = xyesno('no input received, abort?')
 			if yesno:
