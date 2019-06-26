@@ -372,11 +372,8 @@ def cli():
 	__ents = {}
 	err = None
 	if args.add:
-		try:
-			__ents = PassCrypt(*pargs, **pkwargs).adpw(
-                               args.add, args.pwd, args.com)
-		except KeyboardInterrupt:
-			abort()
+		__ents = PassCrypt(*pargs, **pkwargs).adpw(
+                           args.add, args.pwd, args.com)
 		if not __ents:
 			err = ('could not add entry', args.add)
 		elif args.aal:
@@ -385,6 +382,12 @@ def cli():
 					error('entry', args.add, 'not found for', u)
 		elif not args.aal:
 			__ents = __ents[args.user]
+		__pc = __ents[args.add]
+		if __pc:
+			if len(__pc) == 2 and osname != 'nt':
+				xnotify('%s: %s'%(
+                        args.lst, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd

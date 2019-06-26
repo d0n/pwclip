@@ -26,7 +26,7 @@ from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 
 from atexit import register
 
-class PassCrypt(GPGTool):
+class PassCrypt(GPGTool, SecureSHell):
 	"""passcrypt main class"""
 	dbg = None
 	vrb = None
