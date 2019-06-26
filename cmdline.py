@@ -453,60 +453,59 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
-	while True:
-		pcc = PassCrypt(*pargs, **pkwargs)
-		if args.add is not False:
-			__add = __xdialog('enter name for new password entry')
-			if not __add:
-				xmsgok('cannot add empty string ""')
+	pcc = PassCrypt(*pargs, **pkwargs)
+	if args.add is not False:
+		__add = __xdialog('enter name for new password entry')
+		if not __add:
+			xmsgok('cannot add empty string ""')
+			exit(1)
+		__ent = pcc.adpw(__add, None, None)
+		if not __ent:
+			xmsgok('could not add entry %s'%__add)
+			exit(1)
+		__pc = __ent[__add]
+		if len(__pc) == 2:
+			xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+		forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		exit(0)
+	elif args.chg is not False:
+		if args.pwd:
+			pkwargs['password'] = args.pwd
+		if not PassCrypt(
+			  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+			xmsgok('could not change entry %s'%args.chg)
+			exit(1)
+		exit(0)
+	elif args.rms is not False:
+		for r in args.rms:
+			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
+			if not __ents:
+				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
-			__ent = pcc.adpw(__add, None, None)
-			if not __ent:
-				xmsgok('could not add entry %s'%__add)
-				exit(1)
-			__pc = __ent[__add]
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-			exit(0)
-		elif args.chg is not False:
-			if args.pwd:
-				pkwargs['password'] = args.pwd
-			if not PassCrypt(
-				  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-				xmsgok('could not change entry %s'%args.chg)
-				exit(1)
-			exit(0)
-		elif args.rms is not False:
-			for r in args.rms:
-				__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
-				if not __ents:
-					xmsgok('could not delete entry %s'%args.rms)
-					exit(1)
-			exit(0)
-		else:
-			_umsg = '%s\'s entrys'%args.usr
-			if args.aal:
-				_umsg = 'all entrys'
-			__in = args.lst if args.lst else xgetpass(
-				'enter name to search in %s'%_umsg)
-			if __in is None:
-				xnotify('aborted by keystroke')
-				exit()
-			elif not __in:
-				if xyesno('no input received, try again?'):
-					continue
-				exit(1)
-			__ent = pcc.lspw(__in)
-			if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
-				if xyesno('no entry found for %s matching %s, try again?'%(
-                      args.usr, __in)):
-					continue
-				exit(1)
-			if __ent:
-				__pc = __ent[__in]
-				if __pc:
-					if len(__pc) == 2:
-						xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-					forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-					exit(0)
+		exit(0)
+	else:
+		_umsg = '%s\'s entrys'%args.usr
+		if args.aal:
+			_umsg = 'all entrys'
+		__in = args.lst if args.lst else xgetpass(
+			'enter name to search in %s'%_umsg)
+		if __in is None:
+			xnotify('aborted by keystroke')
+			exit()
+		elif not __in:
+			if xyesno('no input received, try again?'):
+				continue
+			exit(1)
+		__ent = pcc.lspw(__in)
+		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
+			if xyesno('no entry found for %s matching %s, try again?'%(
+				  args.usr, __in)):
+				continue
+			exit(1)
+		if __ent:
+			__pc = __ent[__in]
+			if __pc:
+				if len(__pc) == 2:
+					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				exit(0)
