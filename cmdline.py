@@ -54,14 +54,13 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	fno = fork()
-	if out == 'gui' and fno == 0:
-		Popen(str(
-            'xvkbd -no-keypad -delay 20 -text %s'%text
-        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-	elif out == 'cli' and fno == 0:
-		print(text, end='')
-	if fno == 0:
+	if fork() == 0:
+		if out == 'gui':
+			Popen(str(
+				'xvkbd -no-keypad -delay 20 -text %s'%text
+			).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+		elif out == 'cli':
+			print(text, end='')
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
@@ -470,6 +469,7 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		exit(0)
 	elif args.chg is not False:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
@@ -477,12 +477,14 @@ def gui(typ='pw'):
 			  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 			xmsgok('could not change entry %s'%args.chg)
 			exit(1)
+		exit(0)
 	elif args.rms is not False:
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
+		exit(0)
 	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -504,3 +506,4 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		exit(0)
