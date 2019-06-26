@@ -454,11 +454,10 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
-	pcc = PassCrypt(*pargs, **pkwargs)
 	if args.add is not False:
 		__add = __xdialog('enter name for new password entry')
 		if __add:
-			__ent = pcc.adpw(__add, None, None)
+			__ent = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
 			if not __ent:
 				xmsgok('could not add entry %s'%__add)
 				exit(1)
@@ -466,22 +465,18 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		exit(0)
 	elif args.chg is not False:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
-		if not PassCrypt(
-			  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+		if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 			xmsgok('could not change entry %s'%args.chg)
 			exit(1)
-		exit(0)
 	elif args.rms is not False:
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
-		exit(0)
 	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -503,4 +498,3 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		exit(0)
