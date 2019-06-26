@@ -490,7 +490,7 @@ def gui(typ='pw'):
 			if xyesno('no input received, try again?'):
 				exit(1)
 		__ent = pcc.lspw(__in)
-		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
+		if not __ent or (__ent and __in not in __ent.keys() or not __ent[__in]):
 			exit(1)
 		if __ent:
 			__pc = __ent[__in]
