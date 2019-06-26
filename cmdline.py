@@ -469,6 +469,7 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			exit(0)
+			break
 		elif args.chg is not False:
 			if args.pwd:
 				pkwargs['password'] = args.pwd
