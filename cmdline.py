@@ -455,14 +455,15 @@ def gui(typ='pw'):
 	if args.add is not False:
 		__add = __xdialog('enter name for new password entry')
 		if __add:
-			__ent = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
-			if not __ent:
-				xmsgok('could not add entry %s'%__add)
+			__ents = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
+			if not __ents or args.user not in __ents or \
+                  __add not in __ents[args.user].keys():
+				xmsgok('something went wrong while adding %s'%__add)
 				exit(1)
-			if __add in __entskeys():
-				if len(__pc) == 2:
-					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			__ents = __ents[args.user]
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.chg is not False:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
