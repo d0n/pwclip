@@ -478,7 +478,7 @@ def gui(typ='pw'):
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.rms is not False:
 		__rms = __xdialog('enter name of the password entry(s) to delete')
-		if ' ' in __rms:
+		if __rms and ' ' in __rms:
 			__rms.split(' ')
 		else:
 			__rms = [__rms]
