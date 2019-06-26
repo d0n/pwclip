@@ -482,7 +482,7 @@ def gui(typ='pw'):
 		__rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%args.user)
 		if __rms and ' ' in __rms:
-			__rms.split(' ')
+			__rms = __rms.split(' ')
 		else:
 			__rms = [__rms]
 		for r in __rms:
