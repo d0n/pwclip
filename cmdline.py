@@ -343,8 +343,8 @@ def confpars(mode):
 		print(bgre('pargs:\n  %s\npkwargs:\n%s'%(pargs, tabd(pkwargs, 2))))
 	if mode != 'gui' and (
           args.yks is False and args.lst is False and \
-          args.add is None and args.chg is None and \
-          args.rms is None and (args.sslcrt is None and args.sslkey is None)):
+          args.add is False and args.chg is False and \
+          args.rms is False and args.sslcrt is None and args.sslkey is None):
 		pars.print_help()
 		exit(0)
 	if mode == 'gui':
