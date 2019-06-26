@@ -465,6 +465,7 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		exit(0)
 	elif args.chg is not False:
 		__chg = __xdialog(
             'as %s: enter name of the password entry to change'%args.user)
@@ -478,6 +479,7 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		exit(0)
 	elif args.rms is not False:
 		__rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%args.user)
@@ -490,6 +492,7 @@ def gui(typ='pw'):
 			if not __ents:
 				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
+		exit(0)
 	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -511,3 +514,4 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		exit(0)
