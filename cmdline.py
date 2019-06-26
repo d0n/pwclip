@@ -314,11 +314,12 @@ def confpars(mode):
 		pargs.append('rnd')
 		genpwrex = args.genpwrex
 		if args.genpwrex is None:
-			genpwrex = '[\w\#\_\;\:\*\+\.\,\-\?\!]:24'
+			genpwrex = '[\w ~.]:24'
 		genpwlen = 24
 		if ':' in genpwrex:
 			genpwrex, genpwlen = \
-                str(genpwrex).split(':')[:-1], str(genpwrex).split(':')[-1]
+                ''.join(str(genpwrex).split(':')[:-1]), \
+                str(genpwrex).split(':')[-1]
 		pkwargs['genpwrex'] = genpwrex
 		pkwargs['genpwlen'] = genpwlen
 	if args.pcr:
@@ -494,6 +495,8 @@ def gui(typ='pw'):
 				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
 		exit(0)
+	elif args.lst is not False:
+		xnotify(tabd(PassCrypt(*pargs, **pkwargs).lspw(__in)))
 	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
