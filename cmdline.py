@@ -272,6 +272,7 @@ def confpars(mode):
 	envs = _envconf(envmap)
 	for (k, v) in envs.items():
 		cfgs[k] = v
+	print(tabd(confs))
 	print(tabd(cfgs))
 	cfgs['binary'] = 'gpg2'
 	if osname == 'nt':
