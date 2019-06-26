@@ -496,8 +496,7 @@ def gui(typ='pw'):
 				exit(1)
 		exit(0)
 	elif args.lst is False:
-		__in = __xdialog('enter name of the entry')
-		xnotify(tabd(PassCrypt(*pargs, **pkwargs).lspw(__in)))
+		xnotify(tabd(PassCrypt(*pargs, **pkwargs).lspw()))
 	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
