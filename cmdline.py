@@ -272,6 +272,7 @@ def confpars(mode):
 	envs = _envconf(envmap)
 	for (k, v) in envs.items():
 		cfgs[k] = v
+	print(tabd(cfgs))
 	cfgs['binary'] = 'gpg2'
 	if osname == 'nt':
 		cfgs['binary'] = 'gpg'
@@ -318,7 +319,7 @@ def confpars(mode):
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
 	if args.rvs:
-		pkwargs['recvs'] = args.rvs
+		pkwargs['recvs'] = str(args.rvs).split(' ')
 	if args.key:
 		pkwargs['key'] = args.key
 	if args.usr:
@@ -480,28 +481,29 @@ def gui(typ='pw'):
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
-		_umsg = '%s\'s entrys'%args.usr
-		if args.aal:
-			_umsg = 'all entrys'
-		__in = args.lst if args.lst else xgetpass(
-            'enter name to search in %s'%_umsg)
-		if __in is None:
-			xnotify('aborted by keystroke')
-			exit()
-		elif not __in:
-			if xyesno('no input received, try again?'):
-				continue
-			exit(1)
-		__ent = pcc.lspw(__in)
-		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
-			if xyesno('no entry found for %s matching %s, try again?'%(
-                  args.usr, __in)):
-				continue
-			exit(1)
-		if __ent:
-			__pc = __ent[__in]
-			if __pc:
-				if len(__pc) == 2:
-					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-				exit(0)
+		else:
+			_umsg = '%s\'s entrys'%args.usr
+			if args.aal:
+				_umsg = 'all entrys'
+			__in = args.lst if args.lst else xgetpass(
+				'enter name to search in %s'%_umsg)
+			if __in is None:
+				xnotify('aborted by keystroke')
+				exit()
+			elif not __in:
+				if xyesno('no input received, try again?'):
+					continue
+				exit(1)
+			__ent = pcc.lspw(__in)
+			if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
+				if xyesno('no entry found for %s matching %s, try again?'%(
+                      args.usr, __in)):
+					continue
+				exit(1)
+			if __ent:
+				__pc = __ent[__in]
+				if __pc:
+					if len(__pc) == 2:
+						xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+					forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+					exit(0)
