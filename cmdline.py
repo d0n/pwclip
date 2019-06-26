@@ -375,14 +375,9 @@ def cli():
 		__ents = PassCrypt(*pargs, **pkwargs).adpw(
                            args.add, args.pwd, args.com)
 		if not __ents:
-			err = ('could not add entry', args.add)
-		elif args.aal:
-			for u in __ents.keys():
-				if args.add not in __ents[u].keys():
-					error('entry', args.add, 'not found for', u)
-		elif not args.aal:
-			__ents = __ents[args.user]
-		__pc = __ents[args.add]
+			error('something went wrong while adding', args.add)
+			exit(1)
+		__pc = __ents[args.user][args.add]
 		if __pc:
 			if len(__pc) == 2 and osname != 'nt':
 				xnotify('%s: %s'%(

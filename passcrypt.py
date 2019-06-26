@@ -308,7 +308,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				if not self.gui:
 					error(
                         'entry', usr, 'already exists for user', self.user)
-				return
+				return self.__weaks
 			elif self.user not in self.__weaks.keys():
 				self.__weaks[self.user] = {}
 			try:
