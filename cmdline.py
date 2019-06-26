@@ -221,7 +221,6 @@ def optpars(cfgs, mode, name):
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set ' \
 		     'SERIAL of yubikey (autoselect serial and slot is default)')
-	
 	apars = pars.add_argument_group('action arguments')
 	apars.set_defaults(**cfgs)
 	apars.add_argument(
