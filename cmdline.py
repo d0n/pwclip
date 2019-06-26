@@ -453,7 +453,8 @@ def gui(typ='pw'):
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	if args.add is not False:
-		__add = __xdialog('enter name for new password entry')
+		__add = __xdialog(
+            'as %s: enter name for the new password entry'%args.user)
 		if __add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
 			if not __ents or args.user not in __ents or \
@@ -465,7 +466,8 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.chg is not False:
-		__chg = __xdialog('enter name of the password entry to change')
+		__chg = __xdialog(
+            'as %s: enter name of the password entry to change'%args.user)
 		if __chg:
 			__ents = PassCrypt(*pargs, **pkwargs).chpw(__add, None, None)
 			if not __ents or args.user not in __ents or \
@@ -477,7 +479,8 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.rms is not False:
-		__rms = __xdialog('enter name of the password entry(s) to delete')
+		__rms = __xdialog(
+            'as %s: enter name of the password entry(s) to delete'%args.user)
 		if __rms and ' ' in __rms:
 			__rms.split(' ')
 		else:
@@ -492,7 +495,7 @@ def gui(typ='pw'):
 		if args.aal:
 			_umsg = 'all entrys'
 		__in = args.lst if args.lst else xgetpass(
-			'enter name to search in %s'%_umsg)
+                   'enter name to search in %s'%_umsg)
 		if __in is None:
 			xnotify('aborted by keystroke')
 			exit()
