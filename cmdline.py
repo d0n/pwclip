@@ -22,6 +22,8 @@ except ImportError:
 
 from os import environ, path, remove, getpid, name as osname
 
+from sys import exit
+
 from subprocess import DEVNULL, Popen, call
 
 from argparse import ArgumentParser
@@ -44,7 +46,7 @@ from system import \
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, xinput, which, whoami, dictreplace
 
-from pwclip.passcrypt import PassCrypt
+from pwclip.passcrypt import PassCrypt, lscrypt
 
 from secrecy import ykchalres, yubikeys
 
@@ -456,17 +458,18 @@ def gui(typ='pw'):
 	pcc = PassCrypt(*pargs, **pkwargs)
 	if args.add is not False:
 		__add = __xdialog('enter name for new password entry')
-		if not __add:
-			xmsgok('cannot add empty string ""')
-			exit(1)
-		__ent = pcc.adpw(__add, None, None)
-		if not __ent:
-			xmsgok('could not add entry %s'%__add)
-			exit(1)
-		__pc = __ent[__add]
-		if len(__pc) == 2:
-			xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-		forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		if __add:
+			__ent = pcc.adpw(__add, None, None)
+			if not __ent:
+				xmsgok('could not add entry %s'%__add)
+				exit(1)
+			__pc = PassCrypt(*pargs, **pkwargs).lspw(__add)
+			if not __pc:
+				xmsgok('no password entry %s'%__add)
+				exit(1)
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.chg is not False:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
