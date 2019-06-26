@@ -89,7 +89,7 @@ class PassCrypt(GPGTool):
 			self.cpasmsg = 'enter password for %s: '%self.crypt
 		if self.gsm or (
               self.gsm is None and self.recvs and [
-                  r for r in self.recvs if r in gsks]):
+                  r for r in self.recvs if r in GPGSMTool().keylist(True)]):
 			GPGSMTool.__init__(self, *args, **kwargs)
 		else:
 			GPGTool.__init__(self, *args, **kwargs)

@@ -255,7 +255,7 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'gpg': {'recipients': 'rvs', 'delkey': True},
+        'gpg': {'rvs': 'recipients', 'delkey': True},
         'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
@@ -283,8 +283,6 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
 	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
-	if 'recipients' in cfgs.keys():
-		cfgs['recvs'] = cfgs['recipients']
 	pars = optpars(cfgs, mode, 'pwcli')
 	autocomplete(pars)
 	pars = optpars(cfgs, mode, 'pwclip')
