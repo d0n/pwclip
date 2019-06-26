@@ -306,7 +306,8 @@ class PassCrypt(GPGTool, SecureSHell):
 			if self.user in self.__weaks.keys() and \
                   usr in self.__weaks[self.user].keys():
 				if self.gui:
-					xmsgok('entry %s already exists for user %s'%(usr, u))
+					xmsgok('entry %s already exists for user %s'%(
+                        usr, self.user))
 				else:
 					error(
                         'entry', usr, 'already exists for user', self.user)
@@ -396,11 +397,10 @@ class PassCrypt(GPGTool, SecureSHell):
                   usr in self.__weaks[self.user].keys():
 				del  self.__weaks[self.user][usr]
 			else:
-				if not self.gui:
-					if self.gui:
-						xmsgok('entry %s not found as user %s'%(usr, self.user))
-					else:
-						error('entry', usr, 'not found as user', self.user)
+				if self.gui:
+					xmsgok('entry %s not found as user %s'%(usr, self.user))
+				else:
+					error('entry', usr, 'not found as user', self.user)
 			if self.user in self.__weaks.keys() \
                   and not self.__weaks[self.user].keys():
 				del self.__weaks[self.user]
