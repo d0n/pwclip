@@ -305,7 +305,10 @@ class PassCrypt(GPGTool):
 		if not self.aal:
 			if self.user in self.__weaks.keys() and \
                   usr in self.__weaks[self.user].keys():
-				return error('entry', usr, 'already exists for user', self.user)
+				if not self.gui:
+					error(
+                        'entry', usr, 'already exists for user', self.user)
+				return
 			elif self.user not in self.__weaks.keys():
 				self.__weaks[self.user] = {}
 			try:
@@ -319,7 +322,8 @@ class PassCrypt(GPGTool):
 		else:
 			for u in self.__weaks.keys():
 				if usr in self.__weaks[u].keys():
-					error('entry', usr, 'already exists for user', u)
+					if not self.gui:
+						error('entry', usr, 'already exists for user', u)
 					continue
 				try:
 					__opw, __ocom = self.__weaks[u][usr]
@@ -350,7 +354,8 @@ class PassCrypt(GPGTool):
 		else:
 			for u in self.__weaks.keys():
 				if usr not in self.__weaks[u].keys():
-					error('entry', usr, 'does not exist for user', u)
+					if not self.gui:
+						error('entry', usr, 'does not exist for user', u)
 					continue
 				try:
 					__opw, __ocom = self.__weaks[self.user][usr]
@@ -379,7 +384,8 @@ class PassCrypt(GPGTool):
                   usr in self.__weaks[self.user].keys():
 				del  self.__weaks[self.user][usr]
 			else:
-				error('entry', usr, 'not found as user', self.user)
+				if not self.gui:
+					error('entry', usr, 'not found as user', self.user)
 			if self.user in self.__weaks.keys() \
                   and not self.__weaks[self.user].keys():
 				del self.__weaks[self.user]
@@ -387,7 +393,7 @@ class PassCrypt(GPGTool):
 
 	def lspw(self, usr=None, aal=None):
 		"""password listing method"""
-		if self.dbg:
+		if self.dbg and not self.gui:
 			print(bgre(tabd({self.lspw: {'user': self.user, 'entry': usr}})))
 		aal = True if aal else self.aal
 		__ents = {}
