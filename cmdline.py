@@ -79,7 +79,7 @@ def __passreplace(pwlist):
 		__pwcom.append(pwlist[1])
 	return __pwcom
 
-def __dictreplace(pwdict):
+def __dctpwreplace(pwdict):
 	"""password => asterisk replacement function"""
 	__pwdict = {}
 	for (usr, ent) in pwdict.items():
@@ -101,7 +101,7 @@ def _envconf(srcdict):
 def _printpws_(pwdict, insecure=False):
 	"""password printer with in/secure option"""
 	if not insecure:
-		pwdict = __dictreplace(pwdict)
+		pwdict = __dctpwreplace(pwdict)
 	print(tabd(pwdict))
 	exit(0)
 
@@ -495,8 +495,10 @@ def gui(typ='pw'):
 				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
 		exit(0)
-	elif args.lst is False:
-		xnotify(tabd(PassCrypt(*pargs, **pkwargs).lspw()))
+	elif args.lst is not False:
+		if args.aal:
+			pargs.append('aal')
+		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
 	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
