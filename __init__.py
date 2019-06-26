@@ -13,15 +13,22 @@ if path.exists(__lib) and __lib not in sys.path:
 if sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe':
 	sys.stdout = open(devnull, 'w')
 	sys.stderr = open(devnull, 'w')
+from system import xnotify
+from colortext import abort
 from pwclip.cmdline import cli, gui
-def pwclip():
-	"""pwclip passcrypt gui mode"""
-	gui()
+try:
+	def pwclip():
+		"""pwclip passcrypt gui mode"""
+		gui()
+	def ykclip():
+		"""pwclip yubico gui mode"""
+		gui('yk')
+except KeyboardInterrupt:
+	xnotify('aborted by keystroke')
 
-def ykclip():
-	"""pwclip yubico gui mode"""
-	gui('yk')
-
-def pwcli():
-	"""pwclip cli mode"""
-	cli()
+try:
+	def pwcli():
+		"""pwclip cli mode"""
+		cli()
+except KeyboardInterrupt:
+	abort()
