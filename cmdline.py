@@ -495,7 +495,8 @@ def gui(typ='pw'):
 				xmsgok('could not delete entry %s'%args.rms)
 				exit(1)
 		exit(0)
-	elif args.lst is not False:
+	elif args.lst is False:
+		__in = __xdialog('enter name of the entry')
 		xnotify(tabd(PassCrypt(*pargs, **pkwargs).lspw(__in)))
 	else:
 		_umsg = '%s\'s entrys'%args.usr
