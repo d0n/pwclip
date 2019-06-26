@@ -465,13 +465,24 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.chg is not False:
-		if args.pwd:
-			pkwargs['password'] = args.pwd
-		if not PassCrypt(*pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
-			xmsgok('could not change entry %s'%args.chg)
-			exit(1)
+		__chg = __xdialog('enter name of the password entry to change')
+		if __chg:
+			__ents = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
+			if not __ents or args.user not in __ents or \
+                  __add not in __ents[args.user].keys():
+				xmsgok('something went wrong while changing %s'%__add)
+				exit(1)
+			__pc = __ents[args.user][__add]
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.rms is not False:
-		for r in args.rms:
+		__rms = __xdialog('enter name of the password entry to delete')
+		if ' ' in __rms:
+			__rms.split(' ')
+		else:
+			__rms = [__rms]
+		for r in __rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xmsgok('could not delete entry %s'%args.rms)
@@ -488,7 +499,7 @@ def gui(typ='pw'):
 		elif not __in:
 			if xyesno('no input received, try again?'):
 				exit(1)
-		__ent = pcc.lspw(__in)
+		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
 		if not __ent or (__ent and __in not in __ent.keys() or not __ent[__in]):
 			exit(1)
 		if __ent:
