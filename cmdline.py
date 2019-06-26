@@ -314,7 +314,8 @@ def confpars(mode):
 		pargs.append('rnd')
 		genpwrex = args.genpwrex
 		if args.genpwrex is None:
-			genpwrex = '[\w ~.]:24'
+			genpwrex = '[(?=.*\[A-z\])(?=.*\[A-Z\])' \
+                       '(?=.*\[0-9\])(?=.*\[$@\])(?!.*\[iIoO\])]:24'
 		genpwlen = 24
 		if ':' in genpwrex:
 			genpwrex, genpwlen = \
@@ -492,8 +493,7 @@ def gui(typ='pw'):
 		for r in __rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
-				xmsgok('could not delete entry %s'%args.rms)
-				exit(1)
+				xnotify('could not delete entry %s'%args.rms)
 		exit(0)
 	elif args.lst is not False:
 		if args.aal:
@@ -503,16 +503,13 @@ def gui(typ='pw'):
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
 			_umsg = 'all entrys'
-		__in = args.lst if args.lst else xgetpass(
-                   'enter name to search in %s'%_umsg)
-		if __in is None:
-			xnotify('aborted by keystroke')
-			exit()
-		elif not __in:
-			if xyesno('no input received, try again?'):
-				exit(1)
+		__in = __xdialog('enter name to search in %s'%_umsg, True)
+		if not __in:
+			exit(1)
 		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
 		if not __ent or (__ent and __in not in __ent.keys() or not __ent[__in]):
+			xnotify('either %s or %s where not found in passcrypt'%(
+                args.user, __in))
 			exit(1)
 		if __ent:
 			__pc = __ent[__in]
