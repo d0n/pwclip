@@ -26,9 +26,6 @@ try:
 except KeyboardInterrupt:
 	xnotify('aborted by keystroke')
 
-try:
-	def pwcli():
-		"""pwclip cli mode"""
-		cli()
-except KeyboardInterrupt:
-	abort()
+def pwcli():
+	"""pwclip cli mode"""
+	cli()
