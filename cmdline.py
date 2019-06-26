@@ -460,7 +460,7 @@ def gui(typ='pw'):
                   __add not in __ents[args.user].keys():
 				xmsgok('something went wrong while adding %s'%__add)
 				exit(1)
-			__ents = __ents[args.user]
+			__pc = __ents[args.user][__add]
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
