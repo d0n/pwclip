@@ -467,7 +467,7 @@ def gui(typ='pw'):
 	elif args.chg is not False:
 		__chg = __xdialog('enter name of the password entry to change')
 		if __chg:
-			__ents = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
+			__ents = PassCrypt(*pargs, **pkwargs).chpw(__add, None, None)
 			if not __ents or args.user not in __ents or \
                   __add not in __ents[args.user].keys():
 				xmsgok('something went wrong while changing %s'%__add)
@@ -477,7 +477,7 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	elif args.rms is not False:
-		__rms = __xdialog('enter name of the password entry to delete')
+		__rms = __xdialog('enter name of the password entry(s) to delete')
 		if ' ' in __rms:
 			__rms.split(' ')
 		else:

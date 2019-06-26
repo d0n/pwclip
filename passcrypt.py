@@ -305,7 +305,9 @@ class PassCrypt(GPGTool, SecureSHell):
 		if not self.aal:
 			if self.user in self.__weaks.keys() and \
                   usr in self.__weaks[self.user].keys():
-				if not self.gui:
+				if self.gui:
+					xmsgok('entry %s already exists for user %s'%(usr, u))
+				else:
 					error(
                         'entry', usr, 'already exists for user', self.user)
 				return self.__weaks
@@ -322,7 +324,9 @@ class PassCrypt(GPGTool, SecureSHell):
 		else:
 			for u in self.__weaks.keys():
 				if usr in self.__weaks[u].keys():
-					if not self.gui:
+					if self.gui:
+						xmsgok('entry %s already exists for user %s'%(usr, u))
+					else:
 						error('entry', usr, 'already exists for user', u)
 					continue
 				try:
@@ -350,11 +354,16 @@ class PassCrypt(GPGTool, SecureSHell):
 				self.__weaks[self.user][usr] = self.__askpwdcom(
                     self.user, usr, pwd, com, __opw, __ocom, self.passwd)
 			else:
-				error('no entry named', usr, 'for user', self.user)
+				if self.gui:
+					xmsgok('no entry named %s for user %s'%(usr, self.user))
+				else:
+					error('no entry named', usr, 'for user', self.user)
 		else:
 			for u in self.__weaks.keys():
 				if usr not in self.__weaks[u].keys():
-					if not self.gui:
+					if self.gui:
+						xmsgok('entry %s does not exist for user %s'%(usr, u))
+					else:
 						error('entry', usr, 'does not exist for user', u)
 					continue
 				try:
@@ -376,7 +385,10 @@ class PassCrypt(GPGTool, SecureSHell):
 					del self.__weaks[u][usr]
 					setattr(self, 'chg', True)
 				except KeyError:
-					error('entry', usr, 'not found as user', u)
+					if self.gui:
+						xmsgok('entry %s not found as user %s'%(usr, u))
+					else:
+						error('entry', usr, 'not found as user', u)
 				if not self.__weaks[u].keys():
 					del self.__weaks[u]
 		else:
@@ -385,7 +397,10 @@ class PassCrypt(GPGTool, SecureSHell):
 				del  self.__weaks[self.user][usr]
 			else:
 				if not self.gui:
-					error('entry', usr, 'not found as user', self.user)
+					if self.gui:
+						xmsgok('entry %s not found as user %s'%(usr, self.user))
+					else:
+						error('entry', usr, 'not found as user', self.user)
 			if self.user in self.__weaks.keys() \
                   and not self.__weaks[self.user].keys():
 				del self.__weaks[self.user]
