@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-	
+# -*- coding: utf-8 -*-
 #
 # This file is free software by d0n <d0n@janeiskla.de>
 #
@@ -33,16 +33,20 @@ from socket import gethostname as hostname
 
 from time import sleep
 
-from yaml import load
+from yaml import load, FullLoader
 
 from getpass import getpass
 
 # local relative imports
-from colortext import bgre, bred, tabd, error, fatal
+from colortext import bgre, bred, tabd, error, fatal, abort
 
-from system import copy, paste, xgetpass, xmsgok, xyesno, xnotify, which
+from system import \
+    absrelpath, copy, paste, xgetpass, \
+    xmsgok, xyesno, xnotify, xinput, which, whoami, dictreplace
 
-from secrecy import PassCrypt, ykchalres, yubikeys
+from pwclip.passcrypt import PassCrypt
+
+from secrecy import ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
@@ -51,11 +55,10 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	fno = fork()
 	if out == 'gui' and fno == 0:
 		Popen(str(
-			'xvkbd -no-keypad -delay 20 -text %s'%text
-		).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+            'xvkbd -no-keypad -delay 20 -text %s'%text
+        ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 	elif out == 'cli' and fno == 0:
 		print(text, end='')
-	print(text)
 	if fno == 0:
 		copy(text, mode='pb')
 		try:
@@ -87,6 +90,13 @@ def __dictreplace(pwdict):
 			__pwdict[usr] = __passreplace(ent)
 	return __pwdict
 
+def _envconf(srcdict):
+	newdict = {}
+	for (k, v) in srcdict.items():
+		if k in environ.keys():
+			newdict[v] = environ[k]
+	return newdict
+
 def _printpws_(pwdict, insecure=False):
 	"""password printer with in/secure option"""
 	if not insecure:
@@ -94,50 +104,12 @@ def _printpws_(pwdict, insecure=False):
 	print(tabd(pwdict))
 	exit(0)
 
-def confpars(mode):
-	"""pwclip command line opt/arg parsing function"""
-	_me = path.basename(path.dirname(__file__))
-	cfg = path.expanduser('~/.config/%s.yaml'%_me)
-	try:
-		with open(cfg, 'r') as cfh:
-			cfgs = load(cfh.read())
-	except FileNotFoundError:
-		cfgs = {}
-	try:
-		cfgs['time'] = environ['PWCLIPTIME']
-	except KeyError:
-		cfgs['time'] = 3 if 'time' not in cfgs.keys() else cfgs['time']
-	try:
-		cfgs['ykslot'] = environ['YKSLOT']
-	except KeyError:
-		cfgs['ykslot'] = None
-	try:
-		cfgs['ykser'] = environ['YKSERIAL']
-	except KeyError:
-		cfgs['ykser'] = None
-	try:
-		cfgs['binary']
-	except KeyError:
-		cfgs['binary'] = 'gpg2'
-		if osname == 'nt':
-			cfgs['binary'] = 'gpg'
-	try:
-		cfgs['user'] = environ['USER']
-	except KeyError:
-		cfgs['user'] = environ['USERNAME']
-	if 'crypt' not in cfgs.keys():
-		cfgs['crypt'] = path.expanduser('~/.passcrypt')
-	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
-		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
-	if 'plain' not in cfgs.keys():
-		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
-	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
-		cfgs['plain'] = path.expanduser(cfgs['plain'])
+def optpars(cfgs, mode, name):
 	desc = 'pwclip - Multi functional password manager to temporarily ' \
            'save passphrases to your copy/paste buffers for easy and ' \
            'secure accessing your passwords. The following ' \
            'arguments mights also be set by the config ' \
-           '~/.config/%s.yaml file.'%_me
+           '~/.config/%s.yaml file.'%name
 	epic = 'the yubikey mode is compatible with the ' \
            'challenge-response feature of yubikeys only for now.'
 	pars = ArgumentParser(description=desc, epilog=epic)
@@ -157,6 +129,11 @@ def confpars(mode):
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
+        '-g', '--genpw-pattern',
+        dest='genpwrex', default=False, nargs='?',
+        help='randomly generate password (only useful ' \
+             'with -a, default is [\w \.\,\-\?\!]:24)')
+	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
         help='show passwords when listing (replaced by "*" is default)')
@@ -164,31 +141,14 @@ def confpars(mode):
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (%s is default)'%cfgs['time'])
-	pars.add_argument(
-        '-P', '--passcrypt',
-        dest='pcr', metavar='CRYPTFILE',
-        default=path.expanduser('~/.passcrypt'),
-        help='set location of CRYPTFILE to use as ' \
-             'password store (~/.passcrypt is default)')
-	pars.add_argument(
-        '-u', '--user',
-        dest='usr', metavar='USER', default=cfgs['user'],
-        help='query entrys only for USER (-A overrides, ' \
-             '"%s" is default)'%cfgs['user'])
-	pars.add_argument(
-        '-Y', '--yaml',
-        dest='yml', metavar='YAMLFILE',
-        default=path.expanduser('~/.pwd.yaml'),
-        help='set location of YAMLFILE to read whole ' \
-             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	rpars = pars.add_argument_group('remote arguments')
 	rpars.add_argument(
         '-R',
         dest='rem', action='store_true',
-        help='use remote backup given by --remote-host')
+        help='use remote backup given by --remote-host/--remote-user')
 	rpars.add_argument(
         '--remote-host',
-        dest='rehost', metavar='HOST',
+        dest='remote', metavar='HOST',
         help='use HOST for connections')
 	rpars.add_argument(
         '--remote-user',
@@ -196,19 +156,28 @@ def confpars(mode):
         help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.add_argument(
+        '-k', '--key',
+        dest='key', metavar='ID', type=str,
+        help='gpg-key ID(s) to use for decryption/signing')
+	gpars.add_argument(
         '-r', '--recipients',
-        dest='rcp', metavar='"ID ..."',
+        dest='rvs', metavar='"ID [ID ...]"',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
+	gpars.add_argument(
+        '-u', '--user',
+        dest='usr', metavar='USER', default=cfgs['user'],
+        help='query entrys only for USER (-A overrides, ' \
+             '"%s" is default)'%cfgs['user'])
 	pars.add_argument(
         '-p', '--password',
         dest='pwd', default=None,
-        help='enter password for add/change action' \
+        help='enter password for add/change actions' \
              '(insecure & not recommended)')
 	pars.add_argument(
         '--comment',
         dest='com', default=None,
-        help='enter comment for add/change action')
+        help='enter comment for add/change actions')
 	gpars.add_argument(
         '-x', '--x509',
         dest='gpv', action='store_const', const='gpgsm',
@@ -219,53 +188,111 @@ def confpars(mode):
         dest='sslcrt', metavar='SSL-Certificate',
         help='one-shot setting of SSL-Certificate')
 	gpars.add_argument(
-        '-K', '--key',
+        '-K', '--ssl-key',
         dest='sslkey', metavar='SSL-Private-Key',
         help='one-shot setting of SSL-Private-Key')
 	gpars.add_argument(
         '--ca', '--ca-cert',
         dest='sslca', metavar='SSL-CA-Certificate',
         help='one-shot setting of SSL-CA-Certificate')
-
-	
+	gpars.add_argument(
+        '-P', '--passcrypt',
+        dest='pcr', metavar='CRYPTFILE',
+        default=path.expanduser('~/.passcrypt'),
+        help='set location of CRYPTFILE to use as ' \
+             'password store (~/.passcrypt is default)')
+	gpars.add_argument(
+        '-Y', '--yaml',
+        dest='yml', metavar='YAMLFILE',
+        default=path.expanduser('~/.pwd.yaml'),
+        help='set location of YAMLFILE to read whole ' \
+             'sets of passwords from a yaml file (~/.pwd.yaml is default)')
 	ypars = pars.add_argument_group('yubikey arguments')
 	ypars.add_argument(
         '-S', '--slot',
         dest='ysl', default=None, type=int, choices=(1, 2),
         help='set one of the two yubikey slots (only useful with -y)'
-			).completer = ChoicesCompleter((1, 2))
+        ).completer = ChoicesCompleter((1, 2))
 	ypars.add_argument(
         '-y', '--ykserial',
         nargs='?', dest='yks', metavar='SERIAL', default=False,
         help='switch to yubikey mode and optionally set ' \
 		     'SERIAL of yubikey (autoselect serial and slot is default)')
-				
 	gpars = pars.add_argument_group('action arguments')
 	gpars.add_argument(
         '-a', '--add',
-        dest='add', metavar='ENTRY',
-        help='add ENTRY (password will be asked interactivly)')
+        dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        default=False, help='add ENTRY (password will be asked interactivly)')
 	gpars.add_argument(
         '-c', '--change',
-        dest='chg', metavar='ENTRY',
-        help='change ENTRY (password will be asked interactivly)')
+        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        default=False, help='change ENTRY (password will be asked interactivly)')
 	gpars.add_argument(
         '-d', '--delete',
-        dest='rms', metavar='ENTRY', nargs='+',
-        help='delete ENTRY(s) from the passcrypt list')
+        dest='rms', metavar='ENTRY', nargs='?' if mode == 'gui' else '+',
+        default=False, help='delete ENTRY(s) from the passcrypt list')
 	gpars.add_argument(
         '-l', '--list',
         nargs='?', dest='lst', metavar='PATTERN', default=False,
         help='pwclip an entry matching PATTERN if given ' \
              '- otherwise list all entrys')
+	return pars
+
+def confpars(mode):
+	"""pwclip command line opt/arg parsing function"""
+	_me = path.basename(path.dirname(__file__))
+	cfg = path.expanduser('~/.config/%s.cfg'%_me)
+	cfgs = {
+        'crypt': path.expanduser('~/.passcrypt'),
+        'plain': path.expanduser('~/.pwd.yaml'),
+        'time': 3,
+        'binary': 'gpg' if osname == 'nt' else 'gpg.exe',
+        'user': whoami(),
+        }
+	try:
+		with open(cfg, 'r') as cfh:
+			confs = dict(load(cfh.read(), Loader=FullLoader))
+	except (TypeError, FileNotFoundError):
+		confs = {}
+	cfgmap = {
+        'gpg': {'recipients': 'rvs', 'delkey': True},
+        'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
+        'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
+	envmap = {
+        'GPGKEY': 'key',
+        'RECIPIENTS': 'rvs',
+        'PWCLIPTIME': 'time',
+        'YKSERIAL': 'ykser',
+        'USER': 'user',
+        'USERNAME': 'user',
+        'YKSLOT': 'ykslot'}
+	confs = dictreplace(confs, cfgmap)
+	for (k, v) in confs.items():
+		cfgs[k] = v
+	for (k, v) in _envconf(envmap).items():
+		cfgs[k] = v
+	cfgs['binary'] = 'gpg2'
+	if osname == 'nt':
+		cfgs['binary'] = 'gpg'
+	if 'crypt' not in cfgs.keys():
+		cfgs['crypt'] = path.expanduser('~/.passcrypt')
+	elif 'crypt' in cfgs.keys() and cfgs['crypt'].startswith('~'):
+		cfgs['crypt'] = path.expanduser(cfgs['crypt'])
+	if 'plain' not in cfgs.keys():
+		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
+	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
+		cfgs['plain'] = path.expanduser(cfgs['plain'])
+	pars = optpars(cfgs, mode, 'pwcli')
+	autocomplete(pars)
+	pars = optpars(cfgs, mode, 'pwclip')
 	autocomplete(pars)
 	args = pars.parse_args()
 	pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
         'gsm' if args.gpv else None,
-		'gui' if mode else None,
-        'rem' if args.sho else None,
+        'gui' if mode == 'gui' else None,
+        'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
@@ -276,32 +303,46 @@ def confpars(mode):
 	pkwargs['binary'] = __bin
 	pkwargs['sslcrt'] = args.sslcrt
 	pkwargs['sslkey'] = args.sslkey
+	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
+	if args.genpwrex or args.genpwrex is None:
+		pargs.append('rnd')
+		genpwrex = args.genpwrex
+		if args.genpwrex is None:
+			genpwrex = '[\w \.\,\-\?\!]:24'
+		genpwlen = 24
+		if ':' in genpwrex:
+			genpwrex, genpwlen = str(genpwrex).split(':')
+		pkwargs['genpwrex'] = genpwrex
+		pkwargs['genpwlen'] = genpwlen
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
-	if args.rcp:
-		pkwargs['recvs'] = list(args.rcp.split(' '))
+	if args.rvs:
+		pkwargs['recvs'] = [k.strip() for k in args.rvs.split(' ')]
+	if args.key:
+		pkwargs['key'] = args.key
 	if args.usr:
 		pkwargs['user'] = args.usr
 	if args.time:
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
-	if hasattr(args, 'remote'):
-		pkwargs['remote'] = args.remote
-	if hasattr(args, 'reuser'):
-		pkwargs['reuser'] = args.reuser
+	if args.rem:
+		if hasattr(args, 'remote'):
+			pkwargs['remote'] = args.remote
+		if hasattr(args, 'reuser'):
+			pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
-		print(bgre(pkwargs))
-	if mode == 'gui':
-		return args, pargs, pkwargs
-	if (
+		print(bgre('pargs:\n  %s\npkwargs:\n%s'%(pargs, tabd(pkwargs, 2))))
+	if mode != 'gui' and (
           args.yks is False and args.lst is False and \
           args.add is None and args.chg is None and \
           args.rms is None and (args.sslcrt is None and args.sslkey is None)):
 		pars.print_help()
 		exit(0)
+	if mode == 'gui':
+		return args, pargs, pkwargs
 	return args, pargs, pkwargs
 
 def cli():
@@ -325,12 +366,19 @@ def cli():
 	__ents = {}
 	err = None
 	if args.add:
-		__ents = PassCrypt(*pargs, **pkwargs).adpw(
-            args.add, args.pwd, args.com)
-		if not args.aal:
-			__ents = __ents[args.user]
-		if not __ents or args.add not in __ents.keys():
+		try:
+			__ents = PassCrypt(*pargs, **pkwargs).adpw(
+                               args.add, args.pwd, args.com)
+		except KeyboardInterrupt:
+			abort()
+		if not __ents:
 			err = ('could not add entry', args.add)
+		elif args.aal:
+			for u in __ents.keys():
+				if args.add not in __ents[u].keys():
+					error('entry', args.add, 'not found for', u)
+		elif not args.aal:
+			__ents = __ents[args.user]
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
@@ -371,9 +419,25 @@ def cli():
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+		err = 'no password entrys or decryption failed' if not __ents else None
 	if err:
-		fatal(*err)
+		fatal(err)
 	_printpws_(__ents, args.sho)
+
+def __xdialog(msg, sec=None):
+	getin = xinput
+	if sec:
+		getin = xgetpass
+	while True:
+		__ret = getin(msg)
+		print(__ret)
+		if not __ret:
+			yesno = xyesno('no input received, abort?')
+			if yesno:
+				return
+			continue
+		break
+	return __ret
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
@@ -382,41 +446,54 @@ def gui(typ='pw'):
 	if args.yks or args.yks is None or typ == 'yk':
 		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
 		if not res:
-			if xyesno('entry %s does not ' \
-                  'exist or decryption failed\ntry again?'%__in):
-				exit(1)
-		eno = forkwaitclip(res, poclp, boclp, args.time, args.out)
-		exit(eno)
-	pcm = PassCrypt(*pargs, **pkwargs)
+			xmsgok('no response from the key (if there is one)'%__in)
+			exit(1)
+		forkwaitclip(res, poclp, boclp, args.time, args.out)
+	#print(tabd(args.__dict__))
 	while True:
-		fork = 0
-		if args.add:
-			if not PassCrypt(
-                  *pargs, **pkwargs).adpw(args.add, args.pwd, args.com):
-				xmsgok('could not add entry %s'%args.add)
+		pcc = PassCrypt(*pargs, **pkwargs)
+		if args.add is not False:
+			__add = __xdialog('enter name for new password entry')
+			if not __add:
+				xmsgok('cannot add empty string ""')
 				exit(1)
+			__ent = pcc.adpw(__add, None, None)
+			if not __pc:
+				xmsgok('could not add entry %s'%__add)
+				exit(1)
+			__pc = __ent[__add]
+			if len(__pc) == 2:
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			exit(0)
-		elif args.chg:
+		elif args.chg is not False:
 			if args.pwd:
 				pkwargs['password'] = args.pwd
 			if not PassCrypt(
-                  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
+				  *pargs, **pkwargs).chpw(args.chg, args.pwd, args.com):
 				xmsgok('could not change entry %s'%args.chg)
 				exit(1)
 			exit(0)
-		elif args.rms:
+		elif args.rms is not False:
 			for r in args.rms:
 				__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 				if not __ents:
 					xmsgok('could not delete entry %s'%args.rms)
 					exit(1)
 			exit(0)
-		__in = args.lst if args.lst else xgetpass()
-		if not __in:
+		_umsg = '%s\'s entrys'%args.usr
+		if args.aal:
+			_umsg = 'all entrys'
+		__in = args.lst if args.lst else xgetpass(
+            'enter name to search in %s'%_umsg)
+		if __in is None:
+			xnotify('aborted by keystroke')
+			exit()
+		elif not __in:
 			if xyesno('no input received, try again?'):
 				continue
 			exit(1)
-		__ent = pcm.lspw(__in)
+		__ent = pcc.lspw(__in)
 		if not __ent or __ent and __in not in __ent.keys() or not __ent[__in]:
 			if xyesno('no entry found for %s matching %s, try again?'%(
                   args.usr, __in)):
