@@ -4,6 +4,42 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-06-27
+
+  * fixed some bugs implemented with 1.6.0 like correct i/o of questions and
+    answer (few of'em merged from master in lib/system)
+
+  * fixed config parsing - especially in gui mode where e.g. recipients not
+    have been recognised
+
+  * implemented more gui-mode functions like adding, deleting and changing
+    entrys
+
+  * fix FAIL with versioning (1.6.1 is missing)
+
+
+1.6.0
+-----
+
+Released: 2019-06-26
+
+  * added -g as addition for -a to generate random passwords instead of input
+
+  * merged lots of updates from master of each lib like: filerotation fixed for
+    non-remote usage, fixed xinput windows (button placement and msg's),
+    dumped a lot of if - else crap in cmdline.py into a generic function
+    colortext made more generic, fixed gpg-signature verification, overall
+    pimped i/o messages (extened existing and added some more)
+
+  * moved passcrypt.py from lib/secrecy/ to . for not fucking with recursed
+    imports
+
+  * [W] most likely windows support is broken again - no time to test it yet
+
+
+1.5.1
+-----
+
 Released: 2019-05-20
 
   * some cosmetic fixes in user dialogs
