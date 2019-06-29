@@ -434,7 +434,6 @@ def cli():
 
 def __xdialog(msg, sec=None):
 	getin = xinput
-	print(xinput())
 	if sec:
 		getin = xgetpass
 	while True:
