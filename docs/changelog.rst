@@ -4,19 +4,6 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-06-29
-
-  * after i have merged entirely all my branches into each other in all my
-    repos i cannot recall all the changes i made some time and in many cases
-    some time longer ago - i appologise
-
-  * i fear you'll have to trust my liability anyways :-) OR read the code -
-    what you are welcome to do: https://github.com:d0n/pwclip.git
-
-
-1.6.2
------
-
 Released: 2019-06-27
 
   * fixed some bugs implemented with 1.6.0 like correct i/o of questions and
