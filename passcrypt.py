@@ -292,9 +292,8 @@ class PassCrypt(GPGTool, SecureSHell):
 					getpasswd = xgetpass
 				else:
 					getpasswd = self.passwd
-					print('%s %s? [Y/n]'%(
-                        grn('use the following password: "'),
-                        yel(pwd), grn('"?')))
+					print('%s %s%s [Y/n]'%(
+                        grn('use the following password:'), yel(pwd), grn('?')), sep='')
 					yesno = input()
 					yesno = True if str(yesno).lower() in ('y', '') else False
 				if yesno == False:
@@ -306,25 +305,25 @@ class PassCrypt(GPGTool, SecureSHell):
                 self.adpw: {'user': self.user, 'entry': usr,
                             'pwd': pwd, 'comment': com}})))
 		if not self.aal:
-			if self.user in self.__weaks.keys() and \
-                  usr in self.__weaks[self.user].keys():
-				if self.gui:
-					xmsgok('entry %s already exists for user %s'%(
-                        usr, self.user))
-				else:
-					error(
-                        'entry', usr, 'already exists for user', self.user)
-				return self.__weaks
-			elif self.user not in self.__weaks.keys():
-				self.__weaks[self.user] = {}
-			try:
-				__opw, __ocom = self.__weaks[self.user][usr]
-			except (KeyError, ValueError):
-				__opw, __ocom = None, None
-			pwdcom = self.__askpwdcom(
-                self.user, usr, pwd, com, __opw, __ocom, getpasswd)
-			if pwdcom:
-				self.__weaks[self.user][usr] = [p for p in pwdcom if p]
+			if self.user in self.__weaks.keys():
+				if usr in self.__weaks[self.user]:
+					if self.gui:
+						xmsgok('entry %s already exists for user %s'%(
+                            usr, self.user))
+					else:
+						error(
+                            'entry', usr, 'already exists for user', self.user)
+					return self.__weaks
+				elif self.user not in self.__weaks.keys():
+					self.__weaks[self.user] = {}
+				try:
+					__opw, __ocom = self.__weaks[self.user][usr]
+				except (KeyError, ValueError):
+					__opw, __ocom = None, None
+				pwdcom = self.__askpwdcom(
+                    self.user, usr, pwd, com, __opw, __ocom, getpasswd)
+				if pwdcom:
+					self.__weaks[self.user][usr] = [p for p in pwdcom if p]
 		else:
 			for u in self.__weaks.keys():
 				if usr in self.__weaks[u].keys():
