@@ -446,7 +446,7 @@ def __xdialog(msg, sec=None):
 					return
 				finally:
 					break
-		if __ret:
+		if __ret or __ret is None:
 			try:
 				return __ret
 			finally:
@@ -476,7 +476,7 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		xnotify('added entry %s for %s'%(__add, args.user))
+			xnotify('added entry %s for %s'%(__add, args.user))
 		llist = True
 	elif args.chg is not False:
 		__chg = __xdialog(
@@ -491,7 +491,7 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		xnotify('changed entry %s for %s'%(__add, args.user))
+			xnotify('changed entry %s for %s'%(__add, args.user))
 		llist = True
 	elif args.rms is not False:
 		__rms = __xdialog(
@@ -504,7 +504,7 @@ def gui(typ='pw'):
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
-		xnotify('deleted entry %s for %s'%(r, args.user))
+			xnotify('deleted entry %s for %s'%(r, args.user))
 		llist = True
 	if llist:
 		if args.aal:
