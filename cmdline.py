@@ -446,8 +446,10 @@ def __xdialog(msg, sec=None):
 				finally:
 					break
 		elif __ret:
-			break
-	return __ret
+			try:
+				return __ret
+			finally:
+				break
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
