@@ -57,11 +57,12 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	if fork() == 0:
 		if out == 'gui':
 			Popen(str(
-				'xvkbd -no-keypad -delay 20 -text %s'%text
-			).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+					'xvkbd -no-keypad -delay 20 -text %s'%text
+                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
 		elif out == 'cli':
 			print(text, end='')
 		copy(text, mode='pb')
+		xnotify('pwclip')
 		try:
 			sleep(int(wait))
 		except KeyboardInterrupt:
@@ -468,6 +469,7 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		xnotify('added entry %s for %s'%(__add, args.user))
 		exit(0)
 	elif args.chg is not False:
 		__chg = __xdialog(
@@ -482,6 +484,7 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+		xnotify('changed entry %s for %s'%(__add, args.user))
 		exit(0)
 	elif args.rms is not False:
 		__rms = __xdialog(
@@ -493,7 +496,8 @@ def gui(typ='pw'):
 		for r in __rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
-				xnotify('could not delete entry %s'%args.rms)
+				xnotify('could not delete entry %s'%r)
+		xnotify('deleted entry %s for %s'%(r, args.user))
 		exit(0)
 	elif args.lst is not False:
 		if args.aal:
@@ -515,6 +519,6 @@ def gui(typ='pw'):
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
-					xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 		exit(0)
