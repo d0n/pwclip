@@ -445,7 +445,7 @@ def __xdialog(msg, sec=None):
 					return
 				finally:
 					break
-		elif __ret:
+		if __ret:
 			try:
 				return __ret
 			finally:
