@@ -504,7 +504,6 @@ def gui(typ='pw'):
 		if args.aal:
 			pargs.append('aal')
 		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
-	:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
 			_umsg = 'all entrys'
