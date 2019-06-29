@@ -456,6 +456,7 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
+	notepws = False
 	if args.add is not False:
 		__add = __xdialog(
             'as %s: enter name for the new password entry'%args.user)
@@ -470,7 +471,7 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 		xnotify('added entry %s for %s'%(__add, args.user))
-		exit(0)
+		notepws = False
 	elif args.chg is not False:
 		__chg = __xdialog(
             'as %s: enter name of the password entry to change'%args.user)
@@ -484,8 +485,8 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		xnotify('changed entry %s for %s'%(__add, args.user))
-		exit(0)
+		xnotify('changed entry %s for %s'%(__chg, args.user))
+		notepws = False
 	elif args.rms is not False:
 		__rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%args.user)
@@ -497,13 +498,13 @@ def gui(typ='pw'):
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
-		xnotify('deleted entry %s for %s'%(r, args.user))
-		exit(0)
+			xnotify('deleted entry %s for %s'%(r, args.user))
+		notepws = False
 	elif args.lst is not False:
 		if args.aal:
 			pargs.append('aal')
 		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
-	else:
+	:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
 			_umsg = 'all entrys'
@@ -519,6 +520,5 @@ def gui(typ='pw'):
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
-
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+					forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 		exit(0)
