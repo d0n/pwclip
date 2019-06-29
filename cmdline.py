@@ -441,10 +441,15 @@ def __xdialog(msg, sec=None):
 		if not __ret:
 			yesno = xyesno('no input received, abort?')
 			if yesno:
-				return
-			continue
-		break
-	return __ret
+				try:
+					return
+				finally:
+					break
+		if __ret:
+			try:
+				return __ret
+			finally:
+				break
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
@@ -456,7 +461,7 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
-	notepws = False
+	llist = True if args.lst is not None else args.lst
 	if args.add is not False:
 		__add = __xdialog(
             'as %s: enter name for the new password entry'%args.user)
@@ -471,7 +476,7 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 		xnotify('added entry %s for %s'%(__add, args.user))
-		notepws = False
+		llist = True
 	elif args.chg is not False:
 		__chg = __xdialog(
             'as %s: enter name of the password entry to change'%args.user)
@@ -485,8 +490,8 @@ def gui(typ='pw'):
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		xnotify('changed entry %s for %s'%(__chg, args.user))
-		notepws = False
+		xnotify('changed entry %s for %s'%(__add, args.user))
+		llist = True
 	elif args.rms is not False:
 		__rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%args.user)
@@ -498,12 +503,13 @@ def gui(typ='pw'):
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
-			xnotify('deleted entry %s for %s'%(r, args.user))
-		notepws = False
-	elif args.lst is not False:
+		xnotify('deleted entry %s for %s'%(r, args.user))
+		llist = True
+	if llist:
 		if args.aal:
 			pargs.append('aal')
 		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
+	else:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
 			_umsg = 'all entrys'
@@ -520,4 +526,3 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		exit(0)
