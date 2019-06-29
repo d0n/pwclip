@@ -442,8 +442,8 @@ def __xdialog(msg, sec=None):
 			yesno = xyesno('no input received, abort?')
 			if yesno:
 				return
-			continue
-		break
+		elif __ret:
+			break
 	return __ret
 
 def gui(typ='pw'):
