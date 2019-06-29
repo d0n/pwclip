@@ -18,7 +18,7 @@ from colortext import blu, yel, grn, bgre, tabd, error
 
 from system import \
     userfind, filerotate, setfiletime, \
-    xgetpass, xmsgok, xinput, filetime, absrelpath, xyesno, random
+    xgetpass, xmsgok, xinput, filetime, absrelpath, xyesno, random, copy
 
 from net.ssh import SecureSHell
 
@@ -287,6 +287,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				pwd = random(self.genpwlen, self.genpwrex)
 				yesno = False
 				if self.gui:
+					copy(pwd)
 					yesno = xyesno('use the following password: "%s"?'%pwd)
 					getpasswd = xgetpass
 				else:
@@ -296,8 +297,10 @@ class PassCrypt(GPGTool, SecureSHell):
                         yel(pwd), grn('"?')))
 					yesno = input()
 					yesno = True if str(yesno).lower() in ('y', '') else False
-				if yesno:
+				if yesno == False:
 					break
+				elif yesno == None:
+					return
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr,
