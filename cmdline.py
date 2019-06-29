@@ -441,7 +441,10 @@ def __xdialog(msg, sec=None):
 		if not __ret:
 			yesno = xyesno('no input received, abort?')
 			if yesno:
-				return
+				try:
+					return
+				finally:
+					break
 		elif __ret:
 			break
 	return __ret
