@@ -508,15 +508,13 @@ def gui(typ='pw'):
 			_rms = [r.strip() for r in _rms.split(' ')]
 		else:
 			_rms = [_rms]
-		dels = False
 		for r in _rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
 			else:
-				dels = True
 				xnotify('deleted entry %s for %s'%(r, args.user))
-			#sleep(1)
+			sleep(1)
 	elif args.lst is not False:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
