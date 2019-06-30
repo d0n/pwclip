@@ -433,23 +433,20 @@ def cli():
 	_printpws_(__ents, args.sho)
 
 def __xdialog(msg, sec=None):
-	getin = xinput
-	if sec:
-		getin = xgetpass
 	while True:
-		__ret = getin(msg)
-		if not __ret:
+		rtn = False
+		if sec:
+			rtn = xgetpass(msg)
+		else:
+			rtn = xinput()
+		if not rtn:
 			yesno = xyesno('no input received, abort?')
-			print(yesno)
 			if yesno is True:
-				try:
-					return
-				finally:
-					break
-		try:
-			return __ret
-		finally:
+				rtn = False
+				break
+		if rtn:
 			break
+	return rtn
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
@@ -508,11 +505,7 @@ def gui(typ='pw'):
 				xnotify('could not delete entry %s'%r)
 			xnotify('deleted entry %s for %s'%(r, args.user))
 		llist = True
-	if llist:
-		if args.aal:
-			pargs.append('aal')
-		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
-	else:
+	elif args.lst :
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
 			_umsg = 'all entrys'
@@ -529,3 +522,7 @@ def gui(typ='pw'):
 			if __pc:
 				if len(__pc) == 2:
 					forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+	if llist:
+		if args.aal:
+			pargs.append('aal')
+		notify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
