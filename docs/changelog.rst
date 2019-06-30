@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-06-29
+Released: 2019-06-30
 
   * fixed some bugs implemented with 1.6.0 like correct i/o of questions and
     answer (few of'em merged from master in lib/system)
