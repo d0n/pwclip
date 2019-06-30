@@ -101,6 +101,10 @@ class PassCrypt(GPGTool, SecureSHell):
 		self.__weaks = self._readcrypt()
 		self.__oldweaks = str(self.__weaks)
 		self.__weaks = self._mergecrypt(self.__weaks)
+		register(self._cryptpass)
+
+	def __del__(self):
+		self._cryptpass()
 
 	def _cryptpass(self):
 		chgs = []
