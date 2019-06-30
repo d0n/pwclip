@@ -473,7 +473,7 @@ def gui(typ='pw'):
 				exit(1)
 			__pc = __ents[args.user][__add]
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+				xnotify('%s: %s'%(__in, ' '.join(__pc[1])))
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			xnotify('added entry %s for %s'%(__add, args.user))
 			llist = True
@@ -499,7 +499,7 @@ def gui(typ='pw'):
 			xnotify('cannot not delete emty string')
 			exit(1)
 		if __rms and ' ' in __rms:
-			__rms = __rms.split(' ')
+			__rms = [r.strip() for r in __rms.split(' ')]
 		else:
 			__rms = [__rms]
 		dels = False
@@ -510,6 +510,7 @@ def gui(typ='pw'):
 				continue
 			dels = True
 			xnotify('deleted entry %s for %s'%(r, args.user))
+		if dels:
 			llist = True
 	elif args.lst is not False:
 		_umsg = '%s\'s entrys'%args.usr

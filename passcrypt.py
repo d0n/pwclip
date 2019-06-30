@@ -342,7 +342,7 @@ class PassCrypt(GPGTool, SecureSHell):
                     self.user, usr, pwd, com, __opw, __ocom, getpasswd)
 				if pwdcom:
 					self.__weaks[u][usr] = [p for p in pwdcom if p]
-		return self.__weaks
+		return dict(self.__weaks)
 
 	def chpw(self, usr, pwd=None, com=None):
 		"""change existing password method"""
@@ -377,7 +377,7 @@ class PassCrypt(GPGTool, SecureSHell):
 					__opw, __ocom = None, None
 				self.__weaks[u][usr] = self.__askpwdcom(
                     self.user, usr, pwd, com, __opw, __ocom, self.passwd)
-		return self.__weaks
+		return dict(self.__weaks)
 
 	def rmpw(self, usr):
 		"""remove password method"""
@@ -408,7 +408,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			if self.user in self.__weaks.keys() \
                   and not self.__weaks[self.user].keys():
 				del self.__weaks[self.user]
-		return self.__weaks
+		return dict(self.__weaks)
 
 	def lspw(self, usr=None, aal=None):
 		"""password listing method"""
@@ -431,7 +431,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				__ents = self.__weaks[self.user]
 				if usr in __ents.keys():
 					__ents = {usr: self.__weaks[self.user][usr]}
-		return __ents
+		return dict(__ents)
 
 def lscrypt(usr, dbg=None):
 	"""passlist wrapper function"""
