@@ -463,7 +463,7 @@ def gui(typ='pw'):
 		_add = __xdialog(
             'as %s: enter name for the new password entry'%args.user)
 		if not _add:
-			xnotify('cannot add empty string %s'%_add)
+			xnotify('cannot add empty string')
 			exit(1)
 		if _add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
