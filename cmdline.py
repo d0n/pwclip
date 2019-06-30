@@ -525,4 +525,4 @@ def gui(typ='pw'):
 	if llist:
 		if args.aal:
 			pargs.append('aal')
-		notify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
+		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
