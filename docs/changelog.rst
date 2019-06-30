@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-06-30
+Released: 2019-07-01
 
   * fixed some bugs implemented with last merge war like correct i/o behaviour
     of questions and answers via xinput
