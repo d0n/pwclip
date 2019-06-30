@@ -30,7 +30,6 @@ class PassCrypt(GPGTool, SecureSHell):
 	"""passcrypt main class"""
 	dbg = None
 	vrb = None
-	fen = None
 	aal = None
 	fsy = None
 	sho = None
@@ -102,9 +101,8 @@ class PassCrypt(GPGTool, SecureSHell):
 		self.__weaks = self._readcrypt()
 		self.__oldweaks = str(self.__weaks)
 		self.__weaks = self._mergecrypt(self.__weaks)
-		register(self.__del)
 
-	def __del(self):
+	def _cryptpass(self):
 		chgs = []
 		crecvs = []
 		if path.isfile(self.crypt):
@@ -117,7 +115,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			for r in crecvs:
 				if r not in self.recvs:
 					chgs.append('- %s'%r)
-		if self.__oldweaks != str(self.__weaks) or self.fen or chgs:
+		if self.__oldweaks != str(self.__weaks) or chgs:
 			msg = ('recipients have changed:\n',
                     '\n'.join(c for c in chgs),
                     '\nfrom:\n', ' '.join(erecvs),
@@ -156,7 +154,7 @@ class PassCrypt(GPGTool, SecureSHell):
 
 	def _cecktime(self):
 		ok = True
-		if self.rem and self.maxage:
+		if self.maxage:
 			tf = absrelpath(self.timefile)
 			if not path.exists(path.dirname(tf)):
 				makedirs(path.dirname(tf))
@@ -190,6 +188,12 @@ class PassCrypt(GPGTool, SecureSHell):
 		"""copy new file method"""
 		if self.dbg:
 			print(bgre(self._copynews))
+		if not self.rem:
+			return
+		if not self.remote:
+			return
+		if not self._checktime():
+			return
 		fs = (self.crypt,)
 		ok = False
 		if self.sig:
@@ -254,7 +258,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			pwd = self.rndgetpass()
 		if self.gui:
 			if not pwd:
-				pwd = passwd(
+				pwd = xgetpass(
 				    'as user %s: enter password for entry %s'%(sysuser, usr))
 				pwd = pwd if pwd else opw
 				if not pwd:

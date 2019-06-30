@@ -71,7 +71,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 		exit(0)
-	exit(0)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -479,7 +478,6 @@ def gui(typ='pw'):
 			if not args.aal:
 				umsg = 'user %s'%args.user
 			xnotify('added entry %s for %s'%(_add, umsg))
-			llist = True
 	elif args.chg is not False:
 		_chg = __xdialog(
             'as %s: enter name of the password entry to change'%args.user)
@@ -497,7 +495,6 @@ def gui(typ='pw'):
 				xnotify('%s: %s'%(_chg, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			xnotify('changed entry %s for %s'%(_chg, args.user))
-			llist = True
 	elif args.rms is not False:
 		_rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%args.user)
@@ -508,13 +505,13 @@ def gui(typ='pw'):
 			_rms = [r.strip() for r in _rms.split(' ')]
 		else:
 			_rms = [_rms]
+		pcr = PassCrypt(*pargs, **pkwargs)
 		for r in _rms:
-			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
+			__ents = pcr.rmpw(r)
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
 			else:
 				xnotify('deleted entry %s for %s'%(r, args.user))
-			sleep(1)
 	elif args.lst is not False:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -533,7 +530,7 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify(__pc[1])
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-			exit(0)
+		exit(0)
 	else:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	if __ents:
