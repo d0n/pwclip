@@ -458,7 +458,7 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
-	llist = True if args.lst is not None else args.lst
+	llist = None
 	if args.add is not False:
 		__add = __xdialog(
             'as %s: enter name for the new password entry'%args.user)
@@ -495,6 +495,9 @@ def gui(typ='pw'):
 	elif args.rms is not False:
 		__rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%args.user)
+		if not __rms:
+			xnotify('cannot not delete emty string')
+			exit(1)
 		if __rms and ' ' in __rms:
 			__rms = __rms.split(' ')
 		else:
@@ -526,6 +529,9 @@ def gui(typ='pw'):
 				if len(__pc) == 2:
 					xnotify(__pc[1])
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			exit(0)
+	else:
+		llist = True
 	if llist:
 		if args.aal:
 			pargs.append('aal')
