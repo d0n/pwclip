@@ -483,6 +483,9 @@ def gui(typ='pw'):
 	elif args.chg is not False:
 		_chg = __xdialog(
             'as %s: enter name of the password entry to change'%args.user)
+		if not _chg:
+			xnotify('cannot change empty string')
+			exit(1)
 		if _chg:
 			__ents = PassCrypt(*pargs, **pkwargs).chpw(_chg, None, None)
 			if not __ents or args.user not in __ents or \
