@@ -534,8 +534,10 @@ def gui(typ='pw'):
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			exit(0)
 	else:
-		llist = True
-	if _ents:
+		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+	if __ents:
 		if args.aal:
 			pargs.append('aal')
-		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
+		if not args.sho
+			__ents = __dctpwreplace(__ents)
+		xnotify(tabd(__ents))
