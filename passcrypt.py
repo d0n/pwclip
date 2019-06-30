@@ -282,6 +282,10 @@ class PassCrypt(GPGTool, SecureSHell):
 
 	def adpw(self, usr, pwd=None, com=None):
 		"""password adding method"""
+		if self.gui:
+			getpasswd = xgetpass
+		else:
+			getpasswd = self.passwd
 		if self.rnd:
 			while True:
 				pwd = random(self.genpwlen, self.genpwrex)
@@ -289,9 +293,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				if self.gui:
 					copy(pwd)
 					yesno = xyesno('use the following password: "%s"?'%pwd)
-					getpasswd = xgetpass
 				else:
-					getpasswd = self.passwd
 					print('%s %s%s [Y/n]'%(
                         grn('use the following password:'), yel(pwd), grn('?')), sep='')
 					yesno = input()
