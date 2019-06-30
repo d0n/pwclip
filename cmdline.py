@@ -538,6 +538,6 @@ def gui(typ='pw'):
 	if __ents:
 		if args.aal:
 			pargs.append('aal')
-		if not args.sho
+		if not args.sho:
 			__ents = __dctpwreplace(__ents)
 		xnotify(tabd(__ents))
