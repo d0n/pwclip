@@ -280,28 +280,28 @@ class PassCrypt(GPGTool, SecureSHell):
 			com = None
 		return [p for p in [pwd, com] if p is not None]
 
+	def __rndgetpass(self, user):
+		while True:
+			__pwd = random(self.genpwlen, self.genpwrex)
+			yesno = False
+			if self.gui:
+				yesno = xyesno('use the following password: "%s"?'%pwd)
+			else:
+				print('%s %s%s [Y/n]'%(
+					grn('use the following password:'), yel(pwd), grn('?')), sep='')
+				yesno = input()
+				yesno = True if str(yesno).lower() in ('y', '') else False
+			if yesno:
+				break
+		return __pwd
+
 	def adpw(self, usr, pwd=None, com=None):
 		"""password adding method"""
+		getpasswd = self.passwd
 		if self.gui:
 			getpasswd = xgetpass
-		else:
-			getpasswd = self.passwd
 		if self.rnd:
-			while True:
-				pwd = random(self.genpwlen, self.genpwrex)
-				yesno = False
-				if self.gui:
-					copy(pwd)
-					yesno = xyesno('use the following password: "%s"?'%pwd)
-				else:
-					print('%s %s%s [Y/n]'%(
-                        grn('use the following password:'), yel(pwd), grn('?')), sep='')
-					yesno = input()
-					yesno = True if str(yesno).lower() in ('y', '') else False
-				if yesno == False:
-					break
-				elif yesno == None:
-					return
+			getpasswd = self.__rndgetpass
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr,
