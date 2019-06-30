@@ -441,7 +441,7 @@ def __xdialog(msg, sec=None):
 			rtn = xinput()
 		if not rtn:
 			yesno = xyesno('no input received, abort?')
-			if yesno is True:
+			if yesno in (True, None):
 				rtn = False
 				break
 		if rtn:
