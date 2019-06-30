@@ -250,15 +250,32 @@ class PassCrypt(GPGTool, SecureSHell):
 		return isok
 
 	def __askpwdcom(self, sysuser, usr, pwd, com, opw, ocom, passwd):
-		if not self.gui:
-			print(blu('as user '), yel(sysuser), ': ', sep='')
-			pwd = pwd if pwd else passwd(msg='%s%s%s%s: '%(
-                    blu('  enter '), yel('password '),
-                    blu('for entry '), yel('%s'%usr)))
-			pwd = pwd if pwd else opw
+		if self.rnd:
+			pwd = self.__getrndpass()
+		if self.gui:
 			if not pwd:
-				error('password is needed if adding password')
-				return
+				pwd = passwd(
+				    'as user %s: enter password for entry %s'%(sysuser, usr))
+				pwd = pwd if pwd else opw
+				if not pwd:
+					xmsgok('password is needed if adding password')
+					return
+			if not com:
+				com = xinput(
+				    'enter comment (optional, "___" deletes the comment)')
+			com = ocom if not com else com
+			if com == '___':
+				com = None
+		else:
+			if not pwd:
+				print(blu('as user '), yel(sysuser), ': ', sep='')
+				pwd = pwd if pwd else self.passwd(msg='%s%s%s%s: '%(
+						blu('  enter '), yel('password '),
+						blu('for entry '), yel('%s'%usr)))
+				pwd = pwd if pwd else opw
+				if not pwd:
+					error('password is needed if adding password')
+					return
 			if not com:
 				print(
                     blu('  enter '), yel('comment '),
@@ -268,20 +285,6 @@ class PassCrypt(GPGTool, SecureSHell):
 			com = ocom if not com else com
 			if com == '___':
 				com = None
-			return [p for p in [pwd, com] if p is not None]
-		if self.rnd:
-			pwd = self.__getrndpass()
-		else:
-			pwd = passwd('as user %s: enter password for entry %s'%(sysuser, usr))
-			pwd = pwd if pwd else opw
-			if not pwd:
-				xmsgok('password is needed if adding password')
-				return
-		if not com:
-			com = xinput('enter comment (optional, "___" deletes the comment)')
-		com = ocom if not com else com
-		if com == '___':
-			com = None
 		return [p for p in [pwd, com] if p is not None]
 
 	def __rndgetpass(self):
@@ -292,7 +295,8 @@ class PassCrypt(GPGTool, SecureSHell):
 				yesno = xyesno('use the following password: "%s"?'%pwd)
 			else:
 				print('%s %s%s [Y/n]'%(
-					grn('use the following password:'), yel(pwd), grn('?')), sep='')
+                    grn('use the following password:'),
+                    yel(pwd), grn('?')), sep='')
 				yesno = input()
 				yesno = True if str(yesno).lower() in ('y', '') else False
 			if yesno:
@@ -301,11 +305,6 @@ class PassCrypt(GPGTool, SecureSHell):
 
 	def adpw(self, usr, pwd=None, com=None):
 		"""password adding method"""
-		getpasswd = self.passwd
-		if self.gui:
-			getpasswd = xgetpass
-		if self.rnd:
-			getpasswd = self.__rndgetpass
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr,
