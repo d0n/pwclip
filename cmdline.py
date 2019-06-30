@@ -506,7 +506,9 @@ def gui(typ='pw'):
 		else:
 			_rms = [_rms]
 		for r in _rms:
-			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
+			pcr = PassCrypt(*pargs, **pkwargs)
+			__ents = pcr.rmpw(r)
+			pcr.__del__
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
 			else:
