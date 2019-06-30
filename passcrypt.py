@@ -269,7 +269,9 @@ class PassCrypt(GPGTool, SecureSHell):
 			if com == '___':
 				com = None
 			return [p for p in [pwd, com] if p is not None]
-		if not self.rnd:
+		if self.rnd:
+			pwd = self.__getrndpass()
+		else:
 			pwd = passwd('as user %s: enter password for entry %s'%(sysuser, usr))
 			pwd = pwd if pwd else opw
 			if not pwd:
@@ -282,7 +284,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			com = None
 		return [p for p in [pwd, com] if p is not None]
 
-	def __rndgetpass(self, user):
+	def __rndgetpass(self):
 		while True:
 			__pwd = random(self.genpwlen, self.genpwrex)
 			yesno = False
