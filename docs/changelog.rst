@@ -7,7 +7,20 @@ Changelog
 Released: 2019-06-30
 
   * fixed some bugs implemented with 1.6.0 like correct i/o of questions and
-    answer (few of'em merged from master in lib/system)
+    answers via xinput (few of'em merged from master in lib/system)
+
+  * more fixes for gui-mode operations
+
+  * fixes for random password generating
+
+
+1.6.2
+-----
+
+Released: 2019-06-27
+
+  * fixed some bugs implemented with 1.6.0 like correct i/o of questions
+    and answer (few of’em merged from master in lib/system)
 
   * fixed config parsing - especially in gui mode where e.g. recipients not
     have been recognised
@@ -15,7 +28,7 @@ Released: 2019-06-30
   * implemented more gui-mode functions like adding, deleting and changing
     entrys
 
-  * fix FAIL with versioning (1.6.1 is missing)
+  * fix FAIL with versioning
 
 
 1.6.0
