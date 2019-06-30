@@ -6,8 +6,8 @@ Changelog
 
 Released: 2019-06-30
 
-  * fixed some bugs implemented with 1.6.0 like correct i/o of questions and
-    answers via xinput (few of'em merged from master in lib/system)
+  * fixed some bugs implemented with last merge war like correct i/o behaviour
+    of questions and answers via xinput
 
   * more fixes for gui-mode operations
 
