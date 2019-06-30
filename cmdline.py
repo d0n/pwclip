@@ -510,7 +510,7 @@ def gui(typ='pw'):
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
-			else
+			else:
 				dels = True
 				xnotify('deleted entry %s for %s'%(r, args.user))
 			#sleep(1)
