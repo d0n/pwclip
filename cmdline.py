@@ -513,7 +513,7 @@ def gui(typ='pw'):
 			else
 				dels = True
 				xnotify('deleted entry %s for %s'%(r, args.user))
-			sleep(1)
+			#sleep(1)
 	elif args.lst is not False:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
