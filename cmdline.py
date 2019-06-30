@@ -472,7 +472,7 @@ def gui(typ='pw'):
 				exit(1)
 			__pc = __ents[args.user][_add]
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(_add, ' '.join(__pc[1])))
+				xnotify('%s: %s'%(_add, ' '.join(__pc[1:])))
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			umsg = 'all users'
 			if not args.aal:
@@ -529,7 +529,7 @@ def gui(typ='pw'):
 			__pc = __ent[__in]
 			if __pc:
 				if len(__pc) == 2:
-					xnotify(__pc[1])
+					xnotify(' '.join(__pc[1:]))
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 		exit(0)
 	else:
