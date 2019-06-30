@@ -292,7 +292,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			__pwd = random(self.genpwlen, self.genpwrex)
 			yesno = False
 			if self.gui:
-				yesno = xyesno('use the following password: "%s"?'%pwd)
+				yesno = xyesno('use the following password: "%s"?'%__pwd)
 			else:
 				print('%s %s%s [Y/n]'%(
                     grn('use the following password:'),
