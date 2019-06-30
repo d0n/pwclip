@@ -446,11 +446,10 @@ def __xdialog(msg, sec=None):
 					return
 				finally:
 					break
-		if __ret or __ret is None:
-			try:
-				return __ret
-			finally:
-				break
+		try:
+			return __ret
+		finally:
+			break
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
@@ -466,6 +465,9 @@ def gui(typ='pw'):
 	if args.add is not False:
 		__add = __xdialog(
             'as %s: enter name for the new password entry'%args.user)
+		if not __add:
+			xnotify('cannot add empty string %s'__add)
+			exit(1)
 		if __add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
 			if not __ents or args.user not in __ents or \
