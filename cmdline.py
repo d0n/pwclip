@@ -458,63 +458,62 @@ def gui(typ='pw'):
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
-	llist = None
+	__ents = None
 	if args.add is not False:
-		__add = __xdialog(
+		_add = __xdialog(
             'as %s: enter name for the new password entry'%args.user)
 		if not __add:
 			xnotify('cannot add empty string %s'%__add)
 			exit(1)
-		if __add:
-			__ents = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
+		if _add:
+			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
 			if not __ents or args.user not in __ents or \
                   __add not in __ents[args.user].keys():
 				xmsgok('something went wrong while adding %s'%__add)
 				exit(1)
 			__pc = __ents[args.user][__add]
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(__pc, ' '.join(__pc[1])))
+				xnotify('%s: %s'%(_add, ' '.join(__pc[1])))
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			umsg = 'all users'
 			if not args.aal:
 				umsg = 'user %s'%args.user
-			xnotify('added entry %s for %s'%(__add, umsg))
+			xnotify('added entry %s for %s'%(_add, umsg))
 			llist = True
 	elif args.chg is not False:
-		__chg = __xdialog(
+		_chg = __xdialog(
             'as %s: enter name of the password entry to change'%args.user)
-		if __chg:
-			__ents = PassCrypt(*pargs, **pkwargs).chpw(__add, None, None)
+		if _chg:
+			__ents = PassCrypt(*pargs, **pkwargs).chpw(_chg, None, None)
 			if not __ents or args.user not in __ents or \
-                  __add not in __ents[args.user].keys():
-				xmsgok('something went wrong while changing %s'%__add)
+                  _chg not in __ents[args.user].keys():
+				xmsgok('something went wrong while changing %s'%_chg)
 				exit(1)
-			__pc = __ents[args.user][__add]
+			__pc = __ents[args.user][_chg]
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
+				xnotify('%s: %s'%(_chg, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-			xnotify('changed entry %s for %s'%(__add, args.user))
+			xnotify('changed entry %s for %s'%(_chg, args.user))
 			llist = True
 	elif args.rms is not False:
-		__rms = __xdialog(
+		_rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%args.user)
-		if not __rms:
+		if not _rms:
 			xnotify('cannot not delete emty string')
 			exit(1)
-		if __rms and ' ' in __rms:
-			__rms = [r.strip() for r in __rms.split(' ')]
+		if _rms and ' ' in _rms:
+			_rms = [r.strip() for r in _rms.split(' ')]
 		else:
-			__rms = [__rms]
+			_rms = [_rms]
 		dels = False
-		for r in __rms:
+		for r in _rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
-				continue
-			dels = True
-			xnotify('deleted entry %s for %s'%(r, args.user))
-		if dels:
-			llist = True
+			else
+				dels = True
+				xnotify('deleted entry %s for %s'%(r, args.user))
+			sleep(1)
 	elif args.lst is not False:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -536,7 +535,7 @@ def gui(typ='pw'):
 			exit(0)
 	else:
 		llist = True
-	if llist:
+	if _ents:
 		if args.aal:
 			pargs.append('aal')
 		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
