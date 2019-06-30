@@ -473,9 +473,12 @@ def gui(typ='pw'):
 				exit(1)
 			__pc = __ents[args.user][__add]
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1])))
+				xnotify('%s: %s'%(__pc, ' '.join(__pc[1])))
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-			xnotify('added entry %s for %s'%(__add, args.user))
+			umsg = 'all users'
+			if not args.aal:
+				umsg = 'user %s'%args.user
+			xnotify('added entry %s for %s'%(__add, umsg))
 			llist = True
 	elif args.chg is not False:
 		__chg = __xdialog(
