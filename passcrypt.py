@@ -249,7 +249,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		setfiletime(self.crypt, (now, now))
 		return isok
 
-	def __askpwdcom(self, sysuser, usr, pwd, com, opw, ocom, passwd):
+	def __askpwdcom(self, sysuser, usr, pwd, com, opw, ocom):
 		if self.rnd:
 			pwd = self.__getrndpass()
 		if self.gui:
@@ -326,7 +326,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				pwdcom = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, getpasswd)
+                    self.user, usr, pwd, com, __opw, __ocom)
 				if pwdcom:
 					self.__weaks[self.user][usr] = [p for p in pwdcom if p]
 		else:
@@ -342,7 +342,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				pwdcom = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, getpasswd)
+                    self.user, usr, pwd, com, __opw, __ocom)
 				if pwdcom:
 					self.__weaks[u][usr] = [p for p in pwdcom if p]
 		return dict(self.__weaks)
@@ -360,7 +360,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				self.__weaks[self.user][usr] = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, self.passwd)
+                    self.user, usr, pwd, com, __opw, __ocom)
 			else:
 				if self.gui:
 					xmsgok('no entry named %s for user %s'%(usr, self.user))
@@ -379,7 +379,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				self.__weaks[u][usr] = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, self.passwd)
+                    self.user, usr, pwd, com, __opw, __ocom)
 		return dict(self.__weaks)
 
 	def rmpw(self, usr):
