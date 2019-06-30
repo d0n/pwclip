@@ -242,6 +242,8 @@ class PassCrypt(GPGTool, SecureSHell):
             'key': self.key,
             'recvs': self.recvs}
 		isok = self.encrypt(message=dump(__weaks),  **kwargs)
+		cfh = open(self.crypt, 'r')
+		cfh.close()
 		chmod(self.crypt, 0o600)
 		now = int(time())
 		setfiletime(self.crypt, (now, now))
