@@ -13,9 +13,12 @@ Released: 2019-06-30
 
   * fixes for random password generating
 
+  * again slightly changed documentation of fail in versioning 1.6.1~2 has
+    nothing to do with at that time already released 1.6.0
 
-1.6.2
------
+
+1.6.1/2
+-------
 
 Released: 2019-06-27
 
