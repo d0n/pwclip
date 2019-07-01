@@ -539,3 +539,4 @@ def gui(typ='pw'):
 		if not args.sho:
 			__ents = __dctpwreplace(__ents)
 		xnotify(tabd(__ents))
+	exit(0)
