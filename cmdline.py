@@ -57,11 +57,10 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	frk = fork()
 	if frk == 0:
 		if out == 'gui':
-			cmd.stdo('xvkbd -no-keypad -delay 15 -text %s'%text)
+			cmd.run('xvkbd -no-keypad -delay 15 -text %s'%text)
 		elif out == 'cli':
 			print(text, end='')
 		copy(text, mode='pb')
-		xnotify('pwclip')
 		try:
 			sleep(int(wait))
 		finally:
