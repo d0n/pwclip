@@ -54,7 +54,8 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	if fork() == 0:
+	frk = fork()
+	if frk == 0:
 		if out == 'gui':
 			Popen(str(
 					'xvkbd -no-keypad -delay 20 -text %s'%text
@@ -68,7 +69,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-		exit(0)
+	exit(0)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
