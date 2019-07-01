@@ -199,21 +199,22 @@ class PassCrypt(GPGTool, SecureSHell):
 		if not self._checktime():
 			return
 		fs = (self.crypt,)
-		ok = False
 		if self.sig:
 			fs = (self.crypt, '%s.sig'%self.crypt)
+		isok = True
 		for i in fs:
 			ok = self.scpcompstats(
                 i, path.basename(i),
                 2, remote=self.remote, reuser=self.reuser)
 			if ok:
-				print(
-                    blu('file'),
-                    yel(path.basename(i)),
-                    blu('synced successfully'))
-			if not ok:
-				continue
-		return ok
+				isok = True if ok and isok else False
+				if self.gui:
+					xnotify('file %s synced successfully'%path.basename(i))
+				else:
+					print(
+                        blu('file'), yel(path.basename(i)),
+                        blu('synced successfully'))
+		return isok
 
 	def _readcrypt(self):
 		"""read crypt file method"""
