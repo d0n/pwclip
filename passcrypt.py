@@ -166,11 +166,13 @@ class PassCrypt(GPGTool, SecureSHell):
 			now = int(time())
 			if not path.exists(tf):
 				with open(tf, 'w+') as tfh:
-					tfh.write(str(now-self.maxage))
+					tfh.write(str(now))
 			with open(tf, 'r') as tfh:
 				last = int(tfh.read())
-			self.age = int(now-int(last))
-			if self.age >= int(self.maxage):
+			age = int(now-int(last))
+			if age >= int(self.maxage):
+				with open(tf, 'w+') as tfh:
+					tfh.write(str(now))
 				return True
 
 	def _mergecrypt(self, __weaks):
