@@ -99,7 +99,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		if self._cecktime():
 			self._copynews()
 		self.__weaks = self._readcrypt()
-		self.__oldweaks = str(self.__weaks)
+		self.__oldweaks = str(dict(sorted(self.__weaks.items())))
 		self.__weaks = self._mergecrypt(self.__weaks)
 		register(self._cryptpass)
 
@@ -119,7 +119,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			for r in crecvs:
 				if r not in self.recvs:
 					chgs.append('- %s'%r)
-		if self.__oldweaks != str(self.__weaks) or chgs:
+		if self.__oldweaks != str(dict(sorted(self.__weaks.items()))) or chgs:
 			msg = ('recipients have changed:\n',
                     '\n'.join(c for c in chgs),
                     '\nfrom:\n', ' '.join(erecvs),
