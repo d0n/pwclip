@@ -24,8 +24,6 @@ from os import environ, path, remove, getpid, name as osname
 
 from sys import exit
 
-from subprocess import DEVNULL, Popen, call
-
 from argparse import ArgumentParser
 
 from argcomplete import autocomplete
@@ -42,6 +40,8 @@ from getpass import getpass
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal, abort
 
+from executor import command as cmd
+
 from system import \
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, xinput, which, whoami, dictreplace
@@ -57,9 +57,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	frk = fork()
 	if frk == 0:
 		if out == 'gui':
-			Popen(str(
-					'xvkbd -no-keypad -delay 20 -text %s'%text
-                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
+			cmd.stdo('xvkbd -no-keypad -delay 15 -text %s'%text)
 		elif out == 'cli':
 			print(text, end='')
 		copy(text, mode='pb')
@@ -69,6 +67,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
+			
 		exit(0)
 
 def __passreplace(pwlist):
