@@ -310,8 +310,8 @@ def confpars(mode):
 		pargs.append('rnd')
 		genpwrex = args.genpwrex
 		if args.genpwrex is None:
-			genpwrex = '[(?=.*\[A-z\])(?=.*\[A-Z\])' \
-                       '(?=.*\[0-9\])(?=.*\[$@\])(?!.*\[iIoO\])]:24'
+			genpwrex = '[(?=\[!$%&/()=?+#,.-:\]*\[A-z\])(?=\[!$%&/()=?+#,.-:\]*\[A-Z\])' \
+                       '(?=\[!$%&/()=?+#,.-:\]*\[0-9\])(?=\[!$%&/()=?+#,.-:\]*\[$@\])(?!\[!$%&/()=?+#,.-:\]*\[iIoO\])]:24'
 		genpwlen = 24
 		if ':' in genpwrex:
 			genpwrex, genpwlen = \
