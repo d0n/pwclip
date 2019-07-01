@@ -96,7 +96,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		if not self.keys:
 			self._mkconfkeys()
 			SecureSHell.__init__(self, *args, **kwargs)
-		if self._cecktime():
+		if self._checktime():
 			self._copynews()
 		self.__weaks = self._readcrypt()
 		self.__oldweaks = str(dict(sorted(self.__weaks.items())))
