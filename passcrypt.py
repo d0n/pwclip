@@ -156,7 +156,7 @@ class PassCrypt(GPGTool, SecureSHell):
 		with open(self.config, 'w+') as cfh:
 			cfh.write(str(dump(cfgs)))
 
-	def _cecktime(self):
+	def _checktime(self):
 		ok = True
 		if self.maxage:
 			tf = absrelpath(self.timefile)
