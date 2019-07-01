@@ -18,7 +18,8 @@ from colortext import blu, yel, grn, bgre, tabd, error
 
 from system import \
     userfind, filerotate, setfiletime, \
-    xgetpass, xmsgok, xinput, filetime, absrelpath, xyesno, random, copy
+    xgetpass, xmsgok, xinput, xnotify, \
+    filetime, absrelpath, xyesno, random, copy
 
 from net.ssh import SecureSHell
 
