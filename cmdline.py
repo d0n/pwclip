@@ -226,11 +226,11 @@ def optpars(cfgs, mode, name):
 	apars.set_defaults(**cfgs)
 	apars.add_argument(
         '-a', '--add',
-        dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else None,
         default=False, help='add ENTRY (password will be asked interactivly)')
 	apars.add_argument(
         '-c', '--change',
-        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else None,
         default=False, help='change ENTRY (password will be asked interactivly)')
 	apars.add_argument(
         '-d', '--delete',
