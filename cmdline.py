@@ -67,7 +67,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-			
+			cmd.run('kill -9 xsel')
 		exit(0)
 
 def __passreplace(pwlist):
