@@ -6,10 +6,9 @@ Changelog
 
 Released: 2019-07-01
 
-  * fixed some bugs implemented with last merge war like correct i/o behaviour
-    of questions and answers via xinput
+  * fixed some bugs with xinput again
 
-  * more fixes for gui-mode operations
+  * implemented almost all gui-mode functions available for cli mode
 
   * fixes for random password generating
 
