@@ -65,8 +65,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		xnotify('pwclip')
 		try:
 			sleep(int(wait))
-		except KeyboardInterrupt:
-			exit(1)
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
