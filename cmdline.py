@@ -57,7 +57,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	frk = fork()
 	if frk == 0:
 		if out == 'gui':
-			cmd.call(str('xvkbd -no-keypad -delay 15 -text "%s"'%text).split())
+			cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
 		elif out == 'cli':
 			print(text, end='')
 		copy(text, mode='pb')
