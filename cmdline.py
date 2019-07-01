@@ -69,6 +69,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 			copy(boclp, mode='b')
 			cmd.run('kill -9 %s'%cmd.stdo('pidof xsel'))
 		exit(0)
+	exit(0)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
