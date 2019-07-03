@@ -125,6 +125,11 @@ def optpars(cfgs, mode, name):
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
+	if mode == 'gui':
+		pars.add_argument(
+            '-e', '--expression',
+            dest='rex', action='store_true', metavar='EXPRESSION',
+            help='generate password by EXPRESSION:LENGTH (only useful with -g)')
 	pars.add_argument(
         '-g', '--genpw-pattern',
         dest='genpwrex', default=False, nargs='?',
@@ -309,7 +314,9 @@ def confpars(mode):
 	if args.genpwrex or args.genpwrex is None:
 		pargs.append('rnd')
 		genpwrex = args.genpwrex
-		if args.genpwrex is None:
+		if args.expression:
+			genpwrex = xinput('enter pwgen expression [regex]:[length]')
+		if genpwrex is None:
 			genpwrex = '[a-zA-Z0-9\!$%&/\(\)=\?\+#,\.-:]*:24'
 		genpwlen = 24
 		if ':' in genpwrex:
