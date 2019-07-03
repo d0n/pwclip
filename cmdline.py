@@ -125,16 +125,16 @@ def optpars(cfgs, mode, name):
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
-	if mode == 'gui':
-		pars.add_argument(
-            '-e', '--expression',
-            dest='rex', action='store_true', metavar='EXPRESSION',
-            help='generate password by EXPRESSION:LENGTH (only useful with -g)')
 	pars.add_argument(
-        '-g', '--genpw-pattern',
-        dest='genpwrex', default=False, nargs='?',
-        help='randomly generate password (only useful ' \
-             'with -a, default is [\w#_;:\*\+\.\,\-\?\!]:24)')
+        '-e', '--expression',
+        dest='rex', metavar='EXPRESSION:LEN', default=False,
+        nargs='?' if mode == 'gui' else None,
+        help='generate password using EXPRESSION:LEN, only useful with -g' \
+             '(default is "[a-zA-Z0-9\!$%&/\(\)=\?\+#,\.-:]*:24")')
+	pars.add_argument(
+        '-g', '--genpw', dest='gpw', action='store_true',
+        help='randomly generate password, only useful ' \
+             'with -a (uses EXPRESSION)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
