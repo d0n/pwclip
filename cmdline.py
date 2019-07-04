@@ -127,14 +127,15 @@ def optpars(cfgs, mode, name):
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
         '-e', '--expression',
-        dest='rex', metavar='EXPRESSION:LEN', default=False,
-        nargs='?' if mode == 'gui' else None,
-        help='generate password using EXPRESSION:LEN, only useful with -g' \
+        dest='rex', default='[a-zA-Z0-9\!$%&/\(\)=\?\+#,\.-:]*:24',
+        metavar='EXPRESSION:[LEN]',  nargs='?' if mode == 'gui' else None,
+        help='generate password using EXPRESSION to generate password of '
+             'lenght LEN, either LEN is set or 24 is used - use with -g' \
              '(default is "[a-zA-Z0-9\!$%&/\(\)=\?\+#,\.-:]*:24")')
 	pars.add_argument(
-        '-g', '--genpw', dest='gpw', action='store_true',
-        help='randomly generate password, only useful ' \
-             'with -a (uses EXPRESSION)')
+        '-g', '--genpw',
+        dest='gpw', action='store_true', help='randomly generate password' \
+             ', only useful with -a (uses EXPRESSION)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -311,13 +312,9 @@ def confpars(mode):
 	pkwargs['sslcrt'] = args.sslcrt
 	pkwargs['sslkey'] = args.sslkey
 	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
-	if args.genpwrex or args.genpwrex is None:
+	if args.gpw:
 		pargs.append('rnd')
-		genpwrex = args.genpwrex
-		if args.expression:
-			genpwrex = xinput('enter pwgen expression [regex]:[length]')
-		if genpwrex is None:
-			genpwrex = '[a-zA-Z0-9\!$%&/\(\)=\?\+#,\.-:]*:24'
+		genpwrex = args.rex
 		genpwlen = 24
 		if ':' in genpwrex:
 			genpwrex, genpwlen = \
@@ -382,7 +379,7 @@ def cli():
 		if not __ents:
 			error('something went wrong while adding', args.add)
 			exit(1)
-		__pc = __ents[args.user][args.add]
+		__pc = __ents[args.usr][args.add]
 		if __pc:
 			if len(__pc) == 2 and osname != 'nt':
 				xnotify('%s: %s'%(
@@ -394,7 +391,7 @@ def cli():
 		__ents = PassCrypt(*pargs, **pkwargs).chpw(
             args.chg, args.pwd, args.com)
 		if not args.aal:
-			__ents[args.user]
+			__ents[args.usr]
 		if not __ents:
 			if [h for (u, es) in __ents.items() if args.chg in en.keys()]:
 				exit(0)
@@ -404,7 +401,7 @@ def cli():
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not args.aal:
-				__ents[args.user]
+				__ents[args.usr]
 			if r in __ents.keys():
 				ers.append(r)
 		ewrd = 'entry'
@@ -417,7 +414,7 @@ def cli():
 		if __ents and args.lst not in __ents.keys():
 			err = (
                 'could not find entry', args.lst,
-                'for', args.user, 'in', pkwargs['crypt'])
+                'for', args.usr, 'in', pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
 			if __pc:
@@ -462,44 +459,44 @@ def gui(typ='pw'):
 	__ents = None
 	if args.add is not False:
 		_add = __xdialog(
-            'as %s: enter name for the new password entry'%args.user)
+            'as %s: enter name for the new password entry'%args.usr)
 		if not _add:
 			xnotify('cannot add empty string')
 			exit(1)
 		if _add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
-			if not __ents or args.user not in __ents or \
-                  _add not in __ents[args.user].keys():
+			if not __ents or args.usr not in __ents or \
+                  _add not in __ents[args.usr].keys():
 				xmsgok('something went wrong while adding %s'%_add)
 				exit(1)
-			__pc = __ents[args.user][_add]
+			__pc = __ents[args.usr][_add]
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(_add, ' '.join(__pc[1:])))
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			umsg = 'all users'
 			if not args.aal:
-				umsg = 'user %s'%args.user
+				umsg = 'user %s'%args.usr
 			xnotify('added entry %s for %s'%(_add, umsg))
 	elif args.chg is not False:
 		_chg = __xdialog(
-            'as %s: enter name of the password entry to change'%args.user)
+            'as %s: enter name of the password entry to change'%args.usr)
 		if not _chg:
 			xnotify('cannot change empty string')
 			exit(1)
 		if _chg:
 			__ents = PassCrypt(*pargs, **pkwargs).chpw(_chg, None, None)
-			if not __ents or args.user not in __ents or \
-                  _chg not in __ents[args.user].keys():
+			if not __ents or args.usr not in __ents or \
+                  _chg not in __ents[args.usr].keys():
 				xmsgok('something went wrong while changing %s'%_chg)
 				exit(1)
-			__pc = __ents[args.user][_chg]
+			__pc = __ents[args.usr][_chg]
 			if len(__pc) == 2:
 				xnotify('%s: %s'%(_chg, ' '.join(__pc[1:])), args.time)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-			xnotify('changed entry %s for %s'%(_chg, args.user))
+			xnotify('changed entry %s for %s'%(_chg, args.usr))
 	elif args.rms is not False:
 		_rms = __xdialog(
-            'as %s: enter name of the password entry(s) to delete'%args.user)
+            'as %s: enter name of the password entry(s) to delete'%args.usr)
 		if not _rms:
 			xnotify('cannot not delete emty string')
 			exit(1)
@@ -514,7 +511,7 @@ def gui(typ='pw'):
 			if not __ents:
 				xnotify('could not delete entry %s'%r)
 			else:
-				xnotify('deleted entry %s for %s'%(r, args.user))
+				xnotify('deleted entry %s for %s'%(r, args.usr))
 	elif args.lst is not False:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -525,7 +522,7 @@ def gui(typ='pw'):
 		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
 		if not __ent or (__ent and __in not in __ent.keys() or not __ent[__in]):
 			xnotify('either %s or %s where not found in passcrypt'%(
-                args.user, __in))
+                args.usr, __in))
 			exit(1)
 		if __ent:
 			__pc = __ent[__in]
