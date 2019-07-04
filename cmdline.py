@@ -127,11 +127,11 @@ def optpars(cfgs, mode, name):
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
         '-e', '--expression',
-        dest='rex', default='[a-zA-Z0-9\!$%&/\(\)=\?\+#,\.-:]*:24',
+        dest='rex', default='[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24',
         metavar='EXPRESSION:[LEN]',  nargs='?' if mode == 'gui' else None,
         help='generate password using EXPRESSION to generate password of '
              'lenght LEN, either LEN is set or 24 is used - use with -g' \
-             '(default is "[a-zA-Z0-9\!$%&/\(\)=\?\+#,\.-:]*:24")')
+             '(default is "[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24")')
 	pars.add_argument(
         '-g', '--genpw',
         dest='gpw', action='store_true', help='randomly generate password' \
