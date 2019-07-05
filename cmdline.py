@@ -57,8 +57,10 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	frk = fork()
 	if frk == 0:
 		if out == 'gui':
+		    xnotify('pwclip:paste')
 			cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
 		elif out == 'cli':
+		    xnotify('pwclip:paste')
 			print(text, end='')
 		copy(text, mode='pb')
 		try:
@@ -527,8 +529,10 @@ def gui(typ='pw'):
 		if __ent:
 			__pc = __ent[__in]
 			if __pc:
+				notif = 'pwclip:copy'
 				if len(__pc) == 2:
-					xnotify(' '.join(__pc[1:]))
+					notif = ' '.join(__pc[1:])
+				xnotify(notif)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 	else:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
