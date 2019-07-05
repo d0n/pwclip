@@ -57,10 +57,10 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	frk = fork()
 	if frk == 0:
 		if out == 'gui':
-		    xnotify('pwclip:paste')
+			xnotify('pwclip:paste')
 			cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
 		elif out == 'cli':
-		    xnotify('pwclip:paste')
+			xnotify('pwclip:paste')
 			print(text, end='')
 		copy(text, mode='pb')
 		try:
@@ -129,8 +129,8 @@ def optpars(cfgs, mode, name):
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
         '-e', '--expression',
-        dest='rex', default='[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24',
-        metavar='EXPRESSION:[LEN]',  nargs='?' if mode == 'gui' else None,
+        dest='rex', default=False, metavar='EXPRESSION:[LEN]',
+        nargs='?' if mode == 'gui' else None,
         help='generate password using EXPRESSION to generate password of '
              'lenght LEN, either LEN is set or 24 is used - use with -g' \
              '(default is "[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24")')
@@ -315,8 +315,24 @@ def confpars(mode):
 	pkwargs['sslkey'] = args.sslkey
 	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
 	if args.gpw:
+		_genpwrex = '[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24'
 		pargs.append('rnd')
-		genpwrex = args.rex
+		if args.rex is not False:
+			getrex = input
+			msg = 'enter regular expression for new password:'
+			err = 'aborted due to empty input'
+			if mode == 'gui':
+				getrex = xinput
+				msg = 'enter regular expression for new password'
+				err = 'aborted due to empty input'
+			_genpwrex = getrex('enter regular expression for new password')
+			if not _genpwrex:
+				
+				xnotify('aborted due to empty input')
+				exit(1)
+		elif mode == 'gui':
+			_genpwrex = '[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24'
+		genpwrex = _genpwrex
 		genpwlen = 24
 		if ':' in genpwrex:
 			genpwrex, genpwlen = \
