@@ -27,14 +27,13 @@ from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 
 from atexit import register
 
-class PassCrypt(GPGTool, SecureSHell):
+class PassCrypt(GPGTool):
 	"""passcrypt main class"""
 	dbg = None
 	vrb = None
 	aal = None
 	fsy = None
 	sho = None
-	rem = None
 	rnd = None
 	out = None
 	gsm = None
@@ -55,8 +54,6 @@ class PassCrypt(GPGTool, SecureSHell):
 	plain = path.join(home, '.pwd.yaml')
 	crypt = path.join(home, '.passcrypt')
 	timefile = path.expanduser('~/.cache/PassCrypt.time')
-	remote = ''
-	reuser = user
 	recvs = []
 	key = ''
 	keys = {}
@@ -96,11 +93,8 @@ class PassCrypt(GPGTool, SecureSHell):
 		self.keys = self.findkey()
 		if not self.keys:
 			self._mkconfkeys()
-			SecureSHell.__init__(self, *args, **kwargs)
-		if self._checktime():
-			self._copynews()
-		self.__weaks = self._readcrypt()
-		self.__oldweaks = str(dict(sorted(self.__weaks.items())))
+		self.__weaks = dict(sorted(dict(self._readcrypt()).items()))
+		self.__oldweaks = str(self.__weaks)
 		self.__weaks = self._mergecrypt(self.__weaks)
 		register(self._cryptpass)
 

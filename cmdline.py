@@ -22,7 +22,7 @@ except ImportError:
 
 from os import environ, path, remove, getpid, name as osname
 
-from sys import exit
+from sys import exit, stdout
 
 from argparse import ArgumentParser
 
@@ -54,21 +54,20 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	frk = fork()
-	if frk == 0:
-		if out == 'gui':
-			xnotify('pwclip:paste')
-			cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
-		elif out == 'cli':
-			xnotify('pwclip:paste')
-			print(text, end='')
-		copy(text, mode='pb')
+	if out == 'gui':
+		cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
+	elif out == 'cli':
+		stdout.write('%s'%text)
+		xnotify('pwclip:paste')
+	stdout.flush()
+	copy(text, mode='pb')
+	if fork() == 0:
 		try:
 			sleep(int(wait))
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-		exit(0)
+	exit(0)
 
 def __passreplace(pwlist):
 	"""returnes a string of asterisk's as long as the password is"""
@@ -173,7 +172,8 @@ def optpars(cfgs, mode, name):
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER', default=cfgs['user'],
+        dest='usr', metavar='USER', nargs='?' if mode == 'gui' else None,
+        default=False if mode == 'gui' else cfgs['user'],
         help='query entrys only for USER (-A overrides, ' \
              '"%s" is default)'%cfgs['user'])
 	gpars.add_argument(
@@ -346,7 +346,7 @@ def confpars(mode):
 		pkwargs['recvs'] = str(args.rvs).split(' ')
 	if args.key:
 		pkwargs['key'] = args.key
-	if args.usr:
+	if args.usr :
 		pkwargs['user'] = args.usr
 	if args.time:
 		pkwargs['time'] = args.time
@@ -475,6 +475,9 @@ def gui(typ='pw'):
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	__ents = None
+	usr = args.usr
+	if args.usr is not False:
+		__xdialog('enter username for entrys to modífy')
 	if args.add is not False:
 		_add = __xdialog(
             'as %s: enter name for the new password entry'%args.usr)
@@ -550,6 +553,7 @@ def gui(typ='pw'):
 					notif = ' '.join(__pc[1:])
 				xnotify(notif)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				exit(0)
 	else:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	if __ents:
