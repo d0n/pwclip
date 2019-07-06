@@ -54,17 +54,18 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 	"""clipboard forking, after time resetting function"""
-	if out == 'gui':
-		cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
-	elif out == 'cli':
-		stdout.write('%s'%text)
-		xnotify('pwclip:paste')
-	stdout.flush()
-	copy(text, mode='pb')
 	if fork() == 0:
+		if out == 'gui':
+			cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
+		elif out == 'cli':
+			stdout.write('%s'%text)
+			stdout.flush()
+			xnotify('pwclip:paste')
+		copy(text, mode='pb')
 		try:
-			sleep(int(wait))
+			exit(0)
 		finally:
+			sleep(int(wait))
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 	exit(0)
