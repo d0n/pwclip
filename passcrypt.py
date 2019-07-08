@@ -95,7 +95,6 @@ class PassCrypt(GPGTool):
 			self._mkconfkeys()
 		self.__weaks = dict(sorted(dict(self._readcrypt()).items()))
 		self.__oldweaks = str(self.__weaks)
-		self.__weaks = self._mergecrypt(self.__weaks)
 		register(self._cryptpass)
 
 	def __del__(self):
@@ -129,10 +128,8 @@ class PassCrypt(GPGTool):
 				self.genkeys(self._gendefs(self.gui))
 			if self.__weaks:
 				if self._writecrypt(self.__weaks):
-					try:
-						self._copynews()
-					except OSError:
-						pass
+					if self.vrb:
+						print(blu('file'), yel(self.crypt), blu('encrypted'))
 
 	def _mkconfkeys(self):
 		self.key = '0x%s'%str(self.genkeys())[-16:]
@@ -150,68 +147,6 @@ class PassCrypt(GPGTool):
 			self.recvs = [self.key]
 		with open(self.config, 'w+') as cfh:
 			cfh.write(str(dump(cfgs)))
-
-	def _checktime(self):
-		ok = True
-		if self.maxage:
-			tf = absrelpath(self.timefile)
-			if not path.exists(path.dirname(tf)):
-				makedirs(path.dirname(tf))
-			now = int(time())
-			if not path.exists(tf):
-				with open(tf, 'w+') as tfh:
-					tfh.write(str(now))
-			with open(tf, 'r') as tfh:
-				last = int(tfh.read())
-			age = int(now-int(last))
-			if age >= int(self.maxage):
-				with open(tf, 'w+') as tfh:
-					tfh.write(str(now))
-				return True
-
-	def _mergecrypt(self, __weaks):
-		try:
-			with open(self.plain, 'r') as pfh:
-				__newweaks = load(pfh.read(), Loader=Loader)
-			if not self.dbg:
-				remove(self.plain)
-		except FileNotFoundError:
-			__newweaks = {}
-		__newweaks = {} if not __newweaks else __newweaks
-		for (su, ups) in __newweaks.items():
-			for (usr, pwdcom) in ups.items():
-				if su not in __weaks.keys():
-					__weaks[su] = {}
-				__weaks[su][usr] = pwdcom
-		return __weaks
-
-	def _copynews(self, force=None):
-		"""copy new file method"""
-		if self.dbg:
-			print(bgre(self._copynews))
-		if not self.rem:
-			return
-		if not self.remote:
-			return
-		if not self._checktime():
-			return
-		fs = (self.crypt,)
-		if self.sig:
-			fs = (self.crypt, '%s.sig'%self.crypt)
-		isok = True
-		for i in fs:
-			ok = self.scpcompstats(
-                i, path.basename(i),
-                2, remote=self.remote, reuser=self.reuser)
-			if ok:
-				isok = True if ok and isok else False
-				if self.gui:
-					xnotify('file %s synced successfully'%path.basename(i))
-				else:
-					print(
-                        blu('file'), yel(path.basename(i)),
-                        blu('synced successfully'))
-		return isok
 
 	def _readcrypt(self):
 		"""read crypt file method"""
