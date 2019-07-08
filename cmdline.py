@@ -60,7 +60,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None):
 		elif out == 'cli':
 			stdout.write('%s'%text)
 			stdout.flush()
-			xnotify('pwclip:paste')
 		copy(text, mode='pb')
 		try:
 			exit(0)
@@ -437,9 +436,11 @@ def cli():
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
 			if __pc:
-				if len(__pc) == 2 and osname != 'nt':
-					xnotify('%s: %s'%(
-                        args.lst, ' '.join(__pc[1:])), args.time)
+				notif = 'pwclip:copy'
+				if len(__pc) == 2:
+					notif = ' '.join(__pc[1:])
+				if osname!= 'nt':
+					xnotify(notif)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 				exit(0)
 	elif args.lst is None:
@@ -492,13 +493,17 @@ def gui(typ='pw'):
 				xmsgok('something went wrong while adding %s'%_add)
 				exit(1)
 			__pc = __ents[args.usr][_add]
+			notif = 'pwclip:copy'
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(_add, ' '.join(__pc[1:])))
+				notif = ' '.join(__pc[1:])
+			if osname != 'nt':
+				xnotify(notif)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			umsg = 'all users'
 			if not args.aal:
 				umsg = 'user %s'%args.usr
-			xnotify('added entry %s for %s'%(_add, umsg))
+			if osname != 'nt':
+				xnotify('added entry %s for %s'%(_add, umsg))
 	elif args.chg is not False:
 		_chg = __xdialog(
             'as %s: enter name of the password entry to change'%args.usr)
@@ -512,8 +517,11 @@ def gui(typ='pw'):
 				xmsgok('something went wrong while changing %s'%_chg)
 				exit(1)
 			__pc = __ents[args.usr][_chg]
+			notif = 'pwclip:copy'
 			if len(__pc) == 2:
-				xnotify('%s: %s'%(_chg, ' '.join(__pc[1:])), args.time)
+				notif = ' '.join(__pc[1:])
+			if osname != 'nt':
+				xnotify(notif)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 			xnotify('changed entry %s for %s'%(_chg, args.usr))
 	elif args.rms is not False:
@@ -530,10 +538,11 @@ def gui(typ='pw'):
 			pcr = PassCrypt(*pargs, **pkwargs)
 			__ents = pcr.rmpw(r)
 			pcr.__del__()
-			if not __ents:
-				xnotify('could not delete entry %s'%r)
-			else:
-				xnotify('deleted entry %s for %s'%(r, args.usr))
+			if osname != 'nt':
+				if not __ents:
+					xnotify('could not delete entry %s'%r)
+				else:
+					xnotify('deleted entry %s for %s'%(r, args.usr))
 	elif args.lst is not False:
 		_umsg = '%s\'s entrys'%args.usr
 		if args.aal:
@@ -552,7 +561,8 @@ def gui(typ='pw'):
 				notif = 'pwclip:copy'
 				if len(__pc) == 2:
 					notif = ' '.join(__pc[1:])
-				xnotify(notif)
+				if osname != 'nt':
+					xnotify(notif)
 				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
 				exit(0)
 	else:
