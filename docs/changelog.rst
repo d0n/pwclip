@@ -18,6 +18,8 @@ Released: 2019-07-11
     sophisticated "syncthing" - it syncs my encrypted password file between
     my systems by delays next to realtime)
 
+  * fixed issues implemented by latest released features for gui mode
+
   * *working on own replacement for gpg-wrapping "python-gnupg" module while
     it fails in some cases and does not provide propper debugging output due
     to the usage of threading wherefor i cannot see any reason in the first
