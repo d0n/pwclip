@@ -4,10 +4,30 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-07-010
+
+  * fixed passcrypt user selection in gui mode
+
+  * implemented gpg-precheck function inteded to fix some password I/O
+    problems when smardcard is used
+
+  * fixed password input for gui mode in some cases as well as terminal mode
+    in others
+
+  * removed ssh/scp functionality completly (replaced it by much more
+    sophisticated "syncthing" - it syncs my encrypted password file between
+    my systems by delays next to realtime)
+
+  **
+    working on own replacement for gpg-wrapping "python-gnupg" module while
+    it fails in some cases and does not provide propper debugging output due
+    to the usage of threading wherefor i cannot see any reason in the first
+    place
+  **
 
 
-
-
+1.6.3
+-----
 
 Released: 2019-07-01
 
