@@ -52,8 +52,10 @@ from secrecy import ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
-def forkwaitclip(text, poclp, boclp, wait=3, out=None):
+def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
+	enter = '' if not enter else '\n'
+	text = '%s%s'%enter
 	if fork() == 0:
 		if out == 'gui':
 			cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
@@ -122,6 +124,10 @@ def optpars(cfgs, mode, name):
         '-A', '--all',
         dest='aal', action='store_true',
         help='switch to all users entrys ("%s" only is default)'%cfgs['user'])
+	pars.add_argument(
+        '-E', '--enter',
+        dest='ent', action='store_true',
+        help='also enter newline when printing password (only useful with -o)')
 	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
@@ -300,6 +306,7 @@ def confpars(mode):
 	pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
+        'ent' if args.ent else None,
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
         'rem' if args.rem else None,
@@ -387,7 +394,7 @@ def cli():
 		res = ykchalres(getpass(), args.ysl, ykser)
 		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
-		forkwaitclip(res, poclp, boclp, args.time, args.out)
+		forkwaitclip(res, poclp, boclp, args.time, args.out, args.ent)
 		exit(0)
 	__ents = {}
 	err = None
@@ -402,7 +409,7 @@ def cli():
 			if len(__pc) == 2 and osname != 'nt':
 				xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
@@ -441,7 +448,7 @@ def cli():
 					notif = ' '.join(__pc[1:])
 				if osname!= 'nt':
 					xnotify(notif)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -475,7 +482,7 @@ def gui(typ='pw'):
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
-		forkwaitclip(res, poclp, boclp, args.time, args.out)
+		forkwaitclip(res, poclp, boclp, args.time, args.out, args.ent)
 	__ents = None
 	usr = args.usr
 	if args.usr is None:
@@ -501,7 +508,7 @@ def gui(typ='pw'):
 				notif = ' '.join(__pc[1:])
 			if osname != 'nt':
 				xnotify(notif)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 			umsg = 'all users'
 			if not args.aal:
 				umsg = 'user %s'%usr
@@ -525,7 +532,7 @@ def gui(typ='pw'):
 				notif = ' '.join(__pc[1:])
 			if osname != 'nt':
 				xnotify(notif)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, arg.ent)
 			xnotify('changed entry %s for %s'%(_chg, usr))
 	elif args.rms is not False:
 		_rms = __xdialog(
@@ -566,7 +573,8 @@ def gui(typ='pw'):
 					notif = ' '.join(__pc[1:])
 				if osname != 'nt':
 					xnotify(notif)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				forkwaitclip(
+                    __pc[0], poclp, boclp, args.time, args.out, args.ent)
 				exit(0)
 	else:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
