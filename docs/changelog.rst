@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-07-010
+Released: 2019-07-11
 
   * fixed passcrypt user selection in gui mode
 
@@ -18,10 +18,10 @@ Released: 2019-07-010
     sophisticated "syncthing" - it syncs my encrypted password file between
     my systems by delays next to realtime)
 
-  * *working on own replacement for gpg-wrapping "python-gnupg" module while*
-    *it fails in some cases and does not provide propper debugging output due*
-    *to the usage of threading wherefor i cannot see any reason in the first*
-    *place*
+  * *working on own replacement for gpg-wrapping "python-gnupg" module while
+    it fails in some cases and does not provide propper debugging output due
+    to the usage of threading wherefor i cannot see any reason in the first
+    place*
 
 
 1.6.3
