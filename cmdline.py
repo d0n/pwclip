@@ -465,8 +465,9 @@ def __xdialog(msg, sec=None):
 			rtn = xinput(msg)
 		if not rtn:
 			yesno = xyesno('no input received, try again?')
-			if yesno is False:
-				break
+			if yesno:
+				continue
+		break
 	return rtn
 
 def gui(typ='pw'):
