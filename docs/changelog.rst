@@ -1,8 +1,13 @@
-========
+=========
 Changelog
 =========
 
 {CurrentVersion}
+
+
+
+
+
 
 Released: 2019-07-01
 
