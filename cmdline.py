@@ -54,14 +54,13 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
-	enter = '\n' if enter else ''
-	text = '%s%s'%enter
 	if fork() == 0:
+		nl = '\r' if out == 'gui' else '\n'
+		text = '%s%s'%(text, nl if enter else '')
 		if out == 'gui':
-			cmd.call(str('xvkbd -no-keypad -delay 18 -text "%s"'%text).split())
+			cmd.call(str('xvkbd -no-keypad -delay 20 -text "%s"'%text).split())
 		elif out == 'cli':
-			stdout.write('%s'%text)
-			stdout.flush()
+			print(text, end=nl)
 		copy(text, mode='pb')
 		try:
 			exit(0)
@@ -465,12 +464,9 @@ def __xdialog(msg, sec=None):
 		else:
 			rtn = xinput(msg)
 		if not rtn:
-			yesno = xyesno('no input received, abort?')
-			if yesno in (True, None):
-				rtn = False
+			yesno = xyesno('no input received, try again?')
+			if yesno is False:
 				break
-		if rtn:
-			break
 	return rtn
 
 def gui(typ='pw'):
