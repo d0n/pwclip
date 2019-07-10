@@ -56,11 +56,12 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
 		if enter:
-			text = '%s\n'
+			text = '%s\n'%text
+		print(text)
 		if out == 'gui':
-			cmd.call(str('xvkbd -no-keypad -delay 20 -text "%s"'%text).split())
+			cmd.call('xvkbd -no-keypad -delay 20 -text "%s"'%text, shell=True)
 		elif out == 'cli':
-			print(text, end=nl)
+			print(text)
 		copy(text, mode='pb')
 		try:
 			exit(0)
