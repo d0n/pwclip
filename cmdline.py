@@ -479,7 +479,10 @@ def gui(typ='pw'):
 	__ents = None
 	usr = args.usr
 	if args.usr is None:
-		usr = __xdialog('enter username for selected actions')
+		usr = __xdialog('enter username for selected action')
+		if not usr:
+			xnotify('aborted')
+			exit(1)
 	if args.add is not False:
 		_add = __xdialog(
             'as %s: enter name for the new password entry'%usr)
