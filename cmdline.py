@@ -272,8 +272,8 @@ def confpars(mode):
         'RECIPIENTS': 'rvs',
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
-        'USER': 'user',
-        'USERNAME': 'user',
+        'USER': 'usr',
+        'USERNAME': 'usr',
         'YKSLOT': 'ykslot'}
 	confs = dictreplace(confs, cfgmap)
 	for (k, v) in confs.items():
