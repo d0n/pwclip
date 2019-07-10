@@ -54,7 +54,7 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
-	enter = '' if not enter else '\n'
+	enter = '\n' if enter else ''
 	text = '%s%s'%enter
 	if fork() == 0:
 		if out == 'gui':
