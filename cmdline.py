@@ -478,7 +478,7 @@ def gui(typ='pw'):
 		forkwaitclip(res, poclp, boclp, args.time, args.out)
 	__ents = None
 	usr = args.usr
-	if args.usr is not False:
+	if args.usr is None:
 		usr = __xdialog('enter username for entrys to modífy')
 	if args.add is not False:
 		_add = __xdialog(
