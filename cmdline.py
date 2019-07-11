@@ -151,20 +151,6 @@ def optpars(cfgs, mode, name):
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (%s is default)'%cfgs['time'])
-	rpars = pars.add_argument_group('remote arguments')
-	rpars.set_defaults(**cfgs)
-	rpars.add_argument(
-        '-R',
-        dest='rem', action='store_true',
-        help='use remote backup given by --remote-host/--remote-user')
-	rpars.add_argument(
-        '--remote-host',
-        dest='remote', metavar='HOST',
-        help='use HOST for connections')
-	rpars.add_argument(
-        '--remote-user',
-        dest='reuser', metavar='USER',
-        help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.set_defaults(**cfgs)
 	gpars.add_argument(
@@ -271,7 +257,6 @@ def confpars(mode):
 		confs = {}
 	cfgmap = {
         'gpg': {'recipients': 'rvs', 'delkey': True},
-        'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
         'GPGKEY': 'key',
@@ -309,7 +294,6 @@ def confpars(mode):
         'ent' if args.ent else None,
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
-        'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
@@ -320,7 +304,6 @@ def confpars(mode):
 	pkwargs['binary'] = __bin
 	pkwargs['sslcrt'] = args.sslcrt
 	pkwargs['sslkey'] = args.sslkey
-	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
 	if args.gpw:
 		_genpwrex = '[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24'
 		pargs.append('rnd')
@@ -359,11 +342,6 @@ def confpars(mode):
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
-	if args.rem:
-		if hasattr(args, 'remote'):
-			pkwargs['remote'] = args.remote
-		if hasattr(args, 'reuser'):
-			pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))

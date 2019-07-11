@@ -12,16 +12,12 @@ from time import time
 
 from yaml import load, dump, FullLoader
 
-from paramiko.ssh_exception import SSHException
-
 from colortext import blu, yel, grn, bgre, tabd, error
 
 from system import \
     userfind, filerotate, setfiletime, \
     xgetpass, xmsgok, xinput, xnotify, \
     filetime, absrelpath, xyesno, random, copy
-
-from net.ssh import SecureSHell
 
 from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 
