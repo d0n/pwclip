@@ -172,7 +172,7 @@ class PassCrypt(GPGTool):
             'output': self.crypt,
             'key': self.key,
             'recvs': self.recvs}
-		isok = self.encrypt(str(dump(__weaks)),  **kwargs)
+		isok = self.encrypt(str(dump(__weaks, Dumper=Dumper)),  **kwargs)
 		chmod(self.crypt, 0o600)
 		return isok
 
