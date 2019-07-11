@@ -13,7 +13,7 @@ from colortext import blu, yel, grn, bgre, tabd, error
 from system import \
     userfind, filerotate, setfiletime, \
     xgetpass, xmsgok, xinput, xnotify, \
-    filetime, absrelpath, xyesno, random, copy
+    filerotate, absrelpath, xyesno, random, copy
 
 from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 
@@ -172,6 +172,9 @@ class PassCrypt(GPGTool):
             'output': self.crypt,
             'key': self.key,
             'recvs': self.recvs}
+		filerotate(self.crypt, 3)
+		if self.sig:
+			filerotate('%s.sig'%self.crypt)
 		isok = self.encrypt(str(dump(__weaks, Dumper=Dumper)),  **kwargs)
 		chmod(self.crypt, 0o600)
 		return isok
