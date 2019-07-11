@@ -174,7 +174,7 @@ class PassCrypt(GPGTool):
             'recvs': self.recvs}
 		filerotate(self.crypt, 3)
 		if self.sig:
-			filerotate('%s.sig'%self.crypt)
+			filerotate('%s.sig'%self.crypt, 3)
 		isok = self.encrypt(
             str(dump(__weaks, Dumper=Dumper)), output=self.crypt)
 		chmod(self.crypt, 0o600)
