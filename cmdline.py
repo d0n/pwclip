@@ -58,8 +58,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 		if out == 'gui':
 			cmd.call('xvkbd -no-keypad -delay 20 -text "%s%s"'%(
                 text, '\n' if enter else ''))
-			#if enter:
-			#	cmd.call('xte -i 13 "key Return"')
+			if enter:
+				cmd.call('xte -i 13 "key Return"')
 		elif out == 'cli':
 			print(text)
 		copy(text, mode='pb')
