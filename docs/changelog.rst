@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-07-11
+Released: 2019-07-12
 
   * fixed passcrypt user selection in gui mode
 
