@@ -6,11 +6,7 @@ from sys import argv, stdout
 
 from os import path, remove, environ, chmod, stat, makedirs
 
-import socket
-
-from time import time
-
-from yaml import load, dump, FullLoader
+from yaml import load, dump, FullLoader, Dumper
 
 from colortext import blu, yel, grn, bgre, tabd, error
 
@@ -49,7 +45,6 @@ class PassCrypt(GPGTool):
 	config = path.join(home, '.config', 'pwclip.cfg')
 	plain = path.join(home, '.pwd.yaml')
 	crypt = path.join(home, '.passcrypt')
-	timefile = path.expanduser('~/.cache/PassCrypt.time')
 	recvs = []
 	key = ''
 	keys = {}
@@ -58,7 +53,6 @@ class PassCrypt(GPGTool):
 	sigerr = None
 	genpwrex = None
 	genpwlen = 24
-	maxage = 3600
 	__weaks = {}
 	__oldweaks = {}
 	def __init__(self, *args, **kwargs):
@@ -142,7 +136,7 @@ class PassCrypt(GPGTool):
 			cfgs['gpg']['recipients'] = self.key
 			self.recvs = [self.key]
 		with open(self.config, 'w+') as cfh:
-			cfh.write(str(dump(cfgs)))
+			cfh.write(str(dump(cfgs, Dumper=Dumper)))
 
 	def _readcrypt(self):
 		"""read crypt file method"""
@@ -178,12 +172,8 @@ class PassCrypt(GPGTool):
             'output': self.crypt,
             'key': self.key,
             'recvs': self.recvs}
-		isok = self.encrypt(message=dump(__weaks),  **kwargs)
-		cfh = open(self.crypt, 'r')
-		cfh.close()
+		isok = self.encrypt(str(dump(__weaks)),  **kwargs)
 		chmod(self.crypt, 0o600)
-		now = int(time())
-		setfiletime(self.crypt, (now, now))
 		return isok
 
 	def __askpwdcom(self, sysuser, usr, pwd, com, opw, ocom):
