@@ -20,6 +20,11 @@ try:
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
+try:
+	import readline
+except ImportError:
+	pass
+
 from os import environ, path, remove, getpid, name as osname
 
 from sys import exit, stdout
@@ -55,13 +60,15 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
-		if out == 'gui':
-			cmd.call('xvkbd -no-keypad -delay 20 -text "%s%s"'%(
-                text, '\n' if enter else ''))
-			if enter:
-				cmd.call('xte -i 13 "key Return"')
-		elif out == 'cli':
-			print(text)
+		if out:
+			xnotify('pwclip: paste')
+			if out == 'gui':
+				cmd.call('xvkbd -no-keypad -delay 20 -text "%s%s"'%(
+                    text, '\n' if enter else ''))
+			elif out == 'cli':
+				print(text)
+		if enter:
+			cmd.call('xte -i 13 "key Return"')
 		copy(text, mode='pb')
 		try:
 			exit(0)
@@ -482,7 +489,7 @@ def gui(typ='pw'):
 			notif = 'pwclip:copy'
 			if len(__pc) == 2:
 				notif = ' '.join(__pc[1:])
-			if osname != 'nt':
+			if not args.out and osname != 'nt':
 				xnotify(notif)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 			umsg = 'all users'
@@ -506,7 +513,7 @@ def gui(typ='pw'):
 			notif = 'pwclip:copy'
 			if len(__pc) == 2:
 				notif = ' '.join(__pc[1:])
-			if osname != 'nt':
+			if not args.out and osname != 'nt':
 				xnotify(notif)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, arg.ent)
 			xnotify('changed entry %s for %s'%(_chg, usr))
@@ -544,10 +551,10 @@ def gui(typ='pw'):
 		if __ent:
 			__pc = __ent[__in]
 			if __pc:
-				notif = 'pwclip:copy'
+				notif = 'pwclip: copy'
 				if len(__pc) == 2:
 					notif = ' '.join(__pc[1:])
-				if osname != 'nt':
+				if not args.out and osname != 'nt':
 					xnotify(notif)
 				forkwaitclip(
                     __pc[0], poclp, boclp, args.time, args.out, args.ent)
