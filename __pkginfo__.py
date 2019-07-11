@@ -30,7 +30,7 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
-	long_description = str('%s\n\n'%'\n\n\n'.join(
+	long_description = '%s\n\n'str('\n\n\n'.join(
         str(open('pwclip/docs/changelog.rst', 'r').read()).split('\n\n\n')[:4]
         )).format(CurrentVersion='%s (current)\n----------%s'%(
             version, '-'*len(version)))
