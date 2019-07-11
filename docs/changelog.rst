@@ -20,10 +20,12 @@ Released: 2019-07-11
 
   * fixed issues implemented by latest released features for gui mode
 
-  * *working on own replacement for gpg-wrapping "python-gnupg" module while
+  * implemented auto "return" key press after password printing by passing -E
+
+  * *working on own replacement for python-gnupg (gpg-wrapping module) while
     it fails in some cases and does not provide propper debugging output due
-    to the usage of threading wherefor i cannot see any reason in the first
-    place*
+    to the usage of threading (wherefor i cannot see any reason in the first
+    place)*
 
 
 1.6.3

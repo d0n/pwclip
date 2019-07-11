@@ -470,7 +470,7 @@ def gui(typ='pw'):
 		_add = __xdialog(
             'as %s: enter name for the new password entry'%usr)
 		if not _add:
-			xnotify('cannot add empty string')
+			xnotify('adding entry abroted')
 			exit(1)
 		if _add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
@@ -494,7 +494,7 @@ def gui(typ='pw'):
 		_chg = __xdialog(
             'as %s: enter name of the password entry to change'%usr)
 		if not _chg:
-			xnotify('cannot change empty string')
+			xnotify('changing entry aborted')
 			exit(1)
 		if _chg:
 			__ents = PassCrypt(*pargs, **pkwargs).chpw(_chg, None, None)
@@ -514,7 +514,7 @@ def gui(typ='pw'):
 		_rms = __xdialog(
             'as %s: enter name of the password entry(s) to delete'%usr)
 		if not _rms:
-			xnotify('cannot not delete emty string')
+			xnotify('deleting entry aborted')
 			exit(1)
 		if _rms and ' ' in _rms:
 			_rms = [r.strip() for r in _rms.split(' ')]
