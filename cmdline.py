@@ -474,7 +474,7 @@ def gui(typ='pw'):
 		pargs.append('aal')
 	else:
 		pkwargs['user'] = usr
-	if args.add:
+	if args.add is not False:
 		_add = __xdialog('as %s: enter name for entry to add'%usr)
 		if not usr:
 			xnotify('aborted')
