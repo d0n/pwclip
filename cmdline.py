@@ -470,10 +470,10 @@ def gui(typ='pw'):
 	usr = args.usr
 	if args.usr is None:
 		usr = __xdialog('enter username for selected action')
-		if usr == 'all':
-			pargs.append('aal')
-		else:
-			pkwargs['user'] = usr
+	if usr == 'all':
+		pargs.append('aal')
+	else:
+		pkwargs['user'] = usr
 	if args.add:
 		_add = __xdialog('as %s: enter name for entry to add'%usr)
 		if not usr:
