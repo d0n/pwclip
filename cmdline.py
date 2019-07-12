@@ -483,7 +483,7 @@ def gui(typ='pw'):
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
 			if not __ents or usr not in __ents or \
                   _add not in __ents[usr].keys():
-				xmsgok('something went wrong while adding %s'%_add)
+				xnotify('something went wrong while adding %s'%_add)
 				exit(1)
 			__pc = __ents[usr][_add]
 			notif = 'pwclip:copy'
@@ -507,7 +507,7 @@ def gui(typ='pw'):
 			__ents = PassCrypt(*pargs, **pkwargs).chpw(_chg, None, None)
 			if not __ents or usr not in __ents or \
                   _chg not in __ents[usr].keys():
-				xmsgok('something went wrong while changing %s'%_chg)
+				xnotify('something went wrong while changing %s'%_chg)
 				exit(1)
 			__pc = __ents[usr][_chg]
 			notif = 'pwclip:copy'
