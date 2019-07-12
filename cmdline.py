@@ -470,15 +470,15 @@ def gui(typ='pw'):
 	usr = args.usr
 	if args.usr is None:
 		usr = __xdialog('enter username for selected action')
-	if args.add:
-		add = __xdialog('as %s: enter name for entry to add'%usr)
-		if not usr:
-			xnotify('aborted')
-			exit(1)
 		if usr == 'all':
 			pargs.append('aal')
 		else:
 			pkwargs['user'] = usr
+	if args.add:
+		_add = __xdialog('as %s: enter name for entry to add'%usr)
+		if not usr:
+			xnotify('aborted')
+			exit(1)
 		if _add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
 			if not __ents or usr not in __ents or \
