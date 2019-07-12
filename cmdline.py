@@ -470,6 +470,8 @@ def gui(typ='pw'):
 	usr = args.usr
 	if args.usr is None:
 		usr = __xdialog('enter username for selected action')
+	if args.add:
+		add = __xdialog('as %s: enter name for entry to add'%usr)
 		if not usr:
 			xnotify('aborted')
 			exit(1)
@@ -497,7 +499,7 @@ def gui(typ='pw'):
 				xnotify('added entry %s for %s'%(_add, umsg))
 	elif args.chg is not False:
 		_chg = __xdialog(
-            'as %s: enter name of the password entry to change'%usr)
+            'as %s: enter name of the entry to change'%usr)
 		if not _chg:
 			xnotify('changing entry aborted')
 			exit(1)
@@ -517,7 +519,7 @@ def gui(typ='pw'):
 			xnotify('changed entry %s for %s'%(_chg, usr))
 	elif args.rms is not False:
 		_rms = __xdialog(
-            'as %s: enter name of the password entry(s) to delete'%usr)
+            'as %s: enter name of the entry(s) to delete'%usr)
 		if not _rms:
 			xnotify('deleting entry aborted')
 			exit(1)
