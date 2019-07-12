@@ -461,7 +461,7 @@ def gui(typ='pw'):
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
 	if args.yks or args.yks is None or typ == 'yk':
-		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
+		res = ykchalres(xgetpass(), args.ysl, args.yks)
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
