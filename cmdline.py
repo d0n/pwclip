@@ -481,10 +481,16 @@ def gui(typ='pw'):
 			exit(1)
 		if _add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
-			if not __ents or usr not in __ents or \
-                  _add not in __ents[usr].keys():
+			ok = True
+			if not __ents:
+				if 'aal' in pargs:
+					for (susr, entrys) in __ents.items():
+						if _add not in entrys.keys():
+							ok = False
+				elif usr not in __ents or _add not in __ents[usr].keys():
+					ok = False
+			if not ok:
 				xnotify('something went wrong while adding %s'%_add)
-				exit(1)
 			__pc = __ents[usr][_add]
 			notif = 'pwclip:copy'
 			if len(__pc) == 2:
