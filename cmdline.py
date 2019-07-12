@@ -473,13 +473,10 @@ def gui(typ='pw'):
 		if not usr:
 			xnotify('aborted')
 			exit(1)
-		pkwargs['user'] = usr
-	if args.add is not False:
-		_add = __xdialog(
-            'as %s: enter name for the new password entry'%usr)
-		if not _add:
-			xnotify('adding entry abroted')
-			exit(1)
+		if usr == 'all':
+			pargs.append('aal')
+		else:
+			pkwargs['user'] = usr
 		if _add:
 			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
 			if not __ents or usr not in __ents or \
