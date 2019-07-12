@@ -473,7 +473,7 @@ def gui(typ='pw'):
 		if not usr:
 			xnotify('aborted')
 			exit(1)
-		pkwargs['usr'] = usr
+		pkwargs['user'] = usr
 	if args.add is not False:
 		_add = __xdialog(
             'as %s: enter name for the new password entry'%usr)
