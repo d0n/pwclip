@@ -490,7 +490,7 @@ def gui(typ='pw'):
 					ok = False
 			if not ok:
 				xnotify('something went wrong while adding %s'%_add)
-			__pc = __ents[usr][_add]
+			__pc = __ents[args.usr][_add]
 			notif = 'pwclip:copy'
 			if len(__pc) == 2:
 				notif = ' '.join(__pc[1:])
