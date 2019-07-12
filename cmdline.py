@@ -71,9 +71,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			cmd.call('xte -i 13 "key Return"')
 		copy(text, mode='pb')
 		try:
-			exit(0)
-		finally:
 			sleep(int(wait))
+		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
 	exit(0)
@@ -499,10 +498,9 @@ def gui(typ='pw'):
 				xnotify(notif)
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 			umsg = 'all users'
-			if not args.aal:
+			if 'aal' not in pargs:
 				umsg = 'user %s'%usr
-			if osname != 'nt':
-				xnotify('added entry %s for %s'%(_add, umsg))
+			xnotify('added entry %s for %s'%(_add, umsg))
 	elif args.chg is not False:
 		_chg = __xdialog(
             'as %s: enter name of the entry to change'%usr)
