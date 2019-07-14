@@ -4,6 +4,23 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-07-14
+
+  * fix gpgselfcheck - password validation to not get stuck with it later on
+
+  * some code cleanup and minor fixes gpgtools for siging and verifying
+
+  * user interaction sweetend again - also allowing all as input for user
+    to apply actions to entrys of all users
+
+  * bugfix for xvkbd not printing $ characters while it would print the
+    appropriate bash variable passwords cvontaining $TZ for instance would have
+    "Europe/Berlin" printed instead within the password
+
+
+1.6.4
+-----
+
 Released: 2019-07-12
 
   * fixed passcrypt user selection in gui mode
