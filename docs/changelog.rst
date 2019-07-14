@@ -13,6 +13,9 @@ Released: 2019-07-14
   * user interaction sweetend again - also allowing all as input for user
     to apply actions to entrys of all users
 
+  * added xautomation to dependencies for beeing able to send "enter" after
+    password printing
+
   * bugfix for xvkbd not printing $ characters while it would print the
     appropriate bash variable passwords cvontaining $TZ for instance would have
     "Europe/Berlin" printed instead within the password
