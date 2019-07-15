@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-07-14
+Released: 2019-07-15
 
   * fix gpgselfcheck - password validation to not get stuck with it later on
 
