@@ -65,8 +65,7 @@ entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip']}
 package_data = {
-    '': ['pwclip/docs/'],
-    '': ['pwclip/example']}
+    '': ['pwclip/docs/', 'pwclip/example/']}
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [
