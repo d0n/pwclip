@@ -4,10 +4,72 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-07-15
+
+  * fix gpgselfcheck - password validation to not get stuck with it later on
+
+  * some code cleanup and minor fixes gpgtools for siging and verifying
+
+  * user interaction sweetend again - also allowing all as input for user
+    to apply actions to entrys of all users
+
+  * added xautomation to dependencies for beeing able to send "enter" after
+    password printing
+
+  * bugfix for xvkbd not printing $ characters while it would print the
+    appropriate bash variable passwords cvontaining $TZ for instance would have
+    "Europe/Berlin" printed instead within the password
+
+
+1.6.4
+-----
+
+Released: 2019-07-12
+
+  * fixed passcrypt user selection in gui mode
+
+  * implemented gpg-precheck function inteded to fix some password I/O
+    problems when smardcard is used
+
+  * fixed password input for gui mode in some cases as well as terminal mode
+    in others
+
+  * removed ssh/scp functionality completly (replaced it by much more
+    sophisticated "syncthing" - it syncs my encrypted password file between
+    my systems by delays next to realtime)
+
+  * fixed issues implemented by latest released features for gui mode
+
+  * implemented auto "return" key press after password printing by passing -E
+
+  * *working on own replacement for python-gnupg (gpg-wrapping module) while
+    it fails in some cases and does not provide propper debugging output due
+    to the usage of threading (wherefor i cannot see any reason in the first
+    place)*
+
+
+1.6.3
+-----
+
+Released: 2019-07-01
+
+  * fixed some bugs with xinput again
+
+  * implemented almost all gui-mode functions available for cli mode
+
+  * fixes for random password generating
+
+  * again slightly changed documentation of fail in versioning 1.6.1~2 has
+    nothing to do with at that time already released 1.6.0
+
+
+1.6.1/2
+-------
+
 Released: 2019-06-27
 
-  * fixed some bugs implemented with 1.6.0 like correct i/o of questions and
-    answer (few of'em merged from master in lib/system)
+  * fixed some bugs implemented with 1.6.0 like correct i/o of questions
+    and answer (few of’em merged from master in lib/system)
 
   * fixed config parsing - especially in gui mode where e.g. recipients not
     have been recognised
@@ -15,7 +77,7 @@ Released: 2019-06-27
   * implemented more gui-mode functions like adding, deleting and changing
     entrys
 
-  * fix FAIL with versioning (1.6.1 is missing)
+  * fix FAIL with versioning
 
 
 1.6.0

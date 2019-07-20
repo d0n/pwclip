@@ -6,35 +6,26 @@ from sys import argv, stdout
 
 from os import path, remove, environ, chmod, stat, makedirs
 
-import socket
-
-from time import time
-
-from yaml import load, dump, FullLoader
-
-from paramiko.ssh_exception import SSHException
+from yaml import load, dump, FullLoader, Dumper
 
 from colortext import blu, yel, grn, bgre, tabd, error
 
 from system import \
     userfind, filerotate, setfiletime, \
-    xgetpass, xmsgok, xinput, filetime, absrelpath, xyesno, random, copy
-
-from net.ssh import SecureSHell
+    xgetpass, xmsgok, xinput, xnotify, \
+    filerotate, absrelpath, xyesno, random, copy
 
 from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 
 from atexit import register
 
-class PassCrypt(GPGTool, SecureSHell):
+class PassCrypt(GPGTool):
 	"""passcrypt main class"""
 	dbg = None
 	vrb = None
-	fen = None
 	aal = None
 	fsy = None
 	sho = None
-	rem = None
 	rnd = None
 	out = None
 	gsm = None
@@ -54,9 +45,6 @@ class PassCrypt(GPGTool, SecureSHell):
 	config = path.join(home, '.config', 'pwclip.cfg')
 	plain = path.join(home, '.pwd.yaml')
 	crypt = path.join(home, '.passcrypt')
-	timefile = path.expanduser('~/.cache/PassCrypt.time')
-	remote = ''
-	reuser = user
 	recvs = []
 	key = ''
 	keys = {}
@@ -65,7 +53,6 @@ class PassCrypt(GPGTool, SecureSHell):
 	sigerr = None
 	genpwrex = None
 	genpwlen = 24
-	maxage = 3600
 	__weaks = {}
 	__oldweaks = {}
 	def __init__(self, *args, **kwargs):
@@ -96,15 +83,14 @@ class PassCrypt(GPGTool, SecureSHell):
 		self.keys = self.findkey()
 		if not self.keys:
 			self._mkconfkeys()
-			SecureSHell.__init__(self, *args, **kwargs)
-		if self._cecktime():
-			self._copynews()
-		self.__weaks = self._readcrypt()
+		self.__weaks = dict(sorted(dict(self._readcrypt()).items()))
 		self.__oldweaks = str(self.__weaks)
-		self.__weaks = self._mergecrypt(self.__weaks)
-		register(self.__del)
+		register(self._cryptpass)
 
-	def __del(self):
+	def __del__(self):
+		self._cryptpass()
+
+	def _cryptpass(self):
 		chgs = []
 		crecvs = []
 		if path.isfile(self.crypt):
@@ -117,7 +103,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			for r in crecvs:
 				if r not in self.recvs:
 					chgs.append('- %s'%r)
-		if self.__oldweaks != str(self.__weaks) or self.fen or chgs:
+		if self.__oldweaks != str(dict(sorted(self.__weaks.items()))) or chgs:
 			msg = ('recipients have changed:\n',
                     '\n'.join(c for c in chgs),
                     '\nfrom:\n', ' '.join(erecvs),
@@ -132,10 +118,8 @@ class PassCrypt(GPGTool, SecureSHell):
 				self.genkeys(self._gendefs(self.gui))
 			if self.__weaks:
 				if self._writecrypt(self.__weaks):
-					try:
-						self._copynews()
-					except OSError:
-						pass
+					if self.vrb:
+						print(blu('file'), yel(self.crypt), blu('encrypted'))
 
 	def _mkconfkeys(self):
 		self.key = '0x%s'%str(self.genkeys())[-16:]
@@ -152,60 +136,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			cfgs['gpg']['recipients'] = self.key
 			self.recvs = [self.key]
 		with open(self.config, 'w+') as cfh:
-			cfh.write(str(dump(cfgs)))
-
-	def _cecktime(self):
-		ok = True
-		if self.rem and self.maxage:
-			tf = absrelpath(self.timefile)
-			if not path.exists(path.dirname(tf)):
-				makedirs(path.dirname(tf))
-			now = int(time())
-			if not path.exists(tf):
-				with open(tf, 'w+') as tfh:
-					tfh.write(str(now-self.maxage))
-			with open(tf, 'r') as tfh:
-				last = int(tfh.read())
-			self.age = int(now-int(last))
-			if self.age >= int(self.maxage):
-				return True
-
-	def _mergecrypt(self, __weaks):
-		try:
-			with open(self.plain, 'r') as pfh:
-				__newweaks = load(pfh.read(), Loader=Loader)
-			if not self.dbg:
-				remove(self.plain)
-		except FileNotFoundError:
-			__newweaks = {}
-		__newweaks = {} if not __newweaks else __newweaks
-		for (su, ups) in __newweaks.items():
-			for (usr, pwdcom) in ups.items():
-				if su not in __weaks.keys():
-					__weaks[su] = {}
-				__weaks[su][usr] = pwdcom
-		return __weaks
-
-	def _copynews(self, force=None):
-		"""copy new file method"""
-		if self.dbg:
-			print(bgre(self._copynews))
-		fs = (self.crypt,)
-		ok = False
-		if self.sig:
-			fs = (self.crypt, '%s.sig'%self.crypt)
-		for i in fs:
-			ok = self.scpcompstats(
-                i, path.basename(i),
-                2, remote=self.remote, reuser=self.reuser)
-			if ok:
-				print(
-                    blu('file'),
-                    yel(path.basename(i)),
-                    blu('synced successfully'))
-			if not ok:
-				continue
-		return ok
+			cfh.write(str(dump(cfgs, Dumper=Dumper)))
 
 	def _readcrypt(self):
 		"""read crypt file method"""
@@ -241,22 +172,41 @@ class PassCrypt(GPGTool, SecureSHell):
             'output': self.crypt,
             'key': self.key,
             'recvs': self.recvs}
-		isok = self.encrypt(message=dump(__weaks),  **kwargs)
+		filerotate(self.crypt, 3)
+		if self.sig:
+			filerotate('%s.sig'%self.crypt, 3)
+		isok = self.encrypt(
+            str(dump(__weaks, Dumper=Dumper)), output=self.crypt)
 		chmod(self.crypt, 0o600)
-		now = int(time())
-		setfiletime(self.crypt, (now, now))
 		return isok
 
-	def __askpwdcom(self, sysuser, usr, pwd, com, opw, ocom, passwd):
-		if not self.gui:
-			print(blu('as user '), yel(sysuser), ': ', sep='')
-			pwd = pwd if pwd else passwd(msg='%s%s%s%s: '%(
-                    blu('  enter '), yel('password '),
-                    blu('for entry '), yel('%s'%usr)))
-			pwd = pwd if pwd else opw
+	def __askpwdcom(self, sysuser, usr, pwd, com, opw, ocom):
+		if self.rnd:
+			pwd = self.rndgetpass()
+		if self.gui:
 			if not pwd:
-				error('password is needed if adding password')
-				return
+				pwd = xgetpass(
+				    'as user %s: enter password for entry %s'%(sysuser, usr))
+				pwd = pwd if pwd else opw
+				if not pwd:
+					xmsgok('password is needed if adding password')
+					return
+			if not com:
+				com = xinput(
+				    'enter comment (optional, "___" deletes the comment)')
+			com = ocom if not com else com
+			if com == '___':
+				com = None
+		else:
+			if not pwd:
+				print(blu('as user '), yel(sysuser), ': ', sep='')
+				pwd = pwd if pwd else self.passwd(msg='%s%s%s%s: '%(
+						blu('  enter '), yel('password '),
+						blu('for entry '), yel('%s'%usr)))
+				pwd = pwd if pwd else opw
+				if not pwd:
+					error('password is needed if adding password')
+					return
 			if not com:
 				print(
                     blu('  enter '), yel('comment '),
@@ -266,65 +216,50 @@ class PassCrypt(GPGTool, SecureSHell):
 			com = ocom if not com else com
 			if com == '___':
 				com = None
-			return [p for p in [pwd, com] if p is not None]
-		if not self.rnd:
-			pwd = passwd('as user %s: enter password for entry %s'%(sysuser, usr))
-			pwd = pwd if pwd else opw
-			if not pwd:
-				xmsgok('password is needed if adding password')
-				return
-		if not com:
-			com = xinput('enter comment (optional, "___" deletes the comment)')
-		com = ocom if not com else com
-		if com == '___':
-			com = None
 		return [p for p in [pwd, com] if p is not None]
+
+	def rndgetpass(self):
+		while True:
+			__pwd = random(self.genpwlen, self.genpwrex)
+			yesno = False
+			if self.gui:
+				yesno = xyesno('use the following password: "%s"?'%__pwd)
+			else:
+				print('%s %s%s [Y/n]'%(
+                    grn('use the following password:'),
+                    yel(pwd), grn('?')), sep='')
+				yesno = input()
+				yesno = True if str(yesno).lower() in ('y', '') else False
+			if yesno:
+				break
+		return __pwd
 
 	def adpw(self, usr, pwd=None, com=None):
 		"""password adding method"""
-		if self.rnd:
-			while True:
-				pwd = random(self.genpwlen, self.genpwrex)
-				yesno = False
-				if self.gui:
-					copy(pwd)
-					yesno = xyesno('use the following password: "%s"?'%pwd)
-					getpasswd = xgetpass
-				else:
-					getpasswd = self.passwd
-					print('%s %s? [Y/n]'%(
-                        grn('use the following password: "'),
-                        yel(pwd), grn('"?')))
-					yesno = input()
-					yesno = True if str(yesno).lower() in ('y', '') else False
-				if yesno == False:
-					break
-				elif yesno == None:
-					return
 		if self.dbg:
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr,
                             'pwd': pwd, 'comment': com}})))
 		if not self.aal:
-			if self.user in self.__weaks.keys() and \
-                  usr in self.__weaks[self.user].keys():
-				if self.gui:
-					xmsgok('entry %s already exists for user %s'%(
-                        usr, self.user))
-				else:
-					error(
-                        'entry', usr, 'already exists for user', self.user)
-				return self.__weaks
-			elif self.user not in self.__weaks.keys():
-				self.__weaks[self.user] = {}
-			try:
-				__opw, __ocom = self.__weaks[self.user][usr]
-			except (KeyError, ValueError):
-				__opw, __ocom = None, None
-			pwdcom = self.__askpwdcom(
-                self.user, usr, pwd, com, __opw, __ocom, getpasswd)
-			if pwdcom:
-				self.__weaks[self.user][usr] = [p for p in pwdcom if p]
+			if self.user in self.__weaks.keys():
+				if usr in self.__weaks[self.user]:
+					if self.gui:
+						xmsgok('entry %s already exists for user %s'%(
+                            usr, self.user))
+					else:
+						error(
+                            'entry', usr, 'already exists for user', self.user)
+					return self.__weaks
+				elif self.user not in self.__weaks.keys():
+					self.__weaks[self.user] = {}
+				try:
+					__opw, __ocom = self.__weaks[self.user][usr]
+				except (KeyError, ValueError):
+					__opw, __ocom = None, None
+				pwdcom = self.__askpwdcom(
+                    self.user, usr, pwd, com, __opw, __ocom)
+				if pwdcom:
+					self.__weaks[self.user][usr] = [p for p in pwdcom if p]
 		else:
 			for u in self.__weaks.keys():
 				if usr in self.__weaks[u].keys():
@@ -338,10 +273,10 @@ class PassCrypt(GPGTool, SecureSHell):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				pwdcom = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, getpasswd)
+                    self.user, usr, pwd, com, __opw, __ocom)
 				if pwdcom:
 					self.__weaks[u][usr] = [p for p in pwdcom if p]
-		return self.__weaks
+		return dict(self.__weaks)
 
 	def chpw(self, usr, pwd=None, com=None):
 		"""change existing password method"""
@@ -356,7 +291,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				self.__weaks[self.user][usr] = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, self.passwd)
+                    self.user, usr, pwd, com, __opw, __ocom)
 			else:
 				if self.gui:
 					xmsgok('no entry named %s for user %s'%(usr, self.user))
@@ -375,8 +310,8 @@ class PassCrypt(GPGTool, SecureSHell):
 				except (KeyError, ValueError):
 					__opw, __ocom = None, None
 				self.__weaks[u][usr] = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom, self.passwd)
-		return self.__weaks
+                    self.user, usr, pwd, com, __opw, __ocom)
+		return dict(self.__weaks)
 
 	def rmpw(self, usr):
 		"""remove password method"""
@@ -407,7 +342,7 @@ class PassCrypt(GPGTool, SecureSHell):
 			if self.user in self.__weaks.keys() \
                   and not self.__weaks[self.user].keys():
 				del self.__weaks[self.user]
-		return self.__weaks
+		return dict(self.__weaks)
 
 	def lspw(self, usr=None, aal=None):
 		"""password listing method"""
@@ -430,7 +365,7 @@ class PassCrypt(GPGTool, SecureSHell):
 				__ents = self.__weaks[self.user]
 				if usr in __ents.keys():
 					__ents = {usr: self.__weaks[self.user][usr]}
-		return __ents
+		return dict(__ents)
 
 def lscrypt(usr, dbg=None):
 	"""passlist wrapper function"""

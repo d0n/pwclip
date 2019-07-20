@@ -20,11 +20,14 @@ try:
 except ImportError:
 	def fork(): """fork faker function""" ;return 0
 
+try:
+	import readline
+except ImportError:
+	pass
+
 from os import environ, path, remove, getpid, name as osname
 
-from sys import exit
-
-from subprocess import DEVNULL, Popen, call
+from sys import exit, stdout
 
 from argparse import ArgumentParser
 
@@ -42,6 +45,8 @@ from getpass import getpass
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal, abort
 
+from executor import command as cmd
+
 from system import \
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, xinput, which, whoami, dictreplace
@@ -52,25 +57,24 @@ from secrecy import ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
-def forkwaitclip(text, poclp, boclp, wait=3, out=None):
+def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
-		if out == 'gui':
-			Popen(str(
-					'xvkbd -no-keypad -delay 20 -text %s'%text
-                ).split(' '), stdout=DEVNULL, stderr=DEVNULL).communicate()
-		elif out == 'cli':
-			print(text, end='')
+		if out:
+			xnotify('pwclip: paste')
+			if out == 'gui':
+				cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
+                    text))
+			elif out == 'cli':
+				print(text)
+		if enter:
+			cmd.call('xte -i 13 "key Return"')
 		copy(text, mode='pb')
-		xnotify('pwclip')
 		try:
 			sleep(int(wait))
-		except KeyboardInterrupt:
-			exit(1)
 		finally:
 			copy(poclp, mode='p')
 			copy(boclp, mode='b')
-		exit(0)
 	exit(0)
 
 def __passreplace(pwlist):
@@ -127,14 +131,24 @@ def optpars(cfgs, mode, name):
         dest='aal', action='store_true',
         help='switch to all users entrys ("%s" only is default)'%cfgs['user'])
 	pars.add_argument(
+        '-E', '--enter',
+        dest='ent', action='store_true',
+        help='also enter newline when printing password (only useful with -o)')
+	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
         help='print password to stdout (insecure and unrecommended)')
 	pars.add_argument(
-        '-g', '--genpw-pattern',
-        dest='genpwrex', default=False, nargs='?',
-        help='randomly generate password (only useful ' \
-             'with -a, default is [\w#_;:\*\+\.\,\-\?\!]:24)')
+        '-e', '--expression',
+        dest='rex', default=False, metavar='EXPRESSION:[LEN]',
+        nargs='?' if mode == 'gui' else None,
+        help='generate password using EXPRESSION to generate password of '
+             'lenght LEN, either LEN is set or 24 is used - use with -g' \
+             '(default is "[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24")')
+	pars.add_argument(
+        '-g', '--genpw',
+        dest='gpw', action='store_true', help='randomly generate password' \
+             ', only useful with -a (uses EXPRESSION)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -143,20 +157,6 @@ def optpars(cfgs, mode, name):
         '-t',
         dest='time', default=3, metavar='seconds', type=int,
         help='time to wait before resetting clip (%s is default)'%cfgs['time'])
-	rpars = pars.add_argument_group('remote arguments')
-	rpars.set_defaults(**cfgs)
-	rpars.add_argument(
-        '-R',
-        dest='rem', action='store_true',
-        help='use remote backup given by --remote-host/--remote-user')
-	rpars.add_argument(
-        '--remote-host',
-        dest='remote', metavar='HOST',
-        help='use HOST for connections')
-	rpars.add_argument(
-        '--remote-user',
-        dest='reuser', metavar='USER',
-        help='use USER for connections to HOST ("%s" is default)'%cfgs['user'])
 	gpars = pars.add_argument_group('gpg/ssl arguments')
 	gpars.set_defaults(**cfgs)
 	gpars.add_argument(
@@ -170,7 +170,8 @@ def optpars(cfgs, mode, name):
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
         '-u', '--user',
-        dest='usr', metavar='USER', default=cfgs['user'],
+        dest='usr', metavar='USER', nargs='?' if mode == 'gui' else None,
+        default=False if mode == 'gui' else cfgs['user'],
         help='query entrys only for USER (-A overrides, ' \
              '"%s" is default)'%cfgs['user'])
 	gpars.add_argument(
@@ -227,11 +228,11 @@ def optpars(cfgs, mode, name):
 	apars.set_defaults(**cfgs)
 	apars.add_argument(
         '-a', '--add',
-        dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else None,
         default=False, help='add ENTRY (password will be asked interactivly)')
 	apars.add_argument(
         '-c', '--change',
-        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else 1,
+        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else None,
         default=False, help='change ENTRY (password will be asked interactivly)')
 	apars.add_argument(
         '-d', '--delete',
@@ -262,15 +263,14 @@ def confpars(mode):
 		confs = {}
 	cfgmap = {
         'gpg': {'recipients': 'rvs', 'delkey': True},
-        'remote': {'user': 'reuser', 'host': 'remote', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
         'GPGKEY': 'key',
         'RECIPIENTS': 'rvs',
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
-        'USER': 'user',
-        'USERNAME': 'user',
+        'USER': 'usr',
+        'USERNAME': 'usr',
         'YKSLOT': 'ykslot'}
 	confs = dictreplace(confs, cfgmap)
 	for (k, v) in confs.items():
@@ -297,9 +297,9 @@ def confpars(mode):
 	pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
+        'ent' if args.ent else None,
         'gsm' if args.gpv else None,
         'gui' if mode == 'gui' else None,
-        'rem' if args.rem else None,
         'sho' if args.sho else None] if a]
 	__bin = 'gpg2'
 	if args.gpv:
@@ -310,13 +310,25 @@ def confpars(mode):
 	pkwargs['binary'] = __bin
 	pkwargs['sslcrt'] = args.sslcrt
 	pkwargs['sslkey'] = args.sslkey
-	pkwargs['timefile'] = path.expanduser('~/.cache/%s.time'%_me)
-	if args.genpwrex or args.genpwrex is None:
+	if args.gpw:
+		_genpwrex = '[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24'
 		pargs.append('rnd')
-		genpwrex = args.genpwrex
-		if args.genpwrex is None:
-			genpwrex = '[(?=.*\[A-z\])(?=.*\[A-Z\])' \
-                       '(?=.*\[0-9\])(?=.*\[$@\])(?!.*\[iIoO\])]:24'
+		if args.rex is not False:
+			getrex = input
+			msg = 'enter regular expression for new password:'
+			err = 'aborted due to empty input'
+			if mode == 'gui':
+				getrex = xinput
+				msg = 'enter regular expression for new password'
+				err = 'aborted due to empty input'
+			_genpwrex = getrex('enter regular expression for new password')
+			if not _genpwrex:
+				
+				xnotify('aborted due to empty input')
+				exit(1)
+		elif mode == 'gui':
+			_genpwrex = '[a-zA-Z0-9\!$%%&/\(\)=\?\+#,\.-:]*:24'
+		genpwrex = _genpwrex
 		genpwlen = 24
 		if ':' in genpwrex:
 			genpwrex, genpwlen = \
@@ -330,17 +342,12 @@ def confpars(mode):
 		pkwargs['recvs'] = str(args.rvs).split(' ')
 	if args.key:
 		pkwargs['key'] = args.key
-	if args.usr:
+	if args.usr :
 		pkwargs['user'] = args.usr
 	if args.time:
 		pkwargs['time'] = args.time
 	if args.yml:
 		pkwargs['plain'] = args.yml
-	if args.rem:
-		if hasattr(args, 'remote'):
-			pkwargs['remote'] = args.remote
-		if hasattr(args, 'reuser'):
-			pkwargs['reuser'] = args.reuser
 	if args.dbg:
 		print(bgre(pars))
 		print(bgre(tabd(args.__dict__, 2)))
@@ -371,7 +378,7 @@ def cli():
 		res = ykchalres(getpass(), args.ysl, ykser)
 		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
-		forkwaitclip(res, poclp, boclp, args.time, args.out)
+		forkwaitclip(res, poclp, boclp, args.time, args.out, args.ent)
 		exit(0)
 	__ents = {}
 	err = None
@@ -381,19 +388,19 @@ def cli():
 		if not __ents:
 			error('something went wrong while adding', args.add)
 			exit(1)
-		__pc = __ents[args.user][args.add]
+		__pc = __ents[args.usr][args.add]
 		if __pc:
 			if len(__pc) == 2 and osname != 'nt':
 				xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
 		__ents = PassCrypt(*pargs, **pkwargs).chpw(
             args.chg, args.pwd, args.com)
 		if not args.aal:
-			__ents[args.user]
+			__ents[args.usr]
 		if not __ents:
 			if [h for (u, es) in __ents.items() if args.chg in en.keys()]:
 				exit(0)
@@ -403,7 +410,7 @@ def cli():
 		for r in args.rms:
 			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
 			if not args.aal:
-				__ents[args.user]
+				__ents[args.usr]
 			if r in __ents.keys():
 				ers.append(r)
 		ewrd = 'entry'
@@ -416,14 +423,16 @@ def cli():
 		if __ents and args.lst not in __ents.keys():
 			err = (
                 'could not find entry', args.lst,
-                'for', args.user, 'in', pkwargs['crypt'])
+                'for', args.usr, 'in', pkwargs['crypt'])
 		elif args.lst and __ents:
 			__pc = __ents[args.lst]
 			if __pc:
-				if len(__pc) == 2 and osname != 'nt':
-					xnotify('%s: %s'%(
-                        args.lst, ' '.join(__pc[1:])), args.time)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+				notif = 'pwclip:copy'
+				if len(__pc) == 2:
+					notif = ' '.join(__pc[1:])
+				if osname!= 'nt':
+					xnotify(notif)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -433,84 +442,106 @@ def cli():
 	_printpws_(__ents, args.sho)
 
 def __xdialog(msg, sec=None):
-	getin = xinput
-	if sec:
-		getin = xgetpass
 	while True:
-		__ret = getin(msg)
-		if not __ret:
-			yesno = xyesno('no input received, abort?')
+		rtn = False
+		if sec:
+			rtn = xgetpass(msg)
+		else:
+			rtn = xinput(msg)
+		if not rtn:
+			yesno = xyesno('no input received, try again?')
 			if yesno:
-				try:
-					return
-				finally:
-					break
-		if __ret:
-			try:
-				return __ret
-			finally:
-				break
+				continue
+		break
+	return rtn
 
 def gui(typ='pw'):
 	"""gui wrapper function to not run unnecessary code"""
 	poclp, boclp = paste('pb')
 	args, pargs, pkwargs = confpars('gui')
 	if args.yks or args.yks is None or typ == 'yk':
-		res = ykchalres(xgetpass(), args.ykslot, args.ykser)
+		res = ykchalres(xgetpass(), args.ysl, args.yks)
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
-		forkwaitclip(res, poclp, boclp, args.time, args.out)
-	llist = True if args.lst is not None else args.lst
-	if args.add is not False:
-		__add = __xdialog(
-            'as %s: enter name for the new password entry'%args.user)
-		if __add:
-			__ents = PassCrypt(*pargs, **pkwargs).adpw(__add, None, None)
-			if not __ents or args.user not in __ents or \
-                  __add not in __ents[args.user].keys():
-				xmsgok('something went wrong while adding %s'%__add)
-				exit(1)
-			__pc = __ents[args.user][__add]
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		xnotify('added entry %s for %s'%(__add, args.user))
-		llist = True
-	elif args.chg is not False:
-		__chg = __xdialog(
-            'as %s: enter name of the password entry to change'%args.user)
-		if __chg:
-			__ents = PassCrypt(*pargs, **pkwargs).chpw(__add, None, None)
-			if not __ents or args.user not in __ents or \
-                  __add not in __ents[args.user].keys():
-				xmsgok('something went wrong while changing %s'%__add)
-				exit(1)
-			__pc = __ents[args.user][__add]
-			if len(__pc) == 2:
-				xnotify('%s: %s'%(__in, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
-		xnotify('changed entry %s for %s'%(__add, args.user))
-		llist = True
-	elif args.rms is not False:
-		__rms = __xdialog(
-            'as %s: enter name of the password entry(s) to delete'%args.user)
-		if __rms and ' ' in __rms:
-			__rms = __rms.split(' ')
-		else:
-			__rms = [__rms]
-		for r in __rms:
-			__ents = PassCrypt(*pargs, **pkwargs).rmpw(r)
-			if not __ents:
-				xnotify('could not delete entry %s'%r)
-		xnotify('deleted entry %s for %s'%(r, args.user))
-		llist = True
-	if llist:
-		if args.aal:
-			pargs.append('aal')
-		xnotify(tabd(__dctpwreplace(PassCrypt(*pargs, **pkwargs).lspw())))
+		forkwaitclip(res, poclp, boclp, args.time, args.out, args.ent)
+	__ents = None
+	usr = args.usr
+	if args.usr is None:
+		usr = __xdialog('enter username for selected action')
+	if usr == 'all':
+		pargs.append('aal')
 	else:
-		_umsg = '%s\'s entrys'%args.usr
+		pkwargs['user'] = usr
+	if args.add is not False:
+		_add = __xdialog('as %s: enter name for entry to add'%usr)
+		if not usr:
+			xnotify('aborted')
+			exit(1)
+		if _add:
+			__ents = PassCrypt(*pargs, **pkwargs).adpw(_add, None, None)
+			ok = True
+			if not __ents:
+				if 'aal' in pargs:
+					for (susr, entrys) in __ents.items():
+						if _add not in entrys.keys():
+							ok = False
+				elif usr not in __ents or _add not in __ents[usr].keys():
+					ok = False
+			if not ok:
+				xnotify('something went wrong while adding %s'%_add)
+			__pc = __ents[args.usr][_add]
+			notif = 'pwclip:copy'
+			if len(__pc) == 2:
+				notif = ' '.join(__pc[1:])
+			if not args.out and osname != 'nt':
+				xnotify(notif)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
+			umsg = 'all users'
+			if 'aal' not in pargs:
+				umsg = 'user %s'%usr
+			xnotify('added entry %s for %s'%(_add, umsg))
+	elif args.chg is not False:
+		_chg = __xdialog(
+            'as %s: enter name of the entry to change'%usr)
+		if not _chg:
+			xnotify('changing entry aborted')
+			exit(1)
+		if _chg:
+			__ents = PassCrypt(*pargs, **pkwargs).chpw(_chg, None, None)
+			if not __ents or usr not in __ents or \
+                  _chg not in __ents[usr].keys():
+				xnotify('something went wrong while changing %s'%_chg)
+				exit(1)
+			__pc = __ents[usr][_chg]
+			notif = 'pwclip:copy'
+			if len(__pc) == 2:
+				notif = ' '.join(__pc[1:])
+			if not args.out and osname != 'nt':
+				xnotify(notif)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, arg.ent)
+			xnotify('changed entry %s for %s'%(_chg, usr))
+	elif args.rms is not False:
+		_rms = __xdialog(
+            'as %s: enter name of the entry(s) to delete'%usr)
+		if not _rms:
+			xnotify('deleting entry aborted')
+			exit(1)
+		if _rms and ' ' in _rms:
+			_rms = [r.strip() for r in _rms.split(' ')]
+		else:
+			_rms = [_rms]
+		for r in _rms:
+			pcr = PassCrypt(*pargs, **pkwargs)
+			__ents = pcr.rmpw(r)
+			pcr.__del__()
+			if osname != 'nt':
+				if not __ents:
+					xnotify('could not delete entry %s'%r)
+				else:
+					xnotify('deleted entry %s for %s'%(r, usr))
+	elif args.lst is not False:
+		_umsg = '%s\'s entrys'%usr
 		if args.aal:
 			_umsg = 'all entrys'
 		__in = __xdialog('enter name to search in %s'%_umsg, True)
@@ -519,10 +550,24 @@ def gui(typ='pw'):
 		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
 		if not __ent or (__ent and __in not in __ent.keys() or not __ent[__in]):
 			xnotify('either %s or %s where not found in passcrypt'%(
-                args.user, __in))
+                usr, __in))
 			exit(1)
 		if __ent:
 			__pc = __ent[__in]
 			if __pc:
+				notif = 'pwclip: copy'
 				if len(__pc) == 2:
-					forkwaitclip(__pc[0], poclp, boclp, args.time, args.out)
+					notif = ' '.join(__pc[1:])
+				if not args.out and osname != 'nt':
+					xnotify(notif)
+				forkwaitclip(
+                    __pc[0], poclp, boclp, args.time, args.out, args.ent)
+				exit(0)
+	else:
+		__ents = PassCrypt(*pargs, **pkwargs).lspw()
+	if __ents:
+		if args.aal:
+			pargs.append('aal')
+		if not args.sho:
+			__ents = __dctpwreplace(__ents)
+		xnotify(tabd(__ents))

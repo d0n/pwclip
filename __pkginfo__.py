@@ -1,10 +1,9 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.6.2'
+version = '1.6.5'
 install_requires = [
-    'argcomplete', 'paramiko', 'psutil', 'python-gnupg',
-    'python-yubico', 'PyYAML', 'wget', 'cryptography']
+    'argcomplete', 'psutil', 'python-gnupg', 'python-yubico', 'PyYAML', 'wget']
 url = 'https://github.com/d0n/pwclip'
 download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/p/pwclip/python3-pwclip_%s-1_all.deb'%version
 license = "GPLv3+"
@@ -31,7 +30,7 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
-	long_description = str('\n\n\n'.join(
+	long_description = '%s\n\n'%str('\n\n\n'.join(
         str(open('pwclip/docs/changelog.rst', 'r').read()).split('\n\n\n')[:4]
         )).format(CurrentVersion='%s (current)\n----------%s'%(
             version, '-'*len(version)))
@@ -55,9 +54,10 @@ try:
 except (FileNotFoundError, NotADirectoryError):
     long_description = ''
 try:
-	open('pwclip/docs/conf.py', 'w+').write(str(
-            open('pwclip/docs/conf.py.tmpl', 'r').read()
-        ).format(VersionString=version))
+	with open('pwclip/docs/conf.py', 'w+') as cfh:
+		cfh.write(str(open(
+            'pwclip/docs/conf.py.tmpl', 'r').read()
+            ).format(VersionString=version))
 except (FileNotFoundError, NotADirectoryError):
 	pass
 entry_points = {
@@ -65,7 +65,8 @@ entry_points = {
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
                     'ykclip = pwclip.__init__:ykclip']}
 package_data = {
-    '': ['pwclip/docs/', 'pwclip/example/']}
+    '': ['pwclip/docs/'],
+    '': ['pwclip/example']}
 data_files=[
     ('share/man/man1', ['pwclip/docs/pwclip.1']),
     ('share/pwclip', [
