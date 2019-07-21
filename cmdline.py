@@ -137,11 +137,11 @@ def optpars(cfgs, mode, name):
 	pars.add_argument(
         '-O', '--android',
         dest='ano', action='store_const', const=mode,
-        help='print password to stdout (insecure and unrecommended)')
+        help='print password to stdout of android device if one is connected')
 	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
-        help='print password to stdout (insecure and unrecommended)')
+        help='print password to stdout (insecure and not recommended)')
 	pars.add_argument(
         '-e', '--expression',
         dest='rex', default=False, metavar='EXPRESSION:[LEN]',
