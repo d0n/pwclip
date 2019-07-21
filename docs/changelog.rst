@@ -4,6 +4,19 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-07-21
+
+  * fixed signature key not found bug
+
+  * improved gpg-checking method to better fit the gui mode
+
+  * implemented adb (android-debugging-bridge) interface to print
+    passwords on android phones
+
+
+1.6.5
+-----
+
 Released: 2019-07-15
 
   * fix gpgselfcheck - password validation to not get stuck with it later on
