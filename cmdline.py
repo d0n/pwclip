@@ -262,7 +262,7 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'gpg': {'recipients': 'rvs', 'key': 'gpgkey', 'delkey': True},
+        'gpg': {'recipients': 'recvs', 'key': 'gpgkey', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
         'GPGKEY': 'gpgkey',
