@@ -29,7 +29,6 @@ class PassCrypt(GPGTool):
 	rnd = None
 	out = None
 	gsm = None
-	key = None
 	sig = True
 	gui = None
 	chg = None
@@ -46,8 +45,8 @@ class PassCrypt(GPGTool):
 	plain = path.join(home, '.pwd.yaml')
 	crypt = path.join(home, '.passcrypt')
 	recvs = []
-	key = ''
 	keys = {}
+	gpgkey = ''
 	sslcrt = ''
 	sslkey = ''
 	sigerr = None
@@ -122,7 +121,7 @@ class PassCrypt(GPGTool):
 						print(blu('file'), yel(self.crypt), blu('encrypted'))
 
 	def _mkconfkeys(self):
-		self.key = '0x%s'%str(self.genkeys())[-16:]
+		self.gpgkey = '0x%s'%str(self.genkeys())[-16:]
 		cfgs = {'gpg': {}}
 		override = False
 		if path.isfile(self.config):
@@ -131,10 +130,10 @@ class PassCrypt(GPGTool):
 				cfgs = dict(load(cfh.read(), Loader=Loader))
 			if 'gpg' not in cfgs.keys():
 				cfgs['gpg'] = {}
-		cfgs['gpg']['key'] = self.key
+		cfgs['gpg']['gpgkey'] = self.gpgkey
 		if 'recipients' not in cfgs['gpg'].keys():
-			cfgs['gpg']['recipients'] = self.key
-			self.recvs = [self.key]
+			cfgs['gpg']['recipients'] = self.gpgkey
+			self.recvs = [self.gpgkey]
 		with open(self.config, 'w+') as cfh:
 			cfh.write(str(dump(cfgs, Dumper=Dumper)))
 
@@ -170,7 +169,7 @@ class PassCrypt(GPGTool):
 			print(bgre(self._writecrypt))
 		kwargs = {
             'output': self.crypt,
-            'key': self.key,
+            'gpgkey': self.gpgkey,
             'recvs': self.recvs}
 		filerotate(self.crypt, 3)
 		filerotate('%s.sig'%self.crypt, 3)
