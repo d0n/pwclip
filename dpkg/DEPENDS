@@ -1,5 +1,6 @@
 xsel
 xvkbd
+xautomation
 gnupg2
 gpgsm
 openssl
@@ -7,7 +8,6 @@ python-yubico
 python3-argcomplete
 python3-gi
 python3-gnupg
-python3-paramiko
 python3-tk
 python3-wget
 python3-yaml

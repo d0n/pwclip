@@ -2,7 +2,6 @@
 """pwclip init module"""
 import sys
 from os import path, devnull, environ, getenv, remove, name as osname
-from subprocess import call
 
 # this only makes sence while i need the lib folder in the PYTHONPATH
 # otherwise i need to rewrite lots of code cause i have thus libs in the
@@ -13,20 +12,15 @@ if path.exists(__lib) and __lib not in sys.path:
 if sys.platform == 'win32' and sys.executable.split('\\')[-1] == 'pythonw.exe':
 	sys.stdout = open(devnull, 'w')
 	sys.stderr = open(devnull, 'w')
-from colortext import abort
+
 from pwclip.cmdline import cli, gui
-from system import xnotify
 def pwclip():
 	"""pwclip passcrypt gui mode"""
 	gui()
-
 def ykclip():
 	"""pwclip yubico gui mode"""
 	gui('yk')
 
-try:
-	def pwcli():
-		"""pwclip cli mode"""
-		cli()
-except KeyboardInterrupt:
-	abort()
+def pwcli():
+	"""pwclip cli mode"""
+	cli()
