@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-07-21
+Released: 2019-07-22
 
   * fixed signature key not found bug
 
