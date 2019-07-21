@@ -138,7 +138,7 @@ class PassCrypt(GPGTool):
 		if path.isfile(self.config):
 			override = True
 			with open(self.config, 'r') as cfh:
-				cfgs = dict(load(cfh.read(), Loader=Loader))
+				cfgs = dict(load(cfh.read(), Loader=FullLoader))
 			if 'gpg' not in cfgs.keys():
 				cfgs['gpg'] = {}
 		cfgs['gpg']['key'] = self.key
@@ -167,7 +167,7 @@ class PassCrypt(GPGTool):
 	def _mergecrypt(self, __weaks):
 		try:
 			with open(self.plain, 'r') as pfh:
-				__newweaks = load(pfh.read(), Loader=Loader)
+				__newweaks = load(pfh.read(), Loader=FullLoader)
 			if not self.dbg:
 				remove(self.plain)
 		except FileNotFoundError:
