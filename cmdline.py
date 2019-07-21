@@ -161,11 +161,11 @@ def optpars(cfgs, mode, name):
 	gpars.set_defaults(**cfgs)
 	gpars.add_argument(
         '-k', '--key',
-        dest='key', metavar='ID', type=str,
+        dest='gpgkey', metavar='ID', type=str,
         help='gpg-key ID(s) to use for decryption/signing')
 	gpars.add_argument(
         '-r', '--recipients',
-        dest='rvs', metavar='"ID [ID ...]"',
+        dest='recvs', metavar='"ID [ID ...]"',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
@@ -262,11 +262,11 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'gpg': {'recipients': 'rvs', 'delkey': True},
+        'gpg': {'recipients': 'rvs', 'key': 'gpgkey', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
-        'GPGKEY': 'key',
-        'RECIPIENTS': 'rvs',
+        'GPGKEY': 'gpgkey',
+        'RECIPIENTS': 'recvs',
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
         'USER': 'usr',
@@ -338,10 +338,10 @@ def confpars(mode):
 		pkwargs['genpwlen'] = genpwlen
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
-	if args.rvs:
-		pkwargs['recvs'] = str(args.rvs).split(' ')
-	if args.key:
-		pkwargs['key'] = args.key
+	if args.recvs:
+		pkwargs['recvs'] = str(args.recvs).split(' ')
+	if args.gpgkey:
+		pkwargs['gpgkey'] = args.gpgkey
 	if args.usr :
 		pkwargs['user'] = args.usr
 	if args.time:
