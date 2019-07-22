@@ -49,7 +49,8 @@ from executor import command as cmd
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, xinput, which, whoami, dictreplace
+    xmsgok, xyesno, xnotify, xinput, \
+    which, whoami, dictreplace, adbout
 
 from pwclip.passcrypt import PassCrypt, lscrypt
 
@@ -59,17 +60,20 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
+	if out:
+		xnotify('pwclip: paste')
+		if out == 'gui':
+			cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
+                text))
+		elif out == 'cli':
+			print(text, end='')
+		elif out == 'ano':
+			adbout(text, enter)
+			enter = False
+	if enter:
+		cmd.call('%s -i 13 "key Return"'%which('xte'))
+	copy(text, mode='pb')
 	if fork() == 0:
-		if out:
-			xnotify('pwclip: paste')
-			if out == 'gui':
-				cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
-                    text))
-			elif out == 'cli':
-				print(text)
-		if enter:
-			cmd.call('xte -i 13 "key Return"')
-		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		finally:
@@ -135,9 +139,13 @@ def optpars(cfgs, mode, name):
         dest='ent', action='store_true',
         help='also enter newline when printing password (only useful with -o)')
 	pars.add_argument(
+        '-O', '--android',
+        dest='out', action='store_const', const='ano',
+        help='print password to stdout of android device if one is connected')
+	pars.add_argument(
         '-o', '--stdout',
         dest='out', action='store_const', const=mode,
-        help='print password to stdout (insecure and unrecommended)')
+        help='print password to stdout (insecure and not recommended)')
 	pars.add_argument(
         '-e', '--expression',
         dest='rex', default=False, metavar='EXPRESSION:[LEN]',
@@ -161,11 +169,11 @@ def optpars(cfgs, mode, name):
 	gpars.set_defaults(**cfgs)
 	gpars.add_argument(
         '-k', '--key',
-        dest='key', metavar='ID', type=str,
+        dest='gpgkey', metavar='ID', type=str,
         help='gpg-key ID(s) to use for decryption/signing')
 	gpars.add_argument(
         '-r', '--recipients',
-        dest='rvs', metavar='"ID [ID ...]"',
+        dest='recvs', metavar='"ID [ID ...]"',
         help='one ore more gpg-key ID(s) to use for ' \
              'encryption (strings seperated by spaces within "")')
 	gpars.add_argument(
@@ -262,11 +270,11 @@ def confpars(mode):
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
-        'gpg': {'recipients': 'rvs', 'delkey': True},
+        'gpg': {'recipients': 'recvs', 'key': 'gpgkey', 'delkey': True},
         'yubikey': {'slot': 'ykslot', 'seerial': 'ykser', 'delkey': True}}
 	envmap = {
-        'GPGKEY': 'key',
-        'RECIPIENTS': 'rvs',
+        'GPGKEY': 'gpgkey',
+        'RECIPIENTS': 'recvs',
         'PWCLIPTIME': 'time',
         'YKSERIAL': 'ykser',
         'USER': 'usr',
@@ -338,10 +346,10 @@ def confpars(mode):
 		pkwargs['genpwlen'] = genpwlen
 	if args.pcr:
 		pkwargs['crypt'] = args.pcr
-	if args.rvs:
-		pkwargs['recvs'] = str(args.rvs).split(' ')
-	if args.key:
-		pkwargs['key'] = args.key
+	if args.recvs:
+		pkwargs['recvs'] = str(args.recvs).split(' ')
+	if args.gpgkey:
+		pkwargs['gpgkey'] = args.gpgkey
 	if args.usr :
 		pkwargs['user'] = args.usr
 	if args.time:

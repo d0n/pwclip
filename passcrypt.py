@@ -29,7 +29,6 @@ class PassCrypt(GPGTool):
 	rnd = None
 	out = None
 	gsm = None
-	key = None
 	sig = True
 	gui = None
 	chg = None
@@ -46,8 +45,8 @@ class PassCrypt(GPGTool):
 	plain = path.join(home, '.pwd.yaml')
 	crypt = path.join(home, '.passcrypt')
 	recvs = []
-	key = ''
 	keys = {}
+	gpgkey = ''
 	sslcrt = ''
 	sslkey = ''
 	sigerr = None
@@ -122,83 +121,21 @@ class PassCrypt(GPGTool):
 						print(blu('file'), yel(self.crypt), blu('encrypted'))
 
 	def _mkconfkeys(self):
-		self.key = '0x%s'%str(self.genkeys())[-16:]
+		self.gpgkey = '0x%s'%str(self.genkeys())[-16:]
 		cfgs = {'gpg': {}}
 		override = False
 		if path.isfile(self.config):
 			override = True
 			with open(self.config, 'r') as cfh:
-				cfgs = dict(load(cfh.read(), Loader=FullLoader))
+				cfgs = dict(load(cfh.read(), Loader=Loader))
 			if 'gpg' not in cfgs.keys():
 				cfgs['gpg'] = {}
-		cfgs['gpg']['key'] = self.key
+		cfgs['gpg']['gpgkey'] = self.gpgkey
 		if 'recipients' not in cfgs['gpg'].keys():
-			cfgs['gpg']['recipients'] = self.key
-			self.recvs = [self.key]
+			cfgs['gpg']['recipients'] = self.gpgkey
+			self.recvs = [self.gpgkey]
 		with open(self.config, 'w+') as cfh:
-<<<<<<< HEAD
-			cfh.write(str(dump(cfgs)))
-
-	def _cecktime(self):
-		ok = True
-		if self.rem and self.maxage:
-			tf = absrelpath(self.timefile)
-			if not path.exists(path.dirname(tf)):
-				makedirs(path.dirname(tf))
-			now = int(time())
-			if not path.exists(tf):
-				with open(tf, 'w+') as tfh:
-					tfh.write(str(now-self.maxage))
-			with open(tf, 'r') as tfh:
-				last = int(tfh.read())
-			self.age = int(now-int(last))
-			if self.age >= int(self.maxage):
-				return True
-
-	def _mergecrypt(self, __weaks):
-		try:
-			with open(self.plain, 'r') as pfh:
-				__newweaks = load(pfh.read(), Loader=FullLoader)
-			if not self.dbg:
-				remove(self.plain)
-		except FileNotFoundError:
-			__newweaks = {}
-		__newweaks = {} if not __newweaks else __newweaks
-		for (su, ups) in __newweaks.items():
-			for (usr, pwdcom) in ups.items():
-				if su not in __weaks.keys():
-					__weaks[su] = {}
-				__weaks[su][usr] = pwdcom
-		return __weaks
-
-	def _copynews(self, force=None):
-		"""copy new file method"""
-		if self.dbg:
-			print(bgre(self._copynews))
-		fs = (self.crypt,)
-		ok = False
-		if self.sig:
-			fs = (self.crypt, '%s.sig'%self.crypt)
-		if self.rem and self.remote:
-			for i in fs:
-				ok = self.ssh.scpcompstats(
-                    i, path.basename(i),
-                    2, remote=self.remote, reuser=self.reuser)
-				if ok:
-					print(
-                        blu('file'),
-                        yel(path.basename(i)),
-                        blu('synced successfully'))
-				if not ok:
-					continue
-		else:
-			for i in fs:
-				print(blu('rotating'), yel(i))
-				filerotate(i, 2)
-		return ok
-=======
 			cfh.write(str(dump(cfgs, Dumper=Dumper)))
->>>>>>> aacfe55d24abd12a47192332172aa162e07ae1d3
 
 	def _readcrypt(self):
 		"""read crypt file method"""
@@ -232,11 +169,10 @@ class PassCrypt(GPGTool):
 			print(bgre(self._writecrypt))
 		kwargs = {
             'output': self.crypt,
-            'key': self.key,
+            'gpgkey': self.gpgkey,
             'recvs': self.recvs}
 		filerotate(self.crypt, 3)
-		if self.sig:
-			filerotate('%s.sig'%self.crypt, 3)
+		filerotate('%s.sig'%self.crypt, 3)
 		isok = self.encrypt(
             str(dump(__weaks, Dumper=Dumper)), output=self.crypt)
 		chmod(self.crypt, 0o600)
