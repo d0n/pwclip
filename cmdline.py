@@ -62,7 +62,6 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
 		if out:
-			ecmd = '%s -i 13 "key Return"'%which('xte')
 			xnotify('pwclip: paste')
 			if out == 'gui':
 				cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
@@ -70,10 +69,10 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			elif out == 'cli':
 				print(text)
 			elif out == 'ano':
-				
-				ecmd = '%s shell input keyevent 66'%which('adb')
+				adbout(text)
+				enter = False
 		if enter:
-			cmd.call(ecmd)
+			cmd.call('%s -i 10 "key Return"'%which('xte'))
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
