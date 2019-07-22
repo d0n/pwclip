@@ -49,7 +49,8 @@ from executor import command as cmd
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, xinput, which, whoami, dictreplace
+    xmsgok, xyesno, xnotify, xinput, \
+    which, whoami, dictreplace, adbout
 
 from pwclip.passcrypt import PassCrypt, lscrypt
 
@@ -61,14 +62,18 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if fork() == 0:
 		if out:
+			ecmd = '%s -i 13 "key Return"'%which('xte')
 			xnotify('pwclip: paste')
 			if out == 'gui':
 				cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
                     text))
 			elif out == 'cli':
 				print(text)
+			elif out == 'ano':
+				
+				ecmd = '%s shell input keyevent 66'%which('adb')
 		if enter:
-			cmd.call('xte -i 13 "key Return"')
+			cmd.call(ecmd)
 		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
@@ -136,7 +141,7 @@ def optpars(cfgs, mode, name):
         help='also enter newline when printing password (only useful with -o)')
 	pars.add_argument(
         '-O', '--android',
-        dest='ano', action='store_const', const=mode,
+        dest='ano', action='store_const', const='ano',
         help='print password to stdout of android device if one is connected')
 	pars.add_argument(
         '-o', '--stdout',
@@ -382,7 +387,6 @@ def cli():
 		res = ykchalres(getpass(), args.ysl, ykser)
 		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
-		out = args.ano if args.ano else args.out
 		forkwaitclip(res, poclp, boclp, args.time, out, args.ent)
 		exit(0)
 	__ents = {}
@@ -398,7 +402,6 @@ def cli():
 			if len(__pc) == 2 and osname != 'nt':
 				xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-			out = args.ano if args.ano else args.out
 			forkwaitclip(__pc[0], poclp, boclp, args.time, out, args.ent)
 	elif args.chg:
 		if args.pwd:
@@ -438,7 +441,6 @@ def cli():
 					notif = ' '.join(__pc[1:])
 				if osname!= 'nt':
 					xnotify(notif)
-				out = args.ano if args.ano else args.out
 				forkwaitclip(__pc[0], poclp, boclp, args.time, out, args.ent)
 				exit(0)
 	elif args.lst is None:
@@ -471,7 +473,6 @@ def gui(typ='pw'):
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
-		out = args.ano if args.ano else args.out
 		forkwaitclip(res, poclp, boclp, args.time, out, args.ent)
 	__ents = None
 	usr = args.usr
@@ -504,7 +505,6 @@ def gui(typ='pw'):
 				notif = ' '.join(__pc[1:])
 			if not args.out and osname != 'nt':
 				xnotify(notif)
-			out = args.ano if args.ano else args.out
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 			umsg = 'all users'
 			if 'aal' not in pargs:
@@ -528,7 +528,6 @@ def gui(typ='pw'):
 				notif = ' '.join(__pc[1:])
 			if not args.out and osname != 'nt':
 				xnotify(notif)
-			out = args.ano if args.ano else args.out
 			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, arg.ent)
 			xnotify('changed entry %s for %s'%(_chg, usr))
 	elif args.rms is not False:
@@ -570,7 +569,6 @@ def gui(typ='pw'):
 					notif = ' '.join(__pc[1:])
 				if not args.out and osname != 'nt':
 					xnotify(notif)
-				out = args.ano if args.ano else args.out
 				forkwaitclip(
                     __pc[0], poclp, boclp, args.time, out, args.ent)
 				exit(0)
