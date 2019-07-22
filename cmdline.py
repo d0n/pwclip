@@ -60,20 +60,20 @@ from pwclip.__pkginfo__ import version
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
+	if out:
+		xnotify('pwclip: paste')
+		if out == 'gui':
+			cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
+                text))
+		elif out == 'cli':
+			print(text, end='')
+		elif out == 'ano':
+			adbout(text, enter)
+			enter = False
+	if enter:
+		cmd.call('%s -i 13 "key Return"'%which('xte'))
+	copy(text, mode='pb')
 	if fork() == 0:
-		if out:
-			xnotify('pwclip: paste')
-			if out == 'gui':
-				cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
-                    text))
-			elif out == 'cli':
-				print(text, end='')
-			elif out == 'ano':
-				adbout(text, enter)
-				enter = False
-		if enter:
-			cmd.call('%s -i 10 "key Return"'%which('xte'))
-		copy(text, mode='pb')
 		try:
 			sleep(int(wait))
 		finally:
@@ -140,7 +140,7 @@ def optpars(cfgs, mode, name):
         help='also enter newline when printing password (only useful with -o)')
 	pars.add_argument(
         '-O', '--android',
-        dest='ano', action='store_const', const='ano',
+        dest='out', action='store_const', const='ano',
         help='print password to stdout of android device if one is connected')
 	pars.add_argument(
         '-o', '--stdout',
