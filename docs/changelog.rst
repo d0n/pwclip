@@ -47,9 +47,9 @@ Released: 2019-07-12
   * fixed password input for gui mode in some cases as well as terminal mode
     in others
 
-  * removed ssh/scp functionality completly (replaced it by much more
-    sophisticated "syncthing" - it syncs my encrypted password file between
-    my systems by delays next to realtime)
+  * removed ssh/scp functionality completly (pwclip has no remote part any more
+    i propose much more sophisticated "syncthing" - it syncs files between
+    systems by delays next to realtime and it's much more relyable)
 
   * fixed issues implemented by latest released features for gui mode
 
