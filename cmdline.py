@@ -387,7 +387,7 @@ def cli():
 		res = ykchalres(getpass(), args.ysl, ykser)
 		if not res:
 			fatal('could not get valid response on slot ', args.ysl)
-		forkwaitclip(res, poclp, boclp, args.time, out, args.ent)
+		forkwaitclip(res, poclp, boclp, args.time, args.out, args.ent)
 		exit(0)
 	__ents = {}
 	err = None
@@ -402,7 +402,7 @@ def cli():
 			if len(__pc) == 2 and osname != 'nt':
 				xnotify('%s: %s'%(
                         args.lst, ' '.join(__pc[1:])), args.time)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, out, args.ent)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 	elif args.chg:
 		if args.pwd:
 			pkwargs['password'] = args.pwd
@@ -441,7 +441,7 @@ def cli():
 					notif = ' '.join(__pc[1:])
 				if osname!= 'nt':
 					xnotify(notif)
-				forkwaitclip(__pc[0], poclp, boclp, args.time, out, args.ent)
+				forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 				exit(0)
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
@@ -473,7 +473,7 @@ def gui(typ='pw'):
 		if not res:
 			xmsgok('no response from the key (if there is one)'%__in)
 			exit(1)
-		forkwaitclip(res, poclp, boclp, args.time, out, args.ent)
+		forkwaitclip(res, poclp, boclp, args.time, args.out, args.ent)
 	__ents = None
 	usr = args.usr
 	if args.usr is None:
@@ -570,7 +570,7 @@ def gui(typ='pw'):
 				if not args.out and osname != 'nt':
 					xnotify(notif)
 				forkwaitclip(
-                    __pc[0], poclp, boclp, args.time, out, args.ent)
+                    __pc[0], poclp, boclp, args.time, args.out, args.ent)
 				exit(0)
 	else:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
