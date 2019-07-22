@@ -67,9 +67,9 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 				cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
                     text))
 			elif out == 'cli':
-				print(text)
+				print(text, end='')
 			elif out == 'ano':
-				adbout(text)
+				adbout(text, enter)
 				enter = False
 		if enter:
 			cmd.call('%s -i 10 "key Return"'%which('xte'))
