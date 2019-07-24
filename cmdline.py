@@ -49,7 +49,7 @@ from executor import command as cmd
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
-    xmsgok, xyesno, xnotify, xinput, \
+    xmsgok, xyesno, xnotify, xinput, xkbid, \
     which, whoami, dictreplace, adbout
 
 from pwclip.passcrypt import PassCrypt, lscrypt
@@ -58,10 +58,6 @@ from secrecy import ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
-def xinkey():
-	o = cmd.stdo('xinput')
-	return int([
-        l.split()[-4] for l in o.split('\n') if 'keyboard' in l.lower()][-1]
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
@@ -76,8 +72,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			adbout(text, enter)
 			enter = False
 	if enter:
-		xinkey()
-		cmd.call('%s -i %s "key Return"'%(which('xte'), xinkey())
+		cmd.call('%s -i %s "key Return"'%(which('xte'), xkbid())
 	copy(text, mode='pb')
 	if fork() == 0:
 		try:
