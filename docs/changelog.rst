@@ -4,6 +4,18 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-07-24
+
+  * fix xte enter via keyboard to first search & select a keyboard via xinput
+
+  * fixed gpg(pre)check function to recognise cli/gui mode
+
+  
+
+
+1.7.0
+-----
+
 Released: 2019-07-22
 
   * fixed signature key not found bug
