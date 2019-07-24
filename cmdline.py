@@ -58,6 +58,11 @@ from secrecy import ykchalres, yubikeys
 
 from pwclip.__pkginfo__ import version
 
+def xinkey():
+	o = cmd.stdo('xinput')
+	return int([
+        l.split()[-4] for l in o.split('\n') if 'keyboard' in l.lower()][-1]
+
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if out:
@@ -71,7 +76,8 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			adbout(text, enter)
 			enter = False
 	if enter:
-		cmd.call('%s -i 13 "key Return"'%which('xte'))
+		xinkey()
+		cmd.call('%s -i %s "key Return"'%(which('xte'), xinkey())
 	copy(text, mode='pb')
 	if fork() == 0:
 		try:
