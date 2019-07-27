@@ -1,9 +1,9 @@
 Troubleshoot
 ------------
 
-**There are currently no known issues**
+There are currently no known issues
 
-**Obsolete:
+Obsolete:
 
 When using the yubikey challenge-response mode there is a bug in the usb_hid
 interface. This is because of python2 => 3 transition most likely and can be
