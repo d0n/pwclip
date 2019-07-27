@@ -72,7 +72,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			adbout(text, enter)
 			enter = False
 	if enter:
-		cmd.call('%s -i %s "key Return"'%(which('xte'), xkbid())
+		cmd.call('%s -i %s "key Return"'%(which('xte'), xkbid()))
 	copy(text, mode='pb')
 	if fork() == 0:
 		try:
