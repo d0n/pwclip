@@ -484,7 +484,7 @@ def gui(typ='pw'):
 		pkwargs['user'] = usr
 	if args.add is not False:
 		_add = __xdialog('as %s: enter name for entry to add'%usr)
-		if not usr:
+		if not _add:
 			xnotify('aborted')
 			exit(1)
 		if _add:
@@ -499,7 +499,7 @@ def gui(typ='pw'):
 					ok = False
 			if not ok:
 				xnotify('something went wrong while adding %s'%_add)
-			__pc = __ents[args.usr][_add]
+			__pc = __ents[usr][_add]
 			notif = 'pwclip:copy'
 			if len(__pc) == 2:
 				notif = ' '.join(__pc[1:])
