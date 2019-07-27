@@ -23,4 +23,4 @@ the ord() coversion of the response:
 
 needs to be replaced by:
 
-``r_len = response[0]``**
+``r_len = response[0]``
