@@ -238,6 +238,8 @@ class PassCrypt(GPGTool):
 			print(bgre(tabd({
                 self.adpw: {'user': self.user, 'entry': usr,
                             'pwd': pwd, 'comment': com}})))
+		if self.user not in self.__weaks.keys():
+			self.__weaks[self.user] = {}
 		if not self.aal:
 			if self.user in self.__weaks.keys():
 				if usr in self.__weaks[self.user]:
