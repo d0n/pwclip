@@ -4,13 +4,14 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-07-24
+Released: 2019-07-27
 
   * fix xte enter via keyboard to first search & select a keyboard via xinput
+    for that i added the xinput dependency
 
   * fixed gpg(pre)check function to recognise cli/gui mode
 
-  
+  * fixed adding entrys for not-existing users in gui mode
 
 
 1.7.0
