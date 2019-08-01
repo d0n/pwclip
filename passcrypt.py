@@ -6,7 +6,7 @@ from sys import argv, stdout
 
 from os import path, remove, environ, chmod, stat, makedirs
 
-from yaml import load, dump, FullLoader, Dumper
+from yaml import load, dump, Loader, Dumper
 
 from colortext import blu, yel, grn, bgre, tabd, error
 
@@ -147,7 +147,7 @@ class PassCrypt(GPGTool):
 		except DecryptError as err:
 			error(err)
 			exit(1)
-		__dct = dict(load(str(__dct), Loader=FullLoader))
+		__dct = dict(load(str(__dct), Loader=Loader))
 		if err:
 			if err == 'SIGERR':
 				if self.gui:
