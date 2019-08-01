@@ -38,7 +38,7 @@ from socket import gethostname as hostname
 
 from time import sleep
 
-from yaml import load, FullLoader
+from yaml import load, Loader
 
 from getpass import getpass
 
@@ -267,7 +267,7 @@ def confpars(mode):
         }
 	try:
 		with open(cfg, 'r') as cfh:
-			confs = dict(load(cfh.read(), Loader=FullLoader))
+			confs = dict(load(cfh.read(), Loader=Loader))
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
