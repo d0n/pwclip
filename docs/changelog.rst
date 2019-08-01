@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-08-01
+Released: 2019-08-02
 
   * fix xte enter via keyboard to first search & select a keyboard via xinput
     for that i added the xinput dependency
