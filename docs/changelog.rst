@@ -15,6 +15,8 @@ Released: 2019-08-03
 
   * fixed adding entrys for not-existing users
 
+  * replaced python-yubico dependency by python3-yubico
+
   * removed python3-gnupg from deb depends while they switched the python
     base library from python-gnupg to gnupg which is incompatible with pwclip's
     gpg-wrapping lib
