@@ -9,6 +9,8 @@ Released: 2019-08-02
   * fix xte enter via keyboard to first search & select a keyboard via xinput
     for that i added the xinput dependency
 
+  * fix notifications for ubuntu 19+
+
   * fixed gpg(pre)check function to recognise cli/gui mode
 
   * fixed adding entrys for not-existing users in gui mode
