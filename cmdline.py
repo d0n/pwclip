@@ -45,7 +45,7 @@ from getpass import getpass
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal, abort
 
-from executor import command as cmd
+from executor import cmmd
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
@@ -64,7 +64,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	if out:
 		xnotify('pwclip: paste')
 		if out == 'gui':
-			cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
+			cmmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
                 text))
 		elif out == 'cli':
 			print(text, end='')
@@ -72,7 +72,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			adbout(text, enter)
 			enter = False
 	if enter:
-		cmd.call('%s -i %s "key Return"'%(which('xte'), xkbid()))
+		cmmd.call('%s -i %s "key Return"'%(which('xte'), xkbid()))
 	copy(text, mode='pb')
 	if fork() == 0:
 		try:
