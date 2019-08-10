@@ -4,14 +4,23 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-07-28
+Released: 2019-08-04
 
   * fix xte enter via keyboard to first search & select a keyboard via xinput
-    for that i added the xinput dependency
+    for that xinput dependency was added
+
+  * fix notifications for ubuntu 19.04+
 
   * fixed gpg(pre)check function to recognise cli/gui mode
 
-  * fixed adding entrys for not-existing users in gui mode
+  * fixed adding entrys for not-existing users
+
+  * replaced python-yubico dependency by python3-yubico and added adb as well
+    as PyGObject
+
+  * removed python3-gnupg from deb depends while they switched the python
+    base library from python-gnupg to gnupg which is incompatible with pwclip's
+    gpg-wrapping lib
 
 
 1.7.0
