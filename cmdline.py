@@ -67,7 +67,9 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			cmmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
                 text))
 		elif out == 'cli':
-			print(text, end='')
+			stdout.write(text)
+			stdout.flush()
+			#print(text, end='')
 		elif out == 'ano':
 			adbout(text, enter)
 			enter = False
