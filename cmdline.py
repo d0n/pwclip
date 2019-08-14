@@ -25,6 +25,8 @@ try:
 except ImportError:
 	pass
 
+from re import sub
+
 from os import environ, path, remove, getpid, name as osname
 
 from sys import exit, stdout
@@ -45,7 +47,7 @@ from getpass import getpass
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal, abort
 
-from subprocess import call
+from executor.executor import cmmd
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
@@ -62,17 +64,17 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if out:
-		sep = '"' if "'" in text else '"'
-		text = '%s%s%s'%(sep, text, sep)
-		print(text)
 		xnotify('pwclip: paste')
 		if out == 'gui':
-			call('xvkbd -secure -no-keypad -delay 17 -text %s%s%s'%(
-                sep, text, sep), shell=True)
+			sep = '"' if "'" in text else '"'
+			if '"' in text and "'" in text:
+				sep = "'"
+				text = sub(r"'", "\'", text)
+			cmmd.stdo('xvkbd -secure -no-keypad -delay 17 -text %s%s%s'%(
+                sep, text, sep))
 		elif out == 'cli':
 			print(text, end='')
-			#stdout.flush()
-			#print(text, end='')
+			stdout.flush()
 		elif out == 'ano':
 			adbout(text, enter)
 			enter = False
