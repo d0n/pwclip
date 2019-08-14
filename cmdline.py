@@ -123,8 +123,8 @@ def optpars(cfgs, mode, name):
            'secure accessing your passwords. The following ' \
            'arguments might also be set by the config ' \
            '~/.config/%s.yaml file.'%name
-	epic = 'the yubikey mode is compatible with the ' \
-           'challenge-response and gpg feature\'s of yubikeys only for now.'
+	epic = 'the yubikey mode is compatible with the challenge-response ' \
+           'feature of yubikeys only for now.'
 	pars = ArgumentParser(description=desc, epilog=epic)
 	pars.set_defaults(**cfgs)
 	pars.add_argument(
