@@ -1,1 +1,1 @@
-make man
+make man text html xml info gettext json
