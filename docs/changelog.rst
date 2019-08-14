@@ -6,6 +6,8 @@ Changelog
 
 Released: 2019-08-15
 
+  * fix xvkbd printing passwords if they contain ' or "
+
   * fix wrong and obsolete documentation as well as trying to fix the generated
     README.md
 
