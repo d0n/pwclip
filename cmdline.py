@@ -45,7 +45,7 @@ from getpass import getpass
 # local relative imports
 from colortext import bgre, bred, tabd, error, fatal, abort
 
-from executor import cmmd
+from subprocess import call
 
 from system import \
     absrelpath, copy, paste, xgetpass, \
@@ -62,14 +62,16 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if out:
-		sep = "'" if "'" in text else '"'
+		sep = '"' if "'" in text else '"'
+		text = '%s%s%s'%(sep, text, sep)
+		print(text)
 		xnotify('pwclip: paste')
 		if out == 'gui':
 			cmmd.call('xvkbd -secure -no-keypad -delay 17 -text %s%s%s'%(
-                sep, text, sep))
+                sep, text, sep), shell=True)
 		elif out == 'cli':
 			print(text, end='')
-			stdout.flush()
+			#stdout.flush()
 			#print(text, end='')
 		elif out == 'ano':
 			adbout(text, enter)
