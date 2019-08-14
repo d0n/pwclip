@@ -6,13 +6,14 @@ Changelog
 
 Released: 2019-08-15
 
-  * fix xvkbd printing passwords if they contain ' or "
+  * fixed xvkbd printing passwords if they contain ' or "
 
   * fix wrong and obsolete documentation as well as trying to fix the generated
     README.md
 
-  * fix xte "enter" function to first search & select a keyboard via xinput
-    for that xinput dependency has been added
+  * fixed and by that changed the "enter" function to on one hand first search
+    & select a keyboard via xinput (for that the dependency) and changed how to
+    enter depending on what options where used
 
   * fixed gpg(pre)check function to recognise cli/gui mode and assure to have
     valid keys for the password crypt when pwclip starts and no gpg-agent is
