@@ -9,6 +9,6 @@ pwclip
 
 .. include:: ./troubleshoot.rst
 
-.. include:: ./changelog.rst
+.. include:: ./changes.rst
 
 .. include:: ./credits.rst
