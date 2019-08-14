@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-08-14
+Released: 2019-08-15
 
   * fix obsolete documentation
 
