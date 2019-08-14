@@ -7,7 +7,7 @@ systems clipboard (copy/paste buffer). It uses either GnuPG2 or OpenSSL
 (converted to GPGSM) keys for cryptographic operations. It also works with
 yubikey's challenge-response to generate uniq HMAC-SHA1 hashes as well.
 Windows support is volatile while i myself don't need it - bugreports or merge
-requests for features are very welcome. See https://github.com/d0n/pwclip
+requests for features are very welcome: https://github.com/d0n/pwclip
 
 The main feature is the pwcli/pwclip mode which provides easy access to the
 ~/.passcrypt file. That file is used by default as password storage. The
@@ -28,14 +28,13 @@ configured with (HMAC-SHA1) challenge-response, will be used.
 
 To catch user input python's Tk (tkinter) library is used to create a simple
 password input window. The appropriate response is saved for only 3 seconds
-by default to not have it exposed as soon as it's used. The utility also
-supports the input of any integer which is then used as timer. Otherwise the
-environment is searched for PWCLIPTIME and uses the value of that environment
-variable as timer. The timer is used as time in which the received password
-stays in the paste buffer bevore its replaced by the previously copied value.
-As you may see there is an optional commet which is used as text notification
-displayed on the screen if set. Therefor python3's gi notify2 is used which is
-another reason for discontinuing python2 support.
+by default to not have it exposed as soon as it has been used. For the timer
+another environment variable used if set - PWCLIPTIME. The value of that
+variable is obviously used for setting the time to switch back to what you had
+in the clipboard bevore using pwclip. Optionally there is a text notification
+displayed on the screen if the comment field is set. It's intension is having
+a reminder for something attached to a login which is safe exposing to eyes
+watching what's on screen. Therefor python3's gi module's notify2 is used.
 
 I would encourage you to bind pwclip to a shortcut within your X-Environment
 to have access to your passwords at any time. On Windows-Systems you need to
@@ -58,14 +57,15 @@ login. You may have more than one users passwords in the passcrypt but any user
 who can store passwords also is able to read password stored for other users in
 that file. It is just of use for visual kategories if you have stored passwords
 for different systems users sharing the same passcrypt file.
-As an example: A person called "Andrew" has a username called "bob". On some
-other machine he has a username called "cat" and he uses SSH for both of them.
-The shared passcrypt file would be assembled like the attached YAML-Format
-section. If so providing -u or -A when beeing logged in as "bob" or "cat"
-respectivly may be omitted. In the following example both, "bob" and "cat" have
-an entry called ssh. If -A is used in that case the entry corresponding to the
-logged-in user is prefered. If in doubt you're able to read the crypt file
-using "gpg -d ~/.passcrypt" as well (assuming the correct gpg-key is present).
+As an example: Whatever parson has a username called "bob" on one machine,
+and on some other machine he has a username called "cat". For both of them a
+different password is stored. If loged in as the user the ssh password was
+added to by default pwclip will look for the password entry under the currently
+loged-in user. The shared passcrypt file would be assembled like the attached
+YAML-Format section. If so providing -u or -A when beeing logged in as "bob" or
+"cat" respectivly can be omitted.  If in doubt you're able to read the crypt
+file using "gpg -d ~/.passcrypt" as well (assuming the correct gpg-key
+is present).
 
 YAML-Format
 -----------
