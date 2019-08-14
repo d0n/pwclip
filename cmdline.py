@@ -140,7 +140,8 @@ def optpars(cfgs, mode, name):
 	pars.add_argument(
         '-E', '--enter',
         dest='ent', action='store_true',
-        help='also enter newline when printing password (only useful with -o)')
+        help='also enter newline when printing password (only useful with ' \
+             '-o/-O)')
 	pars.add_argument(
         '-O', '--android',
         dest='out', action='store_const', const='ano',
