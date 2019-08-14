@@ -6,7 +6,8 @@ Changelog
 
 Released: 2019-08-15
 
-  * fix obsolete documentation
+  * fix wrong and obsolete documentation as well as trying to fix the generated
+    README.md
 
   * fix xte "enter" function to first search & select a keyboard via xinput
     for that xinput dependency has been added
