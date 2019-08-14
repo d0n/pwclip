@@ -62,12 +62,13 @@ from pwclip.__pkginfo__ import version
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if out:
+		sep = "'" if "'" in text else '"'
 		xnotify('pwclip: paste')
 		if out == 'gui':
-			cmmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
-                text))
+			cmmd.call('xvkbd -secure -no-keypad -delay 17 -text %s%s%s'%(
+                sep, text, sep))
 		elif out == 'cli':
-			print(str(text), end='')
+			print(text, end='')
 			stdout.flush()
 			#print(text, end='')
 		elif out == 'ano':
