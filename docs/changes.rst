@@ -1,1 +1,1 @@
-.. include:: ./changelog.rst
+_build/text/changes.txt

@@ -1,14 +1,1 @@
-pwclip
-""""""
-
-.. include:: ./description.rst
-
-.. include:: ./installation.rst
-
-.. include:: ./usage.rst
-
-.. include:: ./troubleshoot.rst
-
-.. include:: ./changes.rst
-
-.. include:: ./credits.rst
+_build/text/readme.txt
