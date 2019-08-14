@@ -4,23 +4,28 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-08-04
+Released: 2019-08-14
 
-  * fix xte enter via keyboard to first search & select a keyboard via xinput
-    for that xinput dependency was added
+  * fix obsolete documentation
 
-  * fix notifications for ubuntu 19.04+
+  * fix xte "enter" function to first search & select a keyboard via xinput
+    for that xinput dependency has been added
 
-  * fixed gpg(pre)check function to recognise cli/gui mode
+  * fixed gpg(pre)check function to recognise cli/gui mode and assure to have
+    valid keys for the password crypt when pwclip starts and no gpg-agent is
+    running
 
   * fixed adding entrys for not-existing users
 
   * replaced python-yubico dependency by python3-yubico and added adb as well
-    as PyGObject
+    as PyGObject by similar reasons like the one that's following
 
-  * removed python3-gnupg from deb depends while they switched the python
-    base library from python-gnupg to gnupg which is incompatible with pwclip's
-    gpg-wrapping lib
+  * removed python3-gnupg from deb depends while (ubuntu developers) switched
+    the python library if installing "python(3)-gnupg". The lib (at least
+    until 18.04 was python-gnupg as well as for python3 now it's gnupg.
+    Sounds confusing? Eat this:
+    https://pypi.org/project/gnupg/
+    https://pypi.org/project/python-gnupg/
 
 
 1.7.0
