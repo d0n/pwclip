@@ -45,7 +45,7 @@ try:
 		if l.startswith('{'):
 			l = l.strip('{}')
 			fname = 'pwclip/docs/%s.rst'%l
-			with open(fname, 'r') nfh:
+			with open(fname, 'r') as nfh:
 				fmt[l] = nfh.read()
 	long_description = ''.join(__rs).format(**fmt)
 except (FileNotFoundError, NotADirectoryError):
