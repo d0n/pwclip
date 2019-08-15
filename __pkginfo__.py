@@ -31,7 +31,7 @@ include_package_data = True
 long_description = ''
 try:
 	long_description = '%s\n\n'%str('\n\n\n'.join(
-        str(open('pwclip/docs/changelog.rst', 'r').read()).split('\n\n\n')[:4]
+         str(open('pwclip/docs/changelog.rst', 'r').read()).split('\n\n\n')[:4]
         )).format(CurrentVersion='%s (current)\n----------%s'%(
             version, '-'*len(version)))
 except (FileNotFoundError, NotADirectoryError):
@@ -40,7 +40,14 @@ try:
 	__rs = []
 	with open('pwclip/docs/readme.rst', 'r') as __r:
 		__rs = __r.readlines()
-	long_description = ''.join(__rs).format(ChangeLog=long_description)
+	fmt = {}
+	for l in __rs:
+		if l.startswith('{'):
+			l = l.strip('{}')
+			fname = 'pwclip/docs/%s.rst'%l
+			with open(fname, 'r') nfh:
+				fmt[l] = nfh.read()
+	long_description = ''.join(__rs).format(**fmt)
 except (FileNotFoundError, NotADirectoryError):
     long_description = ''
 try:

@@ -1,14 +1,14 @@
 pwclip
 """"""
 
-.. include:: ./description.rst
+{description}
 
-.. include:: ./installation.rst
+{installation}
 
-.. include:: ./usage.rst
+{usage}
 
-.. include:: ./troubleshoot.rst
+{troubleshoot}
 
-.. include:: ./credits.rst
+{credits}
 
-{ChangeLog}
+{changelog}
