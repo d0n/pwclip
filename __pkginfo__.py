@@ -46,6 +46,7 @@ try:
 			l = l.strip('{}')
 			fname = 'pwclip/docs/%s.rst'%l
 			with open(fname, 'r') as nfh:
+				print(fname)
 				fmt[l] = nfh.read()
 	long_description = ''.join(__rs).format(**fmt)
 except (FileNotFoundError, NotADirectoryError):
