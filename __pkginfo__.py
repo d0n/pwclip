@@ -38,13 +38,13 @@ except (FileNotFoundError, NotADirectoryError):
 	long_description = ''
 try:
 	__rs = []
-	with open('pwclip/docs/readme.rst', 'r') as __r:
+	with open('docs/readme.rst', 'r') as __r:
 		__rs = __r.readlines()
 	fmt = {}
 	for l in __rs:
 		if l.startswith('{'):
 			l = l.strip('{}')
-			fname = 'pwclip/docs/%s.rst'%l
+			fname = 'docs/%s.rst'%l
 			with open(fname, 'r') as nfh:
 				print(fname)
 				fmt[l] = nfh.read()
@@ -52,9 +52,9 @@ try:
 except (FileNotFoundError, NotADirectoryError):
     long_description = ''
 try:
-	with open('pwclip/docs/conf.py', 'w+') as cfh:
+	with open('docs/conf.py', 'w+') as cfh:
 		cfh.write(str(open(
-            'pwclip/docs/conf.py.tmpl', 'r').read()
+            'docs/conf.py.tmpl', 'r').read()
             ).format(VersionString=version))
 except (FileNotFoundError, NotADirectoryError):
 	pass
