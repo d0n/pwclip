@@ -39,17 +39,7 @@ except (FileNotFoundError, NotADirectoryError):
 try:
 	__rs = []
 	with open('pwclip/docs/readme.rst', 'r') as __r:
-		__rrs = __r.readlines()
-	for l in __rrs:
-		if l.startswith('.. include::'):
-			__rst = l.split('.. include::')[1].lstrip(' ./').strip()
-			try:
-				with open('pwclip/docs/%s'%__rst, 'r') as __i:
-					__rs = __rs + [i for i in __i.readlines()]
-				continue
-			except FileNotFoundError:
-				pass
-		__rs.append(l)
+		__rs = __r.readlines()
 	long_description = ''.join(__rs).format(ChangeLog=long_description)
 except (FileNotFoundError, NotADirectoryError):
     long_description = ''
