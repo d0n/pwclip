@@ -30,6 +30,7 @@ class PassCrypt(GPGTool):
 	out = None
 	gsm = None
 	sig = True
+	dtg = True
 	gui = None
 	chg = None
 	syn = None
@@ -172,7 +173,8 @@ class PassCrypt(GPGTool):
             'gpgkey': self.gpgkey,
             'recvs': self.recvs}
 		filerotate(self.crypt, 3)
-		filerotate('%s.sig'%self.crypt, 3)
+		if self.sig and self.dtg:
+			filerotate('%s.sig'%self.crypt, 3)
 		isok = self.encrypt(
             str(dump(__weaks, Dumper=Dumper)), output=self.crypt)
 		chmod(self.crypt, 0o600)
