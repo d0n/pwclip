@@ -68,7 +68,7 @@ class PassCrypt(GPGTool):
 			print(' ', bgre(self.__init__))
 			print(bgre(tabd(self.__dict__, 4)))
 		self.cpasmsg = '%s %s%s '%(
-            blu('enter password for'), yel(self.key),
+            blu('enter password for'), yel(self.gpgkey),
             blu('to decrypt'), yel(self.crypt), blu(':'))
 		gargs = list(args) + ['sig'] if self.sig else []
 		if self.gui:
