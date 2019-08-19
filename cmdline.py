@@ -38,7 +38,7 @@ from socket import gethostname as hostname
 
 from time import sleep
 
-from yaml import load, FullLoader
+from yaml import load, Loader
 
 from getpass import getpass
 
@@ -66,7 +66,7 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 			cmd.call('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%(
                 text))
 		elif out == 'cli':
-			print(text, end='')
+			print(r'%s'%text, end='')
 		elif out == 'ano':
 			adbout(text, enter)
 			enter = False
@@ -266,7 +266,7 @@ def confpars(mode):
         }
 	try:
 		with open(cfg, 'r') as cfh:
-			confs = dict(load(cfh.read(), Loader=FullLoader))
+			confs = dict(load(cfh.read(), Loader=Loader))
 	except (TypeError, FileNotFoundError):
 		confs = {}
 	cfgmap = {
