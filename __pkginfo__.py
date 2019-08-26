@@ -4,7 +4,7 @@ provides = ['pwcli', 'pwclip', 'ykclip']
 <<<<<<< HEAD
 version = '1.7.2'
 ||||||| merged common ancestors
-version = '1.7.3'
+version = '1.7.4'
 =======
 version = '1.7.4'
 >>>>>>> b19730bbf4a058b912e2574b2676060ec999462c
