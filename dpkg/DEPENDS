@@ -6,7 +6,6 @@ xautomation
 gnupg2
 gpgsm
 openssl
-python3-yubico
 python3-argcomplete
 python3-gi
 python3-tk

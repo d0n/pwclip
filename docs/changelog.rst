@@ -4,6 +4,16 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2019-08-26
+
+  * fixed android output for some special-characters
+
+  * fix dependencies while python3-pyusb is broken to me
+
+
+1.7.1
+-----
+
 Released: 2019-08-15
 
   * fixed xvkbd printing passwords if they contain ' or "
