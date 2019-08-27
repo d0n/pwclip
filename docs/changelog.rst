@@ -5,11 +5,14 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-08-26
+Released: 2019-08-27
 
   * fixed android output for some special-characters
 
-  * fix dependencies while python3-pyusb is broken to me
+  * fix dependencies - python3-pyusb is broken to me on ubuntu 18.04 so
+    removed yubico dependencie which itself depended on it... fuck sakes - how
+    hard can tracking of things we depend on be? I eagerly try to keep them
+    but if that breaks my installation i have no options
 
 
 1.7.1

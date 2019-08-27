@@ -61,6 +61,19 @@ from secrecy import ykchalres, yubikeys
 from pwclip.__pkginfo__ import version
 
 
+def showclip(mode='cli', cliptime=None, clear=None):
+	if mode == 'cli':
+		print(paste(), end='')
+		stdout.flush()
+		if clear:
+			if cliptime:
+				sleep(cliptime)
+			print('\033c', end='')
+	elif mode == 'ano':
+		adbout(text)
+	elif mode == 'gui':
+		xnotify(paste())
+
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
 	if out:
@@ -163,6 +176,12 @@ def optpars(cfgs, mode, name):
         '-g', '--genpw',
         dest='gpw', action='store_true', help='randomly generate password' \
              ', only useful with -a (uses EXPRESSION)')
+	pars.add_argument(
+        '--show-clip',
+        dest='scl', action='store_true',
+        help='show current clipboard content ' \
+             '(WARNING: insecure - if cliptime set ' \
+             'to 0 cli mode does not clear the sreen)')
 	pars.add_argument(
         '-s', '--show-passwords',
         dest='sho', action='store_true',
@@ -367,7 +386,8 @@ def confpars(mode):
 	if mode != 'gui' and (
           args.yks is False and args.lst is False and \
           args.add is False and args.chg is False and \
-          args.rms is False and args.sslcrt is None and args.sslkey is None):
+          args.rms is False and args.sslcrt is None and \
+          args.sslkey is None and args.scl is None):
 		pars.print_help()
 		exit(0)
 	if mode == 'gui':
@@ -449,6 +469,10 @@ def cli():
 	elif args.lst is None:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 		err = 'no password entrys or decryption failed' if not __ents else None
+	elif args.scl:
+		t = 0 if 'time' not in pkwargs.keys() else pkwargs['time']
+		showclip(args.out if args.out else 'cli', t, True if t else False)
+		exit(0)
 	if err:
 		fatal(err)
 	_printpws_(__ents, args.sho)
@@ -575,6 +599,10 @@ def gui(typ='pw'):
 				forkwaitclip(
                     __pc[0], poclp, boclp, args.time, args.out, args.ent)
 				exit(0)
+	elif args.scl:
+		t = 0 if 'time' not in pkwargs.keys() else pkwargs['time']
+		showclip('gui', t, True if t else False)
+		exit(0)
 	else:
 		__ents = PassCrypt(*pargs, **pkwargs).lspw()
 	if __ents:
