@@ -1,10 +1,4 @@
-.. include:: ./alsos.rst
-.. include:: ./changelog.rst
-.. include:: ./changes.rst
 .. include:: ./contents.rst
-.. include:: ./credits.rst
-.. include:: ./description.rst
-.. include:: ./index.rst
 .. include:: ./installation.rst
 .. include:: ./manpage.rst
 .. include:: ./readme.rst
