@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*-
 #
 # This file is free software by d0n <d0n@janeiskla.de>
@@ -33,7 +34,8 @@ from sys import exit, stdout
 
 from argparse import ArgumentParser
 
-from argcomplete import autocomplete
+import argcomplete
+from argcomplete import autocomplete, shellcode
 from argcomplete.completers import FilesCompleter, ChoicesCompleter
 
 from socket import gethostname as hostname
@@ -261,7 +263,7 @@ def optpars(cfgs, mode, name):
 	apars.set_defaults(**cfgs)
 	apars.add_argument(
         '-a', '--add',
-        dest='add', metavar='ENTRY', nargs='?' if mode == 'gui' else None,
+        dest='add', metavar='ENTRY', nargs='?' if mode != 'gui' else None,
         default=False, help='add ENTRY (password will be asked interactivly)')
 	apars.add_argument(
         '-c', '--change',
@@ -273,10 +275,13 @@ def optpars(cfgs, mode, name):
         default=False, help='delete ENTRY(s) from the passcrypt list')
 	apars.add_argument(
         '-l', '--list',
-        nargs='?', dest='lst', metavar='PATTERN', default=False,
+        dest='lst', metavar='PATTERN', nargs='*' if mode == 'gui' else '?',
+        default=False,
         help='pwclip an entry matching PATTERN if given ' \
              '- otherwise list all entrys')
-	return pars
+	autocomplete(pars)
+	args = pars.parse_args()
+	return pars, args
 
 def confpars(mode):
 	"""pwclip command line opt/arg parsing function"""
@@ -322,9 +327,7 @@ def confpars(mode):
 		cfgs['plain'] = path.expanduser('~/.pwd.yaml')
 	elif 'plain' in cfgs.keys() and cfgs['plain'].startswith('~'):
 		cfgs['plain'] = path.expanduser(cfgs['plain'])
-	pars = optpars(cfgs, mode, 'pwclip')
-	autocomplete(pars)
-	args = pars.parse_args()
+	pars, args = optpars(cfgs, mode, _me)
 	pargs = [a for a in [
         'aal' if args.aal else None,
         'dbg' if args.dbg else None,
@@ -577,12 +580,13 @@ def gui(typ='pw'):
 				else:
 					xnotify('deleted entry %s for %s'%(r, usr))
 	elif args.lst is not False:
-		_umsg = '%s\'s entrys'%usr
-		if args.aal:
-			_umsg = 'all entrys'
-		__in = __xdialog('enter name to search in %s'%_umsg, True)
-		if not __in:
-			exit(1)
+		__in = args.lst
+		if not args.lst:
+			__in = args.lst
+			_umsg = '%s\'s entrys'%usr
+			if args.aal:
+				_umsg = 'all entrys'
+			__in = __xdialog('enter name to search in %s'%_umsg, True)
 		__ent = PassCrypt(*pargs, **pkwargs).lspw(__in)
 		if not __ent or (__ent and __in not in __ent.keys() or not __ent[__in]):
 			xnotify('either %s or %s where not found in passcrypt'%(
