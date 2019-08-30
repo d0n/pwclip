@@ -54,7 +54,7 @@ from executor.executor import cmmd
 from system import \
     absrelpath, copy, paste, xgetpass, \
     xmsgok, xyesno, xnotify, xinput, xkbid, \
-    which, whoami, dictreplace, adbout
+    which, whoami, dictreplace, adbout, WordFind
 
 from pwclip.passcrypt import PassCrypt, lscrypt
 
