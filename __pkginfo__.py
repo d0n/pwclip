@@ -61,8 +61,7 @@ except (FileNotFoundError, NotADirectoryError):
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
-                    'ykclip = pwclip.__init__:ykclip'],
-    'complete_scripts': ['pwcli']}
+                    'ykclip = pwclip.__init__:ykclip']}
 package_data = {
     '': ['pwclip/docs/'],
     '': ['pwclip/example']}
