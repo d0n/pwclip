@@ -5,7 +5,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-08-31
+Released: 2019-09-16
 
   * fixed android output for some special-characters
 
