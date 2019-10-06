@@ -8,4 +8,4 @@ before_script:
 build:
   stage: build
   script:
-    - pylint3 --rcfile=.pylintrc -E *
+    - pylint3 --rcfile=.pylintrc -E ../pwclip
