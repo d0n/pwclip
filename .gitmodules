@@ -1,14 +1,14 @@
 [submodule "lib/colortext"]
 	path = lib/colortext
-	url = d0n@janeiskla.de:rpo/python/colortext.git
+    url = git@bugfisch.net:bin/lib/colortext.git
 	branch = pwclip
 [submodule "lib/executor"]
 	path = lib/executor
-	url = d0n@janeiskla.de:rpo/python/executor.git
+    url = git@bugfisch.net:bin/lib/executor.git
 	branch = pwclip
 [submodule "lib/secrecy"]
 	path = lib/secrecy
-	url = d0n@janeiskla.de:rpo/python/secrecy.git
+    url = git@bugfisch.net:bin/lib/secrecy.git
 	branch = pwclip
 [submodule "lib/system"]
 	path = lib/system
