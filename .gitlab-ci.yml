@@ -9,6 +9,7 @@ before_script:
 build:
   stage: build
   script:
-    - echo $GLTOKEN
+    - echo $GLTOKEN >/gl.token
+    - cat /gl.token
     - git submodule update --init --recursive
     - pylint3 --rcfile=.pylintrc -E ../pwclip
