@@ -1,0 +1,8 @@
+image: "ruby:2.5"
+build:
+  script:
+    - apt-get update
+    - apt-get -y upgrade
+    - apt-get install -y pylint3
+    - git submodule update --init --recursive
+    - pylint3 .
