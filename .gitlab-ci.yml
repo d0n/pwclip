@@ -8,5 +8,4 @@ before_script:
 build:
   stage: build
   script:
-    - git submodule update --init --recursive
     - pylint3 .
