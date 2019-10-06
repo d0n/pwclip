@@ -1,16 +1,16 @@
 [submodule "lib/colortext"]
 	path = lib/colortext
-    url = https://d0n:${GLTOKEN}@bugfisch.net:bin/lib/colortext.git
+    url = https://d0n:${GLTOKEN}@bugfisch.net/bin/lib/colortext.git
 	branch = pwclip
 [submodule "lib/executor"]
 	path = lib/executor
-    url = https://d0n:${GLTOKEN}@bugfisch.net:bin/lib/executor.git
+    url = https://d0n:${GLTOKEN}@bugfisch.net/bin/lib/executor.git
 	branch = pwclip
 [submodule "lib/secrecy"]
 	path = lib/secrecy
-    url = https://d0n:${GLTOKEN}@bugfisch.net:bin/lib/secrecy.git
+    url = https://d0n:${GLTOKEN}@bugfisch.net/bin/lib/secrecy.git
 	branch = pwclip
 [submodule "lib/system"]
 	path = lib/system
-    url = https://d0n:${GLTOKEN}@bugfisch.net:bin/lib/system.git
+    url = https://d0n:${GLTOKEN}@bugfisch.net/bin/lib/system.git
 	branch = pwclip
