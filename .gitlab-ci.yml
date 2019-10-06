@@ -8,4 +8,4 @@ before_script:
 build:
   stage: build
   script:
-    - pylint3 .
+    - pylint3 --disable=bad-continuation,too-many-arguments,too-many-locals,too-many-branches,invalid-name,multiple-statements,duplicate-code --indent-string='\t' .
