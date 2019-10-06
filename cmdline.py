@@ -35,7 +35,7 @@ from sys import exit, stdout
 from argparse import ArgumentParser
 
 import argcomplete
-from argcomplete import autocomplete, shellcode
+from argcomplete import autocomplete
 from argcomplete.completers import FilesCompleter, ChoicesCompleter
 
 from socket import gethostname as hostname
