@@ -1,4 +1,3 @@
-image: "alpine:latest"
 build:
   script:
     - apt-get update
