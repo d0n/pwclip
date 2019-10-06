@@ -1,4 +1,10 @@
+image: "alpine:stable"
+
+before_script:
+  - docker info
+
 build:
+  stage: build
   script:
     - apt-get update
     - apt-get -y upgrade
