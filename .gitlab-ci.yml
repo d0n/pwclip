@@ -8,4 +8,4 @@ before_script:
 build:
   stage: build
   script:
-    - pylint3 --disable=bad-continuation,too-many-arguments,too-many-locals,too-many-branches,invalid-name,multiple-statements,duplicate-code,wrong-import-position --indent-string='\t' .
+    - pylint3 --rcfile=.pylintrc -E *
