@@ -1,8 +1,5 @@
 image: ruby:2.5
 
-variables:
-  GLTOKEN: "$$GLTOKEN"
-
 before_script:
   - apt-get update
   - apt-get -y upgrade
@@ -12,6 +9,6 @@ before_script:
 build:
   stage: build
   script:
-    - sed -i "s/\(\s*\)url = git@bugfisch.net:\(.*\)/\1url = https:\/\/d0n:$GLTOKEN@bugfisch.net\/\2/" .gitmodules
+    - sed -i "s/\(\s*\)url = git@bugfisch.net:\(.*\)/\1url = https:\/\/d0n:$$GLTOKEN@bugfisch.net\/\2/" .gitmodules
     - git submodule update --init --recursive
     - pylint3 --rcfile=.pylintrc -E ../pwclip
