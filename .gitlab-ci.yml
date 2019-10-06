@@ -1,8 +1,5 @@
 image: ruby:2.5
 
-variables:
-  GLTOKEN: $GLTOKEN
-
 before_script:
   - apt-get update
   - apt-get -y upgrade
