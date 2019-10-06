@@ -1,7 +1,7 @@
 image: ruby:2.5
 
 variables:
-  GLTOKEN: $(cat $GLTOKEN)
+  GLTOKEN: cat $GLTOKEN
 
 before_script:
   - apt-get update
