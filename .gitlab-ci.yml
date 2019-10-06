@@ -1,13 +1,12 @@
 image: ruby:2.5
 
 before_script:
-  - docker info
+  - apt-get update
+  - apt-get -y upgrade
+  - apt-get install -y pylint3
 
 build:
   stage: build
   script:
-    - apt-get update
-    - apt-get -y upgrade
-    - apt-get install -y pylint3
     - git submodule update --init --recursive
     - pylint3 .
