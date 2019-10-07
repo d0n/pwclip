@@ -16,4 +16,4 @@ build:
   script:
     - sed -i "s/^.*url = git@bugfisch.net:\(.*\)/\turl = https:\/\/d0n:$GLTOKEN@bugfisch.net\/\1/" .gitmodules
     - git submodule update --init --recursive
-    - pylint3 --rcfile=.pylintrc -E ../housewife
+    - pylint3 --rcfile=.pylintrc -E ../pwclip
