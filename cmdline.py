@@ -438,7 +438,7 @@ def cli():
 		if not args.aal:
 			__ents[args.usr]
 		if not __ents:
-			if [h for (u, es) in __ents.items() if args.chg in en.keys()]:
+			if [u for (u, es) in __ents.items() if args.chg in es.keys()]:
 				exit(0)
 			err = ('could not change entry', args.chg)
 	elif args.rms:
