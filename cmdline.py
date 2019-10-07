@@ -502,7 +502,7 @@ def gui(typ='pw'):
 	if args.yks or args.yks is None or typ == 'yk':
 		res = ykchalres(xgetpass(), args.ysl, args.yks)
 		if not res:
-			xmsgok('no response from the key (if there is one)'%__in)
+			xmsgok('no response from the key (if there is one)'%res)
 			exit(1)
 		forkwaitclip(res, poclp, boclp, args.time, args.out, args.ent)
 	__ents = None
@@ -559,7 +559,7 @@ def gui(typ='pw'):
 				notif = ' '.join(__pc[1:])
 			if not args.out and osname != 'nt':
 				xnotify(notif)
-			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, arg.ent)
+			forkwaitclip(__pc[0], poclp, boclp, args.time, args.out, args.ent)
 			xnotify('changed entry %s for %s'%(_chg, usr))
 	elif args.rms is not False:
 		_rms = __xdialog(
