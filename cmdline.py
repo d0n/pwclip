@@ -64,8 +64,9 @@ from pwclip.__pkginfo__ import version
 
 
 def showclip(mode='cli', cliptime=None, clear=None):
+	text = paste()
 	if mode == 'cli':
-		print(paste(), end='')
+		print(text, end='')
 		stdout.flush()
 		if clear:
 			if cliptime:
@@ -74,7 +75,7 @@ def showclip(mode='cli', cliptime=None, clear=None):
 	elif mode == 'ano':
 		adbout(text)
 	elif mode == 'gui':
-		xnotify(paste())
+		xnotify(text)
 
 def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	"""clipboard forking, after time resetting function"""
