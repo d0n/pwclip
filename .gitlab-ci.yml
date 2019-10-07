@@ -7,8 +7,8 @@ variables:
 before_script:
   - apt-get update
   - apt-get -y upgrade
-  - apt-get install -y pylint3 python3-argcomplete python3-yaml python3-pip tree
-  - pip3 install python-gnupg python-yubico xxhash
+  - apt-get install -y pylint3 python3-argcomplete python3-yaml python3-pip python3-gnupg python3-wget tree git
+  - pip3 install python-gnupg python-yubico
   - tree
 
 build:
