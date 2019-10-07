@@ -1,7 +1,6 @@
 image: ruby:2.5
 
 variables:
-  GLTOKEN: '$GLTOKEN'
   PYTHONPATH: '$PYTHONPATH:./lib'
 
 before_script:
