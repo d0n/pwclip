@@ -115,7 +115,7 @@ class PassCrypt(GPGTool):
 				else:
 					xmsgok(' '.join(msg))
 			if not self.recvs and not self.findkey():
-				self.genkeys(self._gendefs(self.gui))
+				self.genkeys(**self._gendefs(self.gui))
 			if self.__weaks:
 				if self._writecrypt(self.__weaks):
 					if self.vrb:
@@ -227,7 +227,7 @@ class PassCrypt(GPGTool):
 			else:
 				print('%s %s%s [Y/n]'%(
                     grn('use the following password:'),
-                    yel(pwd), grn('?')), sep='')
+                    yel(__pwd), grn('?')), sep='')
 				yesno = input()
 				yesno = True if str(yesno).lower() in ('y', '') else False
 			if yesno:
