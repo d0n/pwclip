@@ -1,17 +1,19 @@
 image: ruby:2.5
 
 variables:
-  GLTOKEN: "$GLTOKEN"
+  GLTOKEN: '$GLTOKEN'
+  PYTHONPATH: '$PYTHONPATH:./lib'
 
 before_script:
   - apt-get update
   - apt-get -y upgrade
-  - apt-get install -y pylint3 python3-argcomplete python3-yaml tree git
+  - apt-get install -y pylint3 python3-argcomplete python3-yaml
+  - pip3 install python-gnupg python-yubico xxhash
   - tree
 
 build:
   stage: build
   script:
-    - sed -i "s/\(\s*\)url = git@bugfisch.net:\(.*\)/\1url = https:\/\/d0n:$GLTOKEN@bugfisch.net\/\2/" .gitmodules
+    - sed -i "s/^.*url = git@bugfisch.net:\(.*\)/\turl = https:\/\/d0n:$GLTOKEN@bugfisch.net\/\1/" .gitmodules
     - git submodule update --init --recursive
-    - pylint3 --rcfile=.pylintrc -E ../pwclip
+    - pylint3 --rcfile=.pylintrc -E ../housewife
