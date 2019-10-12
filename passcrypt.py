@@ -358,10 +358,10 @@ class PassCrypt(GPGTool):
 				if usr:
 					usrs = [self.user] + \
                         [u for u in self.__weaks.keys() if u != self.user]
-					for user in usrs:
-						if user in self.__weaks.keys() and \
-                              usr in self.__weaks[user].keys():
-							__ents = {usr: self.__weaks[user][usr]}
+					for u in usrs:
+						if u in self.__weaks.keys() and \
+                              usr in self.__weaks[u].keys():
+							__ents = {usr: self.__weaks[u][usr]}
 							break
 			elif self.user in self.__weaks.keys():
 				__ents = self.__weaks[self.user]

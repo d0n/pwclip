@@ -264,11 +264,11 @@ def optpars(cfgs, mode, name):
 	apars.set_defaults(**cfgs)
 	apars.add_argument(
         '-a', '--add',
-        dest='add', metavar='ENTRY', nargs='?' if mode != 'gui' else None,
+        dest='add', metavar='ENTRY', nargs='?' if mode != 'gui' else '+',
         default=False, help='add ENTRY (password will be asked interactivly)')
 	apars.add_argument(
         '-c', '--change',
-        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else None,
+        dest='chg', metavar='ENTRY', nargs='?' if mode == 'gui' else '+',
         default=False, help='change ENTRY (password will be asked interactivly)')
 	apars.add_argument(
         '-d', '--delete',
@@ -276,7 +276,7 @@ def optpars(cfgs, mode, name):
         default=False, help='delete ENTRY(s) from the passcrypt list')
 	apars.add_argument(
         '-l', '--list',
-        dest='lst', metavar='PATTERN', nargs='*' if mode == 'gui' else '?',
+        dest='lst', metavar='PATTERN', nargs='?',
         default=False,
         help='pwclip an entry matching PATTERN if given ' \
              '- otherwise list all entrys')
