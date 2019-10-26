@@ -1,5 +1,4 @@
-image:
-  debian:10
+image: alpine:latest
 
 include:
  - template: Container-Scanning.gitlab-ci.yml
