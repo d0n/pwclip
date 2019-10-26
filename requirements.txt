@@ -1,0 +1,7 @@
+argcomplete
+psutil
+python-gnupg
+python-yubico
+PyGObject
+PyYAML
+wget
