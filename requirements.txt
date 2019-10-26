@@ -5,3 +5,6 @@ python-yubico
 PyGObject
 PyYAML
 wget
+atexit
+shutil
+inspect
