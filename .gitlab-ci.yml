@@ -11,13 +11,11 @@ variables:
 
 services:
   - docker:stable-dind
+  - ssh:latest
 
 stages:
   - build
   - test
-
-include:
-  - template: Container-Scanning.gitlab-ci.yml
 
 build:
   image: docker:dind
