@@ -2,8 +2,15 @@
 Changelog
 =========
 
-
 {CurrentVersion}
+
+Released: 2019-11-05
+
+  * [W] fix windows builds not available via pip install - bdist_wininst added
+
+
+1.7.2
+-----
 
 Released: 2019-09-16
 
