@@ -2,10 +2,23 @@
 Changelog
 =========
 
-
 {CurrentVersion}
 
-Released: 2019-09-16
+Released: 2019-11-05
+
+  * fix docs not built in last release
+
+  * fix version mixture documentation
+
+  * [W] fix windows which was/ is still broken by setup.py (till now)
+
+
+1.7.2
+-----
+
+Released: 2019-11-05
+
+  * [W] fix windows builds not available via pip install - bdist_wininst added
 
   * fixed android output for some special-characters
 

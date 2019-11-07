@@ -7,7 +7,7 @@ pwclip: gui to temporarily save passwords to system-clipboard
 
 Contents:
 
-.. include:: ./pseudo.rst
+.. include:: ./description.rst
 
 .. toctree::
    :maxdepth: 2
