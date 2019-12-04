@@ -278,7 +278,7 @@ def optpars(cfgs, mode, name):
         default=False, help='delete ENTRY(s) from the passcrypt list')
 	apars.add_argument(
         '-l', '--list',
-        dest='lst', metavar='PATTERN', nargs='?' if mode == 'gui' else '+'
+        dest='lst', metavar='PATTERN', nargs='?' if mode == 'gui' else '+',
         default=False,
         help='pwclip an entry matching PATTERN if given ' \
              '- otherwise list all entrys')
