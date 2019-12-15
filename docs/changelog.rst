@@ -4,7 +4,10 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2019-11-05
+Released: 2019-12-15
+
+  * fixed serious bugs when changin password and abortting might have ended up with lost/broken
+    entrys
 
   * fix docs not built in last release
 

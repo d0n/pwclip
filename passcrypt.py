@@ -186,7 +186,7 @@ class PassCrypt(GPGTool):
 		if self.gui:
 			if not pwd:
 				pwd = xgetpass(
-				    'as user %s: enter password for entry %s'%(sysuser, usr))
+                    'blank input preserves already set comment/password\nas user %s: enter password for entry %s'%(sysuser, usr))
 				pwd = pwd if pwd else opw
 				if not pwd:
 					xmsgok('password is needed if adding password')
@@ -199,7 +199,9 @@ class PassCrypt(GPGTool):
 				com = None
 		else:
 			if not pwd:
-				print(blu('as user '), yel(sysuser), ': ', sep='')
+				print(
+                    blu('blank input preserves already set comment/password'),
+                    blu('as user '), yel(sysuser), ': ', sep='')
 				pwd = pwd if pwd else self.passwd(msg='%s%s%s%s: '%(
 						blu('  enter '), yel('password '),
 						blu('for entry '), yel('%s'%usr)))
@@ -254,10 +256,7 @@ class PassCrypt(GPGTool):
 					return self.__weaks
 				elif self.user not in self.__weaks.keys():
 					self.__weaks[self.user] = {}
-				try:
-					__opw, __ocom = self.__weaks[self.user][usr]
-				except (KeyError, ValueError):
-					__opw, __ocom = None, None
+				__opw, __ocom = self.__weaks[self.user][usr]
 				pwdcom = self.__askpwdcom(
                     self.user, usr, pwd, com, __opw, __ocom)
 				if pwdcom:
@@ -270,10 +269,7 @@ class PassCrypt(GPGTool):
 					else:
 						error('entry', usr, 'already exists for user', u)
 					continue
-				try:
-					__opw, __ocom = self.__weaks[u][usr]
-				except (KeyError, ValueError):
-					__opw, __ocom = None, None
+				__opw, __ocom = self.__weaks[u][usr]
 				pwdcom = self.__askpwdcom(
                     self.user, usr, pwd, com, __opw, __ocom)
 				if pwdcom:
@@ -286,18 +282,18 @@ class PassCrypt(GPGTool):
 			print(bgre(tabd({
                 self.chpw: {'user': self.user, 'entry': usr, 'pwd': pwd}})))
 		if not self.aal:
-			print(self.__weaks)
-			print(self.user)
-			print(usr)
 			if self.__weaks and self.user in self.__weaks.keys() and \
-                  usr in self.__weaks[self.user].keys():
-
+                    usr in self.__weaks[self.user].keys():
 				try:
-					__opw, __ocom = self.__weaks[self.user][usr]
-				except (KeyError, ValueError):
-					__opw, __ocom = None, None
+					__opw = self.__weaks[self.user][usr][0]
+				except IndexError:
+					return
+				try:
+					__ocmd = self.__weaks[self.user][usr][1]
+				except IndexError:
+					__ocmd = None
 				self.__weaks[self.user][usr] = self.__askpwdcom(
-                    self.user, usr, pwd, com, __opw, __ocom)
+                    self.user, usr, pwd, com, __opw, __ocmd)
 			else:
 				if self.gui:
 					xmsgok('no entry named %s for user %s'%(usr, self.user))
@@ -311,10 +307,7 @@ class PassCrypt(GPGTool):
 					else:
 						error('entry', usr, 'does not exist for user', u)
 					continue
-				try:
-					__opw, __ocom = self.__weaks[self.user][usr]
-				except (KeyError, ValueError):
-					__opw, __ocom = None, None
+				__opw, __ocom = self.__weaks[self.user][usr]
 				self.__weaks[u][usr] = self.__askpwdcom(
                     self.user, usr, pwd, com, __opw, __ocom)
 		return dict(self.__weaks)
