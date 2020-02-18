@@ -9,6 +9,8 @@ Contents:
 
 .. include:: ./description.rst
 
+.. include:: ./pseudo.rst
+
 .. toctree::
    :maxdepth: 2
 

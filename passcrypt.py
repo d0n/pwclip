@@ -301,13 +301,17 @@ class PassCrypt(GPGTool):
 					error('no entry named', usr, 'for user', self.user)
 		else:
 			for u in self.__weaks.keys():
+				#	if self.gui:
+				#		xmsgok('entry %s does not exist for user %s'%(usr, u))
+				#	else:
+				#		error('entry', usr, 'does not exist for user', u)
+				#	continue
+				__opw = ''
+				__ocom = None
 				if usr not in self.__weaks[u].keys():
-					if self.gui:
-						xmsgok('entry %s does not exist for user %s'%(usr, u))
-					else:
-						error('entry', usr, 'does not exist for user', u)
-					continue
-				__opw, __ocom = self.__weaks[self.user][usr]
+					self.__weaks[u][usr] = [__opw, __ocom]
+				elif self.__weaks[self.user][usr]:
+					__opw, __ocom = self.__weaks[self.user][usr]
 				self.__weaks[u][usr] = self.__askpwdcom(
                     self.user, usr, pwd, com, __opw, __ocom)
 		return dict(self.__weaks)
