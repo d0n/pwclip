@@ -1,7 +1,7 @@
 pwclip
 """"""
 
-.. include:: ./description.rst
+{description}
 
 {installation}
 
