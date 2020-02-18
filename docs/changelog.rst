@@ -4,6 +4,14 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2020-02-18
+
+  * fixed password output form some special caracters
+
+
+1.7.3
+-----
+
 Released: 2019-12-15
 
   * fixed serious bugs when changin password and abortting might have ended up with lost/broken
