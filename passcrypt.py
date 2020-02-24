@@ -17,7 +17,10 @@ from system import \
 
 from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 
-from atexit import register
+try:
+	from atexit import register
+except ImportError:
+	def register(*_): return
 
 class PassCrypt(GPGTool):
 	"""passcrypt main class"""
