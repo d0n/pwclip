@@ -30,34 +30,11 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
-	long_description = '%s\n\n'%str('\n\n\n'.join(
-         str(open('pwclip/docs/changelog.rst', 'r').read()).split('\n\n\n')[:4]
-        )).format(CurrentVersion='%s (current)\n----------%s'%(
-            version, '-'*len(version)))
-except (FileNotFoundError, NotADirectoryError):
-	long_description = ''
-try:
-	__rs = []
-	with open('docs/readme.rst', 'r') as __r:
-		__rs = __r.readlines()
-	fmt = {}
-	for l in __rs:
-		if l.startswith('{'):
-			l = l.strip('{}')
-			fname = 'docs/%s.rst'%l
-			with open(fname, 'r') as nfh:
-				print(fname)
-				fmt[l] = nfh.read()
-	long_description = ''.join(__rs).format(**fmt)
-except (FileNotFoundError, NotADirectoryError):
-    long_description = ''
-try:
-	with open('docs/conf.py', 'w+') as cfh:
-		cfh.write(str(open(
-            'docs/conf.py.tmpl', 'r').read()
-            ).format(VersionString=version))
-except (FileNotFoundError, NotADirectoryError):
+	with open('README.md', 'r'), as rfh:
+		long_description = rfh.read()
+except FileNotFoundError:
 	pass
+
 entry_points = {
     'console_scripts': ['pwcli = pwclip.__init__:pwcli'],
     'gui_scripts': ['pwclip = pwclip.__init__:pwclip',
