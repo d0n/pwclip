@@ -12,6 +12,7 @@ Released: 2020-02-18
      - cannonical has chosen some other library then previously used (e.g. python-gnupg)
 	 - the dependency itself had bugs and/or needed to be some higher version as apt provides
 	 - dependency was not compatible to windows and needs to be installed somehow else for now
+	 - windows do not support them hence cannot be placed in requirements.txt
 
   * fixed serious bugs when changin password and abortting might have ended up with lost/broken
     entrys
