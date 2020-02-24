@@ -4,7 +4,7 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2020-02-18
+Released: 2020-02-24
 
   * fixed password output form some special caracters
 
