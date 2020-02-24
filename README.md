@@ -1,1 +1,1 @@
-docs/readme.rst
+docs/_build/text/readme.txt
