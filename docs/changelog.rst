@@ -6,6 +6,14 @@ Changelog
 
 Released: 2020-02-24
 
+  * hotfix for password output in GUI mode
+
+
+1.7.4
+-----
+
+Released: 2020-02-24
+
   * hotfix release for pypy description/readme page
 
 

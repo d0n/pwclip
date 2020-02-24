@@ -82,8 +82,14 @@ def forkwaitclip(text, poclp, boclp, wait=3, out=None, enter=None):
 	if out:
 		xnotify('pwclip: paste')
 		if out == 'gui':
-			if "'" in text:
+			print(text)
+			sep = '"'
+			if "'" in text and '"' in text:
 				text = sub("'", "\'", text)
+				text = sub('"', '\"', text)
+				sep = '"'
+			elif '"' in text:
+				sep = "'"
 			cmmd.stdo('xvkbd -secure -no-keypad -delay 17 -text \'%s\''%text)
 		elif out == 'cli':
 			stdout.write(r'%s'%text if not enter else r'%s\n'%text)
