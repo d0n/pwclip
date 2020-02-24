@@ -8,6 +8,8 @@ Released: 2020-02-24
 
   * hotfix for password output in GUI mode
 
+  * hotfix for (still) broken pypy description/readme page
+
 
 1.7.4
 -----
