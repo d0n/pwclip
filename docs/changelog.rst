@@ -13,12 +13,6 @@ Released: 2020-02-18
 	 - the dependency itself had bugs and/or needed to be some higher version as apt provides
 	 - dependency was not compatible to windows and needs to be installed somehow else for now
 
-
-1.7.3
------
-
-Released: 2019-12-15
-
   * fixed serious bugs when changin password and abortting might have ended up with lost/broken
     entrys
 
@@ -26,7 +20,9 @@ Released: 2019-12-15
 
   * fix version mixture documentation
 
-  * [W] fix windows which was/ is still broken by setup.py (till now)
+  * [W] fix windows which was/is still broken by setup.py (still alpha testing)
+
+  * [W] fix imports which do not exist for windows (still alpha testing)
 
 
 1.7.2
