@@ -6,6 +6,14 @@ Changelog
 
 Released: 2020-02-24
 
+  * hotfix release for pypy description page
+
+
+1.7.3
+-----
+
+Released: 2020-02-24
+
   * fixed password output form some special caracters
 
   * more dependencies needed to be abandoned for some reasons like:
