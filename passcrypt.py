@@ -4,7 +4,7 @@
 
 from sys import argv, stdout
 
-from os import path, remove, environ, chmod, stat, makedirs
+from os import path, remove, environ, chmod, stat, makedirs, name as osname
 
 from yaml import load, dump, Loader, Dumper
 
@@ -20,7 +20,7 @@ from secrecy.gpgtools import GPGTool, GPGSMTool, DecryptError, SignatureError
 try:
 	from atexit import register
 except ImportError:
-	def register(*_): return
+	pass
 
 class PassCrypt(GPGTool):
 	"""passcrypt main class"""
@@ -88,7 +88,8 @@ class PassCrypt(GPGTool):
 			self._mkconfkeys()
 		self.__weaks = dict(sorted(dict(self._readcrypt()).items()))
 		self.__oldweaks = str(self.__weaks)
-		register(self._cryptpass)
+		if osname != 'nt':
+			register(self._cryptpass)
 
 	def __del__(self):
 		self._cryptpass()
