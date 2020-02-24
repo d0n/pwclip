@@ -6,7 +6,7 @@ Changelog
 
 Released: 2020-02-24
 
-  * hotfix release for pypy description page
+  * hotfix release for pypy description/readme page
 
 
 1.7.3
