@@ -30,7 +30,7 @@ classifiers = ['Environment :: Console',
 include_package_data = True
 long_description = ''
 try:
-	with open('docs/readme.rst', 'r') as rfh:
+	with open('docs/description.rst', 'r') as rfh:
 		long_description = rfh.read()
 except FileNotFoundError:
 	pass
