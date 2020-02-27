@@ -4,6 +4,8 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2020-02-27
+
   * trying to fix description for https://pypi.org/project/pwclip
   
 
