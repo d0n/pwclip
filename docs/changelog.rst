@@ -4,6 +4,12 @@ Changelog
 
 {CurrentVersion}
 
+  * trying to fix description for https://pypi.org/project/pwclip
+  
+
+1.7.5
+-----
+
 Released: 2020-02-24
 
   * hotfix for password output in GUI mode
