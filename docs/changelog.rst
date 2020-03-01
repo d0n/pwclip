@@ -8,6 +8,8 @@ Released: 2020-03-01
 
   * fix version docstring of CurrentVersion
 
+  * completly removed dependency for PyGObject while it's breaking windows support
+
   * still trying to fix description for pypi
 
 
