@@ -1,7 +1,7 @@
 """pwclip packaging information"""
 name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
-version = '1.7.7'
+version = '1.7.8'
 install_requires = [
     'argcomplete', 'psutil', 'PyYAML', 'pywin32 >= 1.0;platform_system=="Windows"']
 url = 'https://github.com/d0n/pwclip'
