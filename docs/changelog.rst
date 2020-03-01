@@ -6,6 +6,14 @@ Changelog
 
 Released: 2020-03-01
 
+  * be fixed already! pypi description page is knowing how to prevent doing as i say
+
+
+1.7.8
+-----
+
+Released: 2020-03-01
+
   * description fix for pypi page
   
   * windows support fix release
