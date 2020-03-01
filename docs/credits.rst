@@ -1,5 +1,6 @@
 Credits
 -------
+
 I hope that this might be somewhat of help or at least be inspiring for own
 ideas. You're alway welcome to leave me a message for reviews or feature
 requests as well as bug reports: <mail@leonpelzer.de>
