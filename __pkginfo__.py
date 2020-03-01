@@ -3,7 +3,7 @@ name = 'pwclip'
 provides = ['pwcli', 'pwclip', 'ykclip']
 version = '1.7.7'
 install_requires = [
-    'argcomplete', 'psutil', 'PyGObject', 'PyYAML', 'pywin32 >= 1.0;platform_system=="Windows"']
+    'argcomplete', 'psutil', 'PyYAML', 'pywin32 >= 1.0;platform_system=="Windows"']
 url = 'https://github.com/d0n/pwclip'
 download_url = 'http://deb.janeiskla.de/ubuntu/pool/main/p/pwclip/python3-pwclip_%s-1_all.deb'%version
 license = "GPLv3+"

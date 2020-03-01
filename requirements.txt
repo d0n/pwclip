@@ -1,8 +1,4 @@
 argcomplete
 psutil
-python-gnupg
-python-yubico
 PyYAML
-wget
 shutil
-inspect
