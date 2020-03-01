@@ -4,9 +4,11 @@ Changelog
 
 {CurrentVersion}
 
-Released: 2020-02-27
+Released: 2020-03-01
 
   * trying to fix description for https://pypi.org/project/pwclip
+
+  * fix version docstring of CurrentVersion
   
 
 1.7.5
