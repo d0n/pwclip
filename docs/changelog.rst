@@ -6,6 +6,16 @@ Changelog
 
 Released: 2020-03-01
 
+  * description fix for pypi page
+  
+  * windows support fix release
+
+
+1.7.7
+-----
+
+Released: 2020-03-01
+
   * fix version docstring of CurrentVersion
 
   * completly removed dependency for PyGObject while it's breaking windows support
