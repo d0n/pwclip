@@ -8,6 +8,11 @@ Released: 2020-03-03
 
   * fix cancel function on pressing escape as well as the butten in gui mode
 
+  * fixed repeatedly display of missing cards when using multiple card-keys
+
+  * sadly i'm too dumb to fix pypi description and too lazy to read the manuals
+    so i still have no description apart from thus on github
+
 
 1.7.9
 -----
