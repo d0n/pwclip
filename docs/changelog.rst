@@ -4,6 +4,14 @@ Changelog
 
 {CurrentVersion}
 
+Released: 2020-03-03
+
+  * fix cancel function on pressing escape as well as the butten in gui mode
+
+
+1.7.9
+-----
+
 Released: 2020-03-01
 
   * be fixed already! pypi description page is knowing how to prevent doing as i say
