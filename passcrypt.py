@@ -261,7 +261,10 @@ class PassCrypt(GPGTool):
 					return self.__weaks
 				elif self.user not in self.__weaks.keys():
 					self.__weaks[self.user] = {}
-				__opw, __ocom = self.__weaks[self.user][usr]
+				try:
+					__opw, __ocom = self.__weaks[self.user][usr]
+				except KeyError:
+					__opw, __ocom = None, None
 				pwdcom = self.__askpwdcom(
                     self.user, usr, pwd, com, __opw, __ocom)
 				if pwdcom:
